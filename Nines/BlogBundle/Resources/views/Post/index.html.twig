@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %} 
+    <h1>Blog Posts</h1>
+    <p class="count">
+        Displaying {{ posts|length }} posts of {{ posts.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('post_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+            <a href="{{ path('post_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    {% for post in posts %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title pull-left">
+                    <a href="{{ path('post_show', { 'id': post.id }) }}">
+                        {{ post.title }}
+                    </a>
+                </h2>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="panel-title pull-right">{{ post.status.label }}</div>
+                {% endif %}
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">  
+                {{ post.excerpt|raw }}
+            </div>
+            <div class="panel-footer text-right">
+                Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in 
+                <a href="{{ path('post_category_show', {'id': post.category.id }) }}">
+                    {{ post.category -}}
+                </a>.
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(posts) }}
+    </div>
+
+{% endblock %}

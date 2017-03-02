@@ -1,0 +1,16 @@
+{% set comments = comment_service.findComments(entity) %}
+{% if comments|length %}
+    <div class="well">
+        <h2>Comments</h2>
+        {% for comment in comments %} 
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {{ comment.content }}
+                </div>
+                <div class="panel-footer">
+                    Submitted by {{comment.fullname}} on {{ comment.created|date }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

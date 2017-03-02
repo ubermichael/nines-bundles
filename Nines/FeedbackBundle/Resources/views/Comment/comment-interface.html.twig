@@ -1,0 +1,6 @@
+{% include 'NinesFeedbackBundle:Comment:comment-form.html.twig' with { 'entity': entity } %}				
+{% if is_granted('ROLE_ADMIN') %}
+    {% include 'NinesFeedbackBundle:Comment:comments-admin.html.twig' %}
+{% else %}
+    {% include 'NinesFeedbackBundle:Comment:comments-view.html.twig' %}
+{% endif %}

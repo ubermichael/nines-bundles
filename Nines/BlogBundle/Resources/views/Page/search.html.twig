@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %} 
+    <h1>Page Search</h1>
+    {% if pages|length > 0 %}
+        <p class="count">
+            Displaying {{ pages|length }} pages of {{ pages.getTotalItemCount }} total.
+        </p>
+    {% elseif  q %}
+        <p>Your search for <i>{{ q }}</i> returned zero results.</p>
+    {% endif %}
+{% endblock %} 
+
+{% block body %}
+
+    <form method="get" class="form-horizontal">
+        <fieldset>
+            <legend>Blog search</legend>
+            <div class='form-group'>
+                <label class='col-sm-2 control-label' for='q'>Search query</label>
+                <div class='col-sm-10'>
+                    <div class='input-group'>
+                        <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <span class='glyphicon glyphicon-search'></span>
+                                Search
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    {% if pages|length > 0 %}
+
+        {% for result in pages %}
+            {% set page = result[0] %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title pull-left">
+                        <a href="{{ path('page_show', { 'id': page.id }) }}">
+                            {{ page.title }}
+                        </a>
+                    </h2>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="panel-title pull-right">{{ page.public }}</div>
+                        <div class="clearfix"></div>
+                    {% endif %}
+                </div>
+                <div class="panel-body"> 
+                    {% set result = page.searchHighlight(q) %}
+                    {% if result|length > 0 %}
+                        <ul>
+                            {% for text in page.searchHighlight(q) %}
+                                <li>{{ text|raw }}</li>
+                                {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Cannot highlight the search results.</p>
+                        <p>{{ page.excerpt|raw }}</p>
+                    {% endif %}
+                </div>
+                <div class="panel-footer text-right">
+                    Posted {{ page.created|date('Y-m-d H:i:s') }} by {{ page.user.fullname }}.
+                </div>
+            </div>
+        {% endfor %}
+
+
+        <div class="navigation">
+            {{ knp_pagination_render(pages) }}
+        </div>
+
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,20 @@
+services:
+    feedback.comment:
+        class: Nines\FeedbackBundle\Services\CommentService
+        arguments: [ "%nines_feedback.routing%", "%nines_feedback.default_status%", "%nines_feedback.public_status%" ]
+        calls:
+            - [ setAuthorizationChecker, ['@security.authorization_checker']]
+            - [ setDoctrine, ["@doctrine"]]
+            - [ setLogger, ["@monolog.logger"]]
+            - [ setRouter, ["@router"]]
+            - [ setFormFactory, ["@form.factory"]]
+            
+    feedback.flag:
+        class: Nines\FeedbackBundle\Services\FlagService
+        arguments: [ "%nines_feedback.routing%" ]
+        calls:
+            - [ setAuthorizationChecker, ['@security.authorization_checker']]
+            - [ setDoctrine, ["@doctrine"]]
+            - [ setLogger, ["@monolog.logger"]]
+            - [ setRouter, ["@router"]]
+            - [ setFormFactory, ["@form.factory"]]

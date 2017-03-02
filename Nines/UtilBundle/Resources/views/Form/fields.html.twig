@@ -1,0 +1,25 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block form_label -%}
+    {% spaceless %}
+        {% if label is same as(false) %}
+            <div class="{{ block('form_label_class') }}"></div>
+        {% else %}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ block('form_label_class'))|trim}) %}
+            {{- parent() -}}
+        {% endif %}
+    {% endspaceless %}
+{%- endblock form_label %}
+
+{% block form_row -%}
+    <div class="form-group {%if attr.group_class is defined %}{{ attr.group_class }}{% endif %} {% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+        {{- form_label(form) -}}
+        <div class="{{ block('form_group_class') }}">
+            <div class="clearfix">{{- form_widget(form) -}}</div>
+            {{- form_errors(form) -}}
+            {% if attr.help_block is defined %}
+                <p class='help-block'>{{ attr.help_block|raw }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %} 
+    <h1>Page List</h1>
+    <p class="count">
+        Displaying {{ pages|length }} pages of {{ pages.getTotalItemCount }} total.
+    </p>
+{% endblock %} 
+
+{% block body %}
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('page_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+                <a href="{{ path('page_sort') }}" class="btn btn-default"
+                   <span class="glyphicon glyphicon-sort"></span> Sort
+                </a>                
+            {% endif %}
+            <a href="{{ path('page_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    {% for page in pages %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title pull-left">
+                    <a href="{{ path('page_show', { 'id': page.id }) }}">
+                        {{ page.title }}
+                    </a>
+                </h2>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="panel-title pull-right">{% if page.public %}Public{% else %}Private{% endif %}</div>
+                {% endif %}
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">
+                {{ page.excerpt|raw }}
+            </div>
+            <div class="panel-footer text-right">
+                Posted {{ page.created|date('Y-m-d H:i:s') }} by {{ page.user.fullname }}.
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(pages) }}
+    </div>
+
+{% endblock %}

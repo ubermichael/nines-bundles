@@ -1,0 +1,4 @@
+services:
+#    nines_blog.example:
+#        class: Nines\BlogBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]
