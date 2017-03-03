@@ -15,7 +15,7 @@ class Builder implements ContainerAwareInterface {
     use ContainerAwareTrait;
 
     const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
-    
+
     /**
      * Build a menu for blog posts.
      * 
@@ -23,6 +23,7 @@ class Builder implements ContainerAwareInterface {
      * @param array $options
      * @return ItemInterface
      */
+
     public function userNavMenu(FactoryInterface $factory, array $options) {
         $menu = $factory->createItem('root');
         $menu->setChildrenAttributes(array(
@@ -47,9 +48,24 @@ class Builder implements ContainerAwareInterface {
             $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
             $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
             $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
-        }
 
-        return $menu;
+            if ($this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+                $menu['user']->addChild('divider', array(
+                    'label' => '',
+                ));
+                $menu['user']['divider']->setAttributes(array(
+                    'role' => 'separator',
+                    'class' => 'divider',
+                ));
+
+                $menu['user']->addChild('users', array(
+                    'label' => 'Users',
+                    'route' => 'user',
+                ));
+            }
+
+            return $menu;
+        }
     }
 
 }
