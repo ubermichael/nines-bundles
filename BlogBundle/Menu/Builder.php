@@ -10,8 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 /**
  * Class to build some menus for navigation.
  */
-class Builder implements ContainerAwareInterface
-{
+class Builder implements ContainerAwareInterface {
+
     use ContainerAwareTrait;
 
     /**
@@ -21,27 +21,24 @@ class Builder implements ContainerAwareInterface
      * @param array $options
      * @return ItemInterface
      */
-    public function postNavMenu(FactoryInterface $factory, array $options)
-    {
+    public function postNavMenu(FactoryInterface $factory, array $options) {
         $em = $this->container->get('doctrine')->getManager();
-        
+
         $menu = $factory->createItem('root');
         $menu->setChildrenAttributes(array(
             'class' => 'dropdown-menu',
         ));
         $menu->setAttribute('dropdown', true);
-        
+
         $status = $em->getRepository('NinesBlogBundle:PostStatus')->findOneBy(array(
             'public' => true,
         ));
         $posts = $em->getRepository('NinesBlogBundle:Post')->findBy(
-            array('status' => $status), 
-            array('id' => 'DESC'),
-            $this->container->getParameter('nines_blog.menu_posts')
+                array('status' => $status), array('id' => 'DESC'), $this->container->getParameter('nines_blog.menu_posts')
         );
-        foreach($posts as $post) {
+        foreach ($posts as $post) {
             $menu->addChild($post->getTitle(), array(
-                'route' => 'post_show', 
+                'route' => 'post_show',
                 'routeParameters' => array(
                     'id' => $post->getId(),
                 )
@@ -54,14 +51,14 @@ class Builder implements ContainerAwareInterface
             'role' => 'separator',
             'class' => 'divider',
         ));
-        
+
         $menu->addChild('All Announcements', array(
             'route' => 'post_index',
         ));
-        
+
         return $menu;
     }
-    
+
     /**
      * Build a menu for blog pages.
      * 
@@ -77,10 +74,9 @@ class Builder implements ContainerAwareInterface
         ));
         $menu->setAttribute('dropdown', true);
         $pages = $em->getRepository('NinesBlogBundle:Page')->findBy(
-            array('public' => true), 
-            array('weight' => 'ASC', 'title' => 'ASC')
+                array('public' => true), array('weight' => 'ASC', 'title' => 'ASC')
         );
-        foreach($pages as $page) {
+        foreach ($pages as $page) {
             $menu->addChild($page->getTitle(), array(
                 'route' => 'page_show',
                 'routeParameters' => array(
@@ -88,6 +84,22 @@ class Builder implements ContainerAwareInterface
                 )
             ));
         }
+        if ($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('divider', array(
+                'label' => '',
+            ));
+            $menu['divider']->setAttributes(array(
+                'role' => 'separator',
+                'class' => 'divider',
+            ));
+
+            $menu->addChild('page_admin', array(
+                'label' => 'All Pages',
+                'route' => 'page_index',
+            ));
+        }
+
         return $menu;
     }
+
 }
