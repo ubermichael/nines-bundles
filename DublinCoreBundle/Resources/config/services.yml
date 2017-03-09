@@ -1,0 +1,4 @@
+services:
+#    nines_dublin_core.example:
+#        class: Nines\DublinCoreBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]
