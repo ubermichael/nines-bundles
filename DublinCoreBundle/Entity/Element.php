@@ -16,7 +16,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  *      @ORM\UniqueConstraint(columns={"name"}),
  *      @ORM\UniqueConstraint(columns={"uri"})
  *  }), 
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ElementRepository")
+ * @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
  */
 class Element extends AbstractTerm
 {
