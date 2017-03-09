@@ -16,9 +16,10 @@ class ElementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {    
         $builder->add('name');     
-        $builder->add('label');     
-        $builder->add('uri');     
+        $builder->add('label');    
+        $builder->add('uri');
         $builder->add('description', CKEditorType::class);         
+        $builder->add('comment', CKEditorType::class);         
     }
     
     /**

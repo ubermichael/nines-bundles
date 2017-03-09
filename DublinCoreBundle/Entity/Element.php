@@ -27,6 +27,12 @@ class Element extends AbstractTerm
     private $uri;
     
     /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $comment;
+    
+    /**
      * @var Collection|Field[]
      * @ORM\OneToMany(targetEntity="Field", mappedBy="element")
      */
@@ -101,5 +107,29 @@ class Element extends AbstractTerm
     public function getFields()
     {
         return $this->fields;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param string $comment
+     *
+     * @return Element
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 }

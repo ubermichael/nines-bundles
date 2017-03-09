@@ -26,6 +26,13 @@ abstract class Field extends AbstractEntity
      */
     private $element;
     
+    /**
+     * @var Resource
+     * @ORM\ManyToOne(targetEntity="Resource", inversedBy="fields")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $resource;
+    
     public function __toString() {
         return $this->value;
     }
@@ -76,5 +83,29 @@ abstract class Field extends AbstractEntity
     public function getElement()
     {
         return $this->element;
+    }
+
+    /**
+     * Set resource
+     *
+     * @param Resource $resource
+     *
+     * @return Field
+     */
+    public function setResource(Resource $resource)
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    /**
+     * Get resource
+     *
+     * @return Resource
+     */
+    public function getResource()
+    {
+        return $this->resource;
     }
 }
