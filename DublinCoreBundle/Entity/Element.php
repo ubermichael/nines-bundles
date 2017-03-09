@@ -33,8 +33,8 @@ class Element extends AbstractTerm
     private $comment;
     
     /**
-     * @var Collection|Field[]
-     * @ORM\OneToMany(targetEntity="Field", mappedBy="element")
+     * @var Collection|AbstractField[]
+     * @ORM\OneToMany(targetEntity="AbstractField", mappedBy="element")
      */
     private $fields;
     
@@ -78,11 +78,11 @@ class Element extends AbstractTerm
     /**
      * Add field
      *
-     * @param Field $field
+     * @param AbstractField $field
      *
      * @return Element
      */
-    public function addField(Field $field)
+    public function addField(AbstractField $field)
     {
         $this->fields[] = $field;
 
@@ -92,9 +92,9 @@ class Element extends AbstractTerm
     /**
      * Remove field
      *
-     * @param Field $field
+     * @param AbstractField $field
      */
-    public function removeField(Field $field)
+    public function removeField(AbstractField $field)
     {
         $this->fields->removeElement($field);
     }

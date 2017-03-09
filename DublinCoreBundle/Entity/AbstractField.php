@@ -10,7 +10,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  *
  * @ORM\MappedSuperclass
  */
-abstract class Field extends AbstractEntity
+abstract class AbstractField extends AbstractEntity
 {
     
     /**
@@ -25,14 +25,7 @@ abstract class Field extends AbstractEntity
      * @ORM\JoinColumn(nullable=false)
      */
     private $element;
-    
-    /**
-     * @var Resource
-     * @ORM\ManyToOne(targetEntity="Resource", inversedBy="fields")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $resource;
-    
+        
     public function __toString() {
         return $this->value;
     }
@@ -42,7 +35,7 @@ abstract class Field extends AbstractEntity
      *
      * @param string $value
      *
-     * @return Field
+     * @return AbstractField
      */
     public function setValue($value)
     {
@@ -66,7 +59,7 @@ abstract class Field extends AbstractEntity
      *
      * @param Element $element
      *
-     * @return Field
+     * @return AbstractField
      */
     public function setElement(Element $element = null)
     {
@@ -83,29 +76,5 @@ abstract class Field extends AbstractEntity
     public function getElement()
     {
         return $this->element;
-    }
-
-    /**
-     * Set resource
-     *
-     * @param Resource $resource
-     *
-     * @return Field
-     */
-    public function setResource(Resource $resource)
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
-    /**
-     * Get resource
-     *
-     * @return Resource
-     */
-    public function getResource()
-    {
-        return $this->resource;
     }
 }
