@@ -6,7 +6,7 @@ use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * User.
+ * Concrete User.
  * 
  * Adds fullname and institution. Overrides functionality to make username 
  * and email synonymous.

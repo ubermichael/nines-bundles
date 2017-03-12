@@ -11,7 +11,7 @@ use Symfony\Component\Console\Question\Question;
 
 /**
  * Replaces the CreateUserCommand from FOSUserBundle to add support for
- * fullname and institution.
+ * fullname and institution. 
  * 
  * Requires Symfony > 3.0
  */

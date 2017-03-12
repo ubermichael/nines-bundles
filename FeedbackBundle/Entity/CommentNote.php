@@ -10,10 +10,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * Comment Note
  *
  * @ORM\Table(name="comment_note", indexes={
- *  @ORM\Index(name="commentnote_ft_idx", 
- *      columns={"content"}, 
- *      flags={"fulltext"}
- *  )
+ *  @ORM\Index(name="commentnote_ft_idx",  columns={"content"},  flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentNoteRepository")
  */

@@ -9,8 +9,6 @@ use \Twig_SimpleFilter;
 
 /**
  * Add some class reflection methods to Twig. 
- *
- * @author mjoyce
  */
 class TwigExtension extends Twig_Extension {
     

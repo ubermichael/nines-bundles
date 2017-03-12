@@ -14,8 +14,8 @@ use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
  * To use it, add this to your config.yml
  * twig:
  *    paths:
- *       '%kernel.root_dir%/../src/Nines/UtilBundle/Resources/views': UtilBundle
- *   exception_controller:  UtilBundle:Error:showException
+ *       '%kernel.root_dir%/../src/Nines/UtilBundle/Resources/views': NinesUtilBundle
+ *   exception_controller:  NinesUtilBundle:Error:showException
  */
 class ErrorController extends Controller
 {

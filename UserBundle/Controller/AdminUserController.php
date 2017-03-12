@@ -13,7 +13,9 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Admin-only user controller.
+ * Admin-only user controller. Restrict access to this conroller in security.yml
+ * like so:
+ *         - { path: ^/admin/, role: ROLE_ADMIN }
  *
  * @Route("/admin/user")
  */

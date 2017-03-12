@@ -5,7 +5,8 @@ namespace Nines\UtilBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Term
+ * An abstract term has a computer friendly name, a human readable label,
+ * and a description. 
  *
  * @ORM\MappedSuperclass
  */
