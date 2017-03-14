@@ -63,9 +63,8 @@ class Builder implements ContainerAwareInterface {
                     'route' => 'user',
                 ));
             }
-
-            return $menu;
         }
+        return $menu;
     }
 
 }
