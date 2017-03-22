@@ -3,6 +3,7 @@
 namespace Nines\UtilBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An abstract term has a computer friendly name, a human readable label,
@@ -17,6 +18,7 @@ abstract class AbstractTerm extends AbstractEntity
      * 
      * @ORM\Column(type="string", length=120)
      * @var string
+     * @Groups({"shallow"})
      */
     private $name;
 
@@ -24,6 +26,7 @@ abstract class AbstractTerm extends AbstractEntity
      * Human readable status label.
      * @var string
      * @ORM\Column(type="string", length=120)
+     * @Groups({"shallow"})
      */
     private $label;
     
@@ -31,6 +34,7 @@ abstract class AbstractTerm extends AbstractEntity
      * Descriptino of the status.
      * @var title
      * @ORM\Column(type="text")
+     * @Groups({"shallow"})
      */
     private $description;
     
