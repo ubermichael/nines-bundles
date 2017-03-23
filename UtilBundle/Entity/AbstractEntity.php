@@ -4,6 +4,7 @@ namespace Nines\UtilBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * AbstractEntity adds id, created, and updated fields along with the
@@ -23,6 +24,7 @@ abstract class AbstractEntity
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"shallow"})
      */
     protected $id;
 
@@ -31,6 +33,7 @@ abstract class AbstractEntity
      *
      * @var DateTime
      * @ORM\Column(type="datetime", options={"default": 0})
+     * @Groups({"shallow"})
      */
     protected $created;
 
@@ -39,6 +42,7 @@ abstract class AbstractEntity
      *
      * @var DateTime
      * @ORM\Column(type="datetime", options={"default": 0})
+     * @Groups({"shallow"})
      */
     protected $updated;
 
