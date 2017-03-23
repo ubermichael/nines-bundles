@@ -30,7 +30,7 @@ abstract class AbstractTerm extends AbstractEntity
     /**
      * Descriptino of the status.
      * @var title
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
     

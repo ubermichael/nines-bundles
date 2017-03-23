@@ -30,7 +30,7 @@ abstract class AbstractEntity
      * The DateTime the entity was created (persisted really).
      *
      * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", options={"default": 0})
      */
     protected $created;
 
@@ -38,7 +38,7 @@ abstract class AbstractEntity
      * The DateTime the entity was last updated.
      *
      * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", options={"default": 0})
      */
     protected $updated;
 
