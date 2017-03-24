@@ -10,6 +10,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * and a description. 
  *
  * @ORM\MappedSuperclass
+ * @ORM\Table(
+ *  indexes={
+ *      @ORM\Index(columns={"label", "description"}, flags={"fulltext"})
+ *  },
+ *  uniqueConstraints={
+ *      @ORM\UniqueConstraint(columns={"name"})
+ *  }
+ * )
  */
 abstract class AbstractTerm extends AbstractEntity
 {
