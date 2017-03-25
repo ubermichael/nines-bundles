@@ -84,7 +84,7 @@ class Builder implements ContainerAwareInterface {
                 )
             ));
         }
-        if ($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+        if ($this->container->get('security.token_storage') && $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $menu->addChild('divider', array(
                 'label' => '',
             ));
