@@ -31,7 +31,7 @@ class Builder implements ContainerAwareInterface {
         ));
         $menu->setAttribute('dropdown', true);
 
-        if (!$this->container->get('security.token_storage') || !$this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$this->container->get('security.token_storage')->getToken() || !$this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             $menu->addChild("Login", array(
                 'route' => 'fos_user_security_login'
             ));
@@ -49,7 +49,7 @@ class Builder implements ContainerAwareInterface {
             $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
             $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
 
-            if ($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+            if ($this->container->get('security.token_storage')->getToken() && $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
                 $menu['user']->addChild('divider', array(
                     'label' => '',
                 ));
