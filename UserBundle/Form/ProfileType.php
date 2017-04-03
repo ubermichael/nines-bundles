@@ -24,8 +24,7 @@ class ProfileType extends AbstractType
                 ->remove('username')
                 ->add('email')
                 ->add('fullname')
-                ->add('institution')
-                ->add('save', ButtonType::class, array('label' => 'Update'));
+                ->add('institution');
     }
 
     /**

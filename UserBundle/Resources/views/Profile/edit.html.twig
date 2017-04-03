@@ -7,7 +7,16 @@
 
 {% block body -%}
     
-    {{ form(form) }}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="form-group">
+        <div class="col-sm-2"></div>
+
+        <div class="col-sm-1">
+            <input type="submit" value="Update" class="btn btn-primary" />            
+        </div>
+    </div>
+    {{ form_end(form) }}
     
     <div class="btn-toolbar">
         <div class="btn-group pull-right">
