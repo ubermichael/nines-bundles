@@ -222,9 +222,9 @@ class AdminUserController extends Controller
         if ($editForm->isValid()) {
             $userManager = $this->container->get('fos_user.user_manager');
             $userManager->updateUser($entity);
-            $this->addFlash('success', 'User info updated.');
+            $this->addFlash('success', 'User info updated. The user must log out and then back in for role changes to take effect.');
 
-            return $this->redirect($this->generateUrl('user_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('user_show', array('id' => $id)));
         }
 
         return array(
@@ -275,51 +275,4 @@ class AdminUserController extends Controller
         ;
     }
 
-    /**
-     * Change a user's password.
-     * 
-     * @Route("/{id}/password", name="admin_user_password")
-     * @Method({"GET", "POST"})
-     * @Template()
-     * 
-     * @param Request $request
-     * @param int     $id
-     *
-     * @return array
-     */
-    public function passwordAction(Request $request, $id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
-
-        $builder = $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_user_password', array('id' => $id)))
-            ->setMethod('POST')
-            ->add('password', 'repeated', array(
-                'type' => 'password',
-                'invalid_message' => 'The password fields must match',
-                'required' => true,
-                'first_options' => array('label' => 'Password'),
-                'second_options' => array('label' => 'Password Confirm'),
-            ));
-        $builder->add('submit', 'submit', array('label' => 'Change'));
-        $form = $builder->getForm();
-
-        $form->handleRequest($request);
-        if ($form->isValid()) {
-            $userManager = $this->container->get('fos_user.user_manager');
-            $data = $form->getData();
-            $entity->setPlainPassword($data['password']);
-            $userManager->updateUser($entity);
-            $this->addFlash('success', 'Password successfully changed.');
-
-            return $this->redirect($this->generateUrl('user_show', array('id' => $id)));
-        }
-
-        return array(
-            'entity' => $entity,
-            'form' => $form->createView(),
-        );
-    }
 }

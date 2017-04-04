@@ -207,5 +207,19 @@ class TitleCaser {
         $s = $this->exceptions($s);
         return $s;
     }
+    
+    public function sortableTitle($string) {
+        $filters = array(
+            '/^(the|an?)\b\s*(.*)/ius' => '$2, $1',
+            // move The, A, An to end.
+            '/^[^[:word:][:space:]]+/us' => '',
+            // remove non-word chars at start.
+        );
+        $title = mb_convert_case($string, MB_CASE_LOWER);
+        foreach($filters as $pattern => $replacement) {
+            $title = preg_replace($pattern, $replacement, $title);
+        }
+        return $title;
+    }    
 
 }

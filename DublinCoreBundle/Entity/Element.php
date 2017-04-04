@@ -13,7 +13,6 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * @ORM\Table(
  *  name="element", 
  *  uniqueConstraints={
- *      @ORM\UniqueConstraint(columns={"name"}),
  *      @ORM\UniqueConstraint(columns={"uri"})
  *  }), 
  * @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
@@ -22,7 +21,7 @@ class Element extends AbstractTerm
 {
     /**
      * @var string
-     * @ORM\Column(type="string", length=256, nullable=false)
+     * @ORM\Column(type="string", length=190, nullable=false)
      */
     private $uri;
     

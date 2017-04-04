@@ -17,7 +17,6 @@ class PasswordType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('save', ButtonType::class, array('label' => 'Update'));
     }
 
     /**

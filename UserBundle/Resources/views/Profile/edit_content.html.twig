@@ -1,5 +1,12 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-<form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST" class="form form-horizontal">
-    {{ form(form) }}
-</form>
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<div class="form-group">
+    <div class="col-sm-2"></div>
+
+    <div class="col-sm-1">
+        <input type="submit" value="Update" class="btn btn-primary" />            
+    </div>
+</div>
+{{ form_end(form) }}
