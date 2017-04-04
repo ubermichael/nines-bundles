@@ -132,6 +132,10 @@ class PostCategoryController extends Controller
      */
     public function newAction(Request $request)
     {
+        if( ! $this->isGranted('ROLE_BLOG_ADMIN')) {
+            $this->addFlash('danger', 'You must login to access this page.');
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
         $postCategory = new PostCategory();
         $form = $this->createForm('Nines\BlogBundle\Form\PostCategoryType', $postCategory);
         $form->handleRequest($request);
@@ -178,6 +182,10 @@ class PostCategoryController extends Controller
      */
     public function editAction(Request $request, PostCategory $postCategory)
     {
+        if( ! $this->isGranted('ROLE_BLOG_ADMIN')) {
+            $this->addFlash('danger', 'You must login to access this page.');
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
         $editForm = $this->createForm('Nines\BlogBundle\Form\PostCategoryType', $postCategory);
         $editForm->handleRequest($request);
 
@@ -204,6 +212,10 @@ class PostCategoryController extends Controller
      */
     public function deleteAction(Request $request, PostCategory $postCategory)
     {
+        if( ! $this->isGranted('ROLE_BLOG_ADMIN')) {
+            $this->addFlash('danger', 'You must login to access this page.');
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
         $em = $this->getDoctrine()->getManager();
         $em->remove($postCategory);
         $em->flush();

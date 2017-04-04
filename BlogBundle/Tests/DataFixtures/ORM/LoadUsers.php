@@ -21,7 +21,7 @@ class LoadUsers extends AbstractFixture implements OrderedFixtureInterface {
         $admin->setFullname("Admin user");
         $admin->setUsername("admin@example.com");
         $admin->setPlainPassword("supersecret");
-        $admin->setRoles(array('ROLE_ADMIN'));
+        $admin->setRoles(array('ROLE_BLOG_ADMIN'));
         $admin->setEnabled(true);
         $manager->persist($admin);
         $this->addReference('blog-user-admin', $admin);

@@ -21,6 +21,10 @@ class NinesUserExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+        
+        foreach($config as $key => $value) {
+            $container->setParameter("nines_user.{$key}", $value);
+        }
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

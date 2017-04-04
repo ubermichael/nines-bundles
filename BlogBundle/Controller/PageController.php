@@ -28,7 +28,7 @@ class PageController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $private = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
+        $private = $this->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN');
         $repo = $em->getRepository(Page::class);
         $query = $repo->listQuery($private);
         $paginator = $this->get('knp_paginator');
@@ -110,7 +110,7 @@ class PageController extends Controller
      */
     public function newAction(Request $request)
     {
-        if( ! $this->isGranted('ROLE_ADMIN')) {
+        if( ! $this->isGranted('ROLE_BLOG_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
@@ -152,7 +152,7 @@ class PageController extends Controller
     public function showAction(Page $page)
     {
         if( ! $page->getPublic()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');            
+            $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
         }
 
         return array(
@@ -171,7 +171,7 @@ class PageController extends Controller
      */
     public function editAction(Request $request, Page $page)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');            
+        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
         $editForm = $this->createForm('Nines\BlogBundle\Form\PageType', $page);
         $editForm->handleRequest($request);
 
@@ -203,7 +203,7 @@ class PageController extends Controller
      */
     public function deleteAction(Request $request, Page $page)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');            
+        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
         $em = $this->getDoctrine()->getManager();
         $em->remove($page);
         $em->flush();

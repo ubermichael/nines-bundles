@@ -13,12 +13,19 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class AdminUserType extends AbstractType
 {
+    private $permissionLevels;
+    
+    public function __construct($permissionLevels) { 
+        $this->permissionLevels = $permissionLevels;
+    }
+    
     /**
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        dump($this->permissionLevels);
         $builder
                 ->remove('username')
                 ->add('email')
@@ -30,12 +37,16 @@ class AdminUserType extends AbstractType
                 ))
                 ->add('roles', ChoiceType::class, array(
                     'label' => 'Roles',
-                    'choices' => array(
-                        'Admin' => 'ROLE_ADMIN',
-                    ),
+                    'choices' => $this->permissionLevels,
+                    'choice_label' => function($value, $key, $index) {
+                        return $value;
+                    },
                     'multiple' => true,
                     'expanded' => true,
                     'required' => false,
+                    'attr' => array(
+                        'help_block' => 'ROLE_ADMIN has access to everything. ROLE_CONTENT_ADMIN can add and update content.',
+                    ),                    
                 ))
         ;
     }

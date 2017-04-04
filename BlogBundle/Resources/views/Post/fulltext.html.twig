@@ -42,7 +42,7 @@
                             {{ post.title }}
                         </a>
                     </h2>
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% if is_granted('ROLE_BLOG_ADMIN') %}
                         <div class="panel-title pull-right">{{ post.status.label }}</div>
                         <div class="clearfix"></div>
                     {% endif %}

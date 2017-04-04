@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_BLOG_ADMIN') %}
         <div class="btn-toolbar">
             <div class="btn-group pull-right">
                 <a href="{{ path('post_index') }}" class="btn btn-default">
@@ -23,7 +23,7 @@
         <div class="clearfix"></div>
     {% endif %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_BLOG_ADMIN') %}
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2 class="panel-title">

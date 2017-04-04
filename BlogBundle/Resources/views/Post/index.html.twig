@@ -11,7 +11,7 @@
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_BLOG_ADMIN') %}
                 <a href="{{ path('post_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
@@ -32,7 +32,7 @@
                         {{ post.title }}
                     </a>
                 </h2>
-                {% if is_granted('ROLE_ADMIN') %}
+                {% if is_granted('ROLE_BLOG_ADMIN') %}
                     <div class="panel-title pull-right">{{ post.status.label }}</div>
                 {% endif %}
                 <div class="clearfix"></div>

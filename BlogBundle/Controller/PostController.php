@@ -27,7 +27,7 @@ class PostController extends Controller
     public function indexAction(Request $request)
     {        
         $em = $this->getDoctrine()->getManager();
-        $private = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
+        $private = $this->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN');
         $repo = $em->getRepository(Post::class);
         $query = $repo->recentQuery($private);
         $paginator = $this->get('knp_paginator');
@@ -50,7 +50,7 @@ class PostController extends Controller
     public function fulltextAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $private = $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
+        $private = $this->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN');
 		$repo = $em->getRepository(Post::class);
 		$q = $request->query->get('q');
 		if($q) {
@@ -77,7 +77,7 @@ class PostController extends Controller
      */
     public function newAction(Request $request)
     {
-        if( ! $this->isGranted('ROLE_ADMIN')) {
+        if( ! $this->isGranted('ROLE_BLOG_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
@@ -125,7 +125,7 @@ class PostController extends Controller
     public function showAction(Request $request, Post $post)
     {
         if( ! $post->getStatus()->getPublic()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');            
+            $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
         }
         return array(
             'post' => $post,
@@ -143,7 +143,7 @@ class PostController extends Controller
      */
     public function editAction(Request $request, Post $post)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');            
+        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
         $editForm = $this->createForm('Nines\BlogBundle\Form\PostType', $post);
         $editForm->handleRequest($request);
 
@@ -175,7 +175,7 @@ class PostController extends Controller
      */
     public function deleteAction(Request $request, Post $post)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');            
+        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
         $em = $this->getDoctrine()->getManager();
         $em->remove($post);
         $em->flush();

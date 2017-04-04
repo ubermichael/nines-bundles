@@ -1,25 +1,27 @@
 {% extends 'base.html.twig' %}
 
- {% block pageheader %} 
+{% block pageheader %} 
     <h1>PostStatus List</h1>
     <p class="count">
         Displaying {{ postStatuses|length }} postStatuses of {{ postStatuses.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %} 
 
 {% block body %}
 
-        <div class='btn-toolbar pull-right'>
+    <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            <a href="{{ path('post_status_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+            {% if is_granted('ROLE_BLOG_ADMIN') %}
+                <a href="{{ path('post_status_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
             <a href="{{ path('post_status_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
     </div>
-        
+
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
@@ -32,23 +34,23 @@
             </tr>
         </thead>
         <tbody>
-        {% for postStatus in postStatuses %}
-            <tr>
-                <td>
-                    <a href="{{ path('post_status_show', { 'id': postStatus.id }) }}">
-                        {{ postStatus.name }}
-                    </a>
-                </td>
-                <td>{{ postStatus.label }}</td>
-                <td>{{ postStatus.description }}</td>
-                <td>{% if postStatus.public %}Yes{% else %}No{% endif %}</td>
-                <td>{% if postStatus.created %}{{ postStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if postStatus.updated %}{{ postStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-        {% endfor %}
+            {% for postStatus in postStatuses %}
+                <tr>
+                    <td>
+                        <a href="{{ path('post_status_show', { 'id': postStatus.id }) }}">
+                            {{ postStatus.name }}
+                        </a>
+                    </td>
+                    <td>{{ postStatus.label }}</td>
+                    <td>{{ postStatus.description }}</td>
+                    <td>{% if postStatus.public %}Yes{% else %}No{% endif %}</td>
+                    <td>{% if postStatus.created %}{{ postStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if postStatus.updated %}{{ postStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-        
+
     <div class="navigation">
         {{ knp_pagination_render(postStatuses) }}
     </div>
