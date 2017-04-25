@@ -25,7 +25,6 @@ class AdminUserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        dump($this->permissionLevels);
         $builder
                 ->remove('username')
                 ->add('email')
