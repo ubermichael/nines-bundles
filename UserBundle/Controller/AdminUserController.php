@@ -8,6 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -275,4 +277,49 @@ class AdminUserController extends Controller
         ;
     }
 
-}
+    /**
+     * Change a user's password.
+     *
+     * @Route("/{id}/password", name="admin_user_password")
+     * @Method({"GET", "POST"})
+     * @Template()
+     *
+     * @param Request $request
+     * @param int     $id
+     *
+     * @return array
+     */
+    public function passwordAction(Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
+
+        $builder = $this->createFormBuilder()
+            ->setAction($this->generateUrl('admin_user_password', array('id' => $id)))
+            ->setMethod('POST')
+            ->add('password', RepeatedType::class, array(
+                'type' => PasswordType::class,
+                'invalid_message' => 'The password fields must match',
+                'required' => true,
+                'first_options' => array('label' => 'Password'),
+                'second_options' => array('label' => 'Password Confirm'),
+            ));
+        $form = $builder->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $userManager = $this->container->get('fos_user.user_manager');
+            $data = $form->getData();
+            $entity->setPlainPassword($data['password']);
+            $userManager->updateUser($entity);
+            $this->addFlash('success', 'Password successfully changed.');
+
+            return $this->redirect($this->generateUrl('user_show', array('id' => $id)));
+        }
+
+        return array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+        );
+    }}
