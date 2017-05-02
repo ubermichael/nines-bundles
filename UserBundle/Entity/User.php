@@ -39,6 +39,14 @@ class User extends BaseUser
      * @ORM\Column(name="institution", type="string", nullable=true)
      */
     private $institution;
+    
+    /**
+     * Any extra data associated with the user.
+     * 
+     * @var array
+     * @ORM\Column(name="data", type="array")
+     */
+    private $data;
 
     /**
      * Construct a user.
@@ -46,7 +54,7 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->notify = false;
+        $this->data = array();
     }
 
     /**
@@ -133,5 +141,41 @@ class User extends BaseUser
     public function getFullname()
     {
         return $this->fullname;
+    }
+    
+    /**
+     * Get some data associated with the user.
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function getData($key) {
+        if(isset($this->data[$key])) {
+            return $this->data[$key];
+        }
+        return null;
+    }
+    
+    /**
+     * Check if a user has some data. Checks that the key is defined 
+     * and the value associated with the key is not null. False and
+     * the empty string are considered valid.
+     * 
+     * @param type $key
+     */
+    public function hasData($key) {
+        return isset($this->data[$key]) && $this->data[$key] !== null;
+    }
+    
+    /**
+     * Store some data with the user.
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setData($key, $value) {
+        $this->data[$key] = $value;
+        return $this;
     }
 }
