@@ -14,6 +14,9 @@
             <a href="{{ path('user_edit', { 'id': entity.id }) }}" class="btn btn-default">
                 <span class='glyphicon glyphicon-edit'></span> Edit
             </a>
+            <a href="{{ path('admin_user_password', { 'id': entity.id }) }}" class="btn btn-default">
+                <span class='glyphicon glyphicon-lock'></span> Password
+            </a>
             <a href="{{ path('user_delete', { 'id': entity.id }) }}" class="btn btn-default js-confirm" data-confirm="Are you sure you want to delete this Blacklist?">
                 <span class='glyphicon glyphicon-remove'></span> Delete
             </a>
