@@ -72,12 +72,6 @@
             </div>
             {{ form_end(statusForm) }}
         </div>
-        <dl class='dl-horizontal'>
-            {% for status in statuses %}
-                <dt>{{ status.label }}</dt>
-                <dd>{{ status.description }}</dd>
-            {% endfor %}
-        </dl>                
     </div>
 
     {% if comment.notes|length > 0 %}

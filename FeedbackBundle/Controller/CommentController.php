@@ -6,8 +6,8 @@ use Exception;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Entity\CommentNote;
 use Nines\FeedbackBundle\Entity\CommentStatus;
+use Nines\FeedbackBundle\Form\AdminCommentType;
 use Nines\FeedbackBundle\Form\CommentNoteType;
-use Nines\FeedbackBundle\Form\CommentStatusType;
 use Nines\FeedbackBundle\Form\CommentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -134,7 +134,7 @@ class CommentController extends Controller {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
         $service = $this->get('feedback.comment');
-        $statusForm = $this->createForm(CommentStatusType::class, $comment);
+        $statusForm = $this->createForm(AdminCommentType::class, $comment);
         $statusForm->handleRequest($request);
         if ($statusForm->isSubmitted() && $statusForm->isValid()) {
             $em->flush();
