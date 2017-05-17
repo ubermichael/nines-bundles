@@ -134,7 +134,7 @@ class CommentController extends Controller {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
         $service = $this->get('feedback.comment');
-        $statusForm = $this->createForm(StatusType::class, $comment);
+        $statusForm = $this->createForm(CommentStatusType::class, $comment);
         $statusForm->handleRequest($request);
         if ($statusForm->isSubmitted() && $statusForm->isValid()) {
             $em->flush();
