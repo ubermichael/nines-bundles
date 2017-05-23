@@ -56,6 +56,25 @@ class Builder implements ContainerAwareInterface {
             'route' => 'post_index',
         ));
 
+        if ($this->container->get('security.token_storage')->getToken() && $this->container->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN')) {
+            $menu->addChild('divider', array(
+                'label' => '',
+            ));
+            $menu['divider']->setAttributes(array(
+                'role' => 'separator',
+                'class' => 'divider',
+            ));
+
+            $menu->addChild('post_category', array(
+                'label' => 'Post Categories',
+                'route' => 'post_category_index',
+            ));
+            $menu->addChild('post_status', array(
+                'label' => 'Post Statuses',
+                'route' => 'post_status_index',
+            ));
+        }
+        
         return $menu;
     }
 
