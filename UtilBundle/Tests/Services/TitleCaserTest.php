@@ -40,6 +40,19 @@ class TitleCaserTest extends WebTestCase {
     }
     
     /**
+     * @dataProvider unicodeData
+     */
+    public function testUnicode($str, $expected) {
+        $this->assertEquals($expected, $this->caser->titlecase($str));
+    }
+     
+    public function unicodeData() {
+        return array(
+            ['Hæmochromatosis', 'Hæmochromatosis'],
+        );
+    } 
+      
+    /** 
      * @dataProvider shortWordsData
      */
     public function testShortWords($str, $expected) {
@@ -51,7 +64,8 @@ class TitleCaserTest extends WebTestCase {
             ['The World', 'The World'],
             ['The Brave And The Bold', 'The Brave and the Bold'],
             ['And Then There Were None', 'And Then There Were None'], 
-        ];
+            ['Hæmochromatosis', 'Hæmochromatosis'],
+        ]; 
     }
     
     /**
@@ -66,6 +80,7 @@ class TitleCaserTest extends WebTestCase {
             ['The Brave: and the Bold', 'The Brave: And the Bold'],
             ['The Brave : and the bold', 'The Brave: And the bold'],
             ['! A history of Punctuation.', '! A history of Punctuation.'],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
         
@@ -80,6 +95,7 @@ class TitleCaserTest extends WebTestCase {
         return [
             ['Just Because', 'Just Because'],
             ['Just bc', 'Just BC'],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
     
@@ -96,6 +112,7 @@ class TitleCaserTest extends WebTestCase {
             ["James Macdonald", "James MacDonald"],
             ["Bob Mcklagen", "Bob McKlagen"],
             ["D'adario", "D'Adario"],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
     
@@ -110,6 +127,7 @@ class TitleCaserTest extends WebTestCase {
         return [
             ['Elizabeth ii', 'Elizabeth II'],
             ['Poison ivy', 'Poison ivy'],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
     
@@ -124,6 +142,7 @@ class TitleCaserTest extends WebTestCase {
         return [
             ['Elizabeth the 2nd', 'Elizabeth the 2nd'],
             ['THE 2ND DAUGHTER', 'THE 2nd DAUGHTER'],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
     
@@ -139,6 +158,7 @@ class TitleCaserTest extends WebTestCase {
             ['May West, PHD', 'May West, PhD'],
             ['Billy Cihm', 'Billy CIHM'],
             ['Billie Chimes In', 'Billie Chimes In'],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
     
@@ -196,6 +216,7 @@ class TitleCaserTest extends WebTestCase {
             
             // Exceptions inside words aren't capitalized.
             ['BILLIE CHIMES HELLO', 'Billie Chimes Hello'],
+            ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
     
