@@ -123,6 +123,7 @@ EOT
 
         if (!$input->getArgument('password')) {
             $question = new Question('Please choose an password:');
+            $question->setHidden(true);
             $question->setValidator(function($password) {
                 if (empty($password)) {
                     throw new \Exception('Email can not be empty');
