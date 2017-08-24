@@ -1,0 +1,24 @@
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Name</th>
+                <td>{{ term.name }}</td>
+            </tr>
+            <tr>
+                <th>Label</th>
+                <td>{{ term.label }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ term.description }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{% if term.created %}{{ term.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if term.updated %}{{ term.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>        
+        </tbody>
+    </table>
