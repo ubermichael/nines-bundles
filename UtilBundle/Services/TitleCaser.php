@@ -190,6 +190,10 @@ class TitleCaser {
         }, $string);
         return $s;
     }
+    
+    public function trim($string) {
+        return preg_replace('/^\p{Z}+|\p{Z}+$/u', '', $string);
+    }
 
     /**
      * Returns the titlecased version of string.
@@ -205,6 +209,7 @@ class TitleCaser {
         $s = $this->roman($s);
         $s = $this->ordinals($s);
         $s = $this->exceptions($s);
+        $s = $this->trim($s);
         return $s;
     }
     
@@ -219,7 +224,7 @@ class TitleCaser {
         foreach($filters as $pattern => $replacement) {
             $title = preg_replace($pattern, $replacement, $title);
         }
-        return $title;
+        return $this->trim($title);
     }    
 
 }
