@@ -12,6 +12,7 @@
                 <th>Description</th>
                 <td>{{ term.description }}</td>
             </tr>
+            {% block callback %}{% endblock %}
             <tr>
                 <th>Created</th>
                 <td>{% if term.created %}{{ term.created|date('Y-m-d H:i:s') }}{% endif %}</td>
