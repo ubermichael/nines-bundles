@@ -23,8 +23,8 @@ class PostRepository extends EntityRepository {
      */
     public function fulltextQuery($q, $private = false) {
         $qb = $this->createQueryBuilder('e');
-        $qb->addSelect("MATCH_AGAINST (e.title, e.searchable, :q 'IN BOOLEAN MODE') as HIDDEN score");
-        $qb->andWhere("MATCH_AGAINST (e.title, e.searchable, :q 'IN BOOLEAN MODE') > 0");
+        $qb->addSelect("MATCH (e.title, e.searchable) AGAINST (:q BOOLEAN) as HIDDEN score");
+        $qb->andWhere("MATCH (e.title, e.searchable) AGAINST (:q BOOLEAN) > 0");
         if( ! $private) {
             $em = $this->getEntityManager();
             $statuses = $em->getRepository(PostStatus::class)->findBy(array(
