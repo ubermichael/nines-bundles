@@ -3,7 +3,6 @@
 {% block form_label -%}
     {% spaceless %}
         {% if label is same as(false) %}
-            <div class="{{ block('form_label_class') }}"></div>
         {% else %}
             {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ block('form_label_class'))|trim}) %}
             {{- parent() -}}
@@ -11,8 +10,16 @@
     {% endspaceless %}
 {%- endblock form_label %}
 
+{% block form_label_class -%}
+col-xs-2
+{%- endblock form_label_class %}
+
+{% block form_group_class -%}
+col-xs-10
+{%- endblock form_group_class %}
+
 {% block form_row -%}
-    <div class="form-group {%if attr.group_class is defined %}{{ attr.group_class }}{% endif %} {% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+    <div class="form-group {% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
         {{- form_label(form) -}}
         <div class="{{ block('form_group_class') }}">
             <div class="clearfix">{{- form_widget(form) -}}</div>
