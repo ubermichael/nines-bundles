@@ -10,7 +10,7 @@
             </tr>
             <tr>
                 <th>Description</th>
-                <td>{{ term.description }}</td>
+                <td>{{ term.description|raw }}</td>
             </tr>
             {% block callback %}{% endblock %}
             <tr>
