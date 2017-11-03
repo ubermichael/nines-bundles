@@ -1,6 +1,6 @@
 {% set comments = comment_service.findComments(entity) %}
 {% if comments|length %}
-    <div class="well">
+    <div class="well well-comments">
         <h2>Comments</h2>
         {% for comment in comments %} 
             <div class="panel panel-default">
