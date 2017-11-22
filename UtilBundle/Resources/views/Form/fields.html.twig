@@ -30,3 +30,18 @@ col-sm-10
         </div>
     </div>
 {% endblock %}
+
+{% block checkbox_radio_row -%}
+{% spaceless %}
+    <div class="form-group{% if not valid %} has-error{% endif %}">
+        <div class="{{ block('form_label_class') }}"></div>
+        <div class="{{ block('form_group_class') }}">
+            <div class="clearfix">{{ form_widget(form) }}</div>
+            {{ form_errors(form) }}
+            {% if attr.help_block is defined %}
+                <p class='help-block'>{{ attr.help_block|raw }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endspaceless %}
+{%- endblock checkbox_radio_row %}
