@@ -14,20 +14,19 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @Route("/post")
  */
-class PostController extends Controller
-{
+class PostController extends Controller {
+
     /**
      * Lists all Post entities.
      *
      * @Route("/", name="post_index")
      * @Method("GET")
      * @Template()
-	 * @param Request $request
+     * @param Request $request
      */
-    public function indexAction(Request $request)
-    {        
+    public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $private = $this->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN');
+        $private = $this->get('security.authorization_checker')->isGranted('ROLE_USER');
         $repo = $em->getRepository(Post::class);
         $query = $repo->recentQuery($private);
         $paginator = $this->get('knp_paginator');
@@ -37,33 +36,32 @@ class PostController extends Controller
             'posts' => $posts,
         );
     }
-    
+
     /**
      * Full text search for Post entities.
      *
      * @Route("/fulltext", name="post_search")
      * @Method("GET")
      * @Template()
-	 * @param Request $request
-	 * @return array
+     * @param Request $request
+     * @return array
      */
-    public function fulltextAction(Request $request)
-    {
+    public function fulltextAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $private = $this->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN');
-		$repo = $em->getRepository(Post::class);
-		$q = $request->query->get('q');
-		if($q) {
-	        $query = $repo->fulltextQuery($q, $private);
-			$paginator = $this->get('knp_paginator');
-			$posts = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-		} else {
-			$posts = array();
-		}
+        $private = $this->get('security.authorization_checker')->isGranted('ROLE_USER');
+        $repo = $em->getRepository(Post::class);
+        $q = $request->query->get('q');
+        if ($q) {
+            $query = $repo->fulltextQuery($q, $private);
+            $paginator = $this->get('knp_paginator');
+            $posts = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
+        } else {
+            $posts = array();
+        }
 
         return array(
             'posts' => $posts,
-			'q' => $q,
+            'q' => $q,
         );
     }
 
@@ -73,31 +71,30 @@ class PostController extends Controller
      * @Route("/new", name="post_new")
      * @Method({"GET", "POST"})
      * @Template()
-	 * @param Request $request
+     * @param Request $request
      */
-    public function newAction(Request $request)
-    {
+    public function newAction(Request $request) {
         if( ! $this->isGranted('ROLE_BLOG_ADMIN')) {
             $this->addFlash('danger', 'You must login to access this page.');
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        
+
         $post = new Post();
         $post->setUser($user);
         $post->setCategory($em->getRepository('NinesBlogBundle:PostCategory')->findOneBy(array(
-            'name' => $this->getParameter('nines_blog.default_category'),
+                    'name' => $this->getParameter('nines_blog.default_category'),
         )));
         $post->setStatus($em->getRepository('NinesBlogBundle:PostStatus')->findOneBy(array(
-            'name' => $this->getParameter('nines_blog.default_status'),
-        )));        
+                    'name' => $this->getParameter('nines_blog.default_status'),
+        )));
         $form = $this->createForm('Nines\BlogBundle\Form\PostType', $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $text = $this->get('nines.util.text');
-            if( ! $post->getExcerpt()) {
+            if (!$post->getExcerpt()) {
                 $post->setExcerpt($text->trim($post->getContent(), $this->getParameter('nines_blog.excerpt_length')));
             }
             $post->setSearchable($text->plain($post->getContent()));
@@ -120,12 +117,11 @@ class PostController extends Controller
      * @Route("/{id}", name="post_show")
      * @Method("GET")
      * @Template()
-	 * @param Post $post
+     * @param Post $post
      */
-    public function showAction(Request $request, Post $post)
-    {
-        if( ! $post->getStatus()->getPublic()) {
-            $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
+    public function showAction(Request $request, Post $post) {
+        if (!$post->getStatus()->getPublic()) {
+            $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
         }
         return array(
             'post' => $post,
@@ -138,18 +134,17 @@ class PostController extends Controller
      * @Route("/{id}/edit", name="post_edit")
      * @Method({"GET", "POST"})
      * @Template()
-	 * @param Request $request
-	 * @param Post $post
+     * @param Request $request
+     * @param Post $post
      */
-    public function editAction(Request $request, Post $post)
-    {
-        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
+    public function editAction(Request $request, Post $post) {
+        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');
         $editForm = $this->createForm('Nines\BlogBundle\Form\PostType', $post);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $text = $this->get('nines.util.text');
-            if( ! $post->getExcerpt()) {
+            if (!$post->getExcerpt()) {
                 $post->setExcerpt($text->trim($post->getContent(), $this->getParameter('nines_blog.excerpt_length')));
             }
             $post->setSearchable($text->plain($post->getContent()));
@@ -170,12 +165,11 @@ class PostController extends Controller
      *
      * @Route("/{id}/delete", name="post_delete")
      * @Method("GET")
-	 * @param Request $request
-	 * @param Post $post
+     * @param Request $request
+     * @param Post $post
      */
-    public function deleteAction(Request $request, Post $post)
-    {
-        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');            
+    public function deleteAction(Request $request, Post $post) {
+        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');
         $em = $this->getDoctrine()->getManager();
         $em->remove($post);
         $em->flush();
@@ -183,4 +177,5 @@ class PostController extends Controller
 
         return $this->redirectToRoute('post_index');
     }
+
 }
