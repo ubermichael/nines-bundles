@@ -10,28 +10,32 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Comment form.
  */
-class CommentType extends AbstractType
-{
+class CommentType extends AbstractType {
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {    
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('fullname');  // string     
         $builder->add('email');  // string     
-        $builder->add('followUp');  // boolean     
+        $builder->add('followUp', null, array(
+            'label' => 'Follow Up',
+            'attr' => array(
+                'help_block' => 'Check this box if you would like someone to contact you about your comment.'
+            ),
+        ));
         $builder->add('content', TextareaType::class);  // string 
-        $builder->setMethod('POST');        
+        $builder->setMethod('POST');
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
-    {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'Nines\FeedbackBundle\Entity\Comment'
         ));
     }
+
 }

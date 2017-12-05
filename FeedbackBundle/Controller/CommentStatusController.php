@@ -27,7 +27,7 @@ class CommentStatusController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         $em = $this->getDoctrine()->getManager();
         $dql = 'SELECT e FROM NinesFeedbackBundle:CommentStatus e ORDER BY e.id';
         $query = $em->createQuery($dql);
@@ -49,7 +49,7 @@ class CommentStatusController extends Controller
      */
     public function newAction(Request $request)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         $commentStatus = new CommentStatus();
         $form = $this->createForm('Nines\FeedbackBundle\Form\CommentStatusType', $commentStatus);
         $form->handleRequest($request);
@@ -79,7 +79,7 @@ class CommentStatusController extends Controller
      */
     public function showAction(CommentStatus $commentStatus)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         return array(
             'commentStatus' => $commentStatus,
         );
@@ -96,7 +96,7 @@ class CommentStatusController extends Controller
      */
     public function editAction(Request $request, CommentStatus $commentStatus)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         $editForm = $this->createForm('Nines\FeedbackBundle\Form\CommentStatusType', $commentStatus);
         $editForm->handleRequest($request);
 
@@ -123,7 +123,7 @@ class CommentStatusController extends Controller
      */
     public function deleteAction(Request $request, CommentStatus $commentStatus)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         $em = $this->getDoctrine()->getManager();
         $em->remove($commentStatus);
         $em->flush();

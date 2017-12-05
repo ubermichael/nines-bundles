@@ -6,6 +6,7 @@ use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 /**
  * Class to build some menus for navigation.
@@ -30,8 +31,7 @@ class Builder implements ContainerAwareInterface {
             'class' => 'nav navbar-nav navbar-right',
         ));
         $menu->setAttribute('dropdown', true);
-
-        if (!$this->container->get('security.token_storage')->getToken() || !$this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (! $this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             $menu->addChild("Login", array(
                 'route' => 'fos_user_security_login'
             ));
