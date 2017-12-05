@@ -51,12 +51,14 @@ class Text {
      * @return array
      */
     public function searchHighlight($content, $keyword) {
-        $i = stripos($content, $keyword);
+        $text = $this->plain($content);
+        $i = stripos($text, $keyword);
+        $regex = preg_quote($keyword);
         $results = array();
         while($i !== false) {
-            $s = substr($content, max([0, $i - 60]), 120);
-            $results[] = preg_replace("/$keyword/", "<mark>{$keyword}</mark>", $s);
-            $i = stripos($content, $keyword, $i+1);
+            $s = substr($text, max([0, $i - 60]), 120);
+            $results[] = preg_replace("/($regex)/i", '<mark>$1</mark>', $s);
+            $i = stripos($text, $keyword, $i+1);
         }
         return array_unique($results);
     }
@@ -106,7 +108,7 @@ class Text {
         $trimmed = preg_replace("/(^\s+)|(\s+$)/u", "", $converted);
         // \xA0 is the result of converting nbsp. Requires the /u flag.
         $normalized = preg_replace("/[[:space:]\x{A0}]/su", " ", $trimmed);
-        $words = preg_split('/\s/u', $normalized, $length+1, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split('/\s+/u', $normalized, $length+1, PREG_SPLIT_NO_EMPTY);
 
         if(count($words) <= $length) {
             return implode(' ', $words);
