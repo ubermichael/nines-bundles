@@ -22,6 +22,7 @@ class LoadUser extends Fixture {
         $admin->setPlainPassword("supersecret");
         $admin->setRoles(array('ROLE_ADMIN'));
         $admin->setEnabled(true);
+        $this->setReference('user.admin', $admin);
         $em->persist($admin);
 
         $user = new User();
@@ -30,6 +31,7 @@ class LoadUser extends Fixture {
         $user->setUsername("user@example.com");
         $user->setPlainPassword("secret");
         $user->setEnabled(true);
+        $this->setReference('user.user', $admin);
         $em->persist($user);
         $em->flush();
     }

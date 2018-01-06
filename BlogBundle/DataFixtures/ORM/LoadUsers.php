@@ -1,6 +1,6 @@
 <?php
 
-namespace Nines\BlogBundle\Tests\DataFixtures\ORM;
+namespace Nines\BlogBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
