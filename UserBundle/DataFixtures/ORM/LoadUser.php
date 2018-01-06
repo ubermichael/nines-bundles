@@ -1,20 +1,20 @@
 <?php
 
-namespace Nines\UserBundle\Tests\DataFixtures\ORM;
+namespace Nines\UserBundle\DataFixtures\ORM;
 
-use Nines\UserBundle\Entity\User;
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Nines\UserBundle\Entity\User;
 
 /**
  * Load some users for unit tests.
  */
-class LoadUsers implements FixtureInterface {
+class LoadUser extends Fixture {
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager) {
+    public function load(ObjectManager $em) {
         $admin = new User();
         $admin->setEmail("admin@example.com");
         $admin->setFullname("Admin user");
@@ -22,7 +22,7 @@ class LoadUsers implements FixtureInterface {
         $admin->setPlainPassword("supersecret");
         $admin->setRoles(array('ROLE_ADMIN'));
         $admin->setEnabled(true);
-        $manager->persist($admin);
+        $em->persist($admin);
 
         $user = new User();
         $user->setEmail("user@example.com");
@@ -30,7 +30,7 @@ class LoadUsers implements FixtureInterface {
         $user->setUsername("user@example.com");
         $user->setPlainPassword("secret");
         $user->setEnabled(true);
-        $manager->persist($user);
-        $manager->flush();
+        $em->persist($user);
+        $em->flush();
     }
 }

@@ -4,7 +4,7 @@ namespace Nines\UserBundle\Tests\Controller;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Nines\UserBundle\Entity\User;
-use Nines\UserBundle\Tests\DataFixtures\ORM\LoadUsers;
+use Nines\UserBundle\DataFixtures\ORM\LoadUser;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminUserControllerTest extends WebTestCase {
@@ -22,7 +22,7 @@ class AdminUserControllerTest extends WebTestCase {
 	
 	public function testIndex() {
         $this->loadFixtures(array(
-            LoadUsers::class
+            LoadUser::class
         )); 
          
 		$this->client->request('GET', '/admin/user/');
