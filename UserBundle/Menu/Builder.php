@@ -6,7 +6,8 @@ use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 /**
  * Class to build some menus for navigation.
@@ -18,51 +19,87 @@ class Builder implements ContainerAwareInterface {
     const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
 
     /**
+     * @var FactoryInterface
+     */
+
+    private $factory;
+
+    /**
+     * @var AuthorizationChecker
+     */
+    private $authChecker;
+
+    /**
+     * @var TokenStorage
+     */
+    private $tokenStorage;
+
+    public function __construct(FactoryInterface $factory, AuthorizationChecker $authChecker, TokenStorage $tokenStorage) {
+        $this->factory = $factory;
+        $this->authChecker = $authChecker;
+        $this->tokenStorage = $tokenStorage;
+    }
+
+    private function hasRole($role) {
+        if (!$this->tokenStorage->getToken()) {
+            return false;
+        }
+        return $this->authChecker->isGranted($role);
+    }
+    
+    private function getUser() {
+        if( ! $this->hasRole('ROLE_USER')) {
+            return null;
+        }
+        return $this->tokenStorage->getToken()->getUser();
+    }
+
+    /**
      * Build a menu for blog posts.
      * 
      * @param FactoryInterface $factory
      * @param array $options
      * @return ItemInterface
      */
-
-    public function userNavMenu(FactoryInterface $factory, array $options) {
-        $menu = $factory->createItem('root');
+    public function userNavMenu(array $options) {
+        $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
             'class' => 'nav navbar-nav navbar-right',
         ));
         $menu->setAttribute('dropdown', true);
-        if (! $this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        $user = $this->getUser();
+        if (!$this->hasRole('ROLE_USER')) {
             $menu->addChild("Login", array(
                 'route' => 'fos_user_security_login'
             ));
-        } else {
-            $user = $this->container->get('security.token_storage')->getToken()->getUser();
-            $menu->addChild('user', array(
-                'uri' => '#',
-                'label' => $user->getUsername() . self::CARET,
+            return $menu;
+        }
+
+        $menu->addChild('user', array(
+            'uri' => '#',
+            'label' => $user->getUsername() . self::CARET,
+        ));
+        $menu['user']->setAttribute('dropdown', true);
+        $menu['user']->setLinkAttribute('class', 'dropdown-toggle');
+        $menu['user']->setLinkAttribute('data-toggle', 'dropdown');
+        $menu['user']->setChildrenAttribute('class', 'dropdown-menu');
+        $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
+        $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
+        $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
+
+        if ($this->hasRole('ROLE_ADMIN')) {
+            $menu['user']->addChild('divider', array(
+                'label' => '',
             ));
-            $menu['user']->setAttribute('dropdown', true);
-            $menu['user']->setLinkAttribute('class', 'dropdown-toggle');
-            $menu['user']->setLinkAttribute('data-toggle', 'dropdown');
-            $menu['user']->setChildrenAttribute('class', 'dropdown-menu');
-            $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
-            $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
-            $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
+            $menu['user']['divider']->setAttributes(array(
+                'role' => 'separator',
+                'class' => 'divider',
+            ));
 
-            if ($this->container->get('security.token_storage')->getToken() && $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
-                $menu['user']->addChild('divider', array(
-                    'label' => '',
-                ));
-                $menu['user']['divider']->setAttributes(array(
-                    'role' => 'separator',
-                    'class' => 'divider',
-                ));
-
-                $menu['user']->addChild('users', array(
-                    'label' => 'Users',
-                    'route' => 'user',
-                ));
-            }
+            $menu['user']->addChild('users', array(
+                'label' => 'Users',
+                'route' => 'user',
+            ));
         }
         return $menu;
     }
