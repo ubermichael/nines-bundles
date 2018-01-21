@@ -2,30 +2,16 @@
 
 namespace Nines\UtilBundle\Tests\Util;
 
-use Closure;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
-use ReflectionObject;
 
 abstract class BaseTestCase extends WebTestCase {
 
     /**
-     * @var EntityManager
-     */
-    protected $em;
-    
-    /**
      * @var ReferenceRepository 
      */
     protected $references;
-    
-    /**
-     * http://stackoverflow.com/a/32879462/9316
-     *
-     * @var Closure
-     */
-    private static $kernelModifier = null;
     
     protected function getFixtures() {
         return array();
@@ -34,9 +20,19 @@ abstract class BaseTestCase extends WebTestCase {
     protected function setUp() {
         parent::setUp();
         self::bootKernel();
-        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->references = $this->loadFixtures($this->getFixtures())->getReferenceRepository();
+    }
+    
+    /**
+     * @return EntityManager
+     */
+    protected function getDoctrine() {
+        static $em = null;
+        if( ! $em) {
+            $em = static::$kernel->getContainer()->get('doctrine')->getManager();
+            $em->getConnection()->getConfiguration()->setSQLLogger(null);
+        }
+        return $em;
     }
     
     protected function getReference($name) {
@@ -45,37 +41,4 @@ abstract class BaseTestCase extends WebTestCase {
         }
         return null;
     }
-
-    protected static function createClient(array $options = [], array $server = []) {
-        static::bootKernel($options);
-        if (self::$kernelModifier !== null) {
-            self::$kernelModifier->__invoke();
-            self::$kernelModifier = null;
-        }
-        $client = static::$kernel->getContainer()->get('test.client');
-        $client->setServerParameters($server);
-        return $client;
-    }
-
-    public function setKernelModifier(Closure $kernelModifier) {
-        self::$kernelModifier = $kernelModifier;
-        $this->ensureKernelShutdown();
-    }
-
-    protected function tearDown() {        
-        parent::tearDown();
-//        $this->em->close();
-//        $this->em = null;
-        
-        $refl = new ReflectionObject($this);
-        foreach ($refl->getProperties() as $prop) {
-            if (!$prop->isStatic() && 0 !== strpos($prop->getDeclaringClass()->getName(), 'PHPUnit_')) {
-                $prop->setAccessible(true);
-                $prop->setValue($this, null);
-            }
-        }
-        static::$kernel->shutdown();
-        gc_collect_cycles();
-    }
-
 }
