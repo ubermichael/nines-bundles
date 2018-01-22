@@ -11,6 +11,16 @@ use Nines\UserBundle\Entity\User;
  */
 class LoadUser extends Fixture {
 
+    const ADMIN = array(
+        'username' => 'admin@example.com',
+        'password' => 'supersecret',
+    );
+    
+    const USER = array(
+        'username' => 'user@example.com',
+        'password' => 'secret',
+    );
+    
     /**
      * {@inheritDoc}
      */
@@ -18,8 +28,8 @@ class LoadUser extends Fixture {
         $admin = new User();
         $admin->setEmail("admin@example.com");
         $admin->setFullname("Admin user");
-        $admin->setUsername("admin@example.com");
-        $admin->setPlainPassword("supersecret");
+        $admin->setUsername(self::ADMIN['username']);
+        $admin->setPlainPassword(self::ADMIN['password']);
         $admin->setRoles(array('ROLE_ADMIN'));
         $admin->setEnabled(true);
         $this->setReference('user.admin', $admin);
@@ -28,8 +38,8 @@ class LoadUser extends Fixture {
         $user = new User();
         $user->setEmail("user@example.com");
         $user->setFullname("Unprivileged user");
-        $user->setUsername("user@example.com");
-        $user->setPlainPassword("secret");
+        $user->setUsername(self::USER['username']);
+        $user->setPlainPassword(self::USER['password']);
         $user->setEnabled(true);
         $this->setReference('user.user', $admin);
         $em->persist($user);
