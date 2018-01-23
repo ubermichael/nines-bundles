@@ -68,14 +68,19 @@ abstract class BaseTestCase extends WebTestCase {
     {
         parent::tearDown();
         
+        if($this->em) {
         $this->em->clear();
         $this->em->close();        
-        $this->em = null; // avoid memory leaks'
-        
+            $this->em = null; // avoid memory leaks
+        }
+        if($this->references) {
         $this->references = null;
+        }
         
+        if($this->logger) {
         $this->logger->clear();
         $this->logger = null;
+        }
                 
         gc_collect_cycles();
     }
