@@ -6,8 +6,8 @@ use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class to build some menus for navigation.
@@ -21,20 +21,19 @@ class Builder implements ContainerAwareInterface {
     /**
      * @var FactoryInterface
      */
-
     private $factory;
 
     /**
-     * @var AuthorizationChecker
+     * @var AuthorizationCheckerInterface
      */
     private $authChecker;
 
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     private $tokenStorage;
 
-    public function __construct(FactoryInterface $factory, AuthorizationChecker $authChecker, TokenStorage $tokenStorage) {
+    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage) {
         $this->factory = $factory;
         $this->authChecker = $authChecker;
         $this->tokenStorage = $tokenStorage;
