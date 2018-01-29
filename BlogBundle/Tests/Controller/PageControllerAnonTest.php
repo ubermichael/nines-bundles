@@ -14,7 +14,7 @@ class PageControllerAnonTest extends WebTestCase {
 
     public function testIndex() {
         $this->loadFixtures(array(
-            LoadUsers::class,
+            LoadUser::class,
             LoadPages::class,
         )); 
  

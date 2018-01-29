@@ -2,10 +2,13 @@
 
 namespace Nines\BlogBundle\Menu;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class to build some menus for navigation.
@@ -14,62 +17,114 @@ class Builder implements ContainerAwareInterface {
 
     use ContainerAwareTrait;
 
+    const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
+
+    /**
+     * @var FactoryInterface
+     */
+    private $factory;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authChecker;
+
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
+     *
+     * @var EntityManagerInterface
+     */
+    private $em;
+    
+    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, EntityManagerInterface $em) {
+        $this->factory = $factory;
+        $this->authChecker = $authChecker;
+        $this->tokenStorage = $tokenStorage;
+        $this->em = $em;
+    }
+
+    private function hasRole($role) {
+        if (!$this->tokenStorage->getToken()) {
+            return false;
+        }
+        return $this->authChecker->isGranted($role);
+    }
+    
+    private function getUser() {
+        if( ! $this->hasRole('ROLE_USER')) {
+            return null;
+        }
+        return $this->tokenStorage->getToken()->getUser();
+    }
+
     /**
      * Build a menu for blog posts.
      * 
-     * @param FactoryInterface $factory
      * @param array $options
      * @return ItemInterface
      */
-    public function postNavMenu(FactoryInterface $factory, array $options) {
-        $em = $this->container->get('doctrine')->getManager();
-
-        $menu = $factory->createItem('root');
+    public function postNavMenu(array $options) {
+        $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
-            'class' => 'dropdown-menu',
+            'class' => 'nav navbar-nav',
         ));
         $menu->setAttribute('dropdown', true);
 
-        $status = $em->getRepository('NinesBlogBundle:PostStatus')->findOneBy(array(
+        $status = $this->em->getRepository('NinesBlogBundle:PostStatus')->findOneBy(array(
             'public' => true,
         ));
-        $posts = $em->getRepository('NinesBlogBundle:Post')->findBy(
-                array('status' => $status), array('id' => 'DESC'), $this->container->getParameter('nines_blog.menu_posts')
+        $posts = $this->em->getRepository('NinesBlogBundle:Post')->findBy(
+                array('status' => $status), 
+                array('id' => 'DESC')
         );
+        
+        $menu->addChild('announcements', array(
+            'uri' => '#',
+            'label' => 'Announcements' . self::CARET
+        ));
+        $menu['announcements']->setAttribute('dropdown', true);
+        $menu['announcements']->setLinkAttribute('class', 'dropdown-toggle');
+        $menu['announcements']->setLinkAttribute('data-toggle', 'dropdown');
+        $menu['announcements']->setChildrenAttribute('class', 'dropdown-menu');
+        
         foreach ($posts as $post) {
-            $menu->addChild($post->getTitle(), array(
+            $menu['announcements']->addChild($post->getTitle(), array(
                 'route' => 'post_show',
                 'routeParameters' => array(
                     'id' => $post->getId(),
                 )
             ));
         }
-        $menu->addChild('divider', array(
+        $menu['announcements']->addChild('divider', array(
             'label' => '',
         ));
-        $menu['divider']->setAttributes(array(
+        $menu['announcements']['divider']->setAttributes(array(
             'role' => 'separator',
             'class' => 'divider',
         ));
 
-        $menu->addChild('All Announcements', array(
+        $menu['announcements']->addChild('All Announcements', array(
             'route' => 'post_index',
         ));
 
-        if ($this->container->get('security.token_storage')->getToken() && $this->container->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN')) {
-            $menu->addChild('divider', array(
+        if ($this->hasRole('ROLE_BLOG_ADMIN')) {
+            $menu['announcements']->addChild('divider', array(
                 'label' => '',
             ));
-            $menu['divider']->setAttributes(array(
+            $menu['announcements']['divider']->setAttributes(array(
                 'role' => 'separator',
                 'class' => 'divider',
             ));
 
-            $menu->addChild('post_category', array(
+            $menu['announcements']->addChild('post_category', array(
                 'label' => 'Post Categories',
                 'route' => 'post_category_index',
             ));
-            $menu->addChild('post_status', array(
+            $menu['announcements']->addChild('post_status', array(
                 'label' => 'Post Statuses',
                 'route' => 'post_status_index',
             ));
@@ -81,38 +136,49 @@ class Builder implements ContainerAwareInterface {
     /**
      * Build a menu for blog pages.
      * 
-     * @param FactoryInterface $factory
      * @param array $options
      * @return ItemInterface
      */
-    public function pageNavMenu(FactoryInterface $factory, array $options) {
-        $em = $this->container->get('doctrine')->getManager();
-        $menu = $factory->createItem('root');
+    public function pageNavMenu(array $options) {
+        $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
-            'class' => 'dropdown-menu',
+            'class' => 'nav navbar-nav',
         ));
         $menu->setAttribute('dropdown', true);
-        $pages = $em->getRepository('NinesBlogBundle:Page')->findBy(
-                array('public' => true), array('weight' => 'ASC', 'title' => 'ASC')
+        $pages = $this->em->getRepository('NinesBlogBundle:Page')->findBy(
+                array('public' => true), 
+                array('weight' => 'ASC', 
+                    'title' => 'ASC')
         );
+        
+        $menu->addChild('about', array(
+            'uri' => '#',
+            'label' => 'About' . self::CARET
+        ));
+        $menu['about']->setAttribute('dropdown', true);
+        $menu['about']->setLinkAttribute('class', 'dropdown-toggle');
+        $menu['about']->setLinkAttribute('data-toggle', 'dropdown');
+        $menu['about']->setChildrenAttribute('class', 'dropdown-menu');
+        
+        
         foreach ($pages as $page) {
-            $menu->addChild($page->getTitle(), array(
+            $menu['about']->addChild($page->getTitle(), array(
                 'route' => 'page_show',
                 'routeParameters' => array(
                     'id' => $page->getId(),
                 )
             ));
         }
-        if ($this->container->get('security.token_storage')->getToken() && $this->container->get('security.authorization_checker')->isGranted('ROLE_BLOG_ADMIN')) {
-            $menu->addChild('divider', array(
+        if ($this->hasRole('ROLE_BLOG_ADMIN')) {
+            $menu['about']->addChild('divider', array(
                 'label' => '',
             ));
-            $menu['divider']->setAttributes(array(
+            $menu['about']['divider']->setAttributes(array(
                 'role' => 'separator',
                 'class' => 'divider',
             ));
 
-            $menu->addChild('page_admin', array(
+            $menu['about']->addChild('page_admin', array(
                 'label' => 'All Pages',
                 'route' => 'page_index',
             ));

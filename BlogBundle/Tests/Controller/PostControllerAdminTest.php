@@ -17,7 +17,7 @@ class PostControllerAdminTest extends WebTestCase {
 
     public function testIndex() {
         $this->loadFixtures(array(
-            LoadUsers::class,
+            LoadUser::class,
             LoadStatuses::class,
             LoadCategories::class,
             LoadPosts::class,
