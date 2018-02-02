@@ -18,7 +18,3 @@ services:
         arguments: [ "%nines_user.permission_levels%" ] 
         tags:
             - { name: form.type, alias: nines_admin_user_profile }
-        
-#    nines_user.example:
-#        class: Nines\UserBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
