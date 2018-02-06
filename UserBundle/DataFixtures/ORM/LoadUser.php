@@ -26,7 +26,7 @@ class LoadUser extends Fixture {
      */
     public function load(ObjectManager $em) {
         $admin = new User();
-        $admin->setEmail("admin@example.com");
+        $admin->setEmail(self::ADMIN['username']);
         $admin->setFullname("Admin user");
         $admin->setUsername(self::ADMIN['username']);
         $admin->setPlainPassword(self::ADMIN['password']);
@@ -36,7 +36,7 @@ class LoadUser extends Fixture {
         $em->persist($admin);
 
         $user = new User();
-        $user->setEmail("user@example.com");
+        $user->setEmail(self::USER['username']);
         $user->setFullname("Unprivileged user");
         $user->setUsername(self::USER['username']);
         $user->setPlainPassword(self::USER['password']);

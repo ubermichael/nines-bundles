@@ -2,15 +2,14 @@
 
 namespace Nines\BlogBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Nines\BlogBundle\Entity\PostStatus;
 
 /**
  * Load some users for unit tests.
  */
-class LoadStatuses extends AbstractFixture implements OrderedFixtureInterface {
+class LoadStatuses extends Fixture {
 
     /**
      * {@inheritDoc}
@@ -22,7 +21,7 @@ class LoadStatuses extends AbstractFixture implements OrderedFixtureInterface {
         $draft->setPublic(false);
         $draft->setDescription('Drafty');
         $manager->persist($draft);        
-        $this->addReference('post-status-draft', $draft);
+        $this->addReference('post-status-1', $draft);
         
         $published = new PostStatus();
         $published->setName('published');
@@ -30,12 +29,8 @@ class LoadStatuses extends AbstractFixture implements OrderedFixtureInterface {
         $published->setPublic(true);
         $published->setDescription('Public');        
         $manager->persist($published);
-        $this->setReference('post-status-published', $published);
+        $this->addReference('post-status-2', $draft);
         $manager->flush();
-    }
-
-    public function getOrder() {
-        return 1;
     }
 
 }

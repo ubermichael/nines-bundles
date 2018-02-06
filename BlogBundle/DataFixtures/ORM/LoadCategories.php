@@ -2,15 +2,14 @@
 
 namespace Nines\BlogBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Nines\BlogBundle\Entity\PostCategory;
 
 /**
  * Load some users for unit tests.
  */
-class LoadCategories extends AbstractFixture implements OrderedFixtureInterface {
+class LoadCategories extends Fixture {
 
     /**
      * {@inheritDoc}
@@ -23,11 +22,7 @@ class LoadCategories extends AbstractFixture implements OrderedFixtureInterface 
         $manager->persist($category);
         $manager->flush();
         
-        $this->addReference('post-cat-announcement', $category);
-    }
-
-    public function getOrder() {
-        return 1;
+        $this->addReference('post-category-1', $category);
     }
 
 }
