@@ -47,6 +47,7 @@ class Text {
      * Find the keyword in the plain text and highlight it. Returns a list
      * of the higlights as KWIC results.
      * 
+     * @param string $content
      * @param string $keyword
      * @return array
      */

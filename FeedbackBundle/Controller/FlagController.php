@@ -44,7 +44,6 @@ class FlagController extends Controller
      * 
      * @param Request $request
      * @Route("/post", name="flag_post")
-     * @param Request $request
      * @Template()
      */
     public function postAction(Request $request) {

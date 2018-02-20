@@ -128,6 +128,7 @@ class CommentController extends Controller {
      * @Route("/{id}", name="admin_comment_show")
      * @Method({"GET","POST"})
      * @Template()
+     * @param Request $request
      * @param Comment $comment
      */
     public function showAction(Request $request, Comment $comment) {

@@ -28,6 +28,7 @@ class PageRepository extends EntityRepository
     /**
      * Get a full text query of pages.
      * 
+     * @param string $q
      * @param bool $private
      * @return Query
      */

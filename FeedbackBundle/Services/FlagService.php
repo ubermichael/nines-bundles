@@ -179,7 +179,7 @@ class FlagService {
      * Add flags to an entity. Removes any pre-existing flags on the entity.
      * 
      * @param mixed $entity
-     * @param Flag[] $flag
+     * @param Flag[] $newFlags
      * 
      * @return Comment
      */

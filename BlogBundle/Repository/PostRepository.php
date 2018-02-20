@@ -42,6 +42,7 @@ class PostRepository extends EntityRepository {
      * Get a query to list recent blog posts.
      * 
      * @param bool $private
+     * @param int $limit
      * @return Query
      */
     public function recentQuery($private = false, $limit = 0) {

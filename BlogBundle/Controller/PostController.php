@@ -117,6 +117,7 @@ class PostController extends Controller {
      * @Route("/{id}", name="post_show")
      * @Method("GET")
      * @Template()
+     * @param Request $request
      * @param Post $post
      */
     public function showAction(Request $request, Post $post) {
