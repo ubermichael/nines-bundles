@@ -38,7 +38,7 @@ class Element extends AbstractTerm
     private $fields;
     
     public function __toString() {
-        return $this->label;
+        return parent::__toString();
     }
 
     /**
