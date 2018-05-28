@@ -44,7 +44,7 @@ Usage
 Add commenting to a twig template:
 
 ```twig
-    {% include 'NinesFeedbackBundle:Comment:comments-interface.html.twig' with {'entity': entity } %}                            
+    {% include 'NinesFeedbackBundle:comment:comments-interface.html.twig' with {'entity': entity } %}                            
 ```
 
 This line will show the comment form and public, published comments. If the user

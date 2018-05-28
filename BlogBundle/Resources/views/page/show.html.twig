@@ -42,6 +42,6 @@
         Created {{ page.created|date('Y-m-d H:i:s') }} by {{ page.user.fullname }}.
     </div>
 
-    {% include 'NinesFeedbackBundle:Comment:comment-interface.html.twig' with { 'entity': page } %}				
+    {% include 'NinesFeedbackBundle:comment:comment-interface.html.twig' with { 'entity': page } %}				
 
 {% endblock %}
