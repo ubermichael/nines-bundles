@@ -13,7 +13,7 @@ use \Twig_SimpleFilter;
 class TwigExtension extends Twig_Extension {
     
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function getFilters() {
         return array(

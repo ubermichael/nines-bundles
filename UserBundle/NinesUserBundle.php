@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class NinesUserBundle extends Bundle
 {
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function getParent()
     {

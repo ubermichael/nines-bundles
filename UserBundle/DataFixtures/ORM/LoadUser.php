@@ -22,7 +22,7 @@ class LoadUser extends Fixture {
     );
     
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(ObjectManager $em) {
         $admin = new User();

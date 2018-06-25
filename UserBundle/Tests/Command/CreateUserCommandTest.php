@@ -17,7 +17,7 @@ class CreateUserCommandTest extends WebTestCase {
     private $em;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp()
     {
