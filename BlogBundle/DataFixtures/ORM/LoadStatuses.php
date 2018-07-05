@@ -12,7 +12,7 @@ use Nines\BlogBundle\Entity\PostStatus;
 class LoadStatuses extends Fixture {
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(ObjectManager $manager) {
         $draft = new PostStatus();

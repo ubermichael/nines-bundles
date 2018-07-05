@@ -12,7 +12,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * and updated DateTimes.
  *
  * @ORM\MappedSuperclass
- * @ORM\HasLifecycleCallbacks
  */
 abstract class AbstractEntity
 {
@@ -51,7 +50,8 @@ abstract class AbstractEntity
      * parent::__construct().
      */
     public function __construct() {
-        // Do nothing.
+        $this->created = new DateTime();
+        $this->updated = new DateTime();
     }
 
     /**
@@ -59,7 +59,7 @@ abstract class AbstractEntity
      *
      * @return integer
      */
-    final public function getId() {
+    public function getId() {
         return $this->id;
     }
 
@@ -69,8 +69,8 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    private final function setCreated() {
-        // Do nothing.
+    public function setCreated(DateTime $created) {
+        $this->created = $created;
     }
 
     /**
@@ -87,8 +87,8 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    private final function setUpdated() {
-        // Do nothing.
+    function setUpdated(DateTime $updated) {
+        $this->updated = $updated;
     }
 
     /**

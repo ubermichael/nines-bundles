@@ -12,7 +12,7 @@ use Nines\BlogBundle\Entity\PostCategory;
 class LoadCategories extends Fixture {
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(ObjectManager $manager) {
         $category = new PostCategory();

@@ -45,7 +45,7 @@ class Builder implements ContainerAwareInterface {
         }
         return $this->authChecker->isGranted($role);
     }
-    
+
     private function getUser() {
         if( ! $this->hasRole('ROLE_USER')) {
             return null;
@@ -55,11 +55,15 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Build a menu for blog posts.
-     * 
+     *
      * @param array $options
      * @return ItemInterface
      */
     public function userNavMenu(array $options) {
+        $name = 'Login';
+        if(isset($options['name'])) {
+            $name = $options['name'];
+        }
         $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
             'class' => 'nav navbar-nav navbar-right',
@@ -67,7 +71,7 @@ class Builder implements ContainerAwareInterface {
         $menu->setAttribute('dropdown', true);
         $user = $this->getUser();
         if (!$this->hasRole('ROLE_USER')) {
-            $menu->addChild("Login", array(
+            $menu->addChild($name, array(
                 'route' => 'fos_user_security_login'
             ));
             return $menu;

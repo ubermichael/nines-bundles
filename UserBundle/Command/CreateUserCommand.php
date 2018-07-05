@@ -57,7 +57,7 @@ EOT
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      * 
      * @see Command
      */
@@ -77,7 +77,7 @@ EOT
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      * 
      * @see Command
      */
