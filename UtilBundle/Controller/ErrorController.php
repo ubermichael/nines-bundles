@@ -36,13 +36,13 @@ class ErrorController extends Controller
         $env = $this->container->get( 'kernel' )->getEnvironment();
         switch($env) {
             case 'prod':
-                $response->setContent($this->render('NinesUtilBundle:Error:prod.html.twig', array(
+                $response->setContent($this->render('NinesUtilBundle:error:prod.html.twig', array(
                     'exception' => $exception,
                 )));
                 break;
 
             case 'dev':
-                $response->setContent($this->render('NinesUtilBundle:Error:dev.html.twig', array(
+                $response->setContent($this->render('NinesUtilBundle:error:dev.html.twig', array(
                     'exception' => $exception,
                 )));
                 break;
