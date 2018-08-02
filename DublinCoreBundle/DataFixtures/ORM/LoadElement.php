@@ -2,11 +2,11 @@
 
 namespace Nines\DublinCoreBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Nines\DublinCoreBundle\Entity\Element;
 
-class LoadElementData implements FixtureInterface {
+class LoadElement extends Fixture {
 
     public function load(ObjectManager $manager) {
         foreach($this->getData() as $data) {
@@ -17,8 +17,9 @@ class LoadElementData implements FixtureInterface {
             $element->setDescription($data['description']);
             $element->setComment($data['comment']);
             $manager->persist($element);
+            $this->setReference($data['name'], $element);
         }
-        
+
         $manager->flush();
     }
 
