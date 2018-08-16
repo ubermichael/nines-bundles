@@ -21,16 +21,22 @@ class Post extends AbstractEntity {
      * Blog post title.
      *
      * @var string
-     * 
+     *
      * @ORM\Column(name="title", type="string", nullable=false)
      */
     private $title;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="include_comments", type="boolean", nullable=false)
+     */
+    private $includeComments;
+
+    /**
      * An excerpt, to display in lists.
      *
      * @var string
-     * 
+     *
      * @ORM\Column(name="excerpt", type="text", nullable=true)
      */
     private $excerpt;
@@ -39,23 +45,23 @@ class Post extends AbstractEntity {
      * The content of the post, as HTML.
      *
      * @var string
-     * 
+     *
      * @ORM\Column(name="content", type="text", nullable=false)
      */
     private $content;
 
     /**
      * Searchable version of the content, with the tags stripped out.
-     * 
+     *
      * @var string
-     * 
+     *
      * @ORM\Column(name="searchable", type="text", nullable=false)
      */
     private $searchable;
 
     /**
      * Post category.
-     * 
+     *
      * @var PostCategory
      *
      * @ORM\ManyToOne(targetEntity="PostCategory", inversedBy="posts")
@@ -65,9 +71,9 @@ class Post extends AbstractEntity {
 
     /**
      * Post status.
-     * 
+     *
      * @var PostStatus
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="PostStatus", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -75,16 +81,21 @@ class Post extends AbstractEntity {
 
     /**
      * User that created the post.
-     * 
+     *
      * @var User
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
+    public function __construct() {
+        parent::__construct();
+        $this->includeComments = false;
+    }
+
     /**
      * Return the title of the post.
-     * 
+     *
      * @return type
      */
     public function __toString() {
@@ -246,5 +257,29 @@ class Post extends AbstractEntity {
     public function getSearchable()
     {
         return $this->searchable;
+    }
+
+    /**
+     * Set includeComments
+     *
+     * @param boolean $includeComments
+     *
+     * @return Post
+     */
+    public function setIncludeComments($includeComments)
+    {
+        $this->includeComments = $includeComments;
+
+        return $this;
+    }
+
+    /**
+     * Get includeComments
+     *
+     * @return boolean
+     */
+    public function getIncludeComments()
+    {
+        return $this->includeComments;
     }
 }

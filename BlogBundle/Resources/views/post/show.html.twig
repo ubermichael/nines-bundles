@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>{{ post.title }}</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -39,12 +39,14 @@
     {{ post.content|raw }}
 
     <div class="text-right">
-        Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in 
+        Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in
         <a href="{{ path('post_category_show', {'id': post.category.id }) }}">
             {{ post.category -}}
         </a>.
     </div>
 
-    {% include 'NinesFeedbackBundle:comment:comment-interface.html.twig' with { 'entity': post } %}				
+    {% if page.includeComments %}
+        {% include 'NinesFeedbackBundle:comment:comment-interface.html.twig' with { 'entity': post } %}
+    {% endif %}
 
 {% endblock %}

@@ -14,13 +14,14 @@ class PostType extends AbstractType
 {
     /**
      * Build a post form.
-     * 
+     *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {    
-        $builder->add('title');    
+    {
+        $builder->add('title');
+        $builder->add('includeComments');
         $builder->add('excerpt', CKEditorType::class, array(
             'attr' => array(
                 'help_block' => 'Excerpts will be shown on the home page and in '
@@ -29,11 +30,11 @@ class PostType extends AbstractType
             ),
         ));
         $builder->add('content', CKEditorType::class, array(
-        ));     
-        $builder->add('category');     
-        $builder->add('status');         
+        ));
+        $builder->add('category');
+        $builder->add('status');
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */

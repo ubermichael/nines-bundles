@@ -19,12 +19,12 @@ class Page extends AbstractEntity {
 
     /**
      * Heavier weighted pages will sort to the bottom.
-     * 
+     *
      * @var int
      * @ORM\Column(name="weight", type="integer", nullable=false)
      */
     private $weight;
-    
+
     /**
      * True if the page is public. Defaults to false.
      *
@@ -34,10 +34,16 @@ class Page extends AbstractEntity {
     private $public;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="include_comments", type="boolean", nullable=false)
+     */
+    private $includeComments;
+
+    /**
      * Blog post title.
      *
      * @var string
-     * 
+     *
      * @ORM\Column(name="title", type="string", nullable=false)
      */
     private $title;
@@ -46,32 +52,32 @@ class Page extends AbstractEntity {
      * An excerpt, to display in lists.
      *
      * @var string
-     * 
+     *
      * @ORM\Column(name="excerpt", type="text", nullable=true)
      */
     private $excerpt;
-    
+
     /**
      * The content of the post, as HTML.
      *
      * @var string
-     * 
+     *
      * @ORM\Column(name="content", type="text", nullable=false)
      */
     private $content;
 
     /**
      * Searchable version of the content, with the tags stripped out.
-     * 
+     *
      * @var string
-     * 
+     *
      * @ORM\Column(name="searchable", type="text", nullable=false)
      */
     private $searchable;
 
     /**
      * User that created the post.
-     * 
+     *
      * @var User
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
@@ -85,8 +91,9 @@ class Page extends AbstractEntity {
         parent::__construct();
         $this->weight = 0;
         $this->public = false;
+        $this->includeComments = false;
     }
-    
+
     /**
      * Set public
      *
@@ -258,5 +265,29 @@ class Page extends AbstractEntity {
     public function getExcerpt()
     {
         return $this->excerpt;
+    }
+
+    /**
+     * Set includeComments
+     *
+     * @param boolean $includeComments
+     *
+     * @return Page
+     */
+    public function setIncludeComments($includeComments)
+    {
+        $this->includeComments = $includeComments;
+
+        return $this;
+    }
+
+    /**
+     * Get includeComments
+     *
+     * @return boolean
+     */
+    public function getIncludeComments()
+    {
+        return $this->includeComments;
     }
 }
