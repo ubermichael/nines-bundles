@@ -8,10 +8,6 @@ services:
         class: Nines\UtilBundle\Services\TitleCaser
         calls:
             - [ setLogger, ["@monolog.logger"]]
-            
-    # provides class_name() and short_name() to get the full and short 
+
+    # provides class_name() and short_name() to get the full and short
     # class name of an object.
-    nines.util.twig:
-        class: Nines\UtilBundle\Extensions\Twig\TwigExtension
-        tags: 
-            - { name: twig.extension }
