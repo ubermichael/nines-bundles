@@ -74,7 +74,7 @@ class CommentController extends Controller {
         $class = $request->request->get('entity_class', null);
 
         if(!$service->acceptsComments($class)) {
-            throw new Exception("Cannot accept comments for this class.");
+            throw new Exception("Cannot accept comments for this class: " . $class);
         }
         $repo = $em->getRepository($class);
         $entity = $repo->find($id);
