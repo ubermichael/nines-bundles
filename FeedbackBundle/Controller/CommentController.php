@@ -9,6 +9,7 @@ use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\AdminCommentType;
 use Nines\FeedbackBundle\Form\CommentNoteType;
 use Nines\FeedbackBundle\Form\CommentType;
+use Nines\FeedbackBundle\Services\NotifierService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -57,37 +58,38 @@ class CommentController extends Controller {
             'statuses' => $statusRepo->findAll(),
         );
     }
-    
+
     /**
      * Post a comment on an entity.
-     * 
+     *
      * @Method("POST")
      * @Route("/post", name="comment_post")
      * @param Request $request
      * @Template()
      */
-    public function postAction(Request $request) {
+    public function postAction(Request $request, NotifierService $notifier) {
         $em = $this->getDoctrine()->getManager();
 		$service = $this->get('feedback.comment');
         $id = $request->request->get('entity_id', null);
         $class = $request->request->get('entity_class', null);
-        
+
         if(!$service->acceptsComments($class)) {
             throw new Exception("Cannot accept comments for this class.");
-        }        
+        }
         $repo = $em->getRepository($class);
         $entity = $repo->find($id);
-        
+
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $service->addComment($entity, $comment);
+            $notifier->newComment($comment);
             $this->addFlash('success', 'Thank you for your suggestion.');
             return $this->redirect($service->entityUrl($comment));
         }
-        
+
         return array(
             'entity' => $entity,
 			'service' => $service,
@@ -144,13 +146,13 @@ class CommentController extends Controller {
                 'id' => $comment->getId()
             )));
         }
-        
+
         $commentNote = new CommentNote();
         $commentNote->setComment($comment);
         // $this->getUser() is depreciated in Symfony 3.2, and should be replaced
         // with a typehinted parameter.
         // http://symfony.com/blog/new-in-symfony-3-2-user-value-resolver-for-controllers
-        $commentNote->setUser($this->getUser()); 
+        $commentNote->setUser($this->getUser());
         $noteForm = $this->createForm(CommentNoteType::class, $commentNote);
         $noteForm->handleRequest($request);
         if($noteForm->isSubmitted() && $noteForm->isValid()) {
@@ -162,7 +164,7 @@ class CommentController extends Controller {
                 'id' => $comment->getId()
             )));
         }
-        
+
         return array(
             'comment' => $comment,
             'service' => $service,

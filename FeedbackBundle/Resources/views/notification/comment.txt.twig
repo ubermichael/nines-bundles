@@ -1,0 +1,8 @@
+A new comment has been received.
+
+Sender: {{ comment.fullname }} {{ comment.email }}
+Follow-up: {% if comment.followUp %}Yes{% else %}No{% endif %}
+Re: {{ service.entityUrl(comment)}}
+Date: {{ comment.created|date }}
+
+{{ comment.content }}
