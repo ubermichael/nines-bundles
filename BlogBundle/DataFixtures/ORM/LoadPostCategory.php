@@ -9,7 +9,7 @@ use Nines\BlogBundle\Entity\PostCategory;
 /**
  * Load some users for unit tests.
  */
-class LoadCategories extends Fixture {
+class LoadPostCategory extends Fixture {
 
     /**
      * {@inheritdoc}
@@ -21,7 +21,7 @@ class LoadCategories extends Fixture {
         $category->setDescription('Stuff happened.');
         $manager->persist($category);
         $manager->flush();
-        
+
         $this->addReference('post-category-1', $category);
     }
 

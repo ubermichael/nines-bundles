@@ -15,12 +15,12 @@ class LoadUser extends Fixture {
         'username' => 'admin@example.com',
         'password' => 'supersecret',
     );
-    
+
     const USER = array(
         'username' => 'user@example.com',
         'password' => 'secret',
     );
-    
+
     /**
      * {@inheritdoc}
      */

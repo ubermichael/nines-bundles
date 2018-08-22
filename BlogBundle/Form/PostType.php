@@ -2,40 +2,79 @@
 
 namespace Nines\BlogBundle\Form;
 
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Blog Post form type.
+ * PostType form.
  */
 class PostType extends AbstractType
 {
     /**
-     * Build a post form.
+     * Add form fields to $builder.
      *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add('title');
-        $builder->add('includeComments');
-        $builder->add('excerpt', CKEditorType::class, array(
+    {        $builder->add('title', null, array(
+            'label' => 'Title',
+            'required' => true,
             'attr' => array(
-                'help_block' => 'Excerpts will be shown on the home page and in '
-                . 'lists of blog posts. Leave this field blank and one will be '
-                . 'generated automatically.'
+                'help_block' => '',
             ),
         ));
-        $builder->add('content', CKEditorType::class, array(
-        ));
-        $builder->add('category');
-        $builder->add('status');
-    }
+                $builder->add('includeComments', ChoiceType::class, array(
+            'label' => 'Include Comments',
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => array(
+                'Yes' => true,
+                'No' => false,
+                ),
+            'required' => true,
+            'placeholder' => false,
+            'attr' => array(
+                'help_block' => '',
+            ),
 
+        ));
+                $builder->add('excerpt', null, array(
+            'label' => 'Excerpt',
+            'required' => false,
+            'attr' => array(
+                'help_block' => '',
+            ),
+        ));
+                $builder->add('content', null, array(
+            'label' => 'Content',
+            'required' => true,
+            'attr' => array(
+                'help_block' => '',
+            ),
+        ));
+                $builder->add('searchable', null, array(
+            'label' => 'Searchable',
+            'required' => true,
+            'attr' => array(
+                'help_block' => '',
+            ),
+        ));
+                        $builder->add('category');
+                        $builder->add('status');
+                        $builder->add('user');
+        
+    }
+    
     /**
+     * Define options for the form.
+     *
+     * Set default, optional, and required options passed to the
+     * buildForm() method via the $options parameter.
+     *
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -44,4 +83,5 @@ class PostType extends AbstractType
             'data_class' => 'Nines\BlogBundle\Entity\Post'
         ));
     }
+
 }

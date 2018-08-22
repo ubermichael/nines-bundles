@@ -2,121 +2,121 @@
 
 namespace Nines\FeedbackBundle\Controller;
 
-use Exception;
-use Nines\FeedbackBundle\Entity\Comment;
-use Nines\FeedbackBundle\Entity\CommentNote;
-use Nines\FeedbackBundle\Entity\CommentStatus;
-use Nines\FeedbackBundle\Form\AdminCommentType;
-use Nines\FeedbackBundle\Form\CommentNoteType;
-use Nines\FeedbackBundle\Form\CommentType;
-use Nines\FeedbackBundle\Services\NotifierService;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Nines\FeedbackBundle\Entity\Comment;
+use Nines\FeedbackBundle\Form\CommentType;
 
 /**
  * Comment controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/admin/comment")
  */
-class CommentController extends Controller {
-
+class CommentController extends Controller
+{
     /**
      * Lists all Comment entities.
+     *
+     * @param Request $request
+     *
+     * @return array
      *
      * @Route("/", name="admin_comment_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
      */
-    public function indexAction(Request $request) {
-        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
+    public function indexAction(Request $request)
+    {
         $em = $this->getDoctrine()->getManager();
-        $statusRepo = $em->getRepository(CommentStatus::class);
-        $commentRepo = $em->getRepository(Comment::class);
-        $qb = $commentRepo->createQueryBuilder('e');
-
-        $statusName = $request->query->get('status');
-        if ($statusName) {
-            $status = $statusRepo->findOneBy(array(
-                'name' => $statusName,
-            ));
-            $qb->andWhere('e.status = :status');
-            $qb->setParameter('status', $status);
-        }
-        $qb->orderBy('e.id');
+        $qb = $em->createQueryBuilder();
+        $qb->select('e')->from(Comment::class, 'e')->orderBy('e.id', 'ASC');
         $query = $qb->getQuery();
         $paginator = $this->get('knp_paginator');
-        $comments = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        $service = $this->get('feedback.comment');
+        $comments = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
         return array(
             'comments' => $comments,
-            'service' => $service,
-            'statuses' => $statusRepo->findAll(),
         );
     }
 
-    /**
-     * Post a comment on an entity.
+/**
+     * Typeahead API endpoint for Comment entities.
      *
-     * @Method("POST")
-     * @Route("/post", name="comment_post")
+     * To make this work, add something like this to CommentRepository:
+        //    public function typeaheadQuery($q) {
+        //        $qb = $this->createQueryBuilder('e');
+        //        $qb->andWhere("e.name LIKE :q");
+        //        $qb->orderBy('e.name');
+        //        $qb->setParameter('q', "{$q}%");
+        //        return $qb->getQuery()->execute();
+        //    }
+     *
      * @param Request $request
-     * @Template()
-     */
-    public function postAction(Request $request, NotifierService $notifier) {
-        $em = $this->getDoctrine()->getManager();
-		$service = $this->get('feedback.comment');
-        $id = $request->request->get('entity_id', null);
-        $class = $request->request->get('entity_class', null);
-
-        if(!$service->acceptsComments($class)) {
-            throw new Exception("Cannot accept comments for this class: " . $class);
-        }
-        $repo = $em->getRepository($class);
-        $entity = $repo->find($id);
-
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $service->addComment($entity, $comment);
-            $notifier->newComment($comment);
-            $this->addFlash('success', 'Thank you for your suggestion.');
-            return $this->redirect($service->entityUrl($comment));
-        }
-
-        return array(
-            'entity' => $entity,
-			'service' => $service,
-        );
-    }
-
-    /**
-     * Full text search for Comment entities.
      *
-     * @Route("/fulltext", name="admin_comment_fulltext")
+     * @Route("/typeahead", name="admin_comment_typeahead")
+     * @Method("GET")
+     * @return JsonResponse
+     */
+    public function typeahead(Request $request)
+    {
+        $q = $request->query->get('q');
+        if( ! $q) {
+            return new JsonResponse([]);
+        }
+        $em = $this->getDoctrine()->getManager();
+	$repo = $em->getRepository(Comment::class);
+        $data = [];
+        foreach($repo->typeaheadQuery($q) as $result) {
+            $data[] = [
+                'id' => $result->getId(),
+                'text' => (string)$result,
+            ];
+        }
+        return new JsonResponse($data);
+    }
+    /**
+     * Search for Comment entities.
+     *
+     * To make this work, add a method like this one to the
+     * NinesFeedbackBundle:Comment repository. Replace the fieldName with
+     * something appropriate, and adjust the generated search.html.twig
+     * template.
+     *
+     * <code><pre>
+     *    public function searchQuery($q) {
+     *       $qb = $this->createQueryBuilder('e');
+     *       $qb->addSelect("MATCH (e.title) AGAINST(:q BOOLEAN) as HIDDEN score");
+     *       $qb->orderBy('score', 'DESC');
+     *       $qb->setParameter('q', $q);
+     *       return $qb->getQuery();
+     *    }
+     * </pre></code>
+     *
+     * @param Request $request
+     *
+     * @Route("/search", name="admin_comment_search")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @return array
      */
-    public function fulltextAction(Request $request) {
-        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
+    public function searchAction(Request $request)
+    {
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Comment::class);
-        $q = $request->query->get('q');
-        if ($q) {
-            $query = $repo->fulltextQuery($q);
+	$repo = $em->getRepository('NinesFeedbackBundle:Comment');
+	$q = $request->query->get('q');
+	if($q) {
+	    $query = $repo->searchQuery($q);
             $paginator = $this->get('knp_paginator');
             $comments = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        } else {
+	} else {
             $comments = array();
-        }
+	}
 
         return array(
             'comments' => $comments,
@@ -125,75 +125,126 @@ class CommentController extends Controller {
     }
 
     /**
-     * Finds and displays a Comment entity.
+     * Creates a new Comment entity.
      *
-     * @Route("/{id}", name="admin_comment_show")
-     * @Method({"GET","POST"})
-     * @Template()
      * @param Request $request
-     * @param Comment $comment
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_CONTENT_ADMIN')")
+     * @Route("/new", name="admin_comment_new")
+     * @Method({"GET", "POST"})
+     * @Template()
      */
-    public function showAction(Request $request, Comment $comment) {
-        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $service = $this->get('feedback.comment');
-        $statusForm = $this->createForm(AdminCommentType::class, $comment);
-        $statusForm->handleRequest($request);
-        if ($statusForm->isSubmitted() && $statusForm->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'The comment was updated.');
-            return $this->redirect($this->generateUrl('admin_comment_show', array(
-                'id' => $comment->getId()
-            )));
-        }
+    public function newAction(Request $request)
+    {
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
 
-        $commentNote = new CommentNote();
-        $commentNote->setComment($comment);
-        // $this->getUser() is depreciated in Symfony 3.2, and should be replaced
-        // with a typehinted parameter.
-        // http://symfony.com/blog/new-in-symfony-3-2-user-value-resolver-for-controllers
-        $commentNote->setUser($this->getUser());
-        $noteForm = $this->createForm(CommentNoteType::class, $commentNote);
-        $noteForm->handleRequest($request);
-        if($noteForm->isSubmitted() && $noteForm->isValid()) {
-            $comment->addNote($commentNote);
-            $em->persist($commentNote);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($comment);
             $em->flush();
-            $this->addFlash('success', 'The comment note was added.');
-            return $this->redirect($this->generateUrl('admin_comment_show', array(
-                'id' => $comment->getId()
-            )));
+
+            $this->addFlash('success', 'The new comment was created.');
+            return $this->redirectToRoute('admin_comment_show', array('id' => $comment->getId()));
         }
 
         return array(
             'comment' => $comment,
-            'service' => $service,
-            'statuses' => $em->getRepository(CommentStatus::class)->findAll(),
-            'statusForm' => $statusForm->createView(),
-            'noteForm' => $noteForm->createView(),
+            'form' => $form->createView(),
+        );
+    }
+
+    /**
+     * Creates a new Comment entity in a popup.
+     *
+     * @param Request $request
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_CONTENT_ADMIN')")
+     * @Route("/new_popup", name="admin_comment_new_popup")
+     * @Method({"GET", "POST"})
+     * @Template()
+     */
+    public function newPopupAction(Request $request)
+    {
+        return $this->newAction($request);
+    }
+
+    /**
+     * Finds and displays a Comment entity.
+     *
+     * @param Comment $comment
+     *
+     * @return array
+     *
+     * @Route("/{id}", name="admin_comment_show")
+     * @Method("GET")
+     * @Template()
+     */
+    public function showAction(Comment $comment)
+    {
+
+        return array(
+            'comment' => $comment,
+        );
+    }
+
+    /**
+     * Displays a form to edit an existing Comment entity.
+     *
+     *
+     * @param Request $request
+     * @param Comment $comment
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_CONTENT_ADMIN')")
+     * @Route("/{id}/edit", name="admin_comment_edit")
+     * @Method({"GET", "POST"})
+     * @Template()
+     */
+    public function editAction(Request $request, Comment $comment)
+    {
+        $editForm = $this->createForm(CommentType::class, $comment);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+            $this->addFlash('success', 'The comment has been updated.');
+            return $this->redirectToRoute('admin_comment_show', array('id' => $comment->getId()));
+        }
+
+        return array(
+            'comment' => $comment,
+            'edit_form' => $editForm->createView(),
         );
     }
 
     /**
      * Deletes a Comment entity.
      *
-     * @Route("/{id}/delete", name="admin_comment_delete")
-     * @Method("GET")
+     *
      * @param Request $request
      * @param Comment $comment
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_CONTENT_ADMIN')")
+     * @Route("/{id}/delete", name="admin_comment_delete")
+     * @Method("GET")
      */
-    public function deleteAction(Request $request, Comment $comment) {
-        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
+    public function deleteAction(Request $request, Comment $comment)
+    {
         $em = $this->getDoctrine()->getManager();
         $em->remove($comment);
         $em->flush();
         $this->addFlash('success', 'The comment was deleted.');
 
-        if ($request->query->has('ref')) {
-            return $this->redirect($request->query->get('ref'));
-        }
-
         return $this->redirectToRoute('admin_comment_index');
     }
-
 }

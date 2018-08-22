@@ -45,7 +45,7 @@
         </a>.
     </div>
 
-    {% if page.includeComments %}
+    {% if post.includeComments %}
         {% include 'NinesFeedbackBundle:comment:comment-interface.html.twig' with { 'entity': post } %}
     {% endif %}
 

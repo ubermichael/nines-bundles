@@ -1,25 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>PostStatus List</h1>
     <p class="count">
         Displaying {{ postStatuses|length }} postStatuses of {{ postStatuses.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            {% if is_granted('ROLE_BLOG_ADMIN') %}
+        {% if is_granted('ROLE_BLOG_ADMIN') %}
+            <div class='btn-group'>
                 <a href="{{ path('post_status_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
-            {% endif %}
-            <a href="{{ path('post_status_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
-        </div>
+            </div>
+        {% endif %}
     </div>
 
     <table class="table table-bordered table-condensed table-hover table-striped">
@@ -30,7 +27,7 @@
                 <th>Description</th>
                 <th>Public</th>
                 <th>Created</th>
-                <th>Updated</th>    
+                <th>Updated</th>
             </tr>
         </thead>
         <tbody>

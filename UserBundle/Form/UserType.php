@@ -1,6 +1,6 @@
 <?php
 
-namespace Nines\FeedbackBundle\Form;
+namespace Nines\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,9 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * CommentType form.
+ * UserType form.
  */
-class CommentType extends AbstractType
+class UserType extends AbstractType
 {
     /**
      * Add form fields to $builder.
@@ -22,48 +22,25 @@ class CommentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {        $builder->add('fullname', null, array(
             'label' => 'Fullname',
+            'required' => false,
+            'attr' => array(
+                'help_block' => '',
+            ),
+        ));
+                $builder->add('institution', null, array(
+            'label' => 'Institution',
+            'required' => false,
+            'attr' => array(
+                'help_block' => '',
+            ),
+        ));
+                $builder->add('data', null, array(
+            'label' => 'Data',
             'required' => true,
             'attr' => array(
                 'help_block' => '',
             ),
         ));
-                $builder->add('email', null, array(
-            'label' => 'Email',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-                $builder->add('followUp', ChoiceType::class, array(
-            'label' => 'Follow Up',
-            'expanded' => true,
-            'multiple' => false,
-            'choices' => array(
-                'Yes' => true,
-                'No' => false,
-                ),
-            'required' => true,
-            'placeholder' => false,
-            'attr' => array(
-                'help_block' => '',
-            ),
-
-        ));
-                $builder->add('entity', null, array(
-            'label' => 'Entity',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-                $builder->add('content', null, array(
-            'label' => 'Content',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
-                        $builder->add('status');
         
     }
     
@@ -78,7 +55,7 @@ class CommentType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Nines\FeedbackBundle\Entity\Comment'
+            'data_class' => 'Nines\UserBundle\Entity\User'
         ));
     }
 

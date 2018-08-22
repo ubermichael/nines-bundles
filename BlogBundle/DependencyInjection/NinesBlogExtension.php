@@ -25,7 +25,7 @@ class NinesBlogExtension extends Extension
         foreach($config as $key => $value) {
             $container->setParameter("nines_blog.{$key}", $value);
         }
-        
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }

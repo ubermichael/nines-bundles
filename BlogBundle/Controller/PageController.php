@@ -2,13 +2,17 @@
 
 namespace Nines\BlogBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\BlogBundle\Entity\Page;
 use Nines\BlogBundle\Form\PageType;
+use Nines\UtilBundle\Services\Text;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Page controller.
@@ -20,16 +24,18 @@ class PageController extends Controller {
     /**
      * Lists all Page entities.
      *
+     * @param Request $request
+     *
+     * @return array
+     *
      * @Route("/", name="page_index")
      * @Method("GET")
      * @Template()
-     * @param Request $request
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
         $em = $this->getDoctrine()->getManager();
-        $private = $this->get('security.authorization_checker')->isGranted('ROLE_USER');
         $repo = $em->getRepository(Page::class);
-        $query = $repo->listQuery($private);
+        $query = $repo->listQuery($checker->isGranted('ROLE_USER'));
         $paginator = $this->get('knp_paginator');
         $pages = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
@@ -42,7 +48,8 @@ class PageController extends Controller {
      * @Route("/sort", name="page_sort")
      * @Method({"GET","POST"})
      * @Template()
-     * 
+     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     *
      * @param Request $request
      * @return array
      */
@@ -63,7 +70,7 @@ class PageController extends Controller {
         }
 
         $pages = $repo->findBy(
-                array('public' => true), array('weight' => 'ASC', 'title' => 'ASC')
+            array('public' => true), array('weight' => 'ASC', 'title' => 'ASC')
         );
         return array(
             'pages' => $pages
@@ -76,15 +83,13 @@ class PageController extends Controller {
      * @Route("/search", name="page_search")
      * @Method("GET")
      * @Template()
-     * @param Request $request
-     * @return array
      */
-    public function searchAction(Request $request) {
+    public function searchAction(Request $request, AuthorizationCheckerInterface $checker) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('NinesBlogBundle:Page');
         $q = $request->query->get('q');
         if ($q) {
-            $query = $repo->fulltextQuery($q);
+            $query = $repo->fulltextQuery($q, $checker->isGranted('ROLE_USER'));
             $paginator = $this->get('knp_paginator');
             $pages = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
         } else {
@@ -100,25 +105,22 @@ class PageController extends Controller {
     /**
      * Creates a new Page entity.
      *
+     * @param Request $request
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_BLOG_ADMIN')")
      * @Route("/new", name="page_new")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
      */
-    public function newAction(Request $request) {
-        if (!$this->isGranted('ROLE_BLOG_ADMIN')) {
-            $this->addFlash('danger', 'You must login to access this page.');
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        $user = $this->getUser();
+    public function newAction(Request $request, Text $text) {
         $page = new Page();
-        $page->setUser($user);
-
-        $form = $this->createForm('Nines\BlogBundle\Form\PageType', $page);
+        $page->setUser($this->getUser());
+        $form = $this->createForm(PageType::class, $page);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $text = $this->get('nines.util.text');
             if (!$page->getExcerpt()) {
                 $page->setExcerpt($text->trim($page->getContent(), $this->getParameter('nines_blog.excerpt_length')));
             }
@@ -140,14 +142,17 @@ class PageController extends Controller {
     /**
      * Finds and displays a Page entity.
      *
+     * @param Page $page
+     *
+     * @return array
+     *
      * @Route("/{id}", name="page_show")
      * @Method("GET")
      * @Template()
-     * @param Page $page
      */
     public function showAction(Page $page) {
         if (!$page->getPublic()) {
-            $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page!');
+            $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page.');
         }
 
         return array(
@@ -158,19 +163,22 @@ class PageController extends Controller {
     /**
      * Displays a form to edit an existing Page entity.
      *
+     *
+     * @param Request $request
+     * @param Page $page
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_BLOG_ADMIN')")
      * @Route("/{id}/edit", name="page_edit")
      * @Method({"GET", "POST"})
      * @Template()
-     * @param Request $request
-     * @param Page $page
      */
-    public function editAction(Request $request, Page $page) {
-        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');
-        $editForm = $this->createForm('Nines\BlogBundle\Form\PageType', $page);
+    public function editAction(Request $request, Page $page, Text $text) {
+        $editForm = $this->createForm(PageType::class, $page);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $text = $this->get('nines.util.text');
             if (!$page->getExcerpt()) {
                 $page->setExcerpt($text->trim($page->getContent(), $this->getParameter('nines_blog.excerpt_length')));
             }
@@ -190,13 +198,17 @@ class PageController extends Controller {
     /**
      * Deletes a Page entity.
      *
-     * @Route("/{id}/delete", name="page_delete")
-     * @Method("GET")
+     *
      * @param Request $request
      * @param Page $page
+     *
+     * @return array|RedirectResponse
+     *
+     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @Route("/{id}/delete", name="page_delete")
+     * @Method("GET")
      */
     public function deleteAction(Request $request, Page $page) {
-        $this->denyAccessUnlessGranted('ROLE_BLOG_ADMIN', null, 'Unable to access this page!');
         $em = $this->getDoctrine()->getManager();
         $em->remove($page);
         $em->flush();

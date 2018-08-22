@@ -2,36 +2,26 @@
 
 namespace Nines\BlogBundle\Form;
 
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Nines\BlogBundle\Entity\PostCategory;
+use Nines\UtilBundle\Form\TermType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Blog post category type.
+ * PostCategoryType form.
  */
-class PostCategoryType extends AbstractType
+class PostCategoryType extends TermType
 {
-    /**
-     * Build the form.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add('name');
-        $builder->add('label');
-        $builder->add('description', CKEditorType::class);
-    }
 
     /**
+     * Define options for the form.
+     *
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Nines\BlogBundle\Entity\PostCategory'
+            'data_class' => PostCategory::class,
         ));
     }
+
 }

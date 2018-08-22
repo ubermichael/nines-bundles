@@ -9,7 +9,7 @@ use Nines\BlogBundle\Entity\PostStatus;
 /**
  * Load some users for unit tests.
  */
-class LoadStatuses extends Fixture {
+class LoadPostStatus extends Fixture {
 
     /**
      * {@inheritdoc}
@@ -20,14 +20,14 @@ class LoadStatuses extends Fixture {
         $draft->setLabel('Draft');
         $draft->setPublic(false);
         $draft->setDescription('Drafty');
-        $manager->persist($draft);        
+        $manager->persist($draft);
         $this->addReference('post-status-1', $draft);
-        
+
         $published = new PostStatus();
         $published->setName('published');
         $published->setLabel('Published');
         $published->setPublic(true);
-        $published->setDescription('Public');        
+        $published->setDescription('Public');
         $manager->persist($published);
         $this->addReference('post-status-2', $draft);
         $manager->flush();

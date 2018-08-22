@@ -1,3 +1,0 @@
-nines_dublin_core_homepage:
-    path:     /
-    defaults: { _controller: NinesDublinCoreBundle:Default:index }

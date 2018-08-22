@@ -16,7 +16,7 @@ class PostRepository extends EntityRepository {
 
     /**
      * Return a full text query, respecting private comments.
-     * 
+     *
      * @param string $q
      * @param string $private
      * @return Query
@@ -25,7 +25,7 @@ class PostRepository extends EntityRepository {
         $qb = $this->createQueryBuilder('e');
         $qb->addSelect("MATCH (e.title, e.searchable) AGAINST (:q BOOLEAN) as HIDDEN score");
         $qb->andWhere("MATCH (e.title, e.searchable) AGAINST (:q BOOLEAN) > 0");
-        if( ! $private) {
+        if (!$private) {
             $em = $this->getEntityManager();
             $statuses = $em->getRepository(PostStatus::class)->findBy(array(
                 'public' => true,
@@ -37,10 +37,10 @@ class PostRepository extends EntityRepository {
         $qb->setParameter('q', $q);
         return $qb->getQuery();
     }
-    
+
     /**
      * Get a query to list recent blog posts.
-     * 
+     *
      * @param bool $private
      * @param int $limit
      * @return Query
@@ -48,17 +48,18 @@ class PostRepository extends EntityRepository {
     public function recentQuery($private = false, $limit = 0) {
         $em = $this->getEntityManager();
         $qb = $this->createQueryBuilder('e');
-        if( ! $private) {
+        if (!$private) {
             $statuses = $em->getRepository(PostStatus::class)->findBy(array(
                 'public' => true,
             ));
             $qb->andWhere('e.status = :status');
             $qb->setParameter('status', $statuses);
         }
-        if($limit > 0) {
+        if ($limit > 0) {
             $qb->setMaxResults($limit);
         }
         $qb->orderBy('e.id', 'DESC');
         return $qb->getQuery();
     }
+
 }
