@@ -4,6 +4,7 @@ namespace Nines\FeedbackBundle\Form;
 
 use Nines\FeedbackBundle\Entity\Comment;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,10 +21,18 @@ class CommentType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('fullname');  // string
         $builder->add('email');  // string
-        $builder->add('followUp', null, array(
-            'label' => 'Follow Up',
+        $builder->add('followUp', ChoiceType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => array(
+                'Yes' => true,
+                'No' => false,
+                ),
+            'data' => 'false',
+            'required' => true,
+            'placeholder' => false,
             'attr' => array(
-                'help_block' => 'Check this box if you would like someone to contact you about your comment.'
+                'help_block' => 'Would you like someone to contact you about this comment?'
             ),
         ));
         $builder->add('content', TextareaType::class);  // string
