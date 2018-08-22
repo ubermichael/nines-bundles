@@ -20,22 +20,18 @@ class NinesFeedbackExtension extends Extension {
     public function load(array $configs, ContainerBuilder $container) {
 		$loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 		$loader->load('services.yml');
-		
+
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
         $map = array(
             'commenting' => [],
-            'flagging' => [],
         );
         $container->setParameter('nines_feedback.default_status', $config['default_status']);
         $container->setParameter('nines_feedback.public_status', $config['public_status']);
         foreach($config['commenting'] as $routing) {
             $map['commenting'][$routing['class']] = $routing['route'];
-        }        
-        foreach($config['flagging'] as $routing) {
-            $map['flagging'][$routing['class']] = $routing['route'];
-        }        
+        }
         $container->setParameter('nines_feedback.routing', $map);
     }
-    
+
 }

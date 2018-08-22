@@ -11,13 +11,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/configuration.html}
  */
 class Configuration implements ConfigurationInterface {
-    
+
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
-        
+
         $rootNode = $treeBuilder->root('nines_feedback');
         $rootNode
             ->children()
@@ -31,16 +31,8 @@ class Configuration implements ConfigurationInterface {
                     ->end()
                     ->end()
                 ->end()
-                ->arrayNode('flagging')
-                    ->prototype('array')
-                    ->children()
-                        ->scalarNode('class')->end()
-                        ->scalarNode('route')->end()
-                    ->end()
-                    ->end()
-                ->end()
             ->end();
-            
+
         return $treeBuilder;
     }
 
