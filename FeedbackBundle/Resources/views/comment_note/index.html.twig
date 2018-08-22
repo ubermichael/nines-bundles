@@ -1,21 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>CommentNote List</h1>
     <p class="count">
         Displaying {{ commentNotes|length }} commentNotes of {{ commentNotes.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
-
-    <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            <a href="{{ path('admin_comment_note_fulltext') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
-        </div>
-    </div>
 
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
