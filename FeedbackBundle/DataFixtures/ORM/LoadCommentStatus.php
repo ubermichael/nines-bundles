@@ -5,7 +5,6 @@ namespace Nines\FeedbackBundle\DataFixtures\ORM;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Nines\FeedbackBundle\Entity\CommentStatus;
-use Nines\UserBundle\Entity\User;
 
 /**
  * Load some users for unit tests.

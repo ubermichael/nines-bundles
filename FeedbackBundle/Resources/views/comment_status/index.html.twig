@@ -1,22 +1,24 @@
 {% extends 'base.html.twig' %}
 
- {% block pageheader %} 
+{% block pageheader %}
     <h1>CommentStatus List</h1>
     <p class="count">
         Displaying {{ commentStatuses|length }} commentStatuses of {{ commentStatuses.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %}
 
 {% block body %}
 
+    {% if(is_granted('ROLE_COMMENT_ADMIN')) %}
         <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            <a href="{{ path('admin_comment_status_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+            <div class='btn-group'>
+                <a href="{{ path('admin_comment_status_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            </div>
         </div>
-    </div>
-        
+    {% endif %}
+
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
@@ -27,22 +29,22 @@
                 <th>Updated</th>            </tr>
         </thead>
         <tbody>
-        {% for commentStatus in commentStatuses %}
-            <tr>
-                <td>
-                    <a href="{{ path('admin_comment_status_show', { 'id': commentStatus.id }) }}">
-                        {{ commentStatus.name }}
-                    </a>
-                </td>
-                <td>{{ commentStatus.label }}</td>
-                <td>{{ commentStatus.description }}</td>
-                <td>{% if commentStatus.created %}{{ commentStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if commentStatus.updated %}{{ commentStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-        {% endfor %}
+            {% for commentStatus in commentStatuses %}
+                <tr>
+                    <td>
+                        <a href="{{ path('admin_comment_status_show', { 'id': commentStatus.id }) }}">
+                            {{ commentStatus.name }}
+                        </a>
+                    </td>
+                    <td>{{ commentStatus.label }}</td>
+                    <td>{{ commentStatus.description }}</td>
+                    <td>{% if commentStatus.created %}{{ commentStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if commentStatus.updated %}{{ commentStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-        
+
     <div class="navigation">
         {{ knp_pagination_render(commentStatuses) }}
     </div>

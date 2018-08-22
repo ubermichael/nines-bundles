@@ -1,6 +1,28 @@
 services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Nines\FeedbackBundle\:
+        resource: '../../*'
+        exclude: '../../{Entity,Repository,Resources,Tests}'
+
+    Nines\FeedbackBundle\Controller\:
+        resource: '../../Controller/*'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Nines\FeedbackBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: navMenu, alias: feedback}
+
     feedback.comment:
-        class: Nines\FeedbackBundle\Services\CommentService
+        alias: Nines\FeedbackBundle\Services\CommentService
+        public: true
+
+    Nines\FeedbackBundle\Services\CommentService:
         arguments: [ "%nines_feedback.routing%", "%nines_feedback.default_status%", "%nines_feedback.public_status%" ]
         calls:
             - [ setAuthorizationChecker, ['@security.authorization_checker']]
