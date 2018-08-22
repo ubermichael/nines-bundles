@@ -19,6 +19,7 @@ class LoadPost extends Fixture implements DependentFixtureInterface {
         $draft->setContent("I am an excerpt and I like drafts.");
         $draft->setSearchable("I am an excerpt and I like drafts.");
         $draft->setUser($this->getReference('user.user'));
+        $this->setReference('post.draft', $draft);
         $manager->persist($draft);
 
         $published = new Post();
@@ -29,6 +30,7 @@ class LoadPost extends Fixture implements DependentFixtureInterface {
         $published->setContent("I am an excerpt and I like publishing.");
         $published->setSearchable("I am an excerpt and I like publishing.");
         $published->setUser($this->getReference('user.user'));
+        $this->setReference('post.published', $published);
         $manager->persist($published);
         $manager->flush();
     }

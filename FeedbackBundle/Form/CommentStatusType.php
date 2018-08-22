@@ -2,27 +2,16 @@
 
 namespace Nines\FeedbackBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Nines\FeedbackBundle\Entity\CommentStatus;
+use Nines\UtilBundle\Form\TermType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * CommentStatusType form.
  */
-class CommentStatusType extends AbstractType
+class CommentStatusType extends TermType
 {
-    /**
-     * Add form fields to $builder.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-    }
-    
+
     /**
      * Define options for the form.
      *
@@ -34,7 +23,7 @@ class CommentStatusType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Nines\FeedbackBundle\Entity\CommentStatus'
+            'data_class' => CommentStatus::class,
         ));
     }
 

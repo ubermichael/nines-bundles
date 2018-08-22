@@ -18,17 +18,17 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Commenting service for Symfony.
  */
 class CommentService {
-    
+
     /**
      * @var EntityManager
      */
     private $em;
-    
+
     /**
      * @var Logger
      */
     private $logger;
-    
+
     /**
      * @var Router
      */
@@ -38,14 +38,14 @@ class CommentService {
      * @var AuthorizationCheckerInterface
      */
     private $authChecker;
-    
+
     /**
      * Mapping of class name to route name.
      *
      * @var array
      */
     private $routing;
-    
+
     /**
      * Name of the default comment status.
      *
@@ -63,13 +63,13 @@ class CommentService {
     /**
      * Form factory, for building the comment form.
      *
-     * @var FormFactory 
-     */    
+     * @var FormFactory
+     */
     private $formFactory;
-    
+
     /**
      * Build the commenting service.
-     * 
+     *
      * @param array $routing
      * @param string $defaultStatusName
      * @param string $publicStatusName
@@ -79,10 +79,10 @@ class CommentService {
         $this->defaultStatusName = $defaultStatusName;
         $this->publicStatusName = $publicStatusName;
     }
-    
+
     /**
      * Set the Doctrine Registry.
-     * 
+     *
      * @param Registry $registry
      */
     public function setDoctrine(Registry $registry) {
@@ -91,54 +91,54 @@ class CommentService {
 
     /**
      * Set the logger.
-     * 
+     *
      * @param Logger $logger
      */
     public function setLogger(Logger $logger) {
         $this->logger = $logger;
     }
-    
+
     /**
      * Set the Symfony router.
-     * 
+     *
      * @param Router $router
      */
     public function setRouter(Router $router) {
         $this->router = $router;
     }
-    
+
     /**
      * Set the Symfony Auth Checker.
-     * 
+     *
      * @param AuthorizationCheckerInterface $authChecker
      */
     public function setAuthorizationChecker(AuthorizationCheckerInterface $authChecker) {
-        $this->authChecker = $authChecker;        
+        $this->authChecker = $authChecker;
     }
-    
+
     /**
      * Set the form factory.
-     * 
+     *
      * @param FormFactory $formFactory
      */
     public function setFormFactory(FormFactory $formFactory) {
         $this->formFactory = $formFactory;
     }
-    
+
     /**
      * Check if an entity is configured to accept comments in config.yml.
-     * 
+     *
      * @param string $name The FQCN of the entity.
-     * 
+     *
      * @return bool
      */
     public function acceptsComments($name) {
         return array_key_exists($name, $this->routing['commenting']);
     }
-    
+
     /**
      * Find the entity corresponding to a comment.
-     * 
+     *
      * @param Comment $comment
      * @return mixed
      */
@@ -150,7 +150,7 @@ class CommentService {
 
     /**
      * Return the short class name for the entity a comment refers to.
-     * 
+     *
      * @param Comment $comment
      * @return string
      */
@@ -159,11 +159,11 @@ class CommentService {
         $reflection = new ReflectionClass($entity);
         return $reflection->getShortName();
     }
-    
+
     /**
      * Get the URL to view an entity based on a comment, based on how the
      * entity commenting is configured in config.yml.
-     * 
+     *
      * @param Comment $comment
      * @return string
      * @throws Exception
@@ -175,11 +175,11 @@ class CommentService {
         }
         return $this->router->generate($this->routing['commenting'][$class], ['id' => $id]);
     }
-    
+
     /**
      * Find the comments for an entity. If the current user has ROLE_ADMIN, then
      * all comments are returned, otherwise only public comments are returned.
-     * 
+     *
      * @param mixed $entity
      * @return Collection|Comment[]
      */
@@ -203,30 +203,34 @@ class CommentService {
         }
         return $comments;
     }
-    
+
     /**
      * Add a comment to an entity. Also sets the comment's status to the default
      * one.
-     * 
+     *
      * @param mixed $entity
      * @param Comment $comment
-     * 
+     *
      * @return Comment
      */
     public function addComment($entity, Comment $comment) {
-        $comment->setEntity(get_class($entity) . ':' . $entity->getId());    
+        $comment->setEntity(get_class($entity) . ':' . $entity->getId());
         if( ! $comment->getStatus()) {
-            $comment->setStatus($this->em->getRepository('NinesFeedbackBundle:CommentStatus')->findOneBy(array(
+            $status = $this->em->getRepository('NinesFeedbackBundle:CommentStatus')->findOneBy(array(
                 'name' => $this->defaultStatusName,
-            )));
+            ));
+            if( ! $status) {
+                throw new Exception("Cannot find default comment status " . $this->defaultStatusName);
+            }
+            $comment->setStatus($status);
         }
         $this->em->persist($comment);
         $this->em->flush($comment);
         return $comment;
     }
-    
+
     public function getForm() {
         return $this->formFactory->create(CommentType::class)->createView();
     }
-    
+
 }
