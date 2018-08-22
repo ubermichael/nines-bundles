@@ -7,13 +7,14 @@
 
 {% block body -%}
 
-    {{ form(form, {"style": "horizontal"}) }}
-
-    <div class="btn-toolbar">
-        <div class="btn-group pull-right">
-            <a href="{{ path('user') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-arrow-left"></span> Back
-            </a>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="form-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+            <input type="submit" value="Create" class="btn btn-primary" />
+            <a href="{{ path('user') }}" class="btn btn-warning">Cancel</a>
         </div>
     </div>
+    {{ form_end(form) }}
 {% endblock %}

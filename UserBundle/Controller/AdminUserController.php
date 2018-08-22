@@ -6,6 +6,7 @@ use Nines\UserBundle\Entity\User;
 use Nines\UserBundle\Form\AdminUserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -15,26 +16,23 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Admin-only user controller. Restrict access to this conroller in security.yml
- * like so:
- *         - { path: ^/admin/, role: ROLE_ADMIN }
+ * Admin-only user controller.
  *
  * @Route("/admin/user")
+ * @Security("has_role('ROLE_ADMIN')")
  */
-class AdminUserController extends Controller
-{
+class AdminUserController extends Controller {
+
     /**
      * Lists all User entities.
      *
      * @Route("/", name="user")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @return array
      */
-    public function indexAction()
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    public function indexAction() {
         $em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository('NinesUserBundle:User')->findAll();
 
@@ -42,76 +40,35 @@ class AdminUserController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new User entity.
      *
-     * @Route("/", name="user_create")
-     * @Method("POST")
-     * @Template("NinesUserBundle:User:new.html.twig")
-     * 
+     * @Route("/new", name="user_new")
+     * @Method({"GET", "POST"})
+     * @Template()
+     *
      * @param Request $request
      *
      * @return array
      */
-    public function createAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $entity = new User();
-        $form = $this->createCreateForm($entity);
+    public function newAction(Request $request) {
+        $user = new User();
+        $form = $this->createForm(AdminUserType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $entity->setPlainPassword(substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 15));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setPlainPassword(substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 15));
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+            $em->persist($user);
             $em->flush();
             $this->addFlash('Success', 'The user has been created with a random password. The user should initiate password recovery.');
 
-            return $this->redirect($this->generateUrl('user_show', array('id' => $entity->getId())));
+            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
         }
 
         return array(
-            'entity' => $entity,
-            'form' => $form->createView(),
-        );
-    }
-
-    /**
-     * Creates a form to create a User entity.
-     *
-     * @param User $entity The entity
-     *
-     * @return Form The form
-     */
-    private function createCreateForm(User $entity)
-    {
-        $form = $this->createForm(AdminUserType::class, $entity, array(
-            'action' => $this->generateUrl('user_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', SubmitType::class, array('label' => 'Create'));
-
-        return $form;
-    }
-
-    /**
-     * Displays a form to create a new User entity.
-     *
-     * @Route("/new", name="user_new")
-     * @Method("GET")
-     * @Template()
-     * 
-     * @return array
-     */
-    public function newAction()
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $entity = new User();
-        $form = $this->createCreateForm($entity);
-
-        return array(
-            'entity' => $entity,
+            'entity' => $user,
             'form' => $form->createView(),
         );
     }
@@ -122,26 +79,14 @@ class AdminUserController extends Controller
      * @Route("/{id}", name="user_show")
      * @Method("GET")
      * @Template()
-     * 
+     *
      * @param string $id
      *
      * @return array
      */
-    public function showAction($id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find User entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
+    public function showAction(User $user) {
         return array(
-            'entity' => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'entity' => $user,
         );
     }
 
@@ -149,132 +94,46 @@ class AdminUserController extends Controller
      * Displays a form to edit an existing User entity.
      *
      * @Route("/{id}/edit", name="user_edit")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template()
-     * 
+     *
      * @param string $id
      *
      * @return array
      */
-    public function editAction($id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
+    public function editAction(Request $request, User $user) {
+        $form = $this->createForm(AdminUserType::class, $user);
+        $form->handleRequest($request);
 
-        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+            $this->addFlash('success', 'The user has been updated.');
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find User entity.');
-        }
-
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity' => $entity,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
-     * Creates a form to edit a User entity.
-     *
-     * @param User $entity The entity
-     *
-     * @return Form The form
-     */
-    private function createEditForm(User $entity)
-    {
-        $form = $this->createForm(AdminUserType::class, $entity, array(
-            'action' => $this->generateUrl('user_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
-
-        $form->add('submit', SubmitType::class, array('label' => 'Update'));
-
-        return $form;
-    }
-    /**
-     * Edits an existing User entity.
-     *
-     * @Route("/{id}", name="user_update")
-     * @Method("PUT")
-     * @Template("NinesUserBundle:User:edit.html.twig")
-     * 
-     * @param Request $request
-     * @param string  $id
-     *
-     * @return array
-     */
-    public function updateAction(Request $request, $id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find User entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isValid()) {
-            $userManager = $this->container->get('fos_user.user_manager');
-            $userManager->updateUser($entity);
-            $this->addFlash('success', 'User info updated. The user must log out and then back in for role changes to take effect.');
-
-            return $this->redirect($this->generateUrl('user_show', array('id' => $id)));
+            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
         }
 
         return array(
-            'entity' => $entity,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'entity' => $user,
+            'edit_form' => $form->createView(),
         );
     }
+
     /**
      * Deletes a User entity.
      *
      * @Route("/{id}/delete", name="user_delete")
-     * 
+     *
      * @param string $id
      *
      * @return array
      */
-    public function deleteAction($id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    public function deleteAction(User $user) {
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find User entity.');
-        }
-
-        $em->remove($entity);
+        $em->remove($user);
         $em->flush();
-
-        return $this->redirect($this->generateUrl('user'));
-    }
-
-    /**
-     * Creates a form to delete a User entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('user_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', SubmitType::class, array('label' => 'Delete'))
-            ->getForm()
-        ;
+        $this->addFlash('success', "The user has been removed.");
+        return $this->redirectToRoute('user');
     }
 
     /**
@@ -289,37 +148,33 @@ class AdminUserController extends Controller
      *
      * @return array
      */
-    public function passwordAction(Request $request, $id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('NinesUserBundle:User')->find($id);
-
-        $builder = $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_user_password', array('id' => $id)))
-            ->setMethod('POST')
-            ->add('password', RepeatedType::class, array(
-                'type' => PasswordType::class,
-                'invalid_message' => 'The password fields must match',
-                'required' => true,
-                'first_options' => array('label' => 'Password'),
-                'second_options' => array('label' => 'Password Confirm'),
-            ));
+    public function passwordAction(Request $request, User $user) {
+        $builder = $this->createFormBuilder();
+        $builder->setMethod('POST');
+        $builder->add('password', RepeatedType::class, array(
+            'type' => PasswordType::class,
+            'invalid_message' => 'The password fields must match',
+            'required' => true,
+            'first_options' => array('label' => 'Password'),
+            'second_options' => array('label' => 'Password Confirm'),
+        ));
         $form = $builder->getForm();
 
         $form->handleRequest($request);
         if ($form->isValid()) {
             $userManager = $this->container->get('fos_user.user_manager');
             $data = $form->getData();
-            $entity->setPlainPassword($data['password']);
-            $userManager->updateUser($entity);
+            $user->setPlainPassword($data['password']);
+            $userManager->updateUser($user);
             $this->addFlash('success', 'Password successfully changed.');
 
-            return $this->redirect($this->generateUrl('user_show', array('id' => $id)));
+            return $this->redirectToRoute('user_show', array('id' => $user->getId()));
         }
 
         return array(
-            'entity' => $entity,
+            'entity' => $user,
             'form' => $form->createView(),
         );
-    }}
+    }
+
+}
