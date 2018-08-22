@@ -9,7 +9,7 @@ use Nines\DublinCoreBundle\Entity\Element;
 class LoadElement extends Fixture {
 
     public function load(ObjectManager $manager) {
-        foreach($this->getData() as $data) {
+        foreach ($this->getData() as $data) {
             $element = new Element();
             $element->setName($data['name']);
             $element->setLabel($data['label']);

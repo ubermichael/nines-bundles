@@ -11,32 +11,32 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * Element
  *
  * @ORM\Table(
- *  name="element", 
+ *  name="element",
  *  uniqueConstraints={
  *      @ORM\UniqueConstraint(columns={"uri"})
- *  }), 
+ *  }),
  * @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
  */
-class Element extends AbstractTerm
-{
+class Element extends AbstractTerm {
+
     /**
      * @var string
      * @ORM\Column(type="string", length=190, nullable=false)
      */
     private $uri;
-    
+
     /**
      * @var string
      * @ORM\Column(type="text")
      */
     private $comment;
-    
+
     /**
      * @var Collection|AbstractField[]
      * @ORM\OneToMany(targetEntity="AbstractField", mappedBy="element")
      */
     private $fields;
-    
+
     public function __toString() {
         return parent::__toString();
     }
@@ -44,8 +44,7 @@ class Element extends AbstractTerm
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->fields = new ArrayCollection();
     }
@@ -57,8 +56,7 @@ class Element extends AbstractTerm
      *
      * @return Element
      */
-    public function setUri($uri)
-    {
+    public function setUri($uri) {
         $this->uri = $uri;
 
         return $this;
@@ -69,11 +67,10 @@ class Element extends AbstractTerm
      *
      * @return string
      */
-    public function getUri()
-    {
+    public function getUri() {
         return $this->uri;
     }
-    
+
     /**
      * Add field
      *
@@ -81,8 +78,7 @@ class Element extends AbstractTerm
      *
      * @return Element
      */
-    public function addField(AbstractField $field)
-    {
+    public function addField(AbstractField $field) {
         $this->fields[] = $field;
 
         return $this;
@@ -93,8 +89,7 @@ class Element extends AbstractTerm
      *
      * @param AbstractField $field
      */
-    public function removeField(AbstractField $field)
-    {
+    public function removeField(AbstractField $field) {
         $this->fields->removeElement($field);
     }
 
@@ -103,8 +98,7 @@ class Element extends AbstractTerm
      *
      * @return Collection
      */
-    public function getFields()
-    {
+    public function getFields() {
         return $this->fields;
     }
 
@@ -115,8 +109,7 @@ class Element extends AbstractTerm
      *
      * @return Element
      */
-    public function setComment($comment)
-    {
+    public function setComment($comment) {
         $this->comment = $comment;
 
         return $this;
@@ -127,8 +120,8 @@ class Element extends AbstractTerm
      *
      * @return string
      */
-    public function getComment()
-    {
+    public function getComment() {
         return $this->comment;
     }
+
 }

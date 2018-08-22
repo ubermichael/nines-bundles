@@ -57,9 +57,7 @@ class ElementControllerTest extends BaseTestCase
     public function testAnonShow() {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/element/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -86,56 +84,6 @@ class ElementControllerTest extends BaseTestCase
         $this->assertEquals(1, $crawler->selectLink('Delete')->count());
     }
 
-    /**
-     * @group anon
-     * @group typeahead
-     */
-    public function testAnonTypeahead() {
-        $client = $this->makeClient();
-        $client->request('GET', '/element/typeahead?q=STUFF');
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->headers->get('content-type'));
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-        $json = json_decode($response->getContent());
-        $this->assertEquals(4, count($json));
-    }
-
-    /**
-     * @group user
-     * @group typeahead
-     */
-    public function testUserTypeahead() {
-        $client = $this->makeClient(LoadUser::USER);
-        $client->request('GET', '/element/typeahead?q=STUFF');
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->headers->get('content-type'));
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-        $json = json_decode($response->getContent());
-        $this->assertEquals(4, count($json));
-    }
-
-    /**
-     * @group admin
-     * @group typeahead
-     */
-    public function testAdminTypeahead() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $client->request('GET', '/element/typeahead?q=STUFF');
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->headers->get('content-type'));
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-        $json = json_decode($response->getContent());
-        $this->assertEquals(4, count($json));
-    }
     /**
      * @group anon
      * @group edit
@@ -193,17 +141,6 @@ class ElementControllerTest extends BaseTestCase
     }
 
     /**
-     * @group anon
-     * @group new
-     */
-    public function testAnonNewPopup() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/element/new_popup');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
-    }
-
-    /**
      * @group user
      * @group new
      */
@@ -214,46 +151,12 @@ class ElementControllerTest extends BaseTestCase
     }
 
     /**
-     * @group user
-     * @group new
-     */
-    public function testUserNewPopup() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/element/new_popup');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
-    }
-
-    /**
      * @group admin
      * @group new
      */
     public function testAdminNew() {
         $client = $this->makeClient(LoadUser::ADMIN);
         $formCrawler = $client->request('GET', '/element/new');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-        $form = $formCrawler->selectButton('Create')->form([
-            // DO STUFF HERE.
-            // 'elements[FIELDNAME]' => 'FIELDVALUE',
-        ]);
-
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
-    }
-
-    /**
-     * @group admin
-     * @group new
-     */
-    public function testAdminNewPopup() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/element/new_popup');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->markTestIncomplete(
