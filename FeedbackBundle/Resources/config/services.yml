@@ -19,11 +19,12 @@ services:
             - { name: knp_menu.menu_builder, method: navMenu, alias: feedback}
 
     feedback.comment:
-        alias: Nines\FeedbackBundle\Services\CommentService
+        class: Nines\FeedbackBundle\Services\CommentService
         public: true
-
-    Nines\FeedbackBundle\Services\CommentService:
-        arguments: [ "%nines_feedback.routing%", "%nines_feedback.default_status%", "%nines_feedback.public_status%" ]
+        arguments:
+            $routing: "%nines_feedback.routing%"
+            $defaultStatusName: "%nines_feedback.default_status%"
+            $publicStatusName: "%nines_feedback.public_status%"
         calls:
             - [ setAuthorizationChecker, ['@security.authorization_checker']]
             - [ setDoctrine, ["@doctrine"]]
