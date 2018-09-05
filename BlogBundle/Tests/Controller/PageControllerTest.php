@@ -25,7 +25,7 @@ class PageControllerTest extends BaseTestCase
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/page/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
@@ -36,7 +36,7 @@ class PageControllerTest extends BaseTestCase
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/page/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
@@ -47,7 +47,7 @@ class PageControllerTest extends BaseTestCase
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/page/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('New')->count());
+        $this->assertEquals(1, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**

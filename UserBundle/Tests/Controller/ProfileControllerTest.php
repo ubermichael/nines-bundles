@@ -22,7 +22,7 @@ class ProfileControllerTest extends BaseTestCase {
         $client = $this->makeClient();
         $crawler = $client->request('GET', '/profile/');
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
@@ -33,7 +33,7 @@ class ProfileControllerTest extends BaseTestCase {
         $client = $this->makeClient(LoadUser::USER);
         $crawler = $client->request('GET', '/profile/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
         $this->assertEquals(1, $crawler->selectLink('Edit')->count());
     }
 
