@@ -7,7 +7,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An abstract term has a computer friendly name, a human readable label,
- * and a description. 
+ * and a description.
  *
  * @ORM\MappedSuperclass
  * @ORM\Table(
@@ -24,8 +24,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 abstract class AbstractTerm extends AbstractEntity
 {
     /**
-     * Name of the status.
-     * 
+     * Name of the term.
+     *
      * @ORM\Column(type="string", length=120)
      * @var string
      * @Groups({"shallow"})
@@ -33,25 +33,25 @@ abstract class AbstractTerm extends AbstractEntity
     private $name;
 
     /**
-     * Human readable status label.
+     * Human readable term label.
      * @var string
      * @ORM\Column(type="string", length=120)
      * @Groups({"shallow"})
      */
     private $label;
-    
+
     /**
-     * Descriptino of the status.
-     * @var title
+     * Description of the term.
+     * @var string
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"shallow"})
      */
     private $description;
-    
+
     public function __construct() {
         parent::__construct();
     }
-    
+
     /**
      * Get the status label.
      * @return string
