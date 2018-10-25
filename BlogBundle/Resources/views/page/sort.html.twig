@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    
+    <script src="{{ asset('bower/jquery-ui/jquery-ui.min.js') }}"></script>
     <script>
         $(document).ready(function () {
             $('#list-order').sortable({
@@ -51,6 +51,6 @@
             });
         });
     </script>
-    
-    
+
+
 {% endblock %}
