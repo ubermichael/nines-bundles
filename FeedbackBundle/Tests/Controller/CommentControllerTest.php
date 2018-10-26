@@ -140,7 +140,6 @@ class CommentControllerTest extends BaseTestCase {
         $client = $this->makeClient(LoadUser::ADMIN);
         $crawler = $client->request('GET', '/page/2');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-//        dump($crawler);
         $form = $crawler->selectButton('Submit')->form([
             'comment[fullname]' => 'Bobby Tables',
             'comment[email]' => 'bobby@example.com',
