@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class BaseTestCase extends WebTestCase {
 
     /**
-     * @var ReferenceRepository 
+     * @var ReferenceRepository
      */
     protected $references;
 
@@ -54,6 +54,18 @@ abstract class BaseTestCase extends WebTestCase {
             return $this->references->getReference($name);
         }
         return null;
+    }
+
+    protected function assertNoCookies($client) {
+        $this->assertCookieCount($client, 0);
+    }
+
+    protected function assertCookieCount($client, $count = 0) {
+        $jar = $client->getCookieJar();
+        $this->assertEquals($count, count($jar->all()));
+        foreach($jar->all() as $cookie) {
+            $this->assertEquals('localhost', $cookie->getDomain());
+        }
     }
 
     protected function tearDown() {
