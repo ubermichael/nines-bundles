@@ -39,7 +39,7 @@ class Builder implements ContainerAwareInterface {
      * @var EntityManagerInterface
      */
     private $em;
-    
+
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, EntityManagerInterface $em) {
         $this->factory = $factory;
         $this->authChecker = $authChecker;
@@ -53,7 +53,7 @@ class Builder implements ContainerAwareInterface {
         }
         return $this->authChecker->isGranted($role);
     }
-    
+
     private function getUser() {
         if( ! $this->hasRole('ROLE_USER')) {
             return null;
@@ -63,7 +63,7 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Build a menu for blog posts.
-     * 
+     *
      * @param array $options
      * @return ItemInterface
      */
@@ -78,19 +78,23 @@ class Builder implements ContainerAwareInterface {
             'public' => true,
         ));
         $posts = $this->em->getRepository('NinesBlogBundle:Post')->findBy(
-                array('status' => $status), 
+                array('status' => $status),
                 array('id' => 'DESC')
         );
-        
+        $title = 'Announcements';
+        if(isset($options['title'])) {
+            $title = $options['title'];
+        }
+
         $menu->addChild('announcements', array(
             'uri' => '#',
-            'label' => 'Announcements' . self::CARET
+            'label' => $title . self::CARET
         ));
         $menu['announcements']->setAttribute('dropdown', true);
         $menu['announcements']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['announcements']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['announcements']->setChildrenAttribute('class', 'dropdown-menu');
-        
+
         foreach ($posts as $post) {
             $menu['announcements']->addChild($post->getTitle(), array(
                 'route' => 'post_show',
@@ -129,13 +133,13 @@ class Builder implements ContainerAwareInterface {
                 'route' => 'post_status_index',
             ));
         }
-        
+
         return $menu;
     }
 
     /**
      * Build a menu for blog pages.
-     * 
+     *
      * @param array $options
      * @return ItemInterface
      */
@@ -146,11 +150,11 @@ class Builder implements ContainerAwareInterface {
         ));
         $menu->setAttribute('dropdown', true);
         $pages = $this->em->getRepository('NinesBlogBundle:Page')->findBy(
-                array('public' => true), 
-                array('weight' => 'ASC', 
+                array('public' => true),
+                array('weight' => 'ASC',
                     'title' => 'ASC')
         );
-        
+
         $menu->addChild('about', array(
             'uri' => '#',
             'label' => 'About' . self::CARET
@@ -159,8 +163,8 @@ class Builder implements ContainerAwareInterface {
         $menu['about']->setLinkAttribute('class', 'dropdown-toggle');
         $menu['about']->setLinkAttribute('data-toggle', 'dropdown');
         $menu['about']->setChildrenAttribute('class', 'dropdown-menu');
-        
-        
+
+
         foreach ($pages as $page) {
             $menu['about']->addChild($page->getTitle(), array(
                 'route' => 'page_show',
