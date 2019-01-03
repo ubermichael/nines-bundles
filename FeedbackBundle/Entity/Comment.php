@@ -56,9 +56,9 @@ class Comment extends AbstractEntity {
 
     /**
      * Status of the comment.
-     * 
-     * @var CommentStatus|null 
-     * 
+     *
+     * @var CommentStatus|null
+     *
      * @ORM\ManyToOne(targetEntity="CommentStatus", inversedBy="comments")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", nullable=false)
      */
@@ -66,9 +66,9 @@ class Comment extends AbstractEntity {
 
     /**
      * Any notes the application users have added to the note.
-     * 
-     * @var Collection|CommentNote[] 
-     * @ORM\OneToMany(targetEntity="CommentNote", mappedBy="comment")
+     *
+     * @var Collection|CommentNote[]
+     * @ORM\OneToMany(targetEntity="CommentNote", mappedBy="comment", orphanRemoval=true)
      */
     private $notes;
 
@@ -82,7 +82,7 @@ class Comment extends AbstractEntity {
 
     /**
      * Return the content of the comment.
-     * 
+     *
      * @return string
      */
     public function __toString() {

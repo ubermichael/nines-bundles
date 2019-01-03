@@ -27,11 +27,6 @@ class CommentNoteType extends AbstractType {
                 'help_block' => '',
             ),
         ));
-        $builder->add('user', null, array(
-            'attr' => array(
-                'disabled' => true
-            ),
-        ));
     }
 
     /**

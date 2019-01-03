@@ -86,6 +86,16 @@ class Builder implements ContainerAwareInterface {
         $feedback->addChild('Comments', array(
             'route' => 'admin_comment_index',
         ));
+        $feedback->addChild('Comment Notes', array(
+            'route' => 'admin_comment_note_index',
+        ));
+        $divider = $feedback->addChild('divider', array(
+            'label' => '',
+        ));
+        $divider->setAttributes(array(
+            'role' => 'separator',
+            'class' => 'divider',
+        ));
         $feedback->addChild('Comment States', array(
             'route' => 'admin_comment_status_index',
         ));

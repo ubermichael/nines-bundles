@@ -138,7 +138,7 @@ class CommentController extends Controller {
      * @param Request $request
      * @param Comment $comment
      */
-    public function showAction(Request $request, Comment $comment, User $user) {
+    public function showAction(Request $request, Comment $comment) {
         $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         $em = $this->getDoctrine()->getManager();
         $service = $this->get('feedback.comment');
@@ -154,7 +154,7 @@ class CommentController extends Controller {
 
         $commentNote = new CommentNote();
         $commentNote->setComment($comment);
-        $commentNote->setUser($user);
+        $commentNote->setUser($this->getUser());
         $noteForm = $this->createForm(CommentNoteType::class, $commentNote);
         $noteForm->handleRequest($request);
         if($noteForm->isSubmitted() && $noteForm->isValid()) {
