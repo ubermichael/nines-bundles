@@ -37,7 +37,7 @@
                         </a>
                     </td>
                     <td>{{ commentStatus.label }}</td>
-                    <td>{{ commentStatus.description }}</td>
+                    <td>{{ commentStatus.description|raw }}</td>
                     <td>{% if commentStatus.created %}{{ commentStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
                     <td>{% if commentStatus.updated %}{{ commentStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
                 </tr>

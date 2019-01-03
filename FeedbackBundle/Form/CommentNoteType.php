@@ -11,27 +11,29 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * CommentNoteType form.
  */
-class CommentNoteType extends AbstractType
-{
+class CommentNoteType extends AbstractType {
+
     /**
      * Add form fields to $builder.
      *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {        $builder->add('content', null, array(
+    public function buildForm(FormBuilderInterface $builder, array $options) {
+        $builder->add('content', null, array(
             'label' => 'Content',
             'required' => true,
             'attr' => array(
                 'help_block' => '',
             ),
         ));
-                        $builder->add('user');
-                        $builder->add('comment');
-        
+        $builder->add('user', null, array(
+            'attr' => array(
+                'disabled' => true
+            ),
+        ));
     }
-    
+
     /**
      * Define options for the form.
      *
@@ -40,8 +42,7 @@ class CommentNoteType extends AbstractType
      *
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
-    {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'Nines\FeedbackBundle\Entity\CommentNote'
         ));
