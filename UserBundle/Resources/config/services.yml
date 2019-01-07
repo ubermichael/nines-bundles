@@ -1,20 +1,5 @@
 services:
-    app.form.profile:
-        class: Nines\UserBundle\Form\ProfileType
-        tags:
-            - { name: form.type, alias: app_user_profile }
-            
-    app.form.change_password:
-        class: Nines\UserBundle\Form\PasswordType
-        tags:
-            - { name: form.type, alias: app_user_password }
-            
-    appuserbundle.user_manipulator:
-        class: Nines\UserBundle\Util\UserManipulator
-        arguments: [ "@fos_user.user_manager" ]
-        
-    nines_user.form.admin_user:
-        class: Nines\UserBundle\Form\AdminUserType
-        arguments: [ "%nines_user.permission_levels%" ] 
-        tags:
-            - { name: form.type, alias: nines_admin_user_profile }
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false

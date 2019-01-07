@@ -6,24 +6,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Special-purpose form type for administering users.
  */
 class AdminUserType extends AbstractType {
 
-    private $permissionLevels;
-
-    public function __construct($permissionLevels) {
-        $this->permissionLevels = $permissionLevels;
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        $permissionLevels = $options['permission_levels'];
         $builder
             ->remove('username')
             ->add('email')
@@ -35,7 +30,7 @@ class AdminUserType extends AbstractType {
             ))
             ->add('roles', ChoiceType::class, array(
                 'label' => 'Roles',
-                'choices' => $this->permissionLevels,
+                'choices' => $permissionLevels,
                 'choice_label' => function($value, $key, $index) {
                     return $value;
                 },
@@ -52,10 +47,12 @@ class AdminUserType extends AbstractType {
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver) {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'Nines\UserBundle\Entity\User',
+            'permission_levels' => array(),
         ));
+        $resolver->setAllowedTypes('permission_levels', 'array');
     }
 
     /**

@@ -2,21 +2,31 @@
 
 namespace Nines\UserBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Exception;
+use Nines\UserBundle\Util\UserManipulator;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
 /**
  * Replaces the CreateUserCommand from FOSUserBundle to add support for
- * fullname and institution. 
- * 
+ * fullname and institution.
+ *
  * Requires Symfony > 3.0
  */
-class CreateUserCommand extends ContainerAwareCommand
+class CreateUserCommand extends Command
 {
+    private $userManipulator;
+
+    public function __construct(UserManipulator $userManipulator)
+    {
+        parent::__construct();
+
+        $this->userManipulator = $userManipulator;
+    }
     /**
      * @see Command
      */
@@ -58,7 +68,7 @@ EOT
 
     /**
      * {@inheritdoc}
-     * 
+     *
      * @see Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -70,15 +80,14 @@ EOT
         $inactive = $input->getOption('inactive');
         $superadmin = $input->getOption('super-admin');
 
-        $manipulator = $this->getContainer()->get('appuserbundle.user_manipulator');
-        $manipulator->create($email, $password, $fullname, $institution, !$inactive, $superadmin);
+        $this->userManipulator->create($email, $password, $fullname, $institution, !$inactive, $superadmin);
 
         $output->writeln(sprintf('Created user <comment>%s</comment>', $email));
     }
 
     /**
      * {@inheritdoc}
-     * 
+     *
      * @see Command
      */
     protected function interact(InputInterface $input, OutputInterface $output)
@@ -89,7 +98,7 @@ EOT
             $question = new Question('Please choose an email:');
             $question->setValidator(function($email) {
                 if (empty($email)) {
-                    throw new \Exception('Email can not be empty');
+                    throw new Exception('Email can not be empty');
                 }
 
                 return $email;
@@ -101,7 +110,7 @@ EOT
             $question = new Question('Please choose an fullname:');
             $question->setValidator(function($fullname) {
                 if (empty($fullname)) {
-                    throw new \Exception('Email can not be empty');
+                    throw new Exception('Email can not be empty');
                 }
 
                 return $fullname;
@@ -113,7 +122,7 @@ EOT
             $question = new Question('Please choose an institution:');
             $question->setValidator(function($institution) {
                 if (empty($institution)) {
-                    throw new \Exception('Email can not be empty');
+                    throw new Exception('Email can not be empty');
                 }
 
                 return $institution;
@@ -126,18 +135,18 @@ EOT
             $question->setHidden(true);
             $question->setValidator(function($password) {
                 if (empty($password)) {
-                    throw new \Exception('Email can not be empty');
+                    throw new Exception('Email can not be empty');
                 }
 
                 return $password;
             });
             $questions['password'] = $question;
         }
-		
+
         foreach ($questions as $name => $question) {
             $answer = $this->getHelper('question')->ask($input, $output, $question);
             $input->setArgument($name, $answer);
         }
-		
+
     }
 }
