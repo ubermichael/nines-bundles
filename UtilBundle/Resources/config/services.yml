@@ -1,4 +1,13 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    
+    Nines\UtilBundle\:
+        resource: '../../*'
+        exclude: '../../{Entity,Repository,Resources,Tests}'
+
     nines.util.text:
         class: Nines\UtilBundle\Services\Text
         calls:
@@ -8,6 +17,3 @@ services:
         class: Nines\UtilBundle\Services\TitleCaser
         calls:
             - [ setLogger, ["@monolog.logger"]]
-
-    # provides class_name() and short_name() to get the full and short
-    # class name of an object.

@@ -77,28 +77,28 @@ class Builder implements ContainerAwareInterface {
             return $menu;
         }
 
-        $menu->addChild('user', array(
+        $user = $menu->addChild('user', array(
             'uri' => '#',
             'label' => $user->getUsername() . self::CARET,
         ));
-        $menu['user']->setAttribute('dropdown', true);
-        $menu['user']->setLinkAttribute('class', 'dropdown-toggle');
-        $menu['user']->setLinkAttribute('data-toggle', 'dropdown');
-        $menu['user']->setChildrenAttribute('class', 'dropdown-menu');
-        $menu['user']->addChild('Profile', array('route' => 'fos_user_profile_show'));
-        $menu['user']->addChild('Change password', array('route' => 'fos_user_change_password'));
-        $menu['user']->addChild('Logout', array('route' => 'fos_user_security_logout'));
+        $user->setAttribute('dropdown', true);
+        $user->setLinkAttribute('class', 'dropdown-toggle');
+        $user->setLinkAttribute('data-toggle', 'dropdown');
+        $user->setChildrenAttribute('class', 'dropdown-menu');
+        $user->addChild('Profile', array('route' => 'fos_user_profile_show'));
+        $user->addChild('Change password', array('route' => 'fos_user_change_password'));
+        $user->addChild('Logout', array('route' => 'fos_user_security_logout'));
 
         if ($this->hasRole('ROLE_ADMIN')) {
-            $menu['user']->addChild('divider', array(
+            $user->addChild('divider', array(
                 'label' => '',
             ));
-            $menu['user']['divider']->setAttributes(array(
+            $user['divider']->setAttributes(array(
                 'role' => 'separator',
                 'class' => 'divider',
             ));
 
-            $menu['user']->addChild('users', array(
+            $user->addChild('users', array(
                 'label' => 'Users',
                 'route' => 'user',
             ));

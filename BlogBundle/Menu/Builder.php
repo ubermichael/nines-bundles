@@ -155,18 +155,17 @@ class Builder implements ContainerAwareInterface {
                     'title' => 'ASC')
         );
 
-        $menu->addChild('about', array(
+        $about = $menu->addChild('about', array(
             'uri' => '#',
             'label' => 'About' . self::CARET
         ));
-        $menu['about']->setAttribute('dropdown', true);
-        $menu['about']->setLinkAttribute('class', 'dropdown-toggle');
-        $menu['about']->setLinkAttribute('data-toggle', 'dropdown');
-        $menu['about']->setChildrenAttribute('class', 'dropdown-menu');
-
+        $about->setAttribute('dropdown', true);
+        $about->setLinkAttribute('class', 'dropdown-toggle');
+        $about->setLinkAttribute('data-toggle', 'dropdown');
+        $about->setChildrenAttribute('class', 'dropdown-menu');
 
         foreach ($pages as $page) {
-            $menu['about']->addChild($page->getTitle(), array(
+            $about->addChild($page->getTitle(), array(
                 'route' => 'page_show',
                 'routeParameters' => array(
                     'id' => $page->getId(),
@@ -174,15 +173,15 @@ class Builder implements ContainerAwareInterface {
             ));
         }
         if ($this->hasRole('ROLE_BLOG_ADMIN')) {
-            $menu['about']->addChild('divider', array(
+            $divider = $about->addChild('divider', array(
                 'label' => '',
             ));
-            $menu['about']['divider']->setAttributes(array(
+            $divider->setAttributes(array(
                 'role' => 'separator',
                 'class' => 'divider',
             ));
 
-            $menu['about']->addChild('page_admin', array(
+            $about->addChild('page_admin', array(
                 'label' => 'All Pages',
                 'route' => 'page_index',
             ));

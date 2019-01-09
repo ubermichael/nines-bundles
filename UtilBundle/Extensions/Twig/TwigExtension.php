@@ -2,23 +2,21 @@
 
 namespace Nines\UtilBundle\Extensions\Twig;
 
-use InvalidArgumentException;
-use ReflectionClass;
-use \Twig_Extension;
-use \Twig_SimpleFilter;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
  * Add some class reflection methods to Twig. 
  */
-class TwigExtension extends Twig_Extension {
+class TwigExtension extends AbstractExtension {
     
     /**
      * {@inheritdoc}
      */
     public function getFilters() {
         return array(
-            new Twig_SimpleFilter('class_name', array($this, 'classFilter')),
-            new Twig_SimpleFilter('short_name', array($this, 'shortFilter')),
+            new TwigFilter('class_name', array($this, 'classFilter')),
+            new TwigFilter('short_name', array($this, 'shortFilter')),
         );
     }
     

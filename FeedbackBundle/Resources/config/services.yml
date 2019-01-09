@@ -18,6 +18,13 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: navMenu, alias: feedback}
 
+    Nines\FeedbackBundle\Services\NotifierService:
+        arguments:
+            $sender: '%nines_feedback.sender%'
+            $recipient: '%nines_feedback.recipient%'
+            $subject: '%nines_feedback.subject%'
+            $service: '@feedback.comment'
+            
     feedback.comment:
         class: Nines\FeedbackBundle\Services\CommentService
         public: true
