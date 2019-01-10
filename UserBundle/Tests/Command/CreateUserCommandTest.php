@@ -16,59 +16,57 @@ class CreateUserCommandTest extends BaseTestCase {
 
     public function testExecuteNormal() {
         self::bootKernel();
-        $application = new Application(self::$kernel);
-        $application->add(new CreateUserCommand());
-        $command = $application->get('fos:user:create');
+        $application = new Application(self::$kernel);        
+        $command = $application->find('fos:user:create');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
-			'command' => 'fos:user:create',
-			'email' => 'bob@example.com',
-			'password' => 'secret',
-			'fullname' => 'Bob Terwilliger',
-			'institution' => 'Springfield State Penn',
-		));
+            'command' => 'fos:user:create',
+            'email' => 'bob@example.com',
+            'password' => 'secret',
+            'fullname' => 'Bob Terwilliger',
+            'institution' => 'Springfield State Penn',
+        ));
 
-		$this->em->clear();
-		$user = $this->em->getRepository(User::class)->findOneBy(array(
-			'email' => 'bob@example.com',
-		));
+        $this->em->clear();
+        $user = $this->em->getRepository(User::class)->findOneBy(array(
+                'email' => 'bob@example.com',
+        ));
 
-		$this->assertInstanceOf(User::class, $user);
-		$this->assertEquals('bob@example.com', $user->getUsername());
-		$this->assertEquals('bob@example.com', $user->getEmail());
-		$this->assertEquals('Bob Terwilliger', $user->getFullname());
-		$this->assertEquals('Springfield State Penn', $user->getInstitution());
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('bob@example.com', $user->getUsername());
+        $this->assertEquals('bob@example.com', $user->getEmail());
+        $this->assertEquals('Bob Terwilliger', $user->getFullname());
+        $this->assertEquals('Springfield State Penn', $user->getInstitution());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-	}
+    }
 
     public function testExecuteSuper() {
         self::bootKernel();
         $application = new Application(self::$kernel);
-        $application->add(new CreateUserCommand());
-        $command = $application->get('fos:user:create');
+        $command = $application->find('fos:user:create');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
-			'command' => 'fos:user:create',
-			'email' => 'bob@example.com',
-			'password' => 'secret',
-			'fullname' => 'Bob Terwilliger',
-			'institution' => 'Springfield State Penn',
+            'command' => 'fos:user:create',
+            'email' => 'bob@example.com',
+            'password' => 'secret',
+            'fullname' => 'Bob Terwilliger',
+            'institution' => 'Springfield State Penn',
             '--super-admin' => true
         ));
 
-		$this->em->clear();
-		$user = $this->em->getRepository(User::class)->findOneBy(array(
-			'email' => 'bob@example.com',
-		));
+        $this->em->clear();
+        $user = $this->em->getRepository(User::class)->findOneBy(array(
+                'email' => 'bob@example.com',
+        ));
 
-		$this->assertInstanceOf(User::class, $user);
-		$this->assertEquals('bob@example.com', $user->getUsername());
-		$this->assertEquals('bob@example.com', $user->getEmail());
-		$this->assertEquals('Bob Terwilliger', $user->getFullname());
-		$this->assertEquals('Springfield State Penn', $user->getInstitution());
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('bob@example.com', $user->getUsername());
+        $this->assertEquals('bob@example.com', $user->getEmail());
+        $this->assertEquals('Bob Terwilliger', $user->getFullname());
+        $this->assertEquals('Springfield State Penn', $user->getInstitution());
         $this->assertEquals(['ROLE_SUPER_ADMIN', 'ROLE_USER'], $user->getRoles());
-	}
+    }
 }
 
