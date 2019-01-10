@@ -18,7 +18,9 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: navMenu, alias: feedback}
 
-    Nines\FeedbackBundle\Services\NotifierService:
+    feedback.notifier:
+        class: Nines\FeedbackBundle\Services\NotifierService
+        public: true
         arguments:
             $sender: '%nines_feedback.sender%'
             $recipient: '%nines_feedback.recipient%'

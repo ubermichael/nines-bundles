@@ -78,7 +78,7 @@ abstract class AbstractEntity
      *
      * @return DateTime
      */
-    public final function getCreated() {
+    public function getCreated() {
         return $this->created;
     }
 
