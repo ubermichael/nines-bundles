@@ -168,12 +168,16 @@ class CommentService {
      * @return string
      * @throws Exception
      */
-    public function entityUrl(Comment $comment) {
+    public function entityUrl(Comment $comment, $full = false) {
         list($class, $id) = explode(':', $comment->getEntity());
         if( ! array_key_exists($class, $this->routing['commenting'])) {
             throw new Exception("Cannot map {$class} to a route.");
         }
-        return $this->router->generate($this->routing['commenting'][$class], ['id' => $id]);
+        if($full) {
+            return $this->router->generate($this->routing['commenting'][$class], ['id' => $id], Router::ABSOLUTE_URL);
+        } else {
+            return $this->router->generate($this->routing['commenting'][$class], ['id' => $id]);
+        }
     }
 
     /**
