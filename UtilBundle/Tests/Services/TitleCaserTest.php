@@ -19,62 +19,62 @@
 
 namespace Nines\UtilBundle\Tests\Services;
 
-use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Nines\UtilBundle\Services\TitleCaser;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
 /**
  * Description of TitleCaserTest
  *
  * @author Michael Joyce <mjoyce@sfu.ca>
  */
-class TitleCaserTest extends WebTestCase {
-    
+class TitleCaserTest extends BaseTestCase {
+
     /**
      * @var TitleCaser
      */
     protected $caser;
-    
+
     public function setUp() {
-        parent::setUp();        
-        $this->caser = new TitleCaser();
+        parent::setUp();
+        $this->caser = $this->container->get(TitleCaser::class);
     }
-    
+
     /**
      * @dataProvider unicodeData
      */
     public function testUnicode($str, $expected) {
         $this->assertEquals($expected, $this->caser->titlecase($str));
     }
-     
+
     public function unicodeData() {
         return array(
             ['Hæmochromatosis', 'Hæmochromatosis'],
         );
-    } 
-      
-    /** 
+    }
+
+    /**
      * @dataProvider shortWordsData
      */
     public function testShortWords($str, $expected) {
         $this->assertEquals($expected, $this->caser->shortWords($str));
     }
-    
+
     public function shortWordsData() {
         return [
             ['The World', 'The World'],
             ['The Brave And The Bold', 'The Brave and the Bold'],
-            ['And Then There Were None', 'And Then There Were None'], 
+            ['And Then There Were None', 'And Then There Were None'],
             ['Hæmochromatosis', 'Hæmochromatosis'],
-        ]; 
+        ];
     }
-    
+
     /**
      * @dataProvider punctuationData
      */
     public function testPunctuation($str, $expected) {
-       $this->assertEquals($expected, $this->caser->punctuation($str)); 
+       $this->assertEquals($expected, $this->caser->punctuation($str));
     }
-    
+
     public function punctuationData() {
         return [
             ['The Brave: and the Bold', 'The Brave: And the Bold'],
@@ -83,14 +83,14 @@ class TitleCaserTest extends WebTestCase {
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-        
+
     /**
      * @dataProvider statesData
      */
     public function testStates($str, $expected) {
         $this->assertEquals($expected, $this->caser->states($str));
     }
-    
+
     public function statesData() {
         return [
             ['Just Because', 'Just Because'],
@@ -98,14 +98,14 @@ class TitleCaserTest extends WebTestCase {
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-    
+
     /**
      * @dataProvider namesData
      */
     public function testNames($s, $e) {
         $this->assertEquals($e, $this->caser->names($s));
     }
-    
+
     public function namesData() {
         return [
             ["O'donnel and sons", "O'Donnel and sons"],
@@ -115,14 +115,14 @@ class TitleCaserTest extends WebTestCase {
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-    
+
     /**
      * @dataProvider romanData
      */
     public function testRoman($s, $e) {
         $this->assertEquals($e, $this->caser->roman($s));
     }
-    
+
     public function romanData() {
         return [
             ['Elizabeth ii', 'Elizabeth II'],
@@ -130,14 +130,14 @@ class TitleCaserTest extends WebTestCase {
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-    
+
     /**
      * @dataProvider ordinalsData
      */
     public function testOrdinals($s, $e) {
         $this->assertEquals($e, $this->caser->ordinals($s));
     }
-    
+
     public function ordinalsData() {
         return [
             ['Elizabeth the 2nd', 'Elizabeth the 2nd'],
@@ -145,14 +145,14 @@ class TitleCaserTest extends WebTestCase {
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-    
+
     /**
      * @dataProvider exceptionsData
      */
     public function testExceptions($s, $e) {
         $this->assertEquals($e, $this->caser->exceptions($s));
     }
-    
+
     public function exceptionsData() {
         return [
             ['May West, PHD', 'May West, PhD'],
@@ -161,43 +161,43 @@ class TitleCaserTest extends WebTestCase {
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-    
+
     /**
      * @dataProvider titleCaseData
      */
     public function testTitleCase($str, $expected) {
         $this->assertEquals($expected, $this->caser->titlecase($str));
     }
-    
+
     public function titleCaseData() {
         return [
             // start is still capitalized.
             ['THE WORLD', 'The World'],
-            
+
             // middle stop words aren't.
             ['THE BRAVE AND THE BOLD', 'The Brave and the Bold'],
-            
+
             // Stop words inside bigger words are capitals.
-            ['THEN THERE WERE NONE', 'Then There Were None'], 
-            
+            ['THEN THERE WERE NONE', 'Then There Were None'],
+
             // Stop word after a punctuation.
             ['THE BRAVE: AND THE BOLD', 'The Brave: And the Bold'],
-            
+
             // And punctuation after space is cleaned up.
             ['THE BRAVE : AND THE BOLD', 'The Brave: And the Bold'],
-            
+
             // starting with punctuation is OK.
             ['! A HISTORY OF PUNCTUATION.', '! A History of Punctuation.'],
 
             // State abbrs inside words are OK.
             ['AGNES SUBCURRENT', 'Agnes Subcurrent'],
-            
+
             // Provincial/State abbrs are capitalized.
             ['JUST BC', 'Just BC'],
-            
+
             // Roman numerals are uppercase.
             ['ELIZABETH II', 'Elizabeth II'],
-            
+
             // Roman numerals inside words aren't.
             ['POISON IVY', 'Poison Ivy'],
 
@@ -206,18 +206,18 @@ class TitleCaserTest extends WebTestCase {
             ["JANE MACDONALD", "Jane MacDonald"],
             ["BOBBIE MCKLAGEN", "Bobbie McKlagen"],
             ["D'ADARIO", "D'Adario"],
-            
+
             // Ordinals.
             ['THE 2ND DAUGHTER', 'The 2nd Daughter'],
 
             // Exceptions.
             ['MAY WEST, PHD', 'May West, PhD'],
             ['BILLY CIHM', 'Billy CIHM'],
-            
+
             // Exceptions inside words aren't capitalized.
             ['BILLIE CHIMES HELLO', 'Billie Chimes Hello'],
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
     }
-    
+
 }

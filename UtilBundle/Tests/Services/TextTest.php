@@ -2,11 +2,11 @@
 
 namespace Nines\UtilBundle\Tests\Services;
 
-use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Nines\UtilBundle\Services\Slugger;
 use Nines\UtilBundle\Services\Text;
+use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
-class SluggerTest extends WebTestCase
+class TextTest extends BaseTestCase
 {
 
     /**
@@ -16,7 +16,7 @@ class SluggerTest extends WebTestCase
 
     public function setUp() {
         parent::setUp();
-        $this->text = new Text();
+        $this->text = $this->container->get(Text::class);
     }
 
     public function testSetup() {
@@ -29,7 +29,7 @@ class SluggerTest extends WebTestCase
     public function testPlain($str, $expected) {
         $this->assertEquals($expected, $this->text->plain($str));
     }
-    
+
     public function plainData() {
         return [
             ['plain text and stuff.', 'plain text and stuff.'],
@@ -41,14 +41,14 @@ class SluggerTest extends WebTestCase
             ['Fr&eacute;chét', 'Fréchét'],
         ];
     }
-    
+
     /**
      * @dataProvider searchHighlightData
      */
     public function testSearchHighlight($str, $kw, $expected) {
         $this->assertEquals($expected, $this->text->searchHighlight($str, $kw));
     }
-    
+
     public function searchHighlightData() {
         return [
             ['chilli cheese fries', 'asparagus', []],
@@ -59,15 +59,15 @@ class SluggerTest extends WebTestCase
                 '<mark>chilli</mark> cheese <mark>chilli</mark> fries',
             ]],
         ];
-    } 
+    }
 
-    /** 
-     * @dataProvider slugData 
+    /**
+     * @dataProvider slugData
      */
     public function testSlug($str, $expected) {
         $this->assertEquals($expected, $this->text->slug($str));
     }
- 
+
     public function slugData() {
         return [
             [null, null],
@@ -87,14 +87,14 @@ class SluggerTest extends WebTestCase
             ['Q_1', 'q_1'],
         ];
     }
-    
+
     /**
      * @dataProvider slugSeparatorData
      */
     public function testSlugSeparator($str, $expected, $separator) {
-        $this->assertEquals($expected, $this->text->slug($str, $separator));        
+        $this->assertEquals($expected, $this->text->slug($str, $separator));
     }
-    
+
     public function slugSeparatorData() {
         return [
             [null, null, null],
@@ -109,14 +109,14 @@ class SluggerTest extends WebTestCase
             ['Mash Words', 'mashwords', ''],
         ];
     }
-    
+
     /**
      * @dataProvider trimData
      */
     public function testTrim($expected, $len, $string) {
         $this->assertEquals($expected, $this->text->trim($string, $len));
     }
-    
+
     public function trimData() {
         return [
             ["This is a...", 3, "This is a test of the emergency broadcast system."],
@@ -128,6 +128,6 @@ class SluggerTest extends WebTestCase
             ["Thés iſ a...", 3, "Thés iſ a test of the emergency broadcast system."],
         ];
     }
-    
-    
+
+
 }

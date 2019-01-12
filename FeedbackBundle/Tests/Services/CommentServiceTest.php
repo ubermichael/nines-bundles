@@ -27,6 +27,10 @@ class CommentServiceTest extends BaseTestCase {
         );
     }
 
+    public function testSanity() {
+        $this->assertInstanceOf(CommentService::class, $this->service);
+    }
+
     public function testFindEntity() {
         $comment = $this->getReference('comment.1');
         $entity = $this->service->findEntity($comment);

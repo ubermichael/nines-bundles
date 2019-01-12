@@ -13,12 +13,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AdminUserType extends AbstractType {
 
+    private $permissionLevels;
+
+    public function __construct($permissionLevels) {
+        $this->permissionLevels = $permissionLevels;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $permissionLevels = $options['permission_levels'];
         $builder
             ->remove('username')
             ->add('email')
@@ -30,7 +35,7 @@ class AdminUserType extends AbstractType {
             ))
             ->add('roles', ChoiceType::class, array(
                 'label' => 'Roles',
-                'choices' => $permissionLevels,
+                'choices' => $this->permissionLevels,
                 'choice_label' => function($value, $key, $index) {
                     return $value;
                 },
@@ -50,9 +55,7 @@ class AdminUserType extends AbstractType {
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
             'data_class' => 'Nines\UserBundle\Entity\User',
-            'permission_levels' => array(),
         ));
-        $resolver->setAllowedTypes('permission_levels', 'array');
     }
 
     /**

@@ -18,18 +18,17 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: navMenu, alias: feedback}
 
-    feedback.notifier:
-        class: Nines\FeedbackBundle\Services\NotifierService
-        public: true
+    Nines\FeedbackBundle\Services\NotifierService:
         arguments:
             $sender: '%nines_feedback.sender%'
             $recipient: '%nines_feedback.recipient%'
             $subject: '%nines_feedback.subject%'
-            $service: '@feedback.comment'
-            
-    feedback.comment:
-        class: Nines\FeedbackBundle\Services\CommentService
+
+    feedback.notifier:
+        alias: Nines\FeedbackBundle\Services\NotifierService
         public: true
+
+    Nines\FeedbackBundle\Services\CommentService:
         arguments:
             $routing: "%nines_feedback.routing%"
             $defaultStatusName: "%nines_feedback.default_status%"
@@ -40,3 +39,7 @@ services:
             - [ setLogger, ["@monolog.logger"]]
             - [ setRouter, ["@router"]]
             - [ setFormFactory, ["@form.factory"]]
+
+    feedback.comment:
+        alias: Nines\FeedbackBundle\Services\CommentService
+        public: true

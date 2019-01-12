@@ -54,8 +54,7 @@ class NotifierService {
     /**
      * @return mixed
      */
-    public function getSender()
-    {
+    public function getSender() {
         return $this->sender;
     }
 
@@ -63,8 +62,7 @@ class NotifierService {
      * @param mixed $sender
      * @return NotifierService
      */
-    public function setSender($sender)
-    {
+    public function setSender($sender) {
         $this->sender = $sender;
         return $this;
     }
@@ -72,8 +70,7 @@ class NotifierService {
     /**
      * @return array
      */
-    public function getRecipient(): array
-    {
+    public function getRecipient() {
         return $this->recipient;
     }
 
@@ -81,9 +78,8 @@ class NotifierService {
      * @param mixed $recipient
      * @return NotifierService
      */
-    public function setRecipient($recipient): NotifierService
-    {
-        if(is_array($recipient)) {
+    public function setRecipient($recipient) {
+        if (is_array($recipient)) {
             $this->recipient = $recipient;
         } else if ($recipient) {
             $this->recipient = array($recipient);
@@ -96,8 +92,7 @@ class NotifierService {
     /**
      * @return mixed
      */
-    public function getSubject()
-    {
+    public function getSubject() {
         return $this->subject;
     }
 
@@ -105,8 +100,7 @@ class NotifierService {
      * @param mixed $subject
      * @return NotifierService
      */
-    public function setSubject($subject)
-    {
+    public function setSubject($subject) {
         $this->subject = $subject;
         return $this;
     }
@@ -114,8 +108,7 @@ class NotifierService {
     /**
      * @return EngineInterface
      */
-    public function getTemplating(): EngineInterface
-    {
+    public function getTemplating() {
         return $this->templating;
     }
 
@@ -123,8 +116,7 @@ class NotifierService {
      * @param EngineInterface $templating
      * @return NotifierService
      */
-    public function setTemplating(EngineInterface $templating): NotifierService
-    {
+    public function setTemplating(EngineInterface $templating) {
         $this->templating = $templating;
         return $this;
     }
@@ -132,8 +124,7 @@ class NotifierService {
     /**
      * @return Swift_Mailer
      */
-    public function getMailer(): Swift_Mailer
-    {
+    public function getMailer() {
         return $this->mailer;
     }
 
@@ -141,8 +132,7 @@ class NotifierService {
      * @param Swift_Mailer $mailer
      * @return NotifierService
      */
-    public function setMailer(Swift_Mailer $mailer): NotifierService
-    {
+    public function setMailer(Swift_Mailer $mailer) {
         $this->mailer = $mailer;
         return $this;
     }
@@ -150,8 +140,7 @@ class NotifierService {
     /**
      * @return CommentService
      */
-    public function getService(): CommentService
-    {
+    public function getService() {
         return $this->service;
     }
 
@@ -159,8 +148,7 @@ class NotifierService {
      * @param CommentService $service
      * @return NotifierService
      */
-    public function setService(CommentService $service): NotifierService
-    {
+    public function setService(CommentService $service) {
         $this->service = $service;
         return $this;
     }
@@ -168,7 +156,7 @@ class NotifierService {
     public function __construct($sender, $recipient, $subject, EngineInterface $templating, Swift_Mailer $mailer, CommentService $service) {
         $this->sender = $sender;
         $this->recipient = false;
-        if(is_array($recipient)) {
+        if (is_array($recipient)) {
             $this->recipient = $recipient;
         } else if ($recipient) {
             $this->recipient = array($recipient);
@@ -180,17 +168,17 @@ class NotifierService {
     }
 
     public function newComment(Comment $comment) {
-        if( ! $this->sender || ! $this->recipient) {
+        if (!$this->sender || !$this->recipient) {
             return;
         }
-        foreach($this->recipient as $recipient) {
+        foreach ($this->recipient as $recipient) {
             $message = new Swift_Message();
             $message->setSubject($this->subject);
             $message->setTo($recipient);
             $message->setSender($this->sender);
             $message->setBody($this->templating->render('NinesFeedbackBundle:notification:comment.txt.twig', array(
-                'comment' => $comment,
-                'service' => $this->service,
+                    'comment' => $comment,
+                    'service' => $this->service,
             )));
             $this->mailer->send($message);
         }

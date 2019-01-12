@@ -54,9 +54,7 @@ class AdminUserController extends Controller {
      */
     public function newAction(Request $request) {
         $user = new User();
-        $form = $this->createForm(AdminUserType::class, $user, array(
-            'permission_levels' => $this->getParameter('nines_user.permission_levels')
-        ));
+        $form = $this->createForm(AdminUserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

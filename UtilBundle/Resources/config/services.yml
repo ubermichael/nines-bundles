@@ -3,17 +3,7 @@ services:
         autowire: true
         autoconfigure: true
         public: false
-    
+
     Nines\UtilBundle\:
         resource: '../../*'
         exclude: '../../{Entity,Repository,Resources,Tests}'
-
-    nines.util.text:
-        class: Nines\UtilBundle\Services\Text
-        calls:
-            - [ setLogger, ["@monolog.logger"]]
-
-    nines.util.title_caser:
-        class: Nines\UtilBundle\Services\TitleCaser
-        calls:
-            - [ setLogger, ["@monolog.logger"]]

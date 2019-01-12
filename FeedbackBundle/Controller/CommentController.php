@@ -9,7 +9,8 @@ use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\AdminCommentType;
 use Nines\FeedbackBundle\Form\CommentNoteType;
 use Nines\FeedbackBundle\Form\CommentType;
-use Nines\UserBundle\Entity\User;
+use Nines\FeedbackBundle\Services\CommentService;
+use Nines\FeedbackBundle\Services\NotifierService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -36,7 +37,7 @@ class CommentController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request, CommentService $service) {
         $em = $this->getDoctrine()->getManager();
         $statusRepo = $em->getRepository(CommentStatus::class);
         $commentRepo = $em->getRepository(Comment::class);
@@ -54,7 +55,6 @@ class CommentController extends Controller {
         $query = $qb->getQuery();
         $paginator = $this->get('knp_paginator');
         $comments = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        $service = $this->get('feedback.comment');
 
         return array(
             'comments' => $comments,
@@ -100,9 +100,8 @@ class CommentController extends Controller {
      * @param Request $request
      * @Template()
      */
-    public function postAction(Request $request) {
+    public function postAction(Request $request, CommentService $service, NotifierService $notifier) {
         $em = $this->getDoctrine()->getManager();
-		$service = $this->get('feedback.comment');
         $id = $request->request->get('entity_id', null);
         $class = $request->request->get('entity_class', null);
 
@@ -118,6 +117,7 @@ class CommentController extends Controller {
 
         if ($form->isSubmitted() && $form->isValid()) {
             $service->addComment($entity, $comment);
+            $notifier->newComment($comment);
             $this->addFlash('success', 'Thank you for your suggestion.');
             return $this->redirect($service->entityUrl($comment));
         }
@@ -138,10 +138,9 @@ class CommentController extends Controller {
      * @param Request $request
      * @param Comment $comment
      */
-    public function showAction(Request $request, Comment $comment) {
+    public function showAction(Request $request, Comment $comment, CommentService $service) {
         $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
         $em = $this->getDoctrine()->getManager();
-        $service = $this->get('feedback.comment');
         $statusForm = $this->createForm(AdminCommentType::class, $comment);
         $statusForm->handleRequest($request);
         if ($statusForm->isSubmitted() && $statusForm->isValid()) {

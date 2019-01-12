@@ -3,7 +3,7 @@ services:
         autowire: true
         autoconfigure: true
         public: false
-        
+
     Nines\UserBundle\:
         resource: '../../*'
         # you can exclude directories or files
@@ -13,3 +13,9 @@ services:
     Nines\UserBundle\Menu\Builder:
         tags:
         - { name: knp_menu.menu_builder, method: userNavMenu, alias: user}
+
+    Nines\UserBundle\Form\AdminUserType:
+        arguments:
+            $permissionLevels: "%nines_user.permission_levels%"
+        tags:
+            - { name: form.type, alias: nines_admin_user_profile }

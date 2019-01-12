@@ -20,6 +20,7 @@
 namespace Nines\UtilBundle\Services;
 
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Apply title casing to a string.
@@ -30,17 +31,12 @@ class TitleCaser {
 
     /**
      * Monolog logger.
-     * 
+     *
      * @var Logger
      */
     private $logger;
 
-    /**
-     * Set the service's logger.
-     * 
-     * @param Logger $logger
-     */
-    public function setLogger(Logger $logger) {
+    public function __construct(LoggerInterface $logger) {
         $this->logger = $logger;
     }
 
@@ -68,7 +64,7 @@ class TitleCaser {
         'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA',
         'WV', 'WI', 'WY',
     );
-    
+
     /**
      * Ordinal suffixes.
      *
@@ -77,7 +73,7 @@ class TitleCaser {
     private $ordinals = array(
         'st', 'nd', 'rd', 'th',
     );
-    
+
     /**
      * Abbreviations which get special casing.
      *
@@ -93,7 +89,7 @@ class TitleCaser {
 
     /**
      * Mangle the short words to lower case.
-     * 
+     *
      * @param string $string
      * @return string
      */
@@ -106,7 +102,7 @@ class TitleCaser {
 
     /**
      * Mangle the punctuation and make it all title casey.
-     * 
+     *
      * @param string $string
      * @return string
      */
@@ -125,7 +121,7 @@ class TitleCaser {
 
     /**
      * Make the state abbreviations upper case.
-     * 
+     *
      * @param string $string
      * @return string
      */
@@ -138,8 +134,8 @@ class TitleCaser {
     }
 
     /**
-     * Attempt to get the surnames right. 
-     * 
+     * Attempt to get the surnames right.
+     *
      * @param string $string
      * @return string
      */
@@ -152,7 +148,7 @@ class TitleCaser {
 
     /**
      * Mangle Roman numerials.
-     * 
+     *
      * @param string $string
      * @return string
      */
@@ -165,7 +161,7 @@ class TitleCaser {
 
     /**
      * Set the ordinals in a title to the correct case.
-     * 
+     *
      * @param string $string
      * @return string
      */
@@ -179,7 +175,7 @@ class TitleCaser {
 
     /**
      * Handle the exceptions.
-     * 
+     *
      * @param string $string
      * @return string
      */
@@ -190,14 +186,14 @@ class TitleCaser {
         }, $string);
         return $s;
     }
-    
+
     public function trim($string) {
         return preg_replace('/^\p{Z}+|\p{Z}+$/u', '', $string);
     }
 
     /**
      * Returns the titlecased version of string.
-     * 
+     *
      * @param string $string
      */
     public function titlecase($string) {
@@ -212,7 +208,7 @@ class TitleCaser {
         $s = $this->trim($s);
         return $s;
     }
-    
+
     public function sortableTitle($string) {
         $filters = array(
             '/^(the|an?)\b\s*(.*)/ius' => '$2, $1',
@@ -225,6 +221,6 @@ class TitleCaser {
             $title = preg_replace($pattern, $replacement, $title);
         }
         return $this->trim($title);
-    }    
+    }
 
 }
