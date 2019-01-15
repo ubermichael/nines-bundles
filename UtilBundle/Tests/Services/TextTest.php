@@ -2,19 +2,17 @@
 
 namespace Nines\UtilBundle\Tests\Services;
 
-use Nines\UtilBundle\Services\Slugger;
 use Nines\UtilBundle\Services\Text;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
-class TextTest extends BaseTestCase
-{
+class TextTest extends BaseTestCase {
 
     /**
      * @var Slugger
      */
     private $text;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->text = $this->container->get(Text::class);
     }
@@ -56,8 +54,8 @@ class TextTest extends BaseTestCase
             ['chilli cheese fries', 'cheese', ['chilli <mark>cheese</mark> fries']],
             ['chilli cheese fries', 'fries', ['chilli cheese <mark>fries</mark>']],
             ['chilli cheese chilli fries', 'chilli', [
-                '<mark>chilli</mark> cheese <mark>chilli</mark> fries',
-            ]],
+                    '<mark>chilli</mark> cheese <mark>chilli</mark> fries',
+                ]],
         ];
     }
 
@@ -128,6 +126,5 @@ class TextTest extends BaseTestCase
             ["Thés iſ a...", 3, "Thés iſ a test of the emergency broadcast system."],
         ];
     }
-
 
 }

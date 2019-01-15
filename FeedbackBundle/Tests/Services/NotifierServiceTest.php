@@ -23,7 +23,7 @@ class NotifierServiceTest extends BaseTestCase {
 
     protected function setUp() {
         parent::setUp();
-        $this->notifier = $this->container->get('feedback.notifier');
+        $this->notifier = $this->container->get(NotifierService::class);
         $this->messageLogger = $this->container->get('swiftmailer.mailer.default.plugin.messagelogger');
     }
 

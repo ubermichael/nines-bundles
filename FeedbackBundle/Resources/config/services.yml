@@ -3,7 +3,7 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
+        public: true
 
     Nines\FeedbackBundle\:
         resource: '../../*'
@@ -24,10 +24,6 @@ services:
             $recipient: '%nines_feedback.recipient%'
             $subject: '%nines_feedback.subject%'
 
-    feedback.notifier:
-        alias: Nines\FeedbackBundle\Services\NotifierService
-        public: true
-
     Nines\FeedbackBundle\Services\CommentService:
         arguments:
             $routing: "%nines_feedback.routing%"
@@ -39,7 +35,3 @@ services:
             - [ setLogger, ["@monolog.logger"]]
             - [ setRouter, ["@router"]]
             - [ setFormFactory, ["@form.factory"]]
-
-    feedback.comment:
-        alias: Nines\FeedbackBundle\Services\CommentService
-        public: true

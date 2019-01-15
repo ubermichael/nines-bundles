@@ -1,49 +1,31 @@
 <?php
 
-/*
- * Copyright (C) 2016 Michael Joyce <mjoyce@sfu.ca>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 namespace Nines\UtilBundle\Tests\Services;
 
 use Nines\UtilBundle\Services\TitleCaser;
 use Nines\UtilBundle\Tests\Util\BaseTestCase;
 
-/**
- * Description of TitleCaserTest
- *
- * @author Michael Joyce <mjoyce@sfu.ca>
- */
 class TitleCaserTest extends BaseTestCase {
 
     /**
      * @var TitleCaser
      */
-    protected $caser;
+    private $titleCaser;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
-        $this->caser = $this->container->get(TitleCaser::class);
+        $this->titleCaser = $this->container->get(TitleCaser::class);
+    }
+
+    public function testSetup() {
+        $this->assertInstanceOf(TitleCaser::class, $this->titleCaser);
     }
 
     /**
      * @dataProvider unicodeData
      */
     public function testUnicode($str, $expected) {
-        $this->assertEquals($expected, $this->caser->titlecase($str));
+        $this->assertEquals($expected, $this->titleCaser->titlecase($str));
     }
 
     public function unicodeData() {
@@ -56,7 +38,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider shortWordsData
      */
     public function testShortWords($str, $expected) {
-        $this->assertEquals($expected, $this->caser->shortWords($str));
+        $this->assertEquals($expected, $this->titleCaser->shortWords($str));
     }
 
     public function shortWordsData() {
@@ -72,7 +54,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider punctuationData
      */
     public function testPunctuation($str, $expected) {
-       $this->assertEquals($expected, $this->caser->punctuation($str));
+        $this->assertEquals($expected, $this->titleCaser->punctuation($str));
     }
 
     public function punctuationData() {
@@ -88,7 +70,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider statesData
      */
     public function testStates($str, $expected) {
-        $this->assertEquals($expected, $this->caser->states($str));
+        $this->assertEquals($expected, $this->titleCaser->states($str));
     }
 
     public function statesData() {
@@ -103,7 +85,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider namesData
      */
     public function testNames($s, $e) {
-        $this->assertEquals($e, $this->caser->names($s));
+        $this->assertEquals($e, $this->titleCaser->names($s));
     }
 
     public function namesData() {
@@ -120,7 +102,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider romanData
      */
     public function testRoman($s, $e) {
-        $this->assertEquals($e, $this->caser->roman($s));
+        $this->assertEquals($e, $this->titleCaser->roman($s));
     }
 
     public function romanData() {
@@ -135,7 +117,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider ordinalsData
      */
     public function testOrdinals($s, $e) {
-        $this->assertEquals($e, $this->caser->ordinals($s));
+        $this->assertEquals($e, $this->titleCaser->ordinals($s));
     }
 
     public function ordinalsData() {
@@ -150,7 +132,7 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider exceptionsData
      */
     public function testExceptions($s, $e) {
-        $this->assertEquals($e, $this->caser->exceptions($s));
+        $this->assertEquals($e, $this->titleCaser->exceptions($s));
     }
 
     public function exceptionsData() {
@@ -166,54 +148,41 @@ class TitleCaserTest extends BaseTestCase {
      * @dataProvider titleCaseData
      */
     public function testTitleCase($str, $expected) {
-        $this->assertEquals($expected, $this->caser->titlecase($str));
+        $this->assertEquals($expected, $this->titleCaser->titlecase($str));
     }
 
     public function titleCaseData() {
         return [
             // start is still capitalized.
             ['THE WORLD', 'The World'],
-
             // middle stop words aren't.
             ['THE BRAVE AND THE BOLD', 'The Brave and the Bold'],
-
             // Stop words inside bigger words are capitals.
             ['THEN THERE WERE NONE', 'Then There Were None'],
-
             // Stop word after a punctuation.
             ['THE BRAVE: AND THE BOLD', 'The Brave: And the Bold'],
-
             // And punctuation after space is cleaned up.
             ['THE BRAVE : AND THE BOLD', 'The Brave: And the Bold'],
-
             // starting with punctuation is OK.
             ['! A HISTORY OF PUNCTUATION.', '! A History of Punctuation.'],
-
             // State abbrs inside words are OK.
             ['AGNES SUBCURRENT', 'Agnes Subcurrent'],
-
             // Provincial/State abbrs are capitalized.
             ['JUST BC', 'Just BC'],
-
             // Roman numerals are uppercase.
             ['ELIZABETH II', 'Elizabeth II'],
-
             // Roman numerals inside words aren't.
             ['POISON IVY', 'Poison Ivy'],
-
             // Names.
             ["O'DONNEL AND SONS", "O'Donnel and Sons"],
             ["JANE MACDONALD", "Jane MacDonald"],
             ["BOBBIE MCKLAGEN", "Bobbie McKlagen"],
             ["D'ADARIO", "D'Adario"],
-
             // Ordinals.
             ['THE 2ND DAUGHTER', 'The 2nd Daughter'],
-
             // Exceptions.
             ['MAY WEST, PHD', 'May West, PhD'],
             ['BILLY CIHM', 'Billy CIHM'],
-
             // Exceptions inside words aren't capitalized.
             ['BILLIE CHIMES HELLO', 'Billie Chimes Hello'],
             ['Hæmochromatosis', 'Hæmochromatosis'],

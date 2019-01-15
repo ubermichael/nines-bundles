@@ -18,7 +18,7 @@ class CommentServiceTest extends BaseTestCase {
 
     protected function setUp() {
         parent::setUp();
-        $this->service = $this->container->get('feedback.comment');
+        $this->service = $this->container->get(CommentService::class);
     }
 
     public function getFixtures() {
