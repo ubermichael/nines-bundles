@@ -17,6 +17,7 @@
             <tr>
                 <th>Full name</th>
                 <th>Email</th>
+                <th>Enabled</th>
                 <th>Institution</th>
                 <th>Roles</th>
             </tr>
@@ -26,6 +27,7 @@
                 <tr>
                     <td><a href="{{ path('user_show', { 'id': entity.id }) }}">{{ entity.fullname }}</a></td>
                     <td><a href="mailto:{{ entity.email }}">{{ entity.email}}</a></td>
+                    <td>{% if entity.enabled %} Yes {% else %} No {% endif %}</td>
                     <td>{{ entity.institution }}</td>
                     <td>
                         {% for role in entity.roles %}
