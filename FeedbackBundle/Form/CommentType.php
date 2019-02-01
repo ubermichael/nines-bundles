@@ -19,9 +19,14 @@ class CommentType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('fullname');  // string
-        $builder->add('email');  // string
+        $builder->add('fullname', null, array(
+            'label' => 'Your Name'
+        ));  // string
+        $builder->add('email', null, array(
+            'label' => 'Your Email'
+        ));  // string
         $builder->add('followUp', ChoiceType::class, array(
+            'label' => 'Contact Me',
             'expanded' => true,
             'multiple' => false,
             'choices' => array(
@@ -35,7 +40,9 @@ class CommentType extends AbstractType {
                 'help_block' => 'Would you like someone to contact you about this comment?'
             ),
         ));
-        $builder->add('content', TextareaType::class);  // string
+        $builder->add('content', TextareaType::class, array(
+            'label' => 'Suggestion',
+        ));  // string
     }
 
     /**
