@@ -1,6 +1,14 @@
-{% include 'NinesFeedbackBundle:comment:comment-form.html.twig' with { 'entity': entity } %}				
-{% if is_granted('ROLE_COMMENT_ADMIN') %}
-    {% include 'NinesFeedbackBundle:comment:comments-admin.html.twig' %}
-{% else %}
-    {% include 'NinesFeedbackBundle:comment:comments-view.html.twig' %}
-{% endif %}
+<h3 class="panel-title">
+    <a href="#commentWidgets" data-toggle='collapse' data-target='#commentWidgets' aria-expanded='false' aria-controls='commentWidgets'>Suggestions and Comments for <i>{{ entity }}</i></a>
+</h3>
+
+<div id='commentWidgets' class='collapse'>
+    <div class='well'>
+        {% include 'NinesFeedbackBundle:comment:comment-form.html.twig' with { 'entity': entity } %}
+        {% if is_granted('ROLE_COMMENT_ADMIN') %}
+            {% include 'NinesFeedbackBundle:comment:comments-admin.html.twig' %}
+        {% else %}
+            {% include 'NinesFeedbackBundle:comment:comments-view.html.twig' %}
+        {% endif %}
+    </div>
+</div>
