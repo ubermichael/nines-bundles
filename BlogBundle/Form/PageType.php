@@ -27,13 +27,6 @@ class PageType extends AbstractType {
                 'help_block' => '',
             ),
         ));
-        $builder->add('weight', null, array(
-            'label' => 'Weight',
-            'required' => true,
-            'attr' => array(
-                'help_block' => '',
-            ),
-        ));
         $builder->add('public', ChoiceType::class, array(
             'label' => 'Public',
             'expanded' => true,
