@@ -96,7 +96,7 @@ class Post extends AbstractEntity {
     /**
      * Return the title of the post.
      *
-     * @return type
+     * @return string
      */
     public function __toString() {
         return $this->title;

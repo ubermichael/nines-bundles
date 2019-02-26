@@ -10,7 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Nines\BlogBundle\Entity\PostCategory;
+use Nines\BlogBundle\Entity\Post;
 use Nines\BlogBundle\Form\PostCategoryType;
 
 /**
@@ -130,10 +132,15 @@ class PostCategoryController extends Controller {
      * @Method("GET")
      * @Template()
      */
-    public function showAction(PostCategory $postCategory) {
+    public function showAction(Request $request, PostCategory $postCategory) {
+        $repo = $this->getDoctrine()->getManager()->getRepository(PostCategory::class);
+        $query = $repo->getPosts($postCategory, $this->isGranted('ROLE_USER'))->execute();
+        $paginator = $this->get('knp_paginator');
+        $posts = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
         return array(
             'postCategory' => $postCategory,
+            'posts' => $posts,
         );
     }
 
