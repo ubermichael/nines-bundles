@@ -237,14 +237,13 @@ class Post extends AbstractEntity {
 
     /**
      * Set searchable
-     *
-     * @param string $searchable
-     *
-     * @return Post
+     * 
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
-    public function setSearchable($searchable)
+    public function setSearchable()
     {
-        $this->searchable = $searchable;
+        $this->searchable = strip_tags($this->content);
 
         return $this;
     }
