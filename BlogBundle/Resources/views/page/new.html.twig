@@ -15,3 +15,16 @@
     {{ form_end(form) }}
 
 {% endblock %}
+
+{% block htmlhead %}
+    {% include "@CKSourceCKFinder/setup.html.twig" %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        CKEDITOR.on('instanceReady', function(event){
+            console.log(event);
+            CKFinder.setupCKEditor( event.editor );
+        });
+    </script>
+{% endblock %}
