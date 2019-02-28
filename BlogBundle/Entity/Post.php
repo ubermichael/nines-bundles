@@ -5,6 +5,8 @@ namespace Nines\BlogBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\ContentEntityInterface;
+use Nines\UtilBundle\Entity\ContentExcerptTrait;
 
 /**
  * A blog post.
@@ -15,7 +17,9 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Post extends AbstractEntity {
+class Post extends AbstractEntity  implements ContentEntityInterface {
+
+    use ContentExcerptTrait;
 
     /**
      * Blog post title.
@@ -31,24 +35,6 @@ class Post extends AbstractEntity {
      * @ORM\Column(name="include_comments", type="boolean", nullable=false)
      */
     private $includeComments;
-
-    /**
-     * An excerpt, to display in lists.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="excerpt", type="text", nullable=true)
-     */
-    private $excerpt;
-
-    /**
-     * The content of the post, as HTML.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="content", type="text", nullable=false)
-     */
-    private $content;
 
     /**
      * Searchable version of the content, with the tags stripped out.
@@ -125,28 +111,6 @@ class Post extends AbstractEntity {
     }
 
     /**
-     * Set content
-     *
-     * @param string $content
-     *
-     * @return Post
-     */
-    public function setContent($content) {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * Get content
-     *
-     * @return string
-     */
-    public function getContent() {
-        return $this->content;
-    }
-
-    /**
      * Set category
      *
      * @param PostCategory $category
@@ -211,29 +175,6 @@ class Post extends AbstractEntity {
     public function getUser() {
         return $this->user;
     }
-
-    /**
-     * Set excerpt
-     *
-     * @param string $excerpt
-     *
-     * @return Post
-     */
-    public function setExcerpt($excerpt) {
-        $this->excerpt = $excerpt;
-
-        return $this;
-    }
-
-    /**
-     * Get excerpt
-     *
-     * @return string
-     */
-    public function getExcerpt() {
-        return $this->excerpt;
-    }
-
 
     /**
      * Set searchable

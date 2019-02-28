@@ -7,3 +7,12 @@ services:
     Nines\UtilBundle\:
         resource: '../../*'
         exclude: '../../{Entity,Repository,Resources,Tests}'
+
+    Nines\UtilBundle\EventListener\ContentExcerptListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    Nines\UtilBundle\Services\Text:
+        arguments:
+            $defaultTrimLength: '%nines_text.trim_length%'

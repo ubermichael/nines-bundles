@@ -121,9 +121,6 @@ class PageController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$page->getExcerpt()) {
-                $page->setExcerpt($text->trim($page->getContent(), $this->getParameter('nines_blog.excerpt_length')));
-            }
             $page->setSearchable($text->plain($page->getContent()));
             $em = $this->getDoctrine()->getManager();
             $em->persist($page);
@@ -179,9 +176,6 @@ class PageController extends Controller {
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            if (!$page->getExcerpt()) {
-                $page->setExcerpt($text->trim($page->getContent(), $this->getParameter('nines_blog.excerpt_length')));
-            }
             $page->setSearchable($text->plain($page->getContent()));
             $em = $this->getDoctrine()->getManager();
             $em->flush();

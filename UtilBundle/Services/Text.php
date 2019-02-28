@@ -23,7 +23,10 @@ class Text {
      */
     private $logger;
 
-    public function __construct(LoggerInterface $logger) {
+    private $defaultTrimLenth;
+
+    public function __construct($defaultTrimLength, LoggerInterface $logger) {
+        $this->defaultTrimLenth = $defaultTrimLength;
         $this->logger = $logger;
     }
 
@@ -99,7 +102,10 @@ class Text {
      * @param string $suffix
      * @return string
      */
-    public function trim($string, $length, $suffix = '...') {
+    public function trim($string, $length = null, $suffix = '...') {
+        if($length === null) {
+            $length = $this->defaultTrimLenth;
+        }
         $plain = strip_tags($string);
         $converted = html_entity_decode($plain, ENT_COMPAT | ENT_HTML401, 'UTF-8');
         $trimmed = preg_replace("/(^\s+)|(\s+$)/u", "", $converted);

@@ -5,6 +5,9 @@ namespace Nines\BlogBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\ContentEntityInterface;
+use Nines\UtilBundle\Entity\ContentExcerptTrait;
+
 
 /**
  * Page
@@ -15,7 +18,9 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PageRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Page extends AbstractEntity {
+class Page extends AbstractEntity  implements ContentEntityInterface {
+
+    use ContentExcerptTrait;
 
     /**
      * Heavier weighted pages will sort to the bottom.
@@ -49,24 +54,6 @@ class Page extends AbstractEntity {
     private $title;
 
     /**
-     * An excerpt, to display in lists.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="excerpt", type="text", nullable=true)
-     */
-    private $excerpt;
-
-    /**
-     * The content of the post, as HTML.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="content", type="text", nullable=false)
-     */
-    private $content;
-
-    /**
      * Searchable version of the content, with the tags stripped out.
      *
      * @var string
@@ -92,6 +79,10 @@ class Page extends AbstractEntity {
         $this->weight = 0;
         $this->public = false;
         $this->includeComments = false;
+    }
+
+    public function __toString() {
+        return $this->title;
     }
 
     /**
@@ -143,30 +134,6 @@ class Page extends AbstractEntity {
     }
 
     /**
-     * Set content
-     *
-     * @param string $content
-     *
-     * @return Page
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * Get content
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
      * Set searchable
      *
      * @param string $searchable
@@ -214,11 +181,6 @@ class Page extends AbstractEntity {
         return $this->user;
     }
 
-    public function __toString() {
-        return $this->title;
-    }
-
-
     /**
      * Set weight
      *
@@ -241,30 +203,6 @@ class Page extends AbstractEntity {
     public function getWeight()
     {
         return $this->weight;
-    }
-
-    /**
-     * Set excerpt
-     *
-     * @param string $excerpt
-     *
-     * @return Page
-     */
-    public function setExcerpt($excerpt)
-    {
-        $this->excerpt = $excerpt;
-
-        return $this;
-    }
-
-    /**
-     * Get excerpt
-     *
-     * @return string
-     */
-    public function getExcerpt()
-    {
-        return $this->excerpt;
     }
 
     /**
