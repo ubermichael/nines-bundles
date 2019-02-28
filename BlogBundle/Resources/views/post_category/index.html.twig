@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block pageheader %}
-    <h1>PostCategory List</h1>
+    <h1>Post Category List</h1>
     <p class="count">
         Displaying {{ postCategories|length }} postCategories of {{ postCategories.getTotalItemCount }} total.
     </p>
@@ -34,7 +34,7 @@
                             {{ postCategory.label }}
                         </a>
                     </td>
-                    <td>{{ postCategory.description }}</td>
+                    <td>{{ postCategory.description|raw }}</td>
                 </tr>
             {% endfor %}
         </tbody>

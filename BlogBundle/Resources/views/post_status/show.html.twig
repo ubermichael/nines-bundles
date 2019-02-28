@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block pageheader %} 
-    <h1>PostStatus</h1>
+    <h1>Post Status</h1>
 {% endblock %} 
 
 {% block body %}
@@ -36,7 +36,7 @@
                 <td>{% if postStatus.public %}Yes{% else %}No{% endif %}</td>
             <tr>
                 <th>Description</th>
-                <td>{{ postStatus.description }}</td>
+                <td>{{ postStatus.description|raw }}</td>
             </tr>
             <tr>
                 <th>Created</th>

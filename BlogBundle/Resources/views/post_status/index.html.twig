@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block pageheader %}
-    <h1>PostStatus List</h1>
+    <h1>Post Status List</h1>
     <p class="count">
         Displaying {{ postStatuses|length }} postStatuses of {{ postStatuses.getTotalItemCount }} total.
     </p>
@@ -39,7 +39,7 @@
                         </a>
                     </td>
                     <td>{{ postStatus.label }}</td>
-                    <td>{{ postStatus.description }}</td>
+                    <td>{{ postStatus.description|raw }}</td>
                     <td>{% if postStatus.public %}Yes{% else %}No{% endif %}</td>
                     <td>{% if postStatus.created %}{{ postStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
                     <td>{% if postStatus.updated %}{{ postStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
