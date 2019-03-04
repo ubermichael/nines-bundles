@@ -68,7 +68,7 @@ abstract class BaseTestCase extends WebTestCase {
         }
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         parent::tearDown();
 
         if ($this->em) {
