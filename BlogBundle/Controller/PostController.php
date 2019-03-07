@@ -48,16 +48,18 @@ class PostController extends Controller {
      *
      * @param Request $request
      *
+     * @return array
+     *
      * @Route("/search", name="post_search")
      * @Method("GET")
      * @Template()
      */
-    public function searchAction(Request $request, AuthorizationCheckerInterface $checker) {
+    public function searchAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('NinesBlogBundle:Post');
         $q = $request->query->get('q');
         if ($q) {
-            $query = $repo->fulltextQuery($q, $checker->isGranted('ROLE_USER'));
+            $query = $repo->fulltextQuery($q, $this->isGranted('ROLE_USER'));
             $paginator = $this->get('knp_paginator');
             $posts = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
         } else {

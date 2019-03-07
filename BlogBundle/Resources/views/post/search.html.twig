@@ -1,17 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block pageheader %}
-    <h1>Page Search</h1>
-    {% if pages|length > 0 %}
+    <h1>Blog posts</h1>
+    {% if q %}
         <p class="count">
-            Displaying {{ pages|length }} pages of {{ pages.getTotalItemCount }} total.
+            Displaying {{ posts|length }} posts of {{ posts.getTotalItemCount }} total.
         </p>
-    {% elseif  q %}
-        <p>Your search for <i>{{ q }}</i> returned zero results.</p>
     {% endif %}
 {% endblock %} 
 
 {% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_BLOG_ADMIN') %}
+                <a href="{{ path('post_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
 
     <form method="get" class="form-horizontal">
         <fieldset>
@@ -34,33 +44,34 @@
     </form>
 
     {% if q %}
-        {% for page in pages %}
+        {% for post in posts %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title pull-left">
-                        <a href="{{ path('page_show', { 'id': page.id }) }}">
-                            {{ page.title }}
+                        <a href="{{ path('post_show', { 'id': post.id }) }}">
+                            {{ post.title }}
                         </a>
                     </h2>
                     {% if is_granted('ROLE_BLOG_ADMIN') %}
-                        <div class="panel-title pull-right">{% if page.public %}Public{% else %}Private{% endif %}</div>
+                        <div class="panel-title pull-right">{{ post.status.label }}</div>
                     {% endif %}
                     <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
-                    {{ page.excerpt|raw }}
+                    {{ post.excerpt|raw }}
                 </div>
                 <div class="panel-footer text-right">
-                    Posted {{ page.created|date('Y-m-d H:i:s') }} by {{ page.user.fullname }}.
+                    Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in
+                    <a href="{{ path('post_category_show', {'id': post.category.id }) }}">
+                        {{ post.category -}}
+                    </a>.
                 </div>
             </div>
         {% endfor %}
 
-
         <div class="navigation">
-            {{ knp_pagination_render(pages) }}
+            {{ knp_pagination_render(posts) }}
         </div>
-
     {% endif %}
 
 {% endblock %}
