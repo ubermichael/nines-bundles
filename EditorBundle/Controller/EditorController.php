@@ -16,6 +16,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditorController extends Controller
 {
+
+    private function getUploadDir(){
+        $uploadDir = $this->getParameter('nines.editor.upload_dir');
+        if( ! $uploadDir[0] === '/') {
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/' . $uploadDir;
+        }
+        return $uploadDir;
+    }
+
     /**
      * @param Request $request
      * @Route("/upload/image", name="editor_upload")
@@ -28,7 +37,7 @@ class EditorController extends Controller
             throw new BadRequestHttpException("Expected one file parameter. Got " . $request->files->count() . " instead.");
         }
 
-        $uploadDir = $this->getParameter('kernel.project_dir') . '/' . $this->getParameter('nines.editor.upload_dir');
+        $uploadDir = $this->getUploadDir();
         $uploadFile = $request->files->get('file');
 
         $clientName = preg_replace("/[^a-z0-9 _-]/i", '', $uploadFile->getClientOriginalName());
@@ -48,7 +57,7 @@ class EditorController extends Controller
         if (!preg_match('/^[a-z0-9 ._-]*$/i', $filename)) {
             throw new BadRequestHttpException('Invalid file name: ' . $filename);
         }
-        $uploadDir = $this->getParameter('kernel.project_dir') . '/' . $this->getParameter('nines.editor.upload_dir');
+        $uploadDir = $this->getUploadDir();
         $path = $uploadDir . '/' . $filename;
         if (!file_exists($path)) {
             throw new FileNotFoundException("Cannot find {$filename}.");
