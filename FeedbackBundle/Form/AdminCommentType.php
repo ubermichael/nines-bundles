@@ -17,15 +17,19 @@ class AdminCommentType extends AbstractType
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {    
+    {
         $builder->add('fullname');  // string     
         $builder->add('email');  // string     
         $builder->add('followUp');  // boolean     
-        $builder->add('content', TextareaType::class);  // string 
+        $builder->add('content', TextareaType::class, array(
+            'attr' => array(
+                'class' => 'tinymce',
+            )
+        ));  // string
         $builder->add('status');
-        $builder->setMethod('POST');        
+        $builder->setMethod('POST');
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */

@@ -42,6 +42,9 @@ class CommentType extends AbstractType {
         ));
         $builder->add('content', TextareaType::class, array(
             'label' => 'Suggestion',
+            'attr' => array(
+                'class' => 'tinymce',
+            )
         ));  // string
     }
 

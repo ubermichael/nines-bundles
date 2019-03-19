@@ -2,9 +2,9 @@
 
 namespace Nines\UtilBundle\Form;
 
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 abstract class TermType extends AbstractType {
@@ -26,7 +26,11 @@ abstract class TermType extends AbstractType {
                 'help_block' => 'A human-readable name.'
             ),
         ));
-        $builder->add('description', CKEditorType::class);
+        $builder->add('description', TextareaType::class, array(
+            'attr' => array(
+                'class' => 'tinymce',
+            )
+        ));
     }
 
 }

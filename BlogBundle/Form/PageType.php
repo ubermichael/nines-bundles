@@ -2,7 +2,8 @@
 
 namespace Nines\BlogBundle\Form;
 
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,18 +42,20 @@ class PageType extends AbstractType {
                 'help_block' => '',
             ),
         ));
-        $builder->add('excerpt', CKEditorType::class, array(
+        $builder->add('excerpt', TextareaType::class, array(
             'label' => 'Excerpt',
             'required' => false,
             'attr' => array(
                 'help_block' => '',
+                'class' => 'tinymce',
             ),
         ));
-        $builder->add('content', CKEditorType::class, array(
+        $builder->add('content', TextareaType::class, array(
             'label' => 'Content',
             'required' => true,
             'attr' => array(
                 'help_block' => '',
+                'class' => 'tinymce',
             ),
         ));
         $builder->add('includeComments', ChoiceType::class, array(

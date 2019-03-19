@@ -1,0 +1,4 @@
+services:
+#    nines_editor.example:
+#        class: Nines\EditorBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

@@ -2,7 +2,8 @@
 
 namespace Nines\DublinCoreBundle\Form;
 
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Nines\DublinCoreBundle\Entity\Element;
 use Nines\UtilBundle\Form\TermType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -29,11 +30,12 @@ class ElementType extends TermType {
                 'help_block' => '',
             ),
         ));
-        $builder->add('comment', CKEditorType::class, array(
+        $builder->add('comment', TextareaType::class, array(
             'label' => 'Comment',
             'required' => true,
             'attr' => array(
                 'help_block' => '',
+                'class' => 'tinymce',
             ),
         ));
     }
