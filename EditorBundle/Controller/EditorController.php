@@ -2,14 +2,25 @@
 
 namespace Nines\EditorBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Asset\Packages;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditorController extends Controller
 {
     /**
      * @param Request $request
      * @Route("/upload/image", name="editor_upload")
+     * @Security("has_role('ROLE_USER')")
+     * @Method("POST")
      */
     public function editorUploadImageAction(Request $request, Packages $assetsManager)
     {
@@ -30,6 +41,7 @@ class EditorController extends Controller
     /**
      * @param Request $request
      * @Route("/upload/image/{filename}", name="editor_image")
+     * @Method("GET")
      */
     public function editorViewImageAction(Request $request, $filename)
     {
