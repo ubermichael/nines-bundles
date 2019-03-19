@@ -1,11 +1,13 @@
 (function ($, tinymce, editorUploadPath) {
 
     const mceSettings = {
+        branding: false,
         selector: '.tinymce',
         plugins: 'image imagetools link lists paste wordcount',
         relative_urls: false,
         convert_urls: false,
         height: 480,
+        menubar: 'edit insert view format tools',
 
         toolbar: "undo redo | styleselect | paste | bold italic | alignleft"
             + "aligncenter alignright alignjustify | "
