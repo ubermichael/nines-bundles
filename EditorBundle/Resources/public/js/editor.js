@@ -5,6 +5,7 @@
         plugins: 'image imagetools link lists paste wordcount',
         relative_urls: false,
         convert_urls: false,
+        height: 480,
 
         toolbar: "undo redo | styleselect | paste | bold italic | alignleft"
             + "aligncenter alignright alignjustify | "
