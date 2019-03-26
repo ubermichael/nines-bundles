@@ -19,3 +19,7 @@ services:
     Nines\UtilBundle\Services\Text:
         arguments:
             $defaultTrimLength: '%nines_text.trim_length%'
+
+    Nines\UtilBundle\Twig\TextExtension:
+        tags:
+            - { name : twig.extension }

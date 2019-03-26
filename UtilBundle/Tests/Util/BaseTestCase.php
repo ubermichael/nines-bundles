@@ -5,6 +5,7 @@ namespace Nines\UtilBundle\Tests\Util;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class BaseTestCase extends WebTestCase {
@@ -40,6 +41,12 @@ abstract class BaseTestCase extends WebTestCase {
         if ($fixtures !== null) {
             $this->references = $this->loadFixtures($fixtures)->getReferenceRepository();
         }
+    }
+
+    protected function makeClient($authentication = false, array $params = []): Client {
+        $client =  parent::makeClient($authentication, $params);
+        $client->disableReboot();
+        return $client;
     }
 
     /**
