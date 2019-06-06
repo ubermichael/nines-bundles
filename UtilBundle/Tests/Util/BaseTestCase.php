@@ -29,7 +29,7 @@ abstract class BaseTestCase extends WebTestCase {
         return null;
     }
 
-    protected function setUp() {
+    protected function setUp() : void {
         parent::setUp();
         $kernel = self::bootKernel();
         $this->container = $kernel->getContainer();
