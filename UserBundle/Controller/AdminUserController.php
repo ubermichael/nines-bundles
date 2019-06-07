@@ -4,9 +4,7 @@ namespace Nines\UserBundle\Controller;
 
 use Nines\UserBundle\Entity\User;
 use Nines\UserBundle\Form\AdminUserType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,8 +25,8 @@ class AdminUserController extends Controller {
     /**
      * Lists all User entities.
      *
-     * @Route("/", name="user")
-     * @Method("GET")
+     * @Route("/", name="user", methods={"GET"})
+
      * @Template()
      *
      * @return array
@@ -45,8 +43,8 @@ class AdminUserController extends Controller {
     /**
      * Creates a new User entity.
      *
-     * @Route("/new", name="user_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="user_new", methods={"GET","POST"})
+
      * @Template()
      *
      * @param Request $request
@@ -77,8 +75,8 @@ class AdminUserController extends Controller {
     /**
      * Finds and displays a User entity.
      *
-     * @Route("/{id}", name="user_show")
-     * @Method("GET")
+     * @Route("/{id}", name="user_show", methods={"GET"})
+
      * @Template()
      *
      * @param string $id
@@ -94,8 +92,8 @@ class AdminUserController extends Controller {
     /**
      * Displays a form to edit an existing User entity.
      *
-     * @Route("/{id}/edit", name="user_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="user_edit", methods={"GET","POST"})
+
      * @Template()
      *
      * @param string $id
@@ -123,7 +121,7 @@ class AdminUserController extends Controller {
     /**
      * Deletes a User entity.
      *
-     * @Route("/{id}/delete", name="user_delete")
+     * @Route("/{id}/delete", name="user_delete", methods={"GET"})
      *
      * @param string $id
      *
@@ -140,8 +138,8 @@ class AdminUserController extends Controller {
     /**
      * Change a user's password.
      *
-     * @Route("/{id}/password", name="admin_user_password")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/password", name="admin_user_password", methods={"GET","POST"})
+
      * @Template()
      *
      * @param Request $request

@@ -11,8 +11,7 @@ use Nines\FeedbackBundle\Form\CommentNoteType;
 use Nines\FeedbackBundle\Form\CommentType;
 use Nines\FeedbackBundle\Services\CommentService;
 use Nines\FeedbackBundle\Services\NotifierService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -32,9 +31,9 @@ class CommentController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="admin_comment_index")
+     * @Route("/", name="admin_comment_index", methods={"GET"})
      * @Security("has_role('ROLE_COMMENT_ADMIN')")
-     * @Method("GET")
+
      * @Template()
      */
     public function indexAction(Request $request, CommentService $service) {
@@ -66,8 +65,8 @@ class CommentController extends Controller {
      /**
      * Full text search for Comment entities.
      *
-     * @Route("/fulltext", name="admin_comment_fulltext")
-     * @Method("GET")
+     * @Route("/fulltext", name="admin_comment_fulltext", methods={"GET"})
+
      * @Security("has_role('ROLE_COMMENT_ADMIN')")
      * @Template()
      * @param Request $request
@@ -95,8 +94,8 @@ class CommentController extends Controller {
     /**
      * Post a comment on an entity.
      *
-     * @Method("POST")
-     * @Route("/post", name="comment_post")
+
+     * @Route("/post", name="comment_post", methods={"POST"})
      * @param Request $request
      * @Template()
      */
@@ -131,8 +130,8 @@ class CommentController extends Controller {
     /**
      * Finds and displays a Comment entity.
      *
-     * @Route("/{id}", name="admin_comment_show")
-     * @Method({"GET","POST"})
+     * @Route("/{id}", name="admin_comment_show", methods={"GET","POST"})
+
      * @Security("has_role('ROLE_COMMENT_ADMIN')")
      * @Template()
      * @param Request $request
@@ -178,8 +177,8 @@ class CommentController extends Controller {
     /**
      * Deletes a Comment entity.
      *
-     * @Route("/{id}/delete", name="admin_comment_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="admin_comment_delete", methods={"GET"})
+
      * @Security("is_granted('ROLE_COMMENT_ADMIN')")
      * @param Request $request
      * @param Comment $comment

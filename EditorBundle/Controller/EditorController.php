@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditorController extends Controller
@@ -27,9 +26,9 @@ class EditorController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/upload/image", name="editor_upload")
+     * @Route("/upload/image", name="editor_upload", methods={"POST"})
      * @Security("has_role('ROLE_USER')")
-     * @Method("POST")
+
      */
     public function editorUploadImageAction(Request $request, Packages $assetsManager)
     {
@@ -49,8 +48,8 @@ class EditorController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/upload/image/{filename}", name="editor_image")
-     * @Method("GET")
+     * @Route("/upload/image/{filename}", name="editor_image", methods={"GET"})
+
      */
     public function editorViewImageAction(Request $request, $filename)
     {

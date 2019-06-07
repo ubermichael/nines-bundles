@@ -4,8 +4,7 @@ namespace Nines\BlogBundle\Controller;
 
 use Nines\BlogBundle\Entity\Post;
 use Nines\BlogBundle\Form\PostType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,8 +26,8 @@ class PostController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="post_index")
-     * @Method("GET")
+     * @Route("/", name="post_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
@@ -50,8 +49,8 @@ class PostController extends Controller {
      *
      * @return array
      *
-     * @Route("/search", name="post_search")
-     * @Method("GET")
+     * @Route("/search", name="post_search", methods={"GET"})
+
      * @Template()
      */
     public function searchAction(Request $request) {
@@ -80,8 +79,8 @@ class PostController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/new", name="post_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="post_new", methods={"GET","POST"})
+
      * @Template()
      */
     public function newAction(Request $request) {
@@ -112,8 +111,8 @@ class PostController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="post_show")
-     * @Method("GET")
+     * @Route("/{id}", name="post_show", methods={"GET"})
+
      * @Template()
      */
     public function showAction(Post $post) {
@@ -133,8 +132,8 @@ class PostController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/edit", name="post_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="post_edit", methods={"GET","POST"})
+
      * @Template()
      */
     public function editAction(Request $request, Post $post) {
@@ -164,8 +163,8 @@ class PostController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/delete", name="post_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="post_delete", methods={"GET"})
+
      */
     public function deleteAction(Request $request, Post $post) {
         $em = $this->getDoctrine()->getManager();

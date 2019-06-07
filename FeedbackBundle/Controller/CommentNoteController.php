@@ -6,8 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\FeedbackBundle\Entity\CommentNote;
@@ -28,8 +27,8 @@ class CommentNoteController extends Controller
      *
      * @return array
      *
-     * @Route("/", name="admin_comment_note_index")
-     * @Method("GET")
+     * @Route("/", name="admin_comment_note_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request)
@@ -54,8 +53,8 @@ class CommentNoteController extends Controller
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_CONTENT_ADMIN')")
-     * @Route("/new", name="admin_comment_note_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="admin_comment_note_new", methods={"GET","POST"})
+
      * @Template()
      */
     public function newAction(Request $request)

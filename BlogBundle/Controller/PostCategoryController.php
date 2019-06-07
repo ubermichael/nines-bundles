@@ -6,8 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -29,8 +28,8 @@ class PostCategoryController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="post_category_index")
-     * @Method("GET")
+     * @Route("/", name="post_category_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -51,9 +50,9 @@ class PostCategoryController extends Controller {
      *
      * @param Request $request
      *
-     * @Route("/typeahead", name="post_category_typeahead")
+     * @Route("/typeahead", name="post_category_typeahead", methods={"GET"})
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Method("GET")
+
      * @return JsonResponse
      */
     public function typeahead(Request $request) {
@@ -81,8 +80,8 @@ class PostCategoryController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/new", name="post_category_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="post_category_new", methods={"GET"})
+
      * @Template()
      */
     public function newAction(Request $request) {
@@ -113,8 +112,8 @@ class PostCategoryController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/new_popup", name="post_category_new_popup")
-     * @Method({"GET", "POST"})
+     * @Route("/new_popup", name="post_category_new_popup", methods={"GET"})
+
      * @Template()
      */
     public function newPopupAction(Request $request) {
@@ -128,8 +127,8 @@ class PostCategoryController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="post_category_show")
-     * @Method("GET")
+     * @Route("/{id}", name="post_category_show", methods={"GET"})
+
      * @Template()
      */
     public function showAction(Request $request, PostCategory $postCategory) {
@@ -154,8 +153,8 @@ class PostCategoryController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/edit", name="post_category_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="post_category_edit", methods={"GET"})
+
      * @Template()
      */
     public function editAction(Request $request, PostCategory $postCategory) {
@@ -185,8 +184,8 @@ class PostCategoryController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/delete", name="post_category_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="post_category_delete", methods={"GET"})
+
      */
     public function deleteAction(Request $request, PostCategory $postCategory) {
         $em = $this->getDoctrine()->getManager();

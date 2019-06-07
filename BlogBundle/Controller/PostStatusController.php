@@ -6,8 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\BlogBundle\Entity\PostStatus;
@@ -28,8 +27,8 @@ class PostStatusController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="post_status_index")
-     * @Method("GET")
+     * @Route("/", name="post_status_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -50,9 +49,9 @@ class PostStatusController extends Controller {
      *
      * @param Request $request
      *
-     * @Route("/typeahead", name="post_status_typeahead")
+     * @Route("/typeahead", name="post_status_typeahead", methods={"GET"})
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Method("GET")
+
      * @return JsonResponse
      */
     public function typeahead(Request $request) {
@@ -80,8 +79,8 @@ class PostStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/new", name="post_status_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="post_status_new", methods={"GET","POST"})
+
      * @Template()
      */
     public function newAction(Request $request) {
@@ -112,8 +111,8 @@ class PostStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/new_popup", name="post_status_new_popup")
-     * @Method({"GET", "POST"})
+     * @Route("/new_popup", name="post_status_new_popup", methods={"GET","POST"})
+
      * @Template()
      */
     public function newPopupAction(Request $request) {
@@ -127,8 +126,8 @@ class PostStatusController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="post_status_show")
-     * @Method("GET")
+     * @Route("/{id}", name="post_status_show", methods={"GET"})
+
      * @Template()
      */
     public function showAction(PostStatus $postStatus) {
@@ -148,8 +147,8 @@ class PostStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/edit", name="post_status_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="post_status_edit", methods={"GET","POST"})
+
      * @Template()
      */
     public function editAction(Request $request, PostStatus $postStatus) {
@@ -179,8 +178,8 @@ class PostStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/delete", name="post_status_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="post_status_delete", methods={"GET"})
+
      */
     public function deleteAction(Request $request, PostStatus $postStatus) {
         $em = $this->getDoctrine()->getManager();

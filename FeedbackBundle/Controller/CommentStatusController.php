@@ -4,9 +4,7 @@ namespace Nines\FeedbackBundle\Controller;
 
 use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\CommentStatusType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,8 +27,8 @@ class CommentStatusController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="admin_comment_status_index")
-     * @Method("GET")
+     * @Route("/", name="admin_comment_status_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -54,8 +52,8 @@ class CommentStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_COMMENT_ADMIN')")
-     * @Route("/new", name="admin_comment_status_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="admin_comment_status_new", methods={"GET","POST"})
+
      * @Template()
      */
     public function newAction(Request $request) {
@@ -85,8 +83,8 @@ class CommentStatusController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="admin_comment_status_show")
-     * @Method("GET")
+     * @Route("/{id}", name="admin_comment_status_show", methods={"GET"})
+
      * @Template()
      */
     public function showAction(CommentStatus $commentStatus) {
@@ -106,8 +104,8 @@ class CommentStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_COMMENT_ADMIN')")
-     * @Route("/{id}/edit", name="admin_comment_status_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="admin_comment_status_edit", methods={"GET","POST"})
+
      * @Template()
      */
     public function editAction(Request $request, CommentStatus $commentStatus) {
@@ -137,8 +135,8 @@ class CommentStatusController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_COMMENT_ADMIN')")
-     * @Route("/{id}/delete", name="admin_comment_status_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="admin_comment_status_delete", methods={"GET"})
+
      */
     public function deleteAction(Request $request, CommentStatus $commentStatus) {
         $em = $this->getDoctrine()->getManager();

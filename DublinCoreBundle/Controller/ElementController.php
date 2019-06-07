@@ -6,8 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\DublinCoreBundle\Entity\Element;
@@ -27,8 +26,8 @@ class ElementController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="element_index")
-     * @Method("GET")
+     * @Route("/", name="element_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -52,8 +51,8 @@ class ElementController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_DC_ADMIN')")
-     * @Route("/new", name="element_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="element_new", methods={"GET","POST"})
+
      * @Template()
      */
     public function newAction(Request $request) {
@@ -83,8 +82,8 @@ class ElementController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="element_show")
-     * @Method("GET")
+     * @Route("/{id}", name="element_show", methods={"GET"})
+
      * @Template()
      */
     public function showAction(Element $element) {
@@ -104,8 +103,8 @@ class ElementController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_DC_ADMIN')")
-     * @Route("/{id}/edit", name="element_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="element_edit", methods={"GET","POST"})
+
      * @Template()
      */
     public function editAction(Request $request, Element $element) {
@@ -135,8 +134,8 @@ class ElementController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_DC_ADMIN')")
-     * @Route("/{id}/delete", name="element_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="element_delete", methods={"GET"})
+
      */
     public function deleteAction(Request $request, Element $element) {
         $em = $this->getDoctrine()->getManager();

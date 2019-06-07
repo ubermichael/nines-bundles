@@ -5,8 +5,7 @@ namespace Nines\BlogBundle\Controller;
 use Nines\BlogBundle\Entity\Page;
 use Nines\BlogBundle\Form\PageType;
 use Nines\UtilBundle\Services\Text;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,8 +27,8 @@ class PageController extends Controller {
      *
      * @return array
      *
-     * @Route("/", name="page_index")
-     * @Method("GET")
+     * @Route("/", name="page_index", methods={"GET"})
+
      * @Template()
      */
     public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
@@ -45,8 +44,8 @@ class PageController extends Controller {
     }
 
     /**
-     * @Route("/sort", name="page_sort")
-     * @Method({"GET","POST"})
+     * @Route("/sort", name="page_sort", methods={"GET","POST"})
+
      * @Template()
      * @Security("has_role('ROLE_BLOG_ADMIN')")
      *
@@ -80,8 +79,8 @@ class PageController extends Controller {
     /**
      * Full text search for Page entities.
      *
-     * @Route("/search", name="page_search")
-     * @Method("GET")
+     * @Route("/search", name="page_search", methods={"GET"})
+
      * @Template()
      */
     public function searchAction(Request $request, AuthorizationCheckerInterface $checker) {
@@ -110,8 +109,8 @@ class PageController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/new", name="page_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="page_new", methods={"GET","POST"})
+
      * @Template()
      */
     public function newAction(Request $request, Text $text) {
@@ -143,8 +142,8 @@ class PageController extends Controller {
      *
      * @return array
      *
-     * @Route("/{id}", name="page_show")
-     * @Method("GET")
+     * @Route("/{id}", name="page_show", methods={"GET"})
+
      * @Template()
      */
     public function showAction(Page $page) {
@@ -167,8 +166,8 @@ class PageController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/edit", name="page_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="page_edit", methods={"GET"})
+
      * @Template()
      */
     public function editAction(Request $request, Page $page, Text $text) {
@@ -199,8 +198,8 @@ class PageController extends Controller {
      * @return array|RedirectResponse
      *
      * @Security("has_role('ROLE_BLOG_ADMIN')")
-     * @Route("/{id}/delete", name="page_delete")
-     * @Method("GET")
+     * @Route("/{id}/delete", name="page_delete", methods={"GET"})
+
      */
     public function deleteAction(Request $request, Page $page) {
         $em = $this->getDoctrine()->getManager();

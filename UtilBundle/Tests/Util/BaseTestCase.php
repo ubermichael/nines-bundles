@@ -41,6 +41,9 @@ abstract class BaseTestCase extends WebTestCase {
         if ($fixtures !== null) {
             $this->references = $this->loadFixtures($fixtures)->getReferenceRepository();
         }
+
+        // KnpPaginatorBundle does something odd with GET parameters. Sigh.
+        unset($_GET['sort']);
     }
 
     protected function makeClient($authentication = false, array $params = []): Client {
