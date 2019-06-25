@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Apply title casing to a string.
  *
- * @author Michael Joyce <mjoyce@sfu.ca>
+ *
  */
 class TitleCaser {
 
