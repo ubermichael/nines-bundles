@@ -1,0 +1,3 @@
+nines_dublincore:
+    resource: "@NinesDublinCoreBundle/Controller"
+    type: annotation

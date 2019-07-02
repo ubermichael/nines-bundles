@@ -2,13 +2,12 @@
 
 namespace Nines\DublinCoreBundle\Menu;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 /**
  * Class to build some menus for navigation.
@@ -34,11 +33,10 @@ class Builder implements ContainerAwareInterface {
      */
     private $tokenStorage;
 
-    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, EntityManagerInterface $em) {
+    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage) {
         $this->factory = $factory;
         $this->authChecker = $authChecker;
         $this->tokenStorage = $tokenStorage;
-        $this->em = $em;
     }
 
     private function hasRole($role) {
@@ -64,16 +62,31 @@ class Builder implements ContainerAwareInterface {
      */
 
     public function dcMenu(array $options) {
+        if (!$this->hasRole('ROLE_DC_ADMIN')) {
+            return;
+        }
+        $title = 'Dublin Core';
+        if (isset($options['title'])) {
+            $title = $options['title'];
+        }
         $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes(array(
-            'class' => 'dropdown-menu',
+            'class' => 'nav navbar-nav',
         ));
         $menu->setAttribute('dropdown', true);
-        $menu->addChild('elements', array(
-            'label' => 'Elements',
+
+        $feedback = $menu->addChild('feedback', array(
+            'uri' => '#',
+            'label' => $title . self::CARET,
+        ));
+        $feedback->setAttribute('dropdown', true);
+        $feedback->setLinkAttribute('class', 'dropdown-toggle');
+        $feedback->setLinkAttribute('data-toggle', 'dropdown');
+        $feedback->setChildrenAttribute('class', 'dropdown-menu');
+
+        $feedback->addChild('Elements', array(
             'route' => 'element_index',
         ));
-
 
         return $menu;
     }

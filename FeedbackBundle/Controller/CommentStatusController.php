@@ -4,6 +4,7 @@ namespace Nines\FeedbackBundle\Controller;
 
 use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\CommentStatusType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * CommentStatus controller.
  *
- * @Security("has_role('ROLE_USER')")
+ * @IsGranted("ROLE_USER")
  * @Route("/admin/comment_status")
  */
 class CommentStatusController extends Controller {

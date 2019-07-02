@@ -16,7 +16,6 @@ use Nines\DublinCoreBundle\Form\ElementType;
 /**
  * Element controller.
  *
- * @Security("has_role('ROLE_USER')")
  * @Route("/element")
  */
 class ElementController extends Controller {

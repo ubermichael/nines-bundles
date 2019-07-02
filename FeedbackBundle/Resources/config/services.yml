@@ -1,9 +1,15 @@
+parameters:
+    # comment notifications
+    nines_feedback.sender: ~
+    nines_feedback.recipient: ~
+    nines_feedback.subject: New feedback received
+
 services:
 
     _defaults:
         autowire: true
         autoconfigure: true
-        public: true
+        public: false
 
     Nines\FeedbackBundle\:
         resource: '../../*'

@@ -4,6 +4,7 @@ namespace Nines\UserBundle\Controller;
 
 use Nines\UserBundle\Entity\User;
 use Nines\UserBundle\Form\AdminUserType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Admin-only user controller.
  *
  * @Route("/admin/user")
- * @Security("has_role('ROLE_ADMIN')")
+ * @IsGranted("ROLE_ADMIN")
  */
 class AdminUserController extends Controller {
 
