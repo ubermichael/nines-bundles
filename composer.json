@@ -1,12 +1,19 @@
 {
     "name": "ubermichael/nines",
     "description": "Some useful bundles.",
-    "type": "library",
+    "type": "package",
     "authors": [
         {
             "name": "Michael Joyce",
             "email": "ubermichael@gmail.com"
         }
     ],
-    "require": {}
+    "autoload": {
+        "psr-4": {
+            "Nines\\UtilBundle\\": "UtilBundle"
+        }
+    },
+    "require": {
+        "php": ">=7.2.0"
+    }
 }
