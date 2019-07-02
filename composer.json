@@ -1,0 +1,12 @@
+{
+    "name": "ubermichael/nines",
+    "description": "Some useful bundles.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Michael Joyce",
+            "email": "ubermichael@gmail.com"
+        }
+    ],
+    "require": {}
+}
