@@ -2,7 +2,7 @@
 
 namespace Nines\EditorBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -27,7 +27,7 @@ class EditorController extends Controller
     /**
      * @param Request $request
      * @Route("/upload/image", name="editor_upload", methods={"POST"})
-     * @Security("has_role('ROLE_USER')")
+     * @IsGranted("ROLE_USER")
 
      */
     public function editorUploadImageAction(Request $request, Packages $assetsManager)

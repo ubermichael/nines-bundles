@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Nines\BlogBundle\Entity\PostCategory;
@@ -51,7 +51,7 @@ class PostCategoryController extends Controller {
      * @param Request $request
      *
      * @Route("/typeahead", name="post_category_typeahead", methods={"GET"})
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
 
      * @return JsonResponse
      */
@@ -79,7 +79,7 @@ class PostCategoryController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new", name="post_category_new", methods={"GET"})
 
      * @Template()
@@ -111,7 +111,7 @@ class PostCategoryController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new_popup", name="post_category_new_popup", methods={"GET"})
 
      * @Template()
@@ -152,7 +152,7 @@ class PostCategoryController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="post_category_edit", methods={"GET"})
 
      * @Template()
@@ -183,7 +183,7 @@ class PostCategoryController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/delete", name="post_category_delete", methods={"GET"})
 
      */

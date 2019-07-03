@@ -5,7 +5,7 @@ namespace Nines\BlogBundle\Controller;
 use Nines\BlogBundle\Entity\Post;
 use Nines\BlogBundle\Form\PostType;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -78,7 +78,7 @@ class PostController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new", name="post_new", methods={"GET","POST"})
 
      * @Template()
@@ -131,7 +131,7 @@ class PostController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="post_edit", methods={"GET","POST"})
 
      * @Template()
@@ -162,7 +162,7 @@ class PostController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/delete", name="post_delete", methods={"GET"})
 
      */

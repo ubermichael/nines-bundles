@@ -12,7 +12,7 @@ use Nines\FeedbackBundle\Form\CommentType;
 use Nines\FeedbackBundle\Services\CommentService;
 use Nines\FeedbackBundle\Services\NotifierService;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,7 @@ class CommentController extends Controller {
      * @return array
      *
      * @Route("/", name="admin_comment_index", methods={"GET"})
-     * @Security("has_role('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
 
      * @Template()
      */
@@ -67,7 +67,7 @@ class CommentController extends Controller {
      *
      * @Route("/fulltext", name="admin_comment_fulltext", methods={"GET"})
 
-     * @Security("has_role('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @Template()
      * @param Request $request
      * @return array
@@ -132,7 +132,7 @@ class CommentController extends Controller {
      *
      * @Route("/{id}", name="admin_comment_show", methods={"GET","POST"})
 
-     * @Security("has_role('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @Template()
      * @param Request $request
      * @param Comment $comment

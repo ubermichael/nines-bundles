@@ -6,7 +6,7 @@ use Nines\BlogBundle\Entity\Page;
 use Nines\BlogBundle\Form\PageType;
 use Nines\UtilBundle\Services\Text;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -47,7 +47,7 @@ class PageController extends Controller {
      * @Route("/sort", name="page_sort", methods={"GET","POST"})
 
      * @Template()
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      *
      * @param Request $request
      * @return array
@@ -108,7 +108,7 @@ class PageController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new", name="page_new", methods={"GET","POST"})
 
      * @Template()
@@ -165,7 +165,7 @@ class PageController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="page_edit", methods={"GET"})
 
      * @Template()
@@ -197,7 +197,7 @@ class PageController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/delete", name="page_delete", methods={"GET"})
 
      */

@@ -4,8 +4,8 @@ namespace Nines\FeedbackBundle\Controller;
 
 use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\CommentStatusType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +51,7 @@ class CommentStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @Route("/new", name="admin_comment_status_new", methods={"GET","POST"})
 
      * @Template()
@@ -103,7 +103,7 @@ class CommentStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @Route("/{id}/edit", name="admin_comment_status_edit", methods={"GET","POST"})
 
      * @Template()
@@ -134,7 +134,7 @@ class CommentStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @Route("/{id}/delete", name="admin_comment_status_delete", methods={"GET"})
 
      */

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\DublinCoreBundle\Entity\Element;
 use Nines\DublinCoreBundle\Form\ElementType;
@@ -50,7 +50,7 @@ class ElementController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_DC_ADMIN')")
+     * @IsGranted("ROLE_DC_ADMIN")
      * @Route("/new", name="element_new", methods={"GET","POST"})
 
      * @Template()
@@ -102,7 +102,7 @@ class ElementController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_DC_ADMIN')")
+     * @IsGranted("ROLE_DC_ADMIN")
      * @Route("/{id}/edit", name="element_edit", methods={"GET","POST"})
 
      * @Template()
@@ -133,7 +133,7 @@ class ElementController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_DC_ADMIN')")
+     * @IsGranted("ROLE_DC_ADMIN")
      * @Route("/{id}/delete", name="element_delete", methods={"GET"})
 
      */

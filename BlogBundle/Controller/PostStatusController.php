@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\BlogBundle\Entity\PostStatus;
 use Nines\BlogBundle\Form\PostStatusType;
@@ -15,7 +15,7 @@ use Nines\BlogBundle\Form\PostStatusType;
 /**
  * PostStatus controller.
  *
- * @Security("has_role('ROLE_USER')")
+ * @IsGranted("ROLE_USER")
  * @Route("/post_status")
  */
 class PostStatusController extends Controller {
@@ -50,7 +50,7 @@ class PostStatusController extends Controller {
      * @param Request $request
      *
      * @Route("/typeahead", name="post_status_typeahead", methods={"GET"})
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
 
      * @return JsonResponse
      */
@@ -78,7 +78,7 @@ class PostStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new", name="post_status_new", methods={"GET","POST"})
 
      * @Template()
@@ -110,7 +110,7 @@ class PostStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new_popup", name="post_status_new_popup", methods={"GET","POST"})
 
      * @Template()
@@ -146,7 +146,7 @@ class PostStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="post_status_edit", methods={"GET","POST"})
 
      * @Template()
@@ -177,7 +177,7 @@ class PostStatusController extends Controller {
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_BLOG_ADMIN')")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/delete", name="post_status_delete", methods={"GET"})
 
      */

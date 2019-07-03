@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Nines\FeedbackBundle\Entity\CommentNote;
 use Nines\FeedbackBundle\Form\CommentNoteType;
@@ -15,7 +15,7 @@ use Nines\FeedbackBundle\Form\CommentNoteType;
 /**
  * CommentNote controller.
  *
- * @Security("has_role('ROLE_USER')")
+ * @IsGranted("ROLE_USER")
  * @Route("/admin/comment_note")
  */
 class CommentNoteController extends Controller
@@ -52,7 +52,7 @@ class CommentNoteController extends Controller
      *
      * @return array|RedirectResponse
      *
-     * @Security("has_role('ROLE_CONTENT_ADMIN')")
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/new", name="admin_comment_note_new", methods={"GET","POST"})
 
      * @Template()
