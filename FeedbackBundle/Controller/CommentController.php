@@ -179,7 +179,7 @@ class CommentController extends Controller {
      *
      * @Route("/{id}/delete", name="admin_comment_delete", methods={"GET"})
 
-     * @Security("is_granted('ROLE_COMMENT_ADMIN')")
+     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @param Request $request
      * @param Comment $comment
      */
