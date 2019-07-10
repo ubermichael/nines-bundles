@@ -24,7 +24,7 @@ class LoadUser extends Fixture {
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $manager) {
         $admin = new User();
         $admin->setEmail(self::ADMIN['username']);
         $admin->setFullname("Admin user");
@@ -33,7 +33,7 @@ class LoadUser extends Fixture {
         $admin->setRoles(array('ROLE_ADMIN'));
         $admin->setEnabled(true);
         $this->setReference('user.admin', $admin);
-        $em->persist($admin);
+        $manager->persist($admin);
 
         $user = new User();
         $user->setEmail(self::USER['username']);
@@ -42,7 +42,7 @@ class LoadUser extends Fixture {
         $user->setPlainPassword(self::USER['password']);
         $user->setEnabled(true);
         $this->setReference('user.user', $admin);
-        $em->persist($user);
-        $em->flush();
+        $manager->persist($user);
+        $manager->flush();
     }
 }

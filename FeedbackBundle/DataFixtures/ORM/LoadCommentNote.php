@@ -16,14 +16,14 @@ class LoadCommentNote extends Fixture implements DependentFixtureInterface {
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $manager) {
 
         $note = new CommentNote();
         $note->setComment($this->getReference('comment.1'));
         $note->setContent('This is a note.');
         $note->setUser($this->getReference('user.user'));
-        $em->persist($note);
-        $em->flush();
+        $manager->persist($note);
+        $manager->flush();
     }
 
     public function getDependencies() {

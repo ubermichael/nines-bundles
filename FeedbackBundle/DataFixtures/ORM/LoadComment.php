@@ -18,7 +18,7 @@ class LoadComment extends Fixture implements DependentFixtureInterface {
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $manager) {
 
         $comment = new Comment();
         $comment->setFullname('Bobby');
@@ -28,9 +28,9 @@ class LoadComment extends Fixture implements DependentFixtureInterface {
         $comment->setTitle("Title 1");
         $comment->setEntity(Page::class . ':' . $this->getReference('page.published')->getId());
         $comment->setStatus($this->getReference('comment.status.submitted'));
-        $em->persist($comment);
+        $manager->persist($comment);
         $this->setReference('comment.1', $comment);
-        $em->flush();
+        $manager->flush();
     }
 
     public function getDependencies() {
