@@ -1,19 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Tests\Controller;
 
 use Nines\BlogBundle\Entity\Page;
-use Nines\FeedbackBundle\DataFixtures\ORM\LoadComment;
+use Nines\FeedbackBundle\DataFixtures\CommentFixtures;
 use Nines\FeedbackBundle\Entity\Comment;
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UserBundle\DataFixtures\UserFixtures;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class CommentControllerTest extends BaseTestCase {
-
-    protected function getFixtures() {
+class CommentControllerTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadUser::class,
-            LoadComment::class
+            UserFixtures::class,
+            CommentFixtures::class,
         ];
     }
 
@@ -21,133 +28,129 @@ class CommentControllerTest extends BaseTestCase {
      * @group anon
      * @group index
      */
-    public function testAnonIndex() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/admin/comment/');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testAnonIndex() : void {
+        $crawler = $this->client->request('GET', '/feedback/comment/');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group user
      * @group index
      */
-    public function testUserIndex() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/admin/comment/');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testUserIndex() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/feedback/comment/');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group admin
      * @group index
      */
-    public function testAdminIndex() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/admin/comment/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testAdminIndex() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/feedback/comment/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group anon
      * @group show
      */
-    public function testAnonShow() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/admin/comment/1');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+    public function testAnonShow() : void {
+        $crawler = $this->client->request('GET', '/feedback/comment/1');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(0, $crawler->selectLink('Delete')->count());
     }
 
     /**
      * @group user
      * @group show
      */
-    public function testUserShow() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/admin/comment/1');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+    public function testUserShow() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/feedback/comment/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(0, $crawler->selectLink('Delete')->count());
     }
 
     /**
      * @group admin
      * @group show
      */
-    public function testAdminShow() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/admin/comment/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('Delete')->count());
+    public function testAdminShow() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/feedback/comment/1');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(1, $crawler->selectLink('Delete')->count());
     }
 
     /**
      * @group anon
      * @group delete
      */
-    public function testAnonDelete() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/admin/comment/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
+    public function testAnonDelete() : void {
+        $crawler = $this->client->request('GET', '/feedback/comment/1/delete');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**
      * @group user
      * @group delete
      */
-    public function testUserDelete() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/admin/comment/1/delete');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    public function testUserDelete() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/feedback/comment/1/delete');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @group admin
      * @group delete
      */
-    public function testAdminDelete() {
-        $preCount = count($this->em->getRepository(Comment::class)->findAll());
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/admin/comment/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    public function testAdminDelete() : void {
+        $preCount = count($this->entityManager->getRepository(Comment::class)->findAll());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/feedback/comment/1/delete');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
-        $this->em->clear();
-        $postCount = count($this->em->getRepository(Comment::class)->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->entityManager->clear();
+        $postCount = count($this->entityManager->getRepository(Comment::class)->findAll());
+        $this->assertSame($preCount - 1, $postCount);
     }
 
-    public function testPostNoComments() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/page/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Submit')->count());
+    public function testPostNoComments() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/blog/page/1');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('Submit')->count());
     }
 
-    public function testPostComment() {
-        $page = $this->em->find(Page::class, 2);
+    public function testPostComment() : void {
+        $page = $this->entityManager->find(Page::class, 2);
         $page->setIncludeComments(true);
-        $this->em->flush();
-        $this->em->clear();
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/page/2');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/blog/page/2');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $form = $crawler->selectButton('Submit')->form([
             'comment[fullname]' => 'Bobby Tables',
             'comment[email]' => 'bobby@example.com',
             'comment[followUp]' => 0,
             'comment[content]' => 'I am a banana.',
         ]);
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect('/page/2'));
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect('/blog/page/2'));
     }
-
 }

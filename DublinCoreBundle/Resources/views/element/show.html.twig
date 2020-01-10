@@ -21,37 +21,18 @@
             {% endif %}
         </div>
     </div>
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ element.name }}</td>
-            </tr>
-            <tr>
-                <th>Label</th>
-                <td>{{ element.label }}</td>
-            </tr>
+
+    {% embed '@NinesUtil/term/partial/show.html.twig' with {'term': element} %}
+        {% block callback %}
             <tr>
                 <th>Uri</th>
                 <td>{{ element.uri }}</td>
             </tr>
             <tr>
-                <th>Description</th>
-                <td>{{ element.description|raw }}</td>
-            </tr>
-            <tr>
                 <th>Comment</th>
                 <td>{{ element.comment|raw }}</td>
             </tr>
-            <tr>
-                <th>Created</th>
-                <td>{% if element.created %}{{ element.created|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{% if element.updated %}{{ element.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-        </tbody>
-    </table>
+        {% endblock %}
+    {% endembed %}
 
 {% endblock %}

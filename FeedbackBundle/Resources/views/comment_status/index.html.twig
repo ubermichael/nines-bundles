@@ -12,7 +12,7 @@
     {% if(is_granted('ROLE_COMMENT_ADMIN')) %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
-                <a href="{{ path('admin_comment_status_new') }}" class="btn btn-default">
+                <a href="{{ path('nines_feedback_comment_status_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
             </div>
@@ -32,14 +32,14 @@
             {% for commentStatus in commentStatuses %}
                 <tr>
                     <td>
-                        <a href="{{ path('admin_comment_status_show', { 'id': commentStatus.id }) }}">
+                        <a href="{{ path('nines_feedback_comment_status_show', { 'id': commentStatus.id }) }}">
                             {{ commentStatus.name }}
                         </a>
                     </td>
                     <td>{{ commentStatus.label }}</td>
                     <td>{{ commentStatus.description|raw }}</td>
-                    <td>{% if commentStatus.created %}{{ commentStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
-                    <td>{% if commentStatus.updated %}{{ commentStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if commentStatus.created %}{{ commentStatus.created|date }}{% endif %}</td>
+                    <td>{% if commentStatus.updated %}{{ commentStatus.updated|date }}{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -1,36 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Form;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 abstract class TermType extends AbstractType {
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('name', TextType::class, array(
-            'label' => 'Name',
-            'attr' => array(
-                'help_block' => 'A computer-readable name. Should be lowercase without spaces.'
-            ),
-        ));
-        $builder->add('label', TextType::class, array(
+    public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('label', TextType::class, [
             'label' => 'Label',
-            'attr' => array(
-                'help_block' => 'A human-readable name.'
-            ),
-        ));
-        $builder->add('description', TextareaType::class, array(
-            'attr' => array(
+            'attr' => [
+                'help_block' => 'A human-readable name.',
+            ],
+        ]);
+        $builder->add('description', TextareaType::class, [
+            'required' => false,
+            'attr' => [
                 'class' => 'tinymce',
-            )
-        ));
+                'help_block' => 'A simple description of the item.',
+            ],
+        ]);
     }
-
 }

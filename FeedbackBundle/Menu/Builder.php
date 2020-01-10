@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
@@ -13,15 +21,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Class to build some menus for navigation.
  */
 class Builder implements ContainerAwareInterface {
-
     use ContainerAwareTrait;
-
-    const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
 
     /**
      * @var FactoryInterface
      */
-
     private $factory;
 
     /**
@@ -41,66 +45,53 @@ class Builder implements ContainerAwareInterface {
     }
 
     private function hasRole($role) {
-        if (!$this->tokenStorage->getToken()) {
+        if ( ! $this->tokenStorage->getToken()) {
             return false;
         }
-        return $this->authChecker->isGranted($role);
-    }
 
-    private function getUser() {
-        if (!$this->hasRole('ROLE_USER')) {
-            return null;
-        }
-        return $this->tokenStorage->getToken()->getUser();
+        return $this->authChecker->isGranted($role);
     }
 
     /**
      * Build a menu for blog posts.
      *
-     * @param array $options
      * @return ItemInterface
      */
     public function navMenu(array $options) {
-        if (!$this->hasRole('ROLE_COMMENT_ADMIN')) {
-            return;
-        }
-        $title = 'Feedback';
-        if (isset($options['title'])) {
-            $title = $options['title'];
-        }
+        $title = $options['title'] ?? 'Feedback';
+
         $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttributes(array(
+        $menu->setChildrenAttributes([
             'class' => 'nav navbar-nav',
-        ));
+        ]);
         $menu->setAttribute('dropdown', true);
 
-        $feedback = $menu->addChild('feedback', array(
+        $feedback = $menu->addChild('feedback', [
             'uri' => '#',
-            'label' => $title . self::CARET,
-        ));
+            'label' => $title,
+        ]);
         $feedback->setAttribute('dropdown', true);
         $feedback->setLinkAttribute('class', 'dropdown-toggle');
         $feedback->setLinkAttribute('data-toggle', 'dropdown');
         $feedback->setChildrenAttribute('class', 'dropdown-menu');
 
-        $feedback->addChild('Comments', array(
-            'route' => 'admin_comment_index',
-        ));
-        $feedback->addChild('Comment Notes', array(
-            'route' => 'admin_comment_note_index',
-        ));
-        $divider = $feedback->addChild('divider', array(
+        $feedback->addChild('Comments', [
+            'route' => 'nines_feedback_comment_index',
+        ]);
+        $feedback->addChild('Comment Notes', [
+            'route' => 'nines_feedback_comment_note_index',
+        ]);
+        $divider = $feedback->addChild('divider', [
             'label' => '',
-        ));
-        $divider->setAttributes(array(
+        ]);
+        $divider->setAttributes([
             'role' => 'separator',
             'class' => 'divider',
-        ));
-        $feedback->addChild('Comment States', array(
-            'route' => 'admin_comment_status_index',
-        ));
+        ]);
+        $feedback->addChild('Comment States', [
+            'route' => 'nines_feedback_comment_status_index',
+        ]);
 
         return $menu;
     }
-
 }

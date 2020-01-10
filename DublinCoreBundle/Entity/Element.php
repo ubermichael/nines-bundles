@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\DublinCoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -8,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractTerm;
 
 /**
- * Element
+ * Element.
  *
  * @ORM\Table(
  *  name="element",
@@ -18,7 +26,6 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
  */
 class Element extends AbstractTerm {
-
     /**
      * @var string
      * @ORM\Column(type="string", length=190, nullable=false)
@@ -32,25 +39,25 @@ class Element extends AbstractTerm {
     private $comment;
 
     /**
-     * @var Collection|AbstractField[]
+     * @var AbstractField[]|Collection
      * @ORM\OneToMany(targetEntity="AbstractField", mappedBy="element")
      */
     private $fields;
 
-    public function __toString() {
-        return parent::__toString();
-    }
-
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct() {
         parent::__construct();
         $this->fields = new ArrayCollection();
     }
 
+    public function __toString() : ?string {
+        return parent::__toString();
+    }
+
     /**
-     * Set uri
+     * Set uri.
      *
      * @param string $uri
      *
@@ -63,7 +70,7 @@ class Element extends AbstractTerm {
     }
 
     /**
-     * Get uri
+     * Get uri.
      *
      * @return string
      */
@@ -72,9 +79,7 @@ class Element extends AbstractTerm {
     }
 
     /**
-     * Add field
-     *
-     * @param AbstractField $field
+     * Add field.
      *
      * @return Element
      */
@@ -85,16 +90,14 @@ class Element extends AbstractTerm {
     }
 
     /**
-     * Remove field
-     *
-     * @param AbstractField $field
+     * Remove field.
      */
-    public function removeField(AbstractField $field) {
+    public function removeField(AbstractField $field) : void {
         $this->fields->removeElement($field);
     }
 
     /**
-     * Get fields
+     * Get fields.
      *
      * @return Collection
      */
@@ -103,7 +106,7 @@ class Element extends AbstractTerm {
     }
 
     /**
-     * Set comment
+     * Set comment.
      *
      * @param string $comment
      *
@@ -116,12 +119,11 @@ class Element extends AbstractTerm {
     }
 
     /**
-     * Get comment
+     * Get comment.
      *
      * @return string
      */
     public function getComment() {
         return $this->comment;
     }
-
 }

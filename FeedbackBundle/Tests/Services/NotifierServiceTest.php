@@ -1,78 +1,103 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Tests\Services;
 
 use DateTime;
+use Exception;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Services\CommentService;
 use Nines\FeedbackBundle\Services\NotifierService;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
-use Swift_Plugins_MessageLogger;
+use Nines\UtilBundle\Tests\ServiceBaseCase;
+use Symfony\Component\Mailer\MailerInterface;
 
-class NotifierServiceTest extends BaseTestCase {
-
+class NotifierServiceTest extends ServiceBaseCase {
     /**
      * @var NotifierService
      */
     private $notifier;
 
     /**
-     * @var Swift_Plugins_MessageLogger
+     * @return CommentService
      */
-    private $messageLogger;
+    private function getMockService() {
+        /** @var CommentService $service */
+        $service = $this->createMock(CommentService::class);
+        $service->method('entityUrl')->willReturn('http://example.com/foo');
 
-    protected function setUp() {
-        parent::setUp();
-        $this->notifier = $this->container->get(NotifierService::class);
-        $this->messageLogger = $this->container->get('swiftmailer.mailer.default.plugin.messagelogger');
+        return $service;
     }
 
-    public function testSanity() {
+    /**
+     * @throws Exception
+     *
+     * @return Comment
+     */
+    private function getMockComment() {
+        /** @var Comment $comment */
+        $comment = $this->createMock(Comment::class);
+        $comment->method('getFullname')->willReturn('Alicia');
+        $comment->method('getFollowUp')->willReturn(false);
+        $comment->method('getCreated')->willReturn(new DateTime());
+        $comment->method('getContent')->willReturn('This is a comment.');
+
+        return $comment;
+    }
+
+    private function getMockMailer() {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->method('send')->will($this->returnArgument(0));
+
+        return $mailer;
+    }
+
+    public function testSanity() : void {
         $this->assertInstanceOf(NotifierService::class, $this->notifier);
     }
 
-    public function testNoSender() {
+    public function testNoSender() : void {
+        $comment = $this->getMockComment();
+
         $this->notifier->setSender(false);
-        $this->notifier->newComment(new Comment());
-        $this->assertEquals(0, $this->messageLogger->countMessages());
+        $result = $this->notifier->newComment($comment);
+        $this->assertNull($result);
     }
 
-    public function testNoRecipient() {
-        $this->notifier->setRecipient(false);
-        $this->notifier->newComment(new Comment());
-        $this->assertEquals(0, $this->messageLogger->countMessages());
-    }
+    public function testNoRecipient() : void {
+        $comment = $this->getMockComment();
 
-    public function testOneRecipient() {
-        $comment = $this->createMock(Comment::class);
-        $comment->method('getFullname')->willReturn('Alicia');
-        $comment->method('getFollowUp')->willReturn(false);
-        $comment->method('getCreated')->willReturn(new DateTime());
-        $comment->method('getContent')->willReturn("This is a comment.");
-        $service = $this->createMock(CommentService::class);
-        $service->method('entityUrl')->willReturn("http://example.com/foo");
-
-        $this->notifier->setRecipient("b@example.com");
-        $this->notifier->setSender("b@b.com");
-        $this->notifier->setService($service);
+        $this->notifier->setRecipients(false);
         $this->notifier->newComment($comment);
-        $this->assertEquals(1, $this->messageLogger->countMessages());
+        $result = $this->notifier->newComment($comment);
+        $this->assertNull($result);
     }
 
-    public function testMultiplerecipients() {
-        $comment = $this->createMock(Comment::class);
-        $comment->method('getFullname')->willReturn('Alicia');
-        $comment->method('getFollowUp')->willReturn(false);
-        $comment->method('getCreated')->willReturn(new DateTime());
-        $comment->method('getContent')->willReturn("This is a comment.");
-        $service = $this->createMock(CommentService::class);
-        $service->method('entityUrl')->willReturn("http://example.com/foo");
+    public function testSent() : void {
+        $comment = $this->getMockComment();
+        $service = $this->getMockService();
 
-        $this->notifier->setRecipient(["b@example.com", 'c@example.com']);
-        $this->notifier->setSender("b@b.com");
+        $this->notifier->setRecipients('b@example.com');
+        $this->notifier->setSender('b@b.com');
         $this->notifier->setService($service);
-        $this->notifier->newComment($comment);
-        $this->assertEquals(2, $this->messageLogger->countMessages());
+
+        $email = $this->notifier->newComment($comment);
+        $this->assertNotNull($email);
+        $this->assertCount(1, $email->getFrom());
+        $this->assertSame('b@b.com', $email->getFrom()[0]->getAddress());
+
+        $this->assertCount(1, $email->getBcc());
+        $this->assertSame('b@example.com', $email->getBcc()[0]->getAddress());
     }
 
+    protected function setUp() : void {
+        parent::setUp();
+        $this->notifier = $this->getContainer()->get(NotifierService::class);
+    }
 }

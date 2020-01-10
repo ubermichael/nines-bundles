@@ -11,7 +11,7 @@
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            <a href="{{ path('admin_comment_fulltext') }}" class="btn btn-default">
+            <a href="{{ path('nines_feedback_comment_fulltext') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
@@ -26,10 +26,10 @@
             <ul class='list-group'>
                 {% for status in statuses %}
                     <li class='list-group-item'>
-                        <a href="{{path('admin_comment_index', { 'status': status.name})}}">{{ status.label}}</a>
+                        <a href="{{path('nines_feedback_comment_index', { 'status': status.name})}}">{{ status.label}}</a>
                     </li>
                 {% endfor %}
-                <li class='list-group-item'><a href="{{path('admin_comment_index')}}">All Comments</a></li>
+                <li class='list-group-item'><a href="{{path('nines_feedback_comment_index')}}">All Comments</a></li>
             </ul>
         </div>
         <div class="col-sm-10">
@@ -53,12 +53,12 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{{ path('admin_comment_show', { 'id': comment.id }) }}">
-                                    {{ comment.content|truncate(40) }}
+                                <a href="{{ path('nines_feedback_comment_show', { 'id': comment.id }) }}">
+                                    {{ comment.content|u.truncate(40, '...') }}
                                 </a>
                             </td>
                             <td>{{ comment.fullname }}</td>
-                            <td>{{ service.entityType(comment) }} <a href="{{ service.entityUrl(comment)}}">{{ entity|truncate(40) }}</a></td>
+                            <td>{{ service.entityType(comment) }} <a href="{{ service.entityUrl(comment)}}">{{ entity|u.truncate(40, '...') }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

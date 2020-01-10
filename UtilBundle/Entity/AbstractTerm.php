@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -21,12 +29,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *  }
  * )
  */
-abstract class AbstractTerm extends AbstractEntity
-{
+abstract class AbstractTerm extends AbstractEntity {
     /**
      * Name of the term.
      *
      * @ORM\Column(type="string", length=120)
+     *
      * @var string
      * @Groups({"shallow"})
      */
@@ -34,6 +42,7 @@ abstract class AbstractTerm extends AbstractEntity
 
     /**
      * Human readable term label.
+     *
      * @var string
      * @ORM\Column(type="string", length=120)
      * @Groups({"shallow"})
@@ -42,6 +51,7 @@ abstract class AbstractTerm extends AbstractEntity
 
     /**
      * Description of the term.
+     *
      * @var string
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"shallow"})
@@ -54,84 +64,76 @@ abstract class AbstractTerm extends AbstractEntity
 
     /**
      * Get the status label.
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString() : ?string {
         return $this->label;
     }
 
-
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
      * @return $this
      */
-    public function setName($name)
-    {
+    public function setName($name) : self {
         $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() : ?string {
         return $this->name;
     }
 
     /**
-     * Set label
+     * Set label.
      *
      * @param string $label
      *
      * @return $this
      */
-    public function setLabel($label)
-    {
+    public function setLabel($label) : self {
         $this->label = $label;
 
         return $this;
     }
 
     /**
-     * Get label
+     * Get label.
      *
      * @return string
      */
-    public function getLabel()
-    {
+    public function getLabel() : ?string {
         return $this->label;
     }
 
     /**
-     * Set description
+     * Set description.
      *
      * @param string $description
      *
      * @return $this
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) : self {
         $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get description
+     * Get description.
      *
      * @return string
      */
-    public function getDescription()
-    {
+    public function getDescription() : ?string {
         return $this->description;
     }
-
 }
-

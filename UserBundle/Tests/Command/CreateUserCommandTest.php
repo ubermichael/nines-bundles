@@ -1,72 +1,76 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UserBundle\Tests\Command;
 
-use Nines\UserBundle\Command\CreateUserCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UserBundle\Entity\User;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class CreateUserCommandTest extends BaseTestCase {
+class CreateUserCommandTest extends KernelTestCase {
+    use FixturesTrait;
 
-    public function getFixtures() {
-        return [];
+    /**
+     * @var CommandTester
+     */
+    private $tester;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function testExecute() : void {
+        $this->tester->execute([
+            'email' => 'new@example.com',
+            'fullname' => 'New User',
+            'affiliation' => 'Institution',
+        ]);
+
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Account new@example.com created, but not active.', $output);
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'new@example.com',
+        ]);
+        $this->assertNotNull($user);
+        $this->assertFalse($user->isActive());
+        $this->assertStringStartsWith('$argon2id$', $user->getPassword());
     }
 
-    public function testExecuteNormal() {
-        self::bootKernel();
-        $application = new Application(self::$kernel);        
-        $command = $application->find('fos:user:create');
-
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command' => 'fos:user:create',
-            'email' => 'bob@example.com',
-            'password' => 'secret',
-            'fullname' => 'Bob Terwilliger',
-            'institution' => 'Springfield State Penn',
-        ));
-
-        $this->em->clear();
-        $user = $this->em->getRepository(User::class)->findOneBy(array(
-                'email' => 'bob@example.com',
-        ));
-
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals('bob@example.com', $user->getUsername());
-        $this->assertEquals('bob@example.com', $user->getEmail());
-        $this->assertEquals('Bob Terwilliger', $user->getFullname());
-        $this->assertEquals('Springfield State Penn', $user->getInstitution());
-        $this->assertEquals(['ROLE_USER'], $user->getRoles());
+    /**
+     * @expectedException \Doctrine\DBAL\Exception\UniqueConstraintViolationException
+     */
+    public function testExecuteDuplicate() : void {
+        $this->tester->execute([
+            'email' => 'user@example.com',
+            'fullname' => 'New User',
+            'affiliation' => 'Institution',
+        ]);
     }
 
-    public function testExecuteSuper() {
-        self::bootKernel();
-        $application = new Application(self::$kernel);
-        $command = $application->find('fos:user:create');
+    protected function setUp() : void {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
 
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command' => 'fos:user:create',
-            'email' => 'bob@example.com',
-            'password' => 'secret',
-            'fullname' => 'Bob Terwilliger',
-            'institution' => 'Springfield State Penn',
-            '--super-admin' => true
-        ));
+        $command = $application->find('nines:create:user');
+        $this->tester = new CommandTester($command);
 
-        $this->em->clear();
-        $user = $this->em->getRepository(User::class)->findOneBy(array(
-                'email' => 'bob@example.com',
-        ));
+        $this->entityManager = $kernel->getContainer()->get('doctrine.orm.default_entity_manager');
 
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals('bob@example.com', $user->getUsername());
-        $this->assertEquals('bob@example.com', $user->getEmail());
-        $this->assertEquals('Bob Terwilliger', $user->getFullname());
-        $this->assertEquals('Springfield State Penn', $user->getInstitution());
-        $this->assertEquals(['ROLE_SUPER_ADMIN', 'ROLE_USER'], $user->getRoles());
+        $this->loadFixtures([
+            UserFixtures::class,
+        ]);
     }
 }
-

@@ -1,15 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Services;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Monolog\Logger;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Form\CommentType;
 use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -18,7 +29,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Commenting service for Symfony.
  */
 class CommentService {
-
     /**
      * @var EntityManager
      */
@@ -82,46 +92,36 @@ class CommentService {
 
     /**
      * Set the Doctrine Registry.
-     *
-     * @param Registry $registry
      */
-    public function setDoctrine(Registry $registry) {
+    public function setDoctrine(Registry $registry) : void {
         $this->em = $registry->getManager();
     }
 
     /**
      * Set the logger.
-     *
-     * @param Logger $logger
      */
-    public function setLogger(Logger $logger) {
+    public function setLogger(Logger $logger) : void {
         $this->logger = $logger;
     }
 
     /**
      * Set the Symfony router.
-     *
-     * @param Router $router
      */
-    public function setRouter(Router $router) {
+    public function setRouter(Router $router) : void {
         $this->router = $router;
     }
 
     /**
      * Set the Symfony Auth Checker.
-     *
-     * @param AuthorizationCheckerInterface $authChecker
      */
-    public function setAuthorizationChecker(AuthorizationCheckerInterface $authChecker) {
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authChecker) : void {
         $this->authChecker = $authChecker;
     }
 
     /**
      * Set the form factory.
-     *
-     * @param FormFactory $formFactory
      */
-    public function setFormFactory(FormFactory $formFactory) {
+    public function setFormFactory(FormFactory $formFactory) : void {
         $this->formFactory = $formFactory;
     }
 
@@ -133,30 +133,33 @@ class CommentService {
      * @return bool
      */
     public function acceptsComments($name) {
-        return array_key_exists($name, $this->routing['commenting']);
+        return array_key_exists($name, $this->routing);
     }
 
     /**
      * Find the entity corresponding to a comment.
      *
-     * @param Comment $comment
      * @return mixed
      */
     public function findEntity(Comment $comment) {
         list($class, $id) = explode(':', $comment->getEntity());
-        $entity = $this->em->getRepository($class)->find($id);
-        return $entity;
+
+        return $this->em->getRepository($class)->find($id);
     }
 
     /**
-     * Return the short class name for the entity a comment refers to.
+     * Return the short class name for the entity a comment refers to or null if
+     * the entity cannot be found.
      *
-     * @param Comment $comment
-     * @return string
+     * @throws ReflectionException
      */
-    public function entityType(Comment $comment) {
+    public function entityType(Comment $comment) : ?string {
         $entity = $this->findEntity($comment);
+        if ( ! $entity) {
+            return null;
+        }
         $reflection = new ReflectionClass($entity);
+
         return $reflection->getShortName();
     }
 
@@ -164,20 +167,22 @@ class CommentService {
      * Get the URL to view an entity based on a comment, based on how the
      * entity commenting is configured in config.yml.
      *
-     * @param Comment $comment
-     * @return string
+     * @param mixed $full
+     *
      * @throws Exception
+     *
+     * @return string
      */
     public function entityUrl(Comment $comment, $full = false) {
         list($class, $id) = explode(':', $comment->getEntity());
-        if( ! array_key_exists($class, $this->routing['commenting'])) {
+        if ( ! array_key_exists($class, $this->routing)) {
             throw new Exception("Cannot map {$class} to a route.");
         }
-        if($full) {
-            return $this->router->generate($this->routing['commenting'][$class], ['id' => $id], Router::ABSOLUTE_URL);
-        } else {
-            return $this->router->generate($this->routing['commenting'][$class], ['id' => $id]);
+        if ($full) {
+            return $this->router->generate($this->routing[$class], ['id' => $id], Router::ABSOLUTE_URL);
         }
+
+        return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 
     /**
@@ -185,26 +190,28 @@ class CommentService {
      * all comments are returned, otherwise only public comments are returned.
      *
      * @param mixed $entity
+     *
      * @return Collection|Comment[]
      */
     public function findComments($entity) {
         $class = get_class($entity);
-        $comments = array();
-        if($this->authChecker->isGranted('ROLE_ADMIN')) {
-            $comments = $this->em->getRepository('NinesFeedbackBundle:Comment')->findBy(array(
-                'entity' => $class . ':' . $entity->getId()
-            ));
+        $comments = [];
+        if ($this->authChecker->isGranted('ROLE_ADMIN')) {
+            $comments = $this->em->getRepository('NinesFeedbackBundle:Comment')->findBy([
+                'entity' => $class . ':' . $entity->getId(),
+            ]);
         } else {
-            $status = $this->em->getRepository('NinesFeedbackBundle:CommentStatus')->findOneBy(array(
-                'name' => $this->publicStatusName
-            ));
-            if( $status) {
-                $comments = $this->em->getRepository('NinesFeedbackBundle:Comment')->findBy(array(
+            $status = $this->em->getRepository('NinesFeedbackBundle:CommentStatus')->findOneBy([
+                'name' => $this->publicStatusName,
+            ]);
+            if ($status) {
+                $comments = $this->em->getRepository('NinesFeedbackBundle:Comment')->findBy([
                     'entity' => $class . ':' . $entity->getId(),
                     'status' => $status,
-                ));
+                ]);
             }
         }
+
         return $comments;
     }
 
@@ -213,28 +220,30 @@ class CommentService {
      * one.
      *
      * @param mixed $entity
-     * @param Comment $comment
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @return Comment
      */
     public function addComment($entity, Comment $comment) {
         $comment->setEntity(get_class($entity) . ':' . $entity->getId());
-        if( ! $comment->getStatus()) {
-            $status = $this->em->getRepository('NinesFeedbackBundle:CommentStatus')->findOneBy(array(
+        if ( ! $comment->getStatus()) {
+            $status = $this->em->getRepository('NinesFeedbackBundle:CommentStatus')->findOneBy([
                 'name' => $this->defaultStatusName,
-            ));
-            if( ! $status) {
-                throw new Exception("Cannot find default comment status " . $this->defaultStatusName);
+            ]);
+            if ( ! $status) {
+                throw new Exception('Cannot find default comment status ' . $this->defaultStatusName);
             }
             $comment->setStatus($status);
         }
         $this->em->persist($comment);
-        $this->em->flush($comment);
+        $this->em->flush();
+
         return $comment;
     }
 
     public function getForm() {
         return $this->formFactory->create(CommentType::class)->createView();
     }
-
 }

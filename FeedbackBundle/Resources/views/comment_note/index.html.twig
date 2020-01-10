@@ -22,11 +22,11 @@
                 <tr>
                     <td>{{ commentNote.user.fullname }}</td>
                     <td>
-                        <a href="{{ path('admin_comment_show', { 'id': commentNote.comment.id }) }}#note-{{ commentNote.id}}">
+                        <a href="{{ path('nines_feedback_comment_show', { 'id': commentNote.comment.id }) }}#note-{{ commentNote.id}}">
                             {{ commentNote.content }}
                         </a>
                     </td>
-                    <td>{% if commentNote.created %}{{ commentNote.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if commentNote.created %}{{ commentNote.created|date }}{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

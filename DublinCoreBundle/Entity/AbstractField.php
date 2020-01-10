@@ -1,17 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\DublinCoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
- * Field
+ * Field.
  *
  * @ORM\MappedSuperclass
  */
 abstract class AbstractField extends AbstractEntity {
-
     /**
      * @var string
      * @ORM\Column(type="text")
@@ -30,7 +37,7 @@ abstract class AbstractField extends AbstractEntity {
     }
 
     /**
-     * Set value
+     * Set value.
      *
      * @param string $value
      *
@@ -43,7 +50,7 @@ abstract class AbstractField extends AbstractEntity {
     }
 
     /**
-     * Get value
+     * Get value.
      *
      * @return string
      */
@@ -52,7 +59,7 @@ abstract class AbstractField extends AbstractEntity {
     }
 
     /**
-     * Set element
+     * Set element.
      *
      * @param Element $element
      *
@@ -65,12 +72,11 @@ abstract class AbstractField extends AbstractEntity {
     }
 
     /**
-     * Get element
+     * Get element.
      *
      * @return Element
      */
     public function getElement() {
         return $this->element;
     }
-
 }

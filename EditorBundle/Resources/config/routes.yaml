@@ -1,0 +1,3 @@
+nines_editor:
+    resource: "@NinesEditorBundle/Controller"
+    type: annotation

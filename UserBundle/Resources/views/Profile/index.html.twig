@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <h1>User</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Fullname</th>
+                <td>{{ user.fullname }}</td>
+            </tr>
+            <tr>
+                <th>Affiliation</th>
+                <td>{{ user.affiliation }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>{{ user.roles ? user.roles|join(',') }}</td>
+            </tr>
+            <tr>
+                <th>Last Login</th>
+                <td>{{ user.login ? user.login|date : '' }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ user.created ? user.created|date : '' }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ user.updated ? user.updated|date : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('nines_user_profile_edit') }}">Edit profile</a> | <a href="{{ path('nines_user_profile_password') }}">Change Password</a>
+
+{% endblock %}

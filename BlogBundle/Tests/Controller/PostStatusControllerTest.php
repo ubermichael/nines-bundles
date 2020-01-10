@@ -1,19 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Tests\Controller;
 
+use Nines\BlogBundle\DataFixtures\PostStatusFixtures;
 use Nines\BlogBundle\Entity\PostStatus;
-use Nines\BlogBundle\DataFixtures\ORM\LoadPostStatus;
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UserBundle\DataFixtures\UserFixtures;
+use Nines\UserBundle\Entity\User;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class PostStatusControllerTest extends BaseTestCase
-{
-
-    protected function getFixtures() {
+class PostStatusControllerTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadUser::class,
-            LoadPostStatus::class
+            UserFixtures::class,
+            PostStatusFixtures::class,
         ];
     }
 
@@ -21,151 +28,148 @@ class PostStatusControllerTest extends BaseTestCase
      * @group anon
      * @group index
      */
-    public function testAnonIndex() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/post_status/');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testAnonIndex() : void {
+        $crawler = $this->client->request('GET', '/blog/post_status/');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group user
      * @group index
      */
-    public function testUserIndex() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/post_status/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testUserIndex() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/blog/post_status/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group admin
      * @group index
      */
-    public function testAdminIndex() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/post_status/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testAdminIndex() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/blog/post_status/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(1, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group anon
      * @group show
      */
-    public function testAnonShow() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/post_status/1');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+    public function testAnonShow() : void {
+        $crawler = $this->client->request('GET', '/blog/post_status/1');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(0, $crawler->selectLink('Delete')->count());
     }
 
     /**
      * @group user
      * @group show
      */
-    public function testUserShow() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/post_status/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(0, $crawler->selectLink('Delete')->count());
+    public function testUserShow() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/blog/post_status/1');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(0, $crawler->selectLink('Delete')->count());
     }
 
     /**
      * @group admin
      * @group show
      */
-    public function testAdminShow() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/post_status/1');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('Edit')->count());
-        $this->assertEquals(1, $crawler->selectLink('Delete')->count());
+    public function testAdminShow() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/blog/post_status/1');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(1, $crawler->selectLink('Edit')->count());
+        $this->assertSame(1, $crawler->selectLink('Delete')->count());
     }
 
     /**
      * @group anon
      * @group typeahead
      */
-    public function testAnonTypeahead() {
-        $client = $this->makeClient();
-        $client->request('GET', '/post_status/typeahead?q=STUFF');
-        $response = $client->getResponse();
-        $this->assertEquals(302, $response->getStatusCode());
+    public function testAnonTypeahead() : void {
+        $this->client->request('GET', '/blog/post_status/typeahead?q=STUFF');
+        $response = $this->client->getResponse();
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     /**
      * @group user
      * @group typeahead
      */
-    public function testUserTypeahead() {
-        $client = $this->makeClient(LoadUser::USER);
-        $client->request('GET', '/post_status/typeahead?q=STUFF');
-        $response = $client->getResponse();
-        $this->assertEquals(403, $response->getStatusCode());
+    public function testUserTypeahead() : void {
+        $this->login('user.user');
+        $this->client->request('GET', '/blog/post_status/typeahead?q=STUFF');
+        $response = $this->client->getResponse();
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     /**
      * @group admin
      * @group typeahead
      */
-    public function testAdminTypeahead() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $client->request('GET', '/post_status/typeahead?q=STUFF');
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->headers->get('content-type'));
+    public function testAdminTypeahead() : void {
+        $this->login('user.admin');
+        $this->client->request('GET', '/blog/post_status/typeahead?q=STUFF');
+        $response = $this->client->getResponse();
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('application/json', $response->headers->get('content-type'));
         $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
         $json = json_decode($response->getContent());
-        $this->assertEquals(4, count($json));
+        $this->assertSame(4, count($json));
     }
+
     /**
      * @group anon
      * @group edit
      */
-    public function testAnonEdit() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/post_status/1/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
+    public function testAnonEdit() : void {
+        $crawler = $this->client->request('GET', '/blog/post_status/1/edit');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**
      * @group user
      * @group edit
      */
-    public function testUserEdit() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/post_status/1/edit');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    public function testUserEdit() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/blog/post_status/1/edit');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @group admin
      * @group edit
      */
-    public function testAdminEdit() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/post_status/1/edit');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    public function testAdminEdit() : void {
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/blog/post_status/1/edit');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
         $form = $formCrawler->selectButton('Update')->form([
             // DO STUFF HERE.
             // 'post_statuss[FIELDNAME]' => 'FIELDVALUE',
         ]);
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect('/post_status/1'));
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect('/blog/post_status/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
     }
 
@@ -173,65 +177,63 @@ class PostStatusControllerTest extends BaseTestCase
      * @group anon
      * @group new
      */
-    public function testAnonNew() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/post_status/new');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
+    public function testAnonNew() : void {
+        $crawler = $this->client->request('GET', '/blog/post_status/new');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**
      * @group anon
      * @group new
      */
-    public function testAnonNewPopup() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/post_status/new_popup');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
+    public function testAnonNewPopup() : void {
+        $crawler = $this->client->request('GET', '/blog/post_status/new_popup');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**
      * @group user
      * @group new
      */
-    public function testUserNew() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/post_status/new');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    public function testUserNew() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/blog/post_status/new');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @group user
      * @group new
      */
-    public function testUserNewPopup() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/post_status/new_popup');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    public function testUserNewPopup() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/blog/post_status/new_popup');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @group admin
      * @group new
      */
-    public function testAdminNew() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/post_status/new');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    public function testAdminNew() : void {
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/blog/post_status/new');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
         $form = $formCrawler->selectButton('Create')->form([
             // DO STUFF HERE.
             // 'post_statuss[FIELDNAME]' => 'FIELDVALUE',
         ]);
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
     }
 
@@ -239,23 +241,23 @@ class PostStatusControllerTest extends BaseTestCase
      * @group admin
      * @group new
      */
-    public function testAdminNewPopup() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $formCrawler = $client->request('GET', '/post_status/new_popup');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    public function testAdminNewPopup() : void {
+        $this->login('user.admin');
+        $formCrawler = $this->client->request('GET', '/blog/post_status/new_popup');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+            'This test has not been implemented yet.'
         );
         $form = $formCrawler->selectButton('Create')->form([
             // DO STUFF HERE.
             // 'post_statuss[FIELDNAME]' => 'FIELDVALUE',
         ]);
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
     }
 
@@ -263,39 +265,37 @@ class PostStatusControllerTest extends BaseTestCase
      * @group anon
      * @group delete
      */
-    public function testAnonDelete() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/post_status/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
+    public function testAnonDelete() : void {
+        $crawler = $this->client->request('GET', '/blog/post_status/1/delete');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     /**
      * @group user
      * @group delete
      */
-    public function testUserDelete() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/post_status/1/delete');
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+    public function testUserDelete() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/blog/post_status/1/delete');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @group admin
      * @group delete
      */
-    public function testAdminDelete() {
-        $preCount = count($this->em->getRepository(PostStatus::class)->findAll());
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/post_status/1/delete');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    public function testAdminDelete() : void {
+        $preCount = count($this->entityManager->getRepository(PostStatus::class)->findAll());
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/blog/post_status/1/delete');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
-        $this->em->clear();
-        $postCount = count($this->em->getRepository(PostStatus::class)->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->entityManager->clear();
+        $postCount = count($this->entityManager->getRepository(PostStatus::class)->findAll());
+        $this->assertSame($preCount - 1, $postCount);
     }
-
 }

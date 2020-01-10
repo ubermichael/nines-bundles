@@ -1,29 +1,15 @@
-{% extends '::base.html.twig' %}
+{% extends 'base.html.twig' %}
 
+{% block title %}Edit User{% endblock %}
 
-{% block pageheader %}
-    <h1>Profile Edit</h1>
-{% endblock %}
+{% block body %}
+    <h1>Edit Profile</h1>
 
-{% block body -%}
-    
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <div class="form-group">
-        <div class="col-sm-2"></div>
-
-        <div class="col-sm-1">
-            <input type="submit" value="Update" class="btn btn-primary" />            
-        </div>
-    </div>
+    <button class="btn">{{ button_label|default('Save') }}</button>
     {{ form_end(form) }}
-    
-    <div class="btn-toolbar">
-        <div class="btn-group pull-right">
-            <a href="{{ path('fos_user_profile_show') }}" class="btn btn-default">
-                <span class='glyphicon glyphicon-arrow-left'></span> Back
-            </a>
-        </div>
-    </div>
+
+    <a href="{{ path('nines_user_profile_index') }}">Back</a>
 
 {% endblock %}

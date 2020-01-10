@@ -1,29 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your app/config files.
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/configuration.html}
- */
-class Configuration implements ConfigurationInterface
-{
+class Configuration implements ConfigurationInterface {
     /**
-     * {@inheritdoc}
+     * Generates the configuration tree builder.
+     *
+     * @return TreeBuilder
      */
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('util');
+    public function getConfigTreeBuilder() {
+        $builder = new TreeBuilder('nines_util');
+        $builder
+            ->getRootNode()
+            ->children()
+            ->scalarNode('trim_length')->defaultValue(50)->end()
+            ->end()
+            ->end()
+        ;
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
-
-        return $treeBuilder;
+        return $builder;
     }
 }

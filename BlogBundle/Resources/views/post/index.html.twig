@@ -8,15 +8,14 @@
 {% endblock %} 
 
 {% block body %}
-
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_BLOG_ADMIN') %}
-                <a href="{{ path('post_new') }}" class="btn btn-default">
+                <a href="{{ path('nines_blog_post_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
             {% endif %}
-            <a href="{{ path('post_search') }}" class="btn btn-default">
+            <a href="{{ path('nines_blog_post_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
@@ -28,7 +27,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2 class="panel-title pull-left">
-                    <a href="{{ path('post_show', { 'id': post.id }) }}">
+                    <a href="{{ path('nines_blog_post_show', { 'id': post.id }) }}">
                         {{ post.title }}
                     </a>
                 </h2>
@@ -42,7 +41,7 @@
             </div>
             <div class="panel-footer text-right">
                 Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in 
-                <a href="{{ path('post_category_show', {'id': post.category.id }) }}">
+                <a href="{{ path('nines_blog_post_category_show', {'id': post.category.id }) }}">
                     {{ post.category -}}
                 </a>.
             </div>

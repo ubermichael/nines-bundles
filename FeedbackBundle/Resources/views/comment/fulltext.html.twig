@@ -11,7 +11,7 @@
 
 {% block body %}
 
-    <form method="get" action="{{ path('admin_comment_fulltext') }}" class="form-horizontal">
+    <form method="get" action="{{ path('nines_feedback_comment_fulltext') }}" class="form-horizontal">
         <fieldset>
             <legend>Search</legend>
             <div class='form-group'>
@@ -47,15 +47,15 @@
                 {% for comment in comments %}
                     <tr>
                         <td>
-                            <a href="{{ path('comment_show', { 'id': comment.id }) }}">
+                            <a href="{{ path('nines_feedback_comment_show', { 'id': comment.id }) }}">
                                 {{ comment.content|truncate(20) }}
                             </a>
                         </td>
                         <td>{{ comment.fullname }}</td>
                         <td>{{ comment.email }}</td>
                         <td>{% if comment.followUp %}Yes{% else %}No{% endif %}</td>
-                        <td>{% if comment.created %}{{ comment.created|date('Y-m-d H:i:s') }}{% endif %}</td>
-                        <td>{% if comment.updated %}{{ comment.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{% if comment.created %}{{ comment.created|date }}{% endif %}</td>
+                        <td>{% if comment.updated %}{{ comment.updated|date }}{% endif %}</td>
                     </tr>
                 {% endfor %}
             </tbody>

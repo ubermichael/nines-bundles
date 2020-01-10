@@ -1,44 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Tests\Services;
 
 use Nines\UtilBundle\Services\TitleCaser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ServiceBaseCase;
 
-class TitleCaserTest extends BaseTestCase {
-
+class TitleCaserTest extends ServiceBaseCase {
     /**
      * @var TitleCaser
      */
     private $titleCaser;
 
-    protected function setUp() {
-        parent::setUp();
-        $this->titleCaser = $this->container->get(TitleCaser::class);
-    }
-
-    public function testSetup() {
+    public function testSetup() : void {
         $this->assertInstanceOf(TitleCaser::class, $this->titleCaser);
     }
 
     /**
      * @dataProvider unicodeData
+     *
+     * @param mixed $str
+     * @param mixed $expected
      */
-    public function testUnicode($str, $expected) {
-        $this->assertEquals($expected, $this->titleCaser->titlecase($str));
+    public function testUnicode($str, $expected) : void {
+        $this->assertSame($expected, $this->titleCaser->titlecase($str));
     }
 
     public function unicodeData() {
-        return array(
+        return [
             ['Hæmochromatosis', 'Hæmochromatosis'],
-        );
+        ];
     }
 
     /**
      * @dataProvider shortWordsData
+     *
+     * @param mixed $str
+     * @param mixed $expected
      */
-    public function testShortWords($str, $expected) {
-        $this->assertEquals($expected, $this->titleCaser->shortWords($str));
+    public function testShortWords($str, $expected) : void {
+        $this->assertSame($expected, $this->titleCaser->shortWords($str));
     }
 
     public function shortWordsData() {
@@ -52,9 +60,12 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider punctuationData
+     *
+     * @param mixed $str
+     * @param mixed $expected
      */
-    public function testPunctuation($str, $expected) {
-        $this->assertEquals($expected, $this->titleCaser->punctuation($str));
+    public function testPunctuation($str, $expected) : void {
+        $this->assertSame($expected, $this->titleCaser->punctuation($str));
     }
 
     public function punctuationData() {
@@ -68,9 +79,12 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider statesData
+     *
+     * @param mixed $str
+     * @param mixed $expected
      */
-    public function testStates($str, $expected) {
-        $this->assertEquals($expected, $this->titleCaser->states($str));
+    public function testStates($str, $expected) : void {
+        $this->assertSame($expected, $this->titleCaser->states($str));
     }
 
     public function statesData() {
@@ -83,16 +97,19 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider namesData
+     *
+     * @param mixed $s
+     * @param mixed $e
      */
-    public function testNames($s, $e) {
-        $this->assertEquals($e, $this->titleCaser->names($s));
+    public function testNames($s, $e) : void {
+        $this->assertSame($e, $this->titleCaser->names($s));
     }
 
     public function namesData() {
         return [
             ["O'donnel and sons", "O'Donnel and sons"],
-            ["James Macdonald", "James MacDonald"],
-            ["Bob Mcklagen", "Bob McKlagen"],
+            ['James Macdonald', 'James MacDonald'],
+            ['Bob Mcklagen', 'Bob McKlagen'],
             ["D'adario", "D'Adario"],
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
@@ -100,9 +117,12 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider romanData
+     *
+     * @param mixed $s
+     * @param mixed $e
      */
-    public function testRoman($s, $e) {
-        $this->assertEquals($e, $this->titleCaser->roman($s));
+    public function testRoman($s, $e) : void {
+        $this->assertSame($e, $this->titleCaser->roman($s));
     }
 
     public function romanData() {
@@ -115,9 +135,12 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider ordinalsData
+     *
+     * @param mixed $s
+     * @param mixed $e
      */
-    public function testOrdinals($s, $e) {
-        $this->assertEquals($e, $this->titleCaser->ordinals($s));
+    public function testOrdinals($s, $e) : void {
+        $this->assertSame($e, $this->titleCaser->ordinals($s));
     }
 
     public function ordinalsData() {
@@ -130,9 +153,12 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider exceptionsData
+     *
+     * @param mixed $s
+     * @param mixed $e
      */
-    public function testExceptions($s, $e) {
-        $this->assertEquals($e, $this->titleCaser->exceptions($s));
+    public function testExceptions($s, $e) : void {
+        $this->assertSame($e, $this->titleCaser->exceptions($s));
     }
 
     public function exceptionsData() {
@@ -146,9 +172,12 @@ class TitleCaserTest extends BaseTestCase {
 
     /**
      * @dataProvider titleCaseData
+     *
+     * @param mixed $str
+     * @param mixed $expected
      */
-    public function testTitleCase($str, $expected) {
-        $this->assertEquals($expected, $this->titleCaser->titlecase($str));
+    public function testTitleCase($str, $expected) : void {
+        $this->assertSame($expected, $this->titleCaser->titlecase($str));
     }
 
     public function titleCaseData() {
@@ -175,8 +204,8 @@ class TitleCaserTest extends BaseTestCase {
             ['POISON IVY', 'Poison Ivy'],
             // Names.
             ["O'DONNEL AND SONS", "O'Donnel and Sons"],
-            ["JANE MACDONALD", "Jane MacDonald"],
-            ["BOBBIE MCKLAGEN", "Bobbie McKlagen"],
+            ['JANE MACDONALD', 'Jane MacDonald'],
+            ['BOBBIE MCKLAGEN', 'Bobbie McKlagen'],
             ["D'ADARIO", "D'Adario"],
             // Ordinals.
             ['THE 2ND DAUGHTER', 'The 2nd Daughter'],
@@ -189,4 +218,8 @@ class TitleCaserTest extends BaseTestCase {
         ];
     }
 
+    protected function setUp() : void {
+        parent::setUp();
+        $this->titleCaser = self::$container->get(TitleCaser::class);
+    }
 }

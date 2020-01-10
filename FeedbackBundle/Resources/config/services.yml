@@ -18,16 +18,18 @@ services:
     Nines\FeedbackBundle\Controller\:
         resource: '../../Controller/*'
         public: true
-        tags: ['controller.service_arguments']
+        tags:
+            - 'controller.service_arguments'
+            - 'knp_paginator.injectable'
 
     Nines\FeedbackBundle\Menu\Builder:
         tags:
-            - { name: knp_menu.menu_builder, method: navMenu, alias: feedback}
+            - { name: knp_menu.menu_builder, method: navMenu, alias: nines_feedback}
 
     Nines\FeedbackBundle\Services\NotifierService:
         arguments:
             $sender: '%nines_feedback.sender%'
-            $recipient: '%nines_feedback.recipient%'
+            $recipients: '%nines_feedback.recipients%'
             $subject: '%nines_feedback.subject%'
 
     Nines\FeedbackBundle\Services\CommentService:

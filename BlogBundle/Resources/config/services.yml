@@ -17,9 +17,11 @@ services:
     Nines\BlogBundle\Controller\:
         resource: '../../Controller/*'
         public: true
-        tags: ['controller.service_arguments']
+        tags:
+            - 'controller.service_arguments'
+            - 'knp_paginator.injectable'
 
     Nines\BlogBundle\Menu\Builder:
         tags:
-            - { name: knp_menu.menu_builder, method: postNavMenu, alias: posts}
-            - { name: knp_menu.menu_builder, method: pageNavMenu, alias: pages}
+            - { name: knp_menu.menu_builder, method: postNavMenu, alias: nines_blog_posts}
+            - { name: knp_menu.menu_builder, method: pageNavMenu, alias: nines_blog_pages}

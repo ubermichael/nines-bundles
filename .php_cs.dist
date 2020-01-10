@@ -1,0 +1,101 @@
+<?php
+
+$header = <<<'HEADER'
+(c) 2020 Michael Joyce <mjoyce@sfu.ca>
+This source file is subject to the GPL v2, bundled
+with this source code in the file LICENSE.
+HEADER;
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__ . '/src')
+    ->notPath('Kernel.php')
+    ->in(__DIR__ . '/tests')
+    ->in(__DIR__ . '/lib')
+;
+
+return PhpCsFixer\Config::create()
+    ->setRiskyAllowed(true)
+    ->setUsingCache(true)
+    ->setCacheFile(__DIR__. '/var/cache/php_cs.cache')
+    ->setFinder($finder)
+    ->setRules([
+        '@PhpCsFixer' => true,
+        '@PSR2'        => true,
+
+        '@PHP56Migration' => true,
+        '@PHP56Migration:risky' => true,
+        '@PHP70Migration' => true,
+        '@PHP70Migration:risky' => true,
+        '@PHP71Migration' => true,
+        '@PHP71Migration:risky' => true,
+
+        'array_syntax' => ['syntax' => 'short'],
+        'braces' => [
+            'allow_single_line_closure' => true,
+            'position_after_functions_and_oop_constructs' => 'same'
+        ],
+        'class_keyword_remove' => false,
+        'combine_consecutive_issets' => true,
+        'combine_consecutive_unsets' => true,
+        'concat_space' => ['spacing' => 'one'],
+        'declare_strict_types' => true,
+        'header_comment' => [
+            'header' => $header,
+        ],
+        'elseif' => false,
+        'increment_style' => ['style' => 'post'],
+        'no_extra_consecutive_blank_lines' => true,
+        'no_mixed_echo_print' => ['use' => 'echo'],
+        'no_php4_constructor' => true,
+        'no_useless_else' => true,
+        'no_useless_return' => true,
+        'not_operator_with_space' => true,
+        'ordered_class_elements' => ['order' => [
+                'use_trait',
+                'constant',
+                'constant_public',
+                'constant_protected',
+                'constant_private',
+                'public',
+                'protected',
+                'private',
+                'property',
+                'property_static',
+                'property_public',
+                'property_protected',
+                'property_private',
+                'property_public_static',
+                'property_protected_static',
+                'property_private_static',
+                'construct',
+                'magic',
+                'destruct',
+                'method',
+                'method_static',
+                'method_private',
+                'method_public_static',
+                'method_protected_static',
+                'method_private_static',
+                'method_protected',
+                'method_public',
+                'phpunit',
+            ]
+        ],
+        'ordered_imports' => true,
+
+        'phpdoc_add_missing_param_annotation' => ['only_untyped' => false],
+        'phpdoc_align' => ['align' => 'left'],
+        'phpdoc_annotation_without_dot' => false,
+        'phpdoc_order' => true,
+
+        'php_unit_internal_class' => ['types' => []],
+        'php_unit_test_class_requires_covers' => false,
+        'php_unit_strict' => true,
+
+        'simplified_null_return' => true,
+        'strict_comparison' => true,
+        'strict_param' => true,
+
+        'return_type_declaration' => ['space_before' => 'one'],
+
+    ]);

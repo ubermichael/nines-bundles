@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+    <h1>User index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Fullname</th>
+                <th>Active</th>
+                <th>Affiliation</th>
+                <th>Roles</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td><a href="{{ path('nines_user_admin_show', {'id': user.id}) }}">{{ user.email }}</a></td>
+                <td>{{ user.fullname }}</td>
+                <td>{{ user.active ? 'Yes' : 'No' }}</td>
+                <td>{{ user.affiliation }}</td>
+                <td>{{ user.roles ? user.roles|join(',') }}</td>
+                <td>
+                    <a href="{{ path('nines_user_admin_show', {'id': user.id}) }}">show</a>
+                    <a href="{{ path('nines_user_admin_edit', {'id': user.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('nines_user_admin_new') }}">Create new</a>
+{% endblock %}

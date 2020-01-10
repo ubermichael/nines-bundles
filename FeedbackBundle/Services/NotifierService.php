@@ -1,14 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Services;
 
 use Nines\FeedbackBundle\Entity\Comment;
-use Swift_Mailer;
-use Swift_Message;
-use Symfony\Component\Templating\EngineInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Twig\Environment;
 
 class NotifierService {
-
     /**
      * Sender email address.
      *
@@ -21,7 +30,7 @@ class NotifierService {
      *
      * @var array
      */
-    private $recipient;
+    private $recipients;
 
     /**
      * Subject of the email.
@@ -31,16 +40,21 @@ class NotifierService {
     private $subject;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Twig instance.
      *
      * @var EngineInterface
      */
-    private $templating;
+    private $twig;
 
     /**
      * Mail sender.
      *
-     * @var Swift_Mailer
+     * @var MailerInterface
      */
     private $mailer;
 
@@ -51,6 +65,23 @@ class NotifierService {
      */
     private $service;
 
+    public function __construct($sender, $recipients, $subject, LoggerInterface $logger, Environment $templating, MailerInterface $mailer, CommentService $service) {
+        $this->sender = $sender;
+        $this->recipients = false;
+        if (is_array($recipients)) {
+            $this->recipients = $recipients;
+        } else {
+            if ($recipients) {
+                $this->recipients = [$recipients];
+            }
+        }
+        $this->subject = $subject;
+        $this->logger = $logger;
+        $this->twig = $templating;
+        $this->mailer = $mailer;
+        $this->service = $service;
+    }
+
     /**
      * @return mixed
      */
@@ -60,32 +91,38 @@ class NotifierService {
 
     /**
      * @param mixed $sender
+     *
      * @return NotifierService
      */
     public function setSender($sender) {
         $this->sender = $sender;
+
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getRecipient() {
-        return $this->recipient;
+    public function getRecipients() {
+        return $this->recipients;
     }
 
     /**
-     * @param mixed $recipient
+     * @param mixed $recipients
+     *
      * @return NotifierService
      */
-    public function setRecipient($recipient) {
-        if (is_array($recipient)) {
-            $this->recipient = $recipient;
-        } else if ($recipient) {
-            $this->recipient = array($recipient);
+    public function setRecipients($recipients) {
+        if (is_array($recipients)) {
+            $this->recipients = $recipients;
         } else {
-            $this->recipient = false;
+            if ($recipients) {
+                $this->recipients = [$recipients];
+            } else {
+                $this->recipients = false;
+            }
         }
+
         return $this;
     }
 
@@ -98,42 +135,44 @@ class NotifierService {
 
     /**
      * @param mixed $subject
+     *
      * @return NotifierService
      */
     public function setSubject($subject) {
         $this->subject = $subject;
+
         return $this;
     }
 
     /**
      * @return EngineInterface
      */
-    public function getTemplating() {
-        return $this->templating;
+    public function getTwig() {
+        return $this->twig;
     }
 
     /**
-     * @param EngineInterface $templating
      * @return NotifierService
      */
-    public function setTemplating(EngineInterface $templating) {
-        $this->templating = $templating;
+    public function setTwig(Environment $twig) {
+        $this->twig = $twig;
+
         return $this;
     }
 
     /**
-     * @return Swift_Mailer
+     * @return MailerInterface
      */
     public function getMailer() {
         return $this->mailer;
     }
 
     /**
-     * @param Swift_Mailer $mailer
      * @return NotifierService
      */
-    public function setMailer(Swift_Mailer $mailer) {
+    public function setMailer(MailerInterface $mailer) {
         $this->mailer = $mailer;
+
         return $this;
     }
 
@@ -145,43 +184,35 @@ class NotifierService {
     }
 
     /**
-     * @param CommentService $service
      * @return NotifierService
      */
     public function setService(CommentService $service) {
         $this->service = $service;
+
         return $this;
     }
 
-    public function __construct($sender, $recipient, $subject, EngineInterface $templating, Swift_Mailer $mailer, CommentService $service) {
-        $this->sender = $sender;
-        $this->recipient = false;
-        if (is_array($recipient)) {
-            $this->recipient = $recipient;
-        } else if ($recipient) {
-            $this->recipient = array($recipient);
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function newComment(Comment $comment) : ?TemplatedEmail {
+        if ( ! $this->sender || ! $this->recipients) {
+            return null;
         }
-        $this->subject = $subject;
-        $this->templating = $templating;
-        $this->mailer = $mailer;
-        $this->service = $service;
-    }
+        $email = new TemplatedEmail();
+        $email->from($this->sender);
+        $email->to('dhil@sfu.ca');
+        foreach ($this->recipients as $recipient) {
+            $email->addBcc($recipient);
+        }
+        $email->subject('A new comment has been received');
+        $email->htmlTemplate('@NinesFeedback/notification/comment.html.twig');
+        $email->context([
+            'comment' => $comment,
+            'service' => $this->service,
+        ]);
+        $this->mailer->send($email);
 
-    public function newComment(Comment $comment) {
-        if (!$this->sender || !$this->recipient) {
-            return;
-        }
-        foreach ($this->recipient as $recipient) {
-            $message = new Swift_Message();
-            $message->setSubject($this->subject);
-            $message->setTo($recipient);
-            $message->setSender($this->sender);
-            $message->setBody($this->templating->render('NinesFeedbackBundle:notification:comment.txt.twig', array(
-                    'comment' => $comment,
-                    'service' => $this->service,
-            )));
-            $this->mailer->send($message);
-        }
+        return $email;
     }
-
 }

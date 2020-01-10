@@ -1,32 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UserBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Exception;
+use InvalidArgumentException;
+use Nines\UserBundle\Services\UserManager;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-/**
- * This is the class that loads and manages your bundle configuration.
- *
- * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
- */
-class NinesUserExtension extends Extension
-{
+class NinesUserExtension extends Extension {
     /**
-     * {@inheritdoc}
+     * Loads a specific configuration.
+     *
+     * @throws InvalidArgumentException When provided tag is not defined in this extension
+     * @throws Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
-    {
+    public function load(array $configs, ContainerBuilder $container) : void {
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.yaml');
+
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        foreach($config as $key => $value) {
-            $container->setParameter("nines_user.{$key}", $value);
-        }
+        $definition = $container->getDefinition(UserManager::class);
+        $definition->replaceArgument('$roles', $config['roles']);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $definition->replaceArgument('$afterLogin', $config['after_login_route']);
+        $definition->replaceArgument('$afterRequest', $config['after_request_route']);
+        $definition->replaceArgument('$afterReset', $config['after_reset_route']);
+        $definition->replaceArgument('$afterLogout', $config['after_logout_route']);
     }
 }

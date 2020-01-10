@@ -1,19 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Tests\Controller;
 
-use Nines\FeedbackBundle\Entity\CommentNote;
-use Nines\FeedbackBundle\DataFixtures\ORM\LoadCommentNote;
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\FeedbackBundle\DataFixtures\CommentNoteFixtures;
+use Nines\UserBundle\DataFixtures\UserFixtures;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class CommentNoteControllerTest extends BaseTestCase
-{
-
-    protected function getFixtures() {
+class CommentNoteControllerTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadUser::class,
-            LoadCommentNote::class
+            UserFixtures::class,
+            CommentNoteFixtures::class,
         ];
     }
 
@@ -21,33 +26,31 @@ class CommentNoteControllerTest extends BaseTestCase
      * @group anon
      * @group index
      */
-    public function testAnonIndex() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/admin/comment_note/');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testAnonIndex() : void {
+        $crawler = $this->client->request('GET', '/feedback/comment_note/');
+        $this->assertSame(302, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group user
      * @group index
      */
-    public function testUserIndex() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/admin/comment_note/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testUserIndex() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/feedback/comment_note/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
 
     /**
      * @group admin
      * @group index
      */
-    public function testAdminIndex() {
-        $client = $this->makeClient(LoadUser::ADMIN);
-        $crawler = $client->request('GET', '/admin/comment_note/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testAdminIndex() : void {
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/feedback/comment_note/');
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(0, $crawler->selectLink('New')->filter('a.btn')->count());
     }
-
 }

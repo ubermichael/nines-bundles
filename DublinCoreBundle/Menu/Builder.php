@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\DublinCoreBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
@@ -13,10 +21,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Class to build some menus for navigation.
  */
 class Builder implements ContainerAwareInterface {
-
     use ContainerAwareTrait;
-
-    const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
 
     /**
      * @var FactoryInterface
@@ -40,55 +45,37 @@ class Builder implements ContainerAwareInterface {
     }
 
     private function hasRole($role) {
-        if (!$this->tokenStorage->getToken()) {
+        if ( ! $this->tokenStorage->getToken()) {
             return false;
         }
+
         return $this->authChecker->isGranted($role);
     }
 
-    private function getUser() {
-        if( ! $this->hasRole('ROLE_USER')) {
-            return null;
-        }
-        return $this->tokenStorage->getToken()->getUser();
-    }
-
     /**
-     * Build a menu for blog posts.
-     *
-     * @param FactoryInterface $factory
-     * @param array $options
      * @return ItemInterface
      */
-
-    public function dcMenu(array $options) {
-        if (!$this->hasRole('ROLE_DC_ADMIN')) {
-            return;
-        }
-        $title = 'Dublin Core';
-        if (isset($options['title'])) {
-            $title = $options['title'];
-        }
+    public function dcNavMenu(array $options) {
+        $title = $options['title'] ?? 'Dublin Core';
         $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttributes(array(
+        $menu->setChildrenAttributes([
             'class' => 'nav navbar-nav',
-        ));
+        ]);
         $menu->setAttribute('dropdown', true);
 
-        $feedback = $menu->addChild('feedback', array(
+        $feedback = $menu->addChild('feedback', [
             'uri' => '#',
-            'label' => $title . self::CARET,
-        ));
+            'label' => $title,
+        ]);
         $feedback->setAttribute('dropdown', true);
         $feedback->setLinkAttribute('class', 'dropdown-toggle');
         $feedback->setLinkAttribute('data-toggle', 'dropdown');
         $feedback->setChildrenAttribute('class', 'dropdown-menu');
 
-        $feedback->addChild('Elements', array(
+        $feedback->addChild('Elements', [
             'route' => 'element_index',
-        ));
+        ]);
 
         return $menu;
     }
-
 }

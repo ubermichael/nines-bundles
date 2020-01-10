@@ -3,6 +3,6 @@
 {% block body %}
     <h1>Comment on {{ entity }}</h1>
 
-    {% include 'NinesFeedbackBundle:comment:comment-interface.html.twig' with { 'entity': entity } %}
+    {% include '@NinesFeedback/comment/comment-interface.html.twig' with { 'entity': entity } %}
 
 {% endblock %}

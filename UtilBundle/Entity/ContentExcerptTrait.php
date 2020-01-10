@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Entity;
 
-
-trait ContentExcerptTrait
-{
-
+trait ContentExcerptTrait {
     /**
      * @var string
      * @ORM\Column(type="text")
@@ -19,51 +24,46 @@ trait ContentExcerptTrait
     protected $content;
 
     /**
-     * Set excerpt
+     * Set excerpt.
      *
      * @param string $excerpt
-     *
-     * @return ArtisticStatement
      */
-    public function setExcerpt($excerpt)
-    {
+    public function setExcerpt($excerpt) : self {
         $this->excerpt = $excerpt;
 
         return $this;
     }
 
     /**
-     * Get excerpt
-     *
-     * @return string
+     * Get excerpt.
      */
-    public function getExcerpt()
-    {
+    public function getExcerpt() : string {
+        if ( ! $this->excerpt) {
+            return '';
+        }
+
         return $this->excerpt;
     }
 
     /**
-     * Set content
+     * Set content.
      *
      * @param string $content
-     *
-     * @return ArtisticStatement
      */
-    public function setContent($content)
-    {
+    public function setContent($content) : self {
         $this->content = $content;
 
         return $this;
     }
 
     /**
-     * Get content
-     *
-     * @return string
+     * Get content.
      */
-    public function getContent()
-    {
+    public function getContent() : string {
+        if ( ! $this->content) {
+            return '';
+        }
+
         return $this->content;
     }
-
 }

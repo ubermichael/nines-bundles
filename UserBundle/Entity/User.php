@@ -1,181 +1,287 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UserBundle\Entity;
 
-use FOS\UserBundle\Model\User as BaseUser;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Concrete User.
- * 
- * Adds fullname and institution. Overrides functionality to make username 
- * and email synonymous.
- *
- * @ORM\Table(name="nines_user")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Nines\UserBundle\Repository\UserRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
-class User extends BaseUser
-{
+class User implements UserInterface {
     /**
-     * Database ID.
-     * 
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
      */
-    protected $id;
+    private $id;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    private $active;
+
+    /** @var string
+     * @ORM\Column(type="string", length=180, unique=true)
+     */
+    private $email;
+
+    /**
+     * @var string The hashed password
+     * @ORM\Column(type="string")
+     */
+    private $password;
 
     /**
      * @var string
-     * @ORM\Column(name="fullname", type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $resetToken;
+
+    /**
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $resetExpiry;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64)
      */
     private $fullname;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="institution", type="string", nullable=true)
+     * @ORM\Column(type="string", length=64)
      */
-    private $institution;
-    
+    private $affiliation;
+
     /**
-     * Any extra data associated with the user.
-     * 
      * @var array
-     * @ORM\Column(name="data", type="array")
+     * @ORM\Column(type="json")
      */
-    private $data;
+    private $roles = [];
 
     /**
-     * Construct a user.
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", nullable=true)
      */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->data = array();
+    private $login;
+
+    /**
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     */
+    private $created;
+
+    /**
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     */
+    private $updated;
+
+    public function __construct() {
+        $this->active = false;
+        $this->roles = ['ROLE_USER'];
+    }
+
+    public function __toString() : string {
+        return $this->email;
     }
 
     /**
-     * Get id.
+     * Alias for getEmail.
      *
-     * @return int
+     * @see UserInterface
      */
-    public function getId()
-    {
-        return $this->id;
+    public function getUsername() : string {
+        return (string) $this->email;
     }
 
     /**
-     * Set the email and username.
-     * 
-     * @param string $email
-     *
-     * @return User
+     * @see UserInterface
      */
-    public function setEmail($email)
-    {
-        parent::setUsername($email);
+    public function getRoles() : array {
+        return $this->roles;
+    }
 
-        return parent::setEmail($email);
+    public function setRoles(array $roles) : self {
+        $this->roles = $roles;
+        if ( ! in_array('ROLE_USER', $roles, true)) {
+            $this->roles[] = 'ROLE_USER';
+        }
+
+        return $this;
+    }
+
+    public function addRole($role) : self {
+        if ( ! in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole($role) : self {
+        if ('ROLE_USER' !== $role && in_array($role, $this->roles, true)) {
+            array_splice($this->roles, array_search($role, $this->roles, true), 1);
+        }
+
+        return $this;
+    }
+
+    public function hasRole($role) : bool {
+        return in_array($role, $this->roles, true);
     }
 
     /**
-     * Set the canonical email address.
-     * 
-     * @param string $emailCanonical
-     *
-     * @return User
+     * @see UserInterface
      */
-    public function setEmailCanonical($emailCanonical)
-    {
-        parent::setUsernameCanonical($emailCanonical);
-
-        return parent::setEmailCanonical($emailCanonical);
+    public function getPassword() : string {
+        return (string) $this->password;
     }
 
-    /**
-     * Set institution.
-     *
-     * @param string $institution
-     *
-     * @return User
-     */
-    public function setInstitution($institution)
-    {
-        $this->institution = $institution;
+    public function setPassword(string $password) : self {
+        $this->password = $password;
 
         return $this;
     }
 
     /**
-     * Get institution.
-     *
-     * @return string
+     * @see UserInterface
      */
-    public function getInstitution()
-    {
-        return $this->institution;
+    public function getSalt() : void {
+        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
     /**
-     * Set fullname.
-     *
-     * @param string $fullname
-     *
-     * @return User
+     * @see UserInterface
      */
-    public function setFullname($fullname)
-    {
+    public function eraseCredentials() : void {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getId() : ?int {
+        return $this->id;
+    }
+
+    public function isActive() : ?bool {
+        return $this->active;
+    }
+
+    public function setActive(bool $active) : self {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    public function getEmail() : ?string {
+        return $this->email;
+    }
+
+    public function setEmail(string $email) : self {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getFullname() : ?string {
+        return $this->fullname;
+    }
+
+    public function setFullname(string $fullname) : self {
         $this->fullname = $fullname;
 
         return $this;
     }
 
+    public function getAffiliation() : ?string {
+        return $this->affiliation;
+    }
+
+    public function setAffiliation(string $affiliation) : self {
+        $this->affiliation = $affiliation;
+
+        return $this;
+    }
+
+    public function getResetToken() : ?string {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken) : self {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getResetExpiry() : ?DateTimeImmutable {
+        return $this->resetExpiry;
+    }
+
+    public function setResetExpiry(?DateTimeImmutable $resetExpiry) : self {
+        $this->resetExpiry = $resetExpiry;
+
+        return $this;
+    }
+
+    public function getLogin() : ?DateTimeImmutable {
+        return $this->login;
+    }
+
+    public function setLogin(?DateTimeImmutable $login) : self {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    public function getCreated() : ?DateTimeImmutable {
+        return $this->created;
+    }
+
     /**
-     * Get fullname.
+     * @ORM\PrePersist
      *
-     * @return string
+     * @throws Exception
+     *
+     * @return User
      */
-    public function getFullname()
-    {
-        return $this->fullname;
-    }
-    
-    /**
-     * Get some data associated with the user.
-     * 
-     * @param string $key
-     * @return mixed
-     */
-    public function getData($key) {
-        if(isset($this->data[$key])) {
-            return $this->data[$key];
+    public function setCreated() : self {
+        if ( ! $this->created) {
+            $this->created = new DateTimeImmutable();
+            $this->updated = new DateTimeImmutable();
         }
-        return null;
+
+        return $this;
     }
-    
-    /**
-     * Check if a user has some data. Checks that the key is defined 
-     * and the value associated with the key is not null. False and
-     * the empty string are considered valid.
-     * 
-     * @param type $key
-     */
-    public function hasData($key) {
-        return isset($this->data[$key]) && $this->data[$key] !== null;
+
+    public function getUpdated() : ?DateTimeImmutable {
+        return $this->updated;
     }
-    
+
     /**
-     * Store some data with the user.
-     * 
-     * @param string $key
-     * @param mixed $value
-     * @return $this
+     * @ORM\PreUpdate
+     *
+     * @throws Exception
+     *
+     * @return User
      */
-    public function setData($key, $value) {
-        $this->data[$key] = $value;
+    public function setUpdated() : self {
+        $this->updated = new DateTimeImmutable();
+
         return $this;
     }
 }

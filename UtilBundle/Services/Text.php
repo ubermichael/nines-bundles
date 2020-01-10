@@ -1,9 +1,11 @@
 <?php
 
-/**
- * @file
- *
- * Text processing serivce.
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace Nines\UtilBundle\Services;
@@ -15,7 +17,6 @@ use Psr\Log\LoggerInterface;
  * Various text mangling functions for twig and for other symfony stuff.
  */
 class Text {
-
     /**
      * Monolog logger.
      *
@@ -32,14 +33,17 @@ class Text {
 
     /**
      * Build a plain, searchable version of a marked up text.
+     *
+     * @param mixed $content
+     *
+     * @return null|string|string[]
      */
     public function plain($content) {
         $plain = strip_tags($content);
         $converted = html_entity_decode($plain, ENT_HTML5, 'UTF-8');
-        $trimmed = preg_replace("/(^\s+)|(\s+$)/u", "", $converted);
+        $trimmed = preg_replace('/(^\\s+)|(\\s+$)/u', '', $converted);
         // \xA0 is the result of converting nbsp.
-        $normalized = preg_replace("/[[:space:]\x{A0}]/su", " ", $trimmed);
-        return $normalized;
+        return preg_replace('/[[:space:]\\x{A0}]/su', ' ', $trimmed);
     }
 
     /**
@@ -48,18 +52,20 @@ class Text {
      *
      * @param string $content
      * @param string $keyword
+     *
      * @return array
      */
     public function searchHighlight($content, $keyword) {
         $text = $this->plain($content);
         $i = stripos($text, $keyword);
         $regex = preg_quote($keyword);
-        $results = array();
-        while($i !== false) {
+        $results = [];
+        while (false !== $i) {
             $s = substr($text, max([0, $i - 60]), 120);
-            $results[] = preg_replace("/($regex)/i", '<mark>$1</mark>', $s);
-            $i = stripos($text, $keyword, $i+1);
+            $results[] = preg_replace("/({$regex})/i", '<mark>$1</mark>', $s);
+            $i = stripos($text, $keyword, $i + 1);
         }
+
         return array_unique($results);
     }
 
@@ -71,10 +77,15 @@ class Text {
      * the end of the string are removed.
      *
      * @param string $string
-     * @param string  $separator
+     * @param string $separator
+     *
      * @return string
      */
     public function slug($string, $separator = '-') {
+        if (null === $string) {
+            return;
+        }
+
         // trim spaces and periods.
         $s = preg_replace('/(^[\s.]*)|([\s.]*$)/u', '', $string);
 
@@ -84,14 +95,13 @@ class Text {
         // lowercase
         $s = mb_convert_case($s, MB_CASE_LOWER, 'UTF-8');
 
-        // strip non letter/digit/period/space chars
-        $s = preg_replace('/[^-_a-z0-9. ]/u', '', $s);
+        // strip non letter/digit/space chars
+        $s = preg_replace('/[^a-z0-9 _.-]/u', '', $s);
 
         // transform spaces and runs of separators to separator.
-        $quoted = preg_quote($separator, '/');
-        $s = preg_replace("/(\s|$quoted)+/u", $separator, $s);
+        $quoted = preg_quote($separator ?? '', '/');
 
-        return $s;
+        return preg_replace("/(\\s|{$quoted})+/u", $separator, $s);
     }
 
     /**
@@ -100,23 +110,20 @@ class Text {
      * @param string $string
      * @param string $length
      * @param string $suffix
+     *
      * @return string
      */
     public function trim($string, $length = null, $suffix = '...') {
-        if($length === null) {
+        if (null === $length) {
             $length = $this->defaultTrimLenth;
         }
-        $plain = strip_tags($string);
-        $converted = html_entity_decode($plain, ENT_COMPAT | ENT_HTML401, 'UTF-8');
-        $trimmed = preg_replace("/(^\s+)|(\s+$)/u", "", $converted);
-        // \xA0 is the result of converting nbsp. Requires the /u flag.
-        $normalized = preg_replace("/[[:space:]\x{A0}]/su", " ", $trimmed);
-        $words = preg_split('/\s+/u', $normalized, $length+1, PREG_SPLIT_NO_EMPTY);
+        $plain = $this->plain($string);
+        $words = preg_split('/\s+/u', $plain, $length + 1, PREG_SPLIT_NO_EMPTY);
 
-        if(count($words) <= $length) {
+        if (count($words) <= $length) {
             return implode(' ', $words);
         }
+
         return implode(' ', array_slice($words, 0, $length)) . $suffix;
     }
-
 }

@@ -1,16 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\BlogBundle\Entity\PostStatus;
 use Nines\BlogBundle\Form\PostStatusType;
+use Nines\UtilBundle\Controller\PaginatorTrait;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * PostStatus controller.
@@ -18,17 +29,16 @@ use Nines\BlogBundle\Form\PostStatusType;
  * @IsGranted("ROLE_USER")
  * @Route("/post_status")
  */
-class PostStatusController extends Controller {
+class PostStatusController extends AbstractController implements PaginatorAwareInterface {
+    use PaginatorTrait;
 
     /**
      * Lists all PostStatus entities.
      *
-     * @param Request $request
-     *
      * @return array
      *
-     * @Route("/", name="post_status_index", methods={"GET"})
-
+     * @Route("/", name="nines_blog_post_status_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -36,27 +46,25 @@ class PostStatusController extends Controller {
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(PostStatus::class, 'e')->orderBy('e.id', 'ASC');
         $query = $qb->getQuery();
-        $paginator = $this->get('knp_paginator');
-        $postStatuses = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        $postStatuses = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
+
+        return [
             'postStatuses' => $postStatuses,
-        );
+        ];
     }
 
     /**
      * Typeahead API endpoint for PostStatus entities.
      *
-     * @param Request $request
-     *
-     * @Route("/typeahead", name="post_status_typeahead", methods={"GET"})
+     * @Route("/typeahead", name="nines_blog_post_status_typeahead", methods={"GET"})
      * @IsGranted("ROLE_BLOG_ADMIN")
-
+     *
      * @return JsonResponse
      */
     public function typeahead(Request $request) {
         $q = $request->query->get('q');
-        if (!$q) {
+        if ( ! $q) {
             return new JsonResponse([]);
         }
         $em = $this->getDoctrine()->getManager();
@@ -68,19 +76,18 @@ class PostStatusController extends Controller {
                 'text' => (string) $result,
             ];
         }
+
         return new JsonResponse($data);
     }
 
     /**
      * Creates a new PostStatus entity.
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="post_status_new", methods={"GET","POST"})
-
+     * @Route("/new", name="nines_blog_post_status_new", methods={"GET","POST"})
+     *
      * @Template()
      */
     public function newAction(Request $request) {
@@ -94,25 +101,24 @@ class PostStatusController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new postStatus was created.');
-            return $this->redirectToRoute('post_status_show', array('id' => $postStatus->getId()));
+
+            return $this->redirectToRoute('nines_blog_post_status_show', ['id' => $postStatus->getId()]);
         }
 
-        return array(
+        return [
             'postStatus' => $postStatus,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Creates a new PostStatus entity in a popup.
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new_popup", name="post_status_new_popup", methods={"GET","POST"})
-
+     * @Route("/new_popup", name="nines_blog_post_status_new_popup", methods={"GET","POST"})
+     *
      * @Template()
      */
     public function newPopupAction(Request $request) {
@@ -122,33 +128,26 @@ class PostStatusController extends Controller {
     /**
      * Finds and displays a PostStatus entity.
      *
-     * @param PostStatus $postStatus
-     *
      * @return array
      *
-     * @Route("/{id}", name="post_status_show", methods={"GET"})
-
+     * @Route("/{id}", name="nines_blog_post_status_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(PostStatus $postStatus) {
-
-        return array(
+        return [
             'postStatus' => $postStatus,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing PostStatus entity.
      *
-     *
-     * @param Request $request
-     * @param PostStatus $postStatus
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="post_status_edit", methods={"GET","POST"})
-
+     * @Route("/{id}/edit", name="nines_blog_post_status_edit", methods={"GET","POST"})
+     *
      * @Template()
      */
     public function editAction(Request $request, PostStatus $postStatus) {
@@ -159,27 +158,23 @@ class PostStatusController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The postStatus has been updated.');
-            return $this->redirectToRoute('post_status_show', array('id' => $postStatus->getId()));
+
+            return $this->redirectToRoute('nines_blog_post_status_show', ['id' => $postStatus->getId()]);
         }
 
-        return array(
+        return [
             'postStatus' => $postStatus,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a PostStatus entity.
      *
-     *
-     * @param Request $request
-     * @param PostStatus $postStatus
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/delete", name="post_status_delete", methods={"GET"})
-
+     * @Route("/{id}/delete", name="nines_blog_post_status_delete", methods={"GET"})
      */
     public function deleteAction(Request $request, PostStatus $postStatus) {
         $em = $this->getDoctrine()->getManager();
@@ -187,7 +182,6 @@ class PostStatusController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The postStatus was deleted.');
 
-        return $this->redirectToRoute('post_status_index');
+        return $this->redirectToRoute('nines_blog_post_status_index');
     }
-
 }

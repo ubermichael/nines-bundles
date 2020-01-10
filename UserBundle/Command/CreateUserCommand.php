@@ -1,152 +1,71 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UserBundle\Command;
 
-use Exception;
-use Nines\UserBundle\Util\UserManipulator;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\EntityManagerInterface;
+use Nines\UserBundle\Entity\User;
+use Nines\UserBundle\Services\UserManager;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * Replaces the CreateUserCommand from FOSUserBundle to add support for
- * fullname and institution.
- *
- * Requires Symfony > 3.0
- */
-class CreateUserCommand extends Command
-{
-    private $userManipulator;
-
-    public function __construct(UserManipulator $userManipulator)
-    {
-        parent::__construct();
-
-        $this->userManipulator = $userManipulator;
-    }
+class CreateUserCommand extends AbstractUserCommand {
     /**
-     * @see Command
+     * @var UserManager
      */
-    protected function configure()
-    {
-        $this
-            ->setName('fos:user:create')
-            ->setDescription('Create a user.')
-            ->setDefinition(array(
-                new InputArgument('email', InputArgument::REQUIRED, 'The email'),
-                new InputArgument('password', InputArgument::REQUIRED, 'The password'),
-                new InputArgument('fullname', InputArgument::REQUIRED, 'The full name'),
-                new InputArgument('institution', InputArgument::REQUIRED, 'The institution'),
-                new InputOption('super-admin', null, InputOption::VALUE_NONE, 'Set the user as super admin'),
-                new InputOption('inactive', null, InputOption::VALUE_NONE, 'Set the user as inactive'),
-            ))
-            ->setHelp(<<<EOT
-The <info>fos:user:create</info> command creates a user:
+    private $manager;
 
-  <info>php app/console fos:user:create user@example.com</info>
+    protected static $defaultName = 'nines:create:user';
 
-This interactive shell will ask you for a password.
-
-You can alternatively specify the email and password as the first and second arguments:
-
-  <info>php app/console fos:user:create matthieu@example.com mypassword</info>
-
-You can create a super admin via the super-admin flag:
-
-  <info>php app/console fos:user:create admin@example.com --super-admin</info>
-
-You can create an inactive user (will not be able to log in):
-
-  <info>php app/console fos:user:create user@example.com --inactive</info>
-
-EOT
-            );
+    public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {
+        parent::__construct($validator, $em);
+        $this->manager = $manager;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see Command
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $email = $input->getArgument('email');
-        $password = $input->getArgument('password');
-        $fullname = $input->getArgument('fullname');
-        $institution = $input->getArgument('institution');
-        $inactive = $input->getOption('inactive');
-        $superadmin = $input->getOption('super-admin');
-
-        $this->userManipulator->create($email, $password, $fullname, $institution, !$inactive, $superadmin);
-
-        $output->writeln(sprintf('Created user <comment>%s</comment>', $email));
+    protected function getArgs() : array {
+        return [
+            ['name' => 'email', 'desc' => 'Email address for the new user account', 'question' => 'Email address: ', 'valid' => [new NotBlank(), new Email()]],
+            ['name' => 'fullname', 'desc' => 'User\'s full name', 'question' => 'Full name: ', 'valid' => [new NotBlank()]],
+            ['name' => 'affiliation', 'desc' => 'User\'s Institutional affiliation', 'question' => 'Affiliation: ', 'valid' => [new NotBlank()]],
+        ];
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see Command
-     */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-        $questions = array();
+    protected function configure() : void {
+        $this->setDescription('Create a new user in the database');
+        parent::configure();
+    }
 
-        if (!$input->getArgument('email')) {
-            $question = new Question('Please choose an email:');
-            $question->setValidator(function($email) {
-                if (empty($email)) {
-                    throw new Exception('Email can not be empty');
-                }
+    protected function generatePassword() : string {
+        $bytes = random_bytes(self::PASSWORD_BYTES);
 
-                return $email;
-            });
-            $questions['email'] = $question;
-        }
+        return base64_encode($bytes);
+    }
 
-        if (!$input->getArgument('fullname')) {
-            $question = new Question('Please choose an fullname:');
-            $question->setValidator(function($fullname) {
-                if (empty($fullname)) {
-                    throw new Exception('Email can not be empty');
-                }
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
+        $user = new User();
+        $user->setEmail($input->getArgument('email'));
+        $user->setFullname($input->getArgument('fullname'));
+        $user->setAffiliation($input->getArgument('affiliation'));
+        $password = $this->manager->encodePassword($user, $this->manager->generatePassword());
+        $user->setPassword($password);
+        $this->manager->requestReset($user);
+        $this->manager->sendReset($user, []);
 
-                return $fullname;
-            });
-            $questions['fullname'] = $question;
-        }
+        $this->em->persist($user);
+        $this->em->flush();
 
-        if (!$input->getArgument('institution')) {
-            $question = new Question('Please choose an institution:');
-            $question->setValidator(function($institution) {
-                if (empty($institution)) {
-                    throw new Exception('Email can not be empty');
-                }
+        $output->writeln("Account {$user->getEmail()} created, but not active.");
 
-                return $institution;
-            });
-            $questions['institution'] = $question;
-        }
-
-        if (!$input->getArgument('password')) {
-            $question = new Question('Please choose an password:');
-            $question->setHidden(true);
-            $question->setValidator(function($password) {
-                if (empty($password)) {
-                    throw new Exception('Email can not be empty');
-                }
-
-                return $password;
-            });
-            $questions['password'] = $question;
-        }
-
-        foreach ($questions as $name => $question) {
-            $answer = $this->getHelper('question')->ask($input, $output, $question);
-            $input->setArgument($name, $answer);
-        }
-
+        return 0;
     }
 }

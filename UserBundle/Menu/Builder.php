@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UserBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
@@ -13,10 +21,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Class to build some menus for navigation.
  */
 class Builder implements ContainerAwareInterface {
-
     use ContainerAwareTrait;
-
-    const CARET = ' ▾'; // U+25BE, black down-pointing small triangle.
 
     /**
      * @var FactoryInterface
@@ -40,70 +45,73 @@ class Builder implements ContainerAwareInterface {
     }
 
     private function hasRole($role) {
-        if (!$this->tokenStorage->getToken()) {
+        if ( ! $this->tokenStorage->getToken()) {
             return false;
         }
+
         return $this->authChecker->isGranted($role);
     }
 
     private function getUser() {
-        if( ! $this->hasRole('ROLE_USER')) {
-            return null;
+        if ( ! $this->hasRole('ROLE_USER')) {
+            return;
         }
+
         return $this->tokenStorage->getToken()->getUser();
     }
 
     /**
      * Build a menu for blog posts.
      *
-     * @param array $options
      * @return ItemInterface
      */
-    public function userNavMenu(array $options) {
-        $name = 'Login';
-        if(isset($options['name'])) {
-            $name = $options['name'];
-        }
+    public function userMenu(array $options) {
+        $name = $options['name'] ?? 'Login';
+
         $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttributes(array(
+        $menu->setChildrenAttributes([
             'class' => 'nav navbar-nav navbar-right',
-        ));
+        ]);
+
         $menu->setAttribute('dropdown', true);
         $user = $this->getUser();
-        if (!$this->hasRole('ROLE_USER')) {
-            $menu->addChild($name, array(
-                'route' => 'fos_user_security_login'
-            ));
+        if ( ! $this->hasRole('ROLE_USER')) {
+            $menu->addChild($name, [
+                'route' => 'nines_user_security_login',
+            ]);
+
             return $menu;
         }
 
-        $user = $menu->addChild('user', array(
+        $user = $menu->addChild('user', [
             'uri' => '#',
-            'label' => $user->getUsername() . self::CARET,
-        ));
+            'label' => $user->getUsername(),
+        ]);
+
         $user->setAttribute('dropdown', true);
         $user->setLinkAttribute('class', 'dropdown-toggle');
         $user->setLinkAttribute('data-toggle', 'dropdown');
         $user->setChildrenAttribute('class', 'dropdown-menu');
-        $user->addChild('Profile', array('route' => 'fos_user_profile_show'));
-        $user->addChild('Change password', array('route' => 'fos_user_change_password'));
-        $user->addChild('Logout', array('route' => 'fos_user_security_logout'));
+
+        $user->addChild('Profile', ['route' => 'nines_user_profile_index']);
+        $user->addChild('Change password', ['route' => 'nines_user_profile_password']);
+        $user->addChild('Logout', ['route' => 'nines_user_security_logout']);
 
         if ($this->hasRole('ROLE_ADMIN')) {
-            $user->addChild('divider', array(
+            $user->addChild('divider', [
                 'label' => '',
-            ));
-            $user['divider']->setAttributes(array(
+            ]);
+            $user['divider']->setAttributes([
                 'role' => 'separator',
                 'class' => 'divider',
-            ));
+            ]);
 
-            $user->addChild('users', array(
+            $user->addChild('users', [
                 'label' => 'Users',
-                'route' => 'user',
-            ));
+                'route' => 'nines_user_admin_index',
+            ]);
         }
+
         return $menu;
     }
-
 }

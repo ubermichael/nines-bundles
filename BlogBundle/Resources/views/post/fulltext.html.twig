@@ -38,7 +38,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title pull-left">
-                        <a href="{{ path('post_show', { 'id': post.id }) }}">
+                        <a href="{{ path('nines_blog_post_show', { 'id': post.id }) }}">
                             {{ post.title }}
                         </a>
                     </h2>
@@ -52,7 +52,7 @@
                 </div>
                 <div class="panel-footer text-right">
                     Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in 
-                    <a href="{{ path('post_category_show', {'id': post.category.id }) }}">
+                    <a href="{{ path('nines_blog_post_category_show', {'id': post.category.id }) }}">
                         {{ post.category -}}
                     </a>.
                 </div>

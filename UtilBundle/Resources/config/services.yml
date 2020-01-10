@@ -1,6 +1,3 @@
-parameters:
-    nines_text.trim_length: 50
-
 services:
     _defaults:
         autowire: true
@@ -16,9 +13,14 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
+    Nines\UtilBundle\EventListener\TermNameListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
     Nines\UtilBundle\Services\Text:
         arguments:
-            $defaultTrimLength: '%nines_text.trim_length%'
+            $defaultTrimLength: ~
 
     Nines\UtilBundle\Twig\TextExtension:
         tags:

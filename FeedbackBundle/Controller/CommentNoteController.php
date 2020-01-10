@@ -1,64 +1,68 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\FeedbackBundle\Entity\CommentNote;
 use Nines\FeedbackBundle\Form\CommentNoteType;
+use Nines\UtilBundle\Controller\PaginatorTrait;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * CommentNote controller.
  *
- * @IsGranted("ROLE_USER")
- * @Route("/admin/comment_note")
+ * @Route("/comment_note")
  */
-class CommentNoteController extends Controller
-{
+class CommentNoteController extends AbstractController implements PaginatorAwareInterface {
+    use PaginatorTrait;
+
     /**
      * Lists all CommentNote entities.
      *
-     * @param Request $request
-     *
      * @return array
      *
-     * @Route("/", name="admin_comment_note_index", methods={"GET"})
-
+     * @Route("/", name="nines_feedback_comment_note_index", methods={"GET"})
+     *
      * @Template()
      */
-    public function indexAction(Request $request)
-    {
+    public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(CommentNote::class, 'e')->orderBy('e.id', 'ASC');
         $query = $qb->getQuery();
-        $paginator = $this->get('knp_paginator');
-        $commentNotes = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        $commentNotes = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
+
+        return [
             'commentNotes' => $commentNotes,
-        );
+        ];
     }
 
     /**
      * Creates a new CommentNote entity.
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/new", name="admin_comment_note_new", methods={"GET","POST"})
-
+     * @Route("/new", name="nines_feedback_comment_note_new", methods={"GET","POST"})
+     *
      * @Template()
      */
-    public function newAction(Request $request)
-    {
+    public function newAction(Request $request) {
         $commentNote = new CommentNote();
         $form = $this->createForm(CommentNoteType::class, $commentNote);
         $form->handleRequest($request);
@@ -69,13 +73,13 @@ class CommentNoteController extends Controller
             $em->flush();
 
             $this->addFlash('success', 'The new commentNote was created.');
-            return $this->redirectToRoute('admin_comment_note_show', array('id' => $commentNote->getId()));
+
+            return $this->redirectToRoute('nines_feedback_comment_note_show', ['id' => $commentNote->getId()]);
         }
 
-        return array(
+        return [
             'commentNote' => $commentNote,
             'form' => $form->createView(),
-        );
+        ];
     }
-
 }

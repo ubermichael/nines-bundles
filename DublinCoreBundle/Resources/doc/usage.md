@@ -22,5 +22,5 @@ Display the menu somewhere
 ```
 
 Load data into the elements table by visiting element/new or
-by loading the fixtures in Nines\DublinCoreBundle\DataFixtures\ORM\LoadElement.php
+by loading the fixtures in Nines\DublinCoreBundle\DataFixtures\LoadElement.php
 

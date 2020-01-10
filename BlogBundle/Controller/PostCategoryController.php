@@ -1,35 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Nines\BlogBundle\Entity\Post;
+use Nines\BlogBundle\Entity\PostCategory;
+use Nines\BlogBundle\Form\PostCategoryType;
+use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Nines\BlogBundle\Entity\PostCategory;
-use Nines\BlogBundle\Entity\Post;
-use Nines\BlogBundle\Form\PostCategoryType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * PostCategory controller.
  *
  * @Route("/post_category")
  */
-class PostCategoryController extends Controller {
+class PostCategoryController extends AbstractController implements PaginatorAwareInterface {
+    use PaginatorTrait;
 
     /**
      * Lists all PostCategory entities.
      *
-     * @param Request $request
-     *
      * @return array
      *
-     * @Route("/", name="post_category_index", methods={"GET"})
-
+     * @Route("/", name="nines_blog_post_category_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request) {
@@ -37,27 +46,25 @@ class PostCategoryController extends Controller {
         $qb = $em->createQueryBuilder();
         $qb->select('e')->from(PostCategory::class, 'e')->orderBy('e.id', 'ASC');
         $query = $qb->getQuery();
-        $paginator = $this->get('knp_paginator');
-        $postCategories = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        $postCategories = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
+
+        return [
             'postCategories' => $postCategories,
-        );
+        ];
     }
 
     /**
      * Typeahead API endpoint for PostCategory entities.
      *
-     * @param Request $request
-     *
-     * @Route("/typeahead", name="post_category_typeahead", methods={"GET"})
+     * @Route("/typeahead", name="nines_blog_post_category_typeahead", methods={"GET"})
      * @IsGranted("ROLE_BLOG_ADMIN")
-
+     *
      * @return JsonResponse
      */
     public function typeahead(Request $request) {
         $q = $request->query->get('q');
-        if (!$q) {
+        if ( ! $q) {
             return new JsonResponse([]);
         }
         $em = $this->getDoctrine()->getManager();
@@ -69,19 +76,18 @@ class PostCategoryController extends Controller {
                 'text' => (string) $result,
             ];
         }
+
         return new JsonResponse($data);
     }
 
     /**
      * Creates a new PostCategory entity.
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="post_category_new", methods={"GET"})
-
+     * @Route("/new", name="nines_blog_post_category_new", methods={"GET", "POST"})
+     *
      * @Template()
      */
     public function newAction(Request $request) {
@@ -95,25 +101,24 @@ class PostCategoryController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new postCategory was created.');
-            return $this->redirectToRoute('post_category_show', array('id' => $postCategory->getId()));
+
+            return $this->redirectToRoute('nines_blog_post_category_show', ['id' => $postCategory->getId()]);
         }
 
-        return array(
+        return [
             'postCategory' => $postCategory,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Creates a new PostCategory entity in a popup.
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new_popup", name="post_category_new_popup", methods={"GET"})
-
+     * @Route("/new_popup", name="nines_blog_post_category_new_popup", methods={"GET"})
+     *
      * @Template()
      */
     public function newPopupAction(Request $request) {
@@ -123,38 +128,32 @@ class PostCategoryController extends Controller {
     /**
      * Finds and displays a PostCategory entity.
      *
-     * @param PostCategory $postCategory
-     *
      * @return array
      *
-     * @Route("/{id}", name="post_category_show", methods={"GET"})
-
+     * @Route("/{id}", name="nines_blog_post_category_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(Request $request, PostCategory $postCategory) {
         $repo = $this->getDoctrine()->getManager()->getRepository(PostCategory::class);
         $query = $repo->getPosts($postCategory, $this->isGranted('ROLE_USER'))->execute();
-        $paginator = $this->get('knp_paginator');
-        $posts = $paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        $posts = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
+
+        return [
             'postCategory' => $postCategory,
             'posts' => $posts,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing PostCategory entity.
      *
-     *
-     * @param Request $request
-     * @param PostCategory $postCategory
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="post_category_edit", methods={"GET"})
-
+     * @Route("/{id}/edit", name="nines_blog_post_category_edit", methods={"GET"})
+     *
      * @Template()
      */
     public function editAction(Request $request, PostCategory $postCategory) {
@@ -165,27 +164,23 @@ class PostCategoryController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The postCategory has been updated.');
-            return $this->redirectToRoute('post_category_show', array('id' => $postCategory->getId()));
+
+            return $this->redirectToRoute('nines_blog_post_category_show', ['id' => $postCategory->getId()]);
         }
 
-        return array(
+        return [
             'postCategory' => $postCategory,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a PostCategory entity.
      *
-     *
-     * @param Request $request
-     * @param PostCategory $postCategory
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/delete", name="post_category_delete", methods={"GET"})
-
+     * @Route("/{id}/delete", name="nines_blog_post_category_delete", methods={"GET"})
      */
     public function deleteAction(Request $request, PostCategory $postCategory) {
         $em = $this->getDoctrine()->getManager();
@@ -193,7 +188,6 @@ class PostCategoryController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The postCategory was deleted.');
 
-        return $this->redirectToRoute('post_category_index');
+        return $this->redirectToRoute('nines_blog_post_category_index');
     }
-
 }

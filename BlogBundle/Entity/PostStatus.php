@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -8,15 +16,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractTerm;
 
 /**
- * PostStatus
+ * PostStatus.
  *
  * @ORM\Table(name="blog_post_status")
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostStatusRepository")
  */
-class PostStatus extends AbstractTerm
-{
+class PostStatus extends AbstractTerm {
     /**
      * True if the status is meant to be public.
+     *
      * @var bool
      * @ORM\Column(type="boolean")
      */
@@ -24,7 +32,7 @@ class PostStatus extends AbstractTerm
 
     /**
      * List of the posts with this status.
-     * 
+     *
      * @var Collection|Post[]
      * @ORM\OneToMany(targetEntity="Post", mappedBy="status")
      */
@@ -38,62 +46,53 @@ class PostStatus extends AbstractTerm
         $this->public = false;
         $this->posts = new ArrayCollection();
     }
-    
+
     /**
-     * Add post
-     *
-     * @param Post $post
+     * Add post.
      *
      * @return PostStatus
      */
-    public function addPost(Post $post)
-    {
+    public function addPost(Post $post) {
         $this->posts[] = $post;
 
         return $this;
     }
 
     /**
-     * Remove post
-     *
-     * @param Post $post
+     * Remove post.
      */
-    public function removePost(Post $post)
-    {
+    public function removePost(Post $post) : void {
         $this->posts->removeElement($post);
     }
 
     /**
-     * Get posts
+     * Get posts.
      *
      * @return Collection
      */
-    public function getPosts()
-    {
+    public function getPosts() {
         return $this->posts;
     }
 
     /**
-     * Set public
+     * Set public.
      *
-     * @param boolean $public
+     * @param bool $public
      *
      * @return PostStatus
      */
-    public function setPublic($public)
-    {
+    public function setPublic($public) {
         $this->public = $public;
 
         return $this;
     }
 
     /**
-     * Get public
+     * Get public.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getPublic()
-    {
+    public function getPublic() {
         return $this->public;
     }
 }

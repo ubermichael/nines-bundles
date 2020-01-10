@@ -1,28 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Exception;
+use InvalidArgumentException;
+use Nines\UtilBundle\Services\Text;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
 
-/**
- * This is the class that loads and manages your bundle configuration.
- *
- * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
- */
-class NinesUtilExtension extends Extension
-{
+class NinesUtilExtension extends Extension {
     /**
-     * {@inheritdoc}
+     * Loads a specific configuration.
+     *
+     * @throws InvalidArgumentException When provided tag is not defined in this extension
+     * @throws Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
-    {
+    public function load(array $configs, ContainerBuilder $container) : void {
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.yml');
+
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $definition = $container->getDefinition(Text::class);
+        $definition->replaceArgument('$defaultTrimLength', $config['trim_length']);
     }
 }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\FeedbackBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
@@ -8,7 +16,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Comment
+ * Comment.
  *
  * @ORM\Table(name="comment", indexes={
  *  @ORM\Index(name="comment_ft_idx", columns={"fullname", "content"}, flags={"fulltext"})
@@ -16,9 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentRepository")
  */
 class Comment extends AbstractEntity {
-
     /**
      * Full name of the commenter.
+     *
      * @var string
      * @ORM\Column(type="string", length=120)
      */
@@ -26,6 +34,7 @@ class Comment extends AbstractEntity {
 
     /**
      * Commenter's email.
+     *
      * @var string
      * @ORM\Column(type="string", length=120)
      * @Assert\Email()
@@ -34,7 +43,9 @@ class Comment extends AbstractEntity {
 
     /**
      * True if the user would like a followup email.
+     *
      * @ORM\Column(type="boolean")
+     *
      * @var bool
      */
     private $followUp;
@@ -42,14 +53,18 @@ class Comment extends AbstractEntity {
     /**
      * A string of the form entity:id where entity is the un-namespaced
      * class name in lowercase and id is the numeric id.
+     *
      * @ORM\Column(type="string", length=120)
+     *
      * @var string
      */
     private $entity;
 
     /**
      * Content of the comment.
+     *
      * @ORM\Column(type="text")
+     *
      * @var string
      */
     private $content;
@@ -57,7 +72,7 @@ class Comment extends AbstractEntity {
     /**
      * Status of the comment.
      *
-     * @var CommentStatus|null
+     * @var null|CommentStatus
      *
      * @ORM\ManyToOne(targetEntity="CommentStatus", inversedBy="comments")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", nullable=false)
@@ -90,7 +105,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
      *
@@ -103,7 +118,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -112,7 +127,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Set fullname
+     * Set fullname.
      *
      * @param string $fullname
      *
@@ -125,7 +140,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get fullname
+     * Get fullname.
      *
      * @return string
      */
@@ -134,7 +149,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Set email
+     * Set email.
      *
      * @param string $email
      *
@@ -147,7 +162,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get email
+     * Get email.
      *
      * @return string
      */
@@ -156,9 +171,9 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Set followUp
+     * Set followUp.
      *
-     * @param boolean $followUp
+     * @param bool $followUp
      *
      * @return Comment
      */
@@ -169,16 +184,16 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get followUp
+     * Get followUp.
      *
-     * @return boolean
+     * @return bool
      */
     public function getFollowUp() {
         return $this->followUp;
     }
 
     /**
-     * Set content
+     * Set content.
      *
      * @param string $content
      *
@@ -191,7 +206,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return string
      */
@@ -200,7 +215,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Set entity
+     * Set entity.
      *
      * @param string $entity
      *
@@ -213,7 +228,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get entity
+     * Get entity.
      *
      * @return string
      */
@@ -222,9 +237,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Set status
-     *
-     * @param CommentStatus $status
+     * Set status.
      *
      * @return Comment
      */
@@ -235,7 +248,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return CommentStatus
      */
@@ -244,9 +257,7 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Add note
-     *
-     * @param CommentNote $note
+     * Add note.
      *
      * @return Comment
      */
@@ -257,21 +268,18 @@ class Comment extends AbstractEntity {
     }
 
     /**
-     * Remove note
-     *
-     * @param CommentNote $note
+     * Remove note.
      */
-    public function removeNote(CommentNote $note) {
+    public function removeNote(CommentNote $note) : void {
         $this->notes->removeElement($note);
     }
 
     /**
-     * Get notes
+     * Get notes.
      *
      * @return Collection
      */
     public function getNotes() {
         return $this->notes;
     }
-
 }

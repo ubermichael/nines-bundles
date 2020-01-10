@@ -11,14 +11,14 @@
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_BLOG_ADMIN') %}
-                <a href="{{ path('page_new') }}" class="btn btn-default">
+                <a href="{{ path('nines_blog_page_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
-                <a href="{{ path('page_sort') }}" class="btn btn-default">
+                <a href="{{ path('nines_blog_page_sort') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-sort"></span> Sort
                 </a>                
             {% endif %}
-            <a href="{{ path('page_search') }}" class="btn btn-default">
+            <a href="{{ path('nines_blog_page_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
             </a>
         </div>
@@ -29,7 +29,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2 class="panel-title pull-left">
-                    <a href="{{ path('page_show', { 'id': page.id }) }}">
+                    <a href="{{ path('nines_blog_page_show', { 'id': page.id }) }}">
                         {{ page.title }}
                     </a>
                 </h2>

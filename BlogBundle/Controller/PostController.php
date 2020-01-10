@@ -1,15 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Controller;
 
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\BlogBundle\Entity\Post;
 use Nines\BlogBundle\Form\PostType;
-use Symfony\Component\Routing\Annotation\Route;
+use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -17,40 +28,36 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  *
  * @Route("/post")
  */
-class PostController extends Controller {
+class PostController extends AbstractController implements PaginatorAwareInterface {
+    use PaginatorTrait;
 
     /**
      * Lists all Post entities.
      *
-     * @param Request $request
-     *
      * @return array
      *
-     * @Route("/", name="post_index", methods={"GET"})
-
+     * @Route("/", name="nines_blog_post_index", methods={"GET"})
+     *
      * @Template()
      */
     public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Post::class);
         $query = $repo->recentQuery($checker->isGranted('ROLE_USER'));
-        $paginator = $this->get('knp_paginator');
-        $posts = $paginator->paginate($query, $request->query->getint('page', 1), 25);
+        $posts = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
 
-        return array(
+        return [
             'posts' => $posts,
-        );
+        ];
     }
 
     /**
      * Search for Post entities.
      *
-     * @param Request $request
-     *
      * @return array
      *
-     * @Route("/search", name="post_search", methods={"GET"})
-
+     * @Route("/search", name="nines_blog_post_search", methods={"GET"})
+     *
      * @Template()
      */
     public function searchAction(Request $request) {
@@ -59,28 +66,25 @@ class PostController extends Controller {
         $q = $request->query->get('q');
         if ($q) {
             $query = $repo->fulltextQuery($q, $this->isGranted('ROLE_USER'));
-            $paginator = $this->get('knp_paginator');
-            $posts = $paginator->paginate($query, $request->query->getInt('page', 1), 25);
+            $posts = $this->paginator->paginate($query, $request->query->getInt('page', 1), 25);
         } else {
-            $posts = array();
+            $posts = [];
         }
 
-        return array(
+        return [
             'posts' => $posts,
             'q' => $q,
-        );
+        ];
     }
 
     /**
      * Creates a new Post entity.
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="post_new", methods={"GET","POST"})
-
+     * @Route("/new", name="nines_blog_post_new", methods={"GET","POST"})
+     *
      * @Template()
      */
     public function newAction(Request $request) {
@@ -95,45 +99,39 @@ class PostController extends Controller {
             $em->flush();
 
             $this->addFlash('success', 'The new post was created.');
-            return $this->redirectToRoute('post_show', array('id' => $post->getId()));
+
+            return $this->redirectToRoute('nines_blog_post_show', ['id' => $post->getId()]);
         }
 
-        return array(
+        return [
             'post' => $post,
             'form' => $form->createView(),
-        );
+        ];
     }
 
     /**
      * Finds and displays a Post entity.
      *
-     * @param Post $post
-     *
      * @return array
      *
-     * @Route("/{id}", name="post_show", methods={"GET"})
-
+     * @Route("/{id}", name="nines_blog_post_show", methods={"GET"})
+     *
      * @Template()
      */
     public function showAction(Post $post) {
-
-        return array(
+        return [
             'post' => $post,
-        );
+        ];
     }
 
     /**
      * Displays a form to edit an existing Post entity.
      *
-     *
-     * @param Request $request
-     * @param Post $post
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="post_edit", methods={"GET","POST"})
-
+     * @Route("/{id}/edit", name="nines_blog_post_edit", methods={"GET","POST"})
+     *
      * @Template()
      */
     public function editAction(Request $request, Post $post) {
@@ -144,27 +142,23 @@ class PostController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $this->addFlash('success', 'The post has been updated.');
-            return $this->redirectToRoute('post_show', array('id' => $post->getId()));
+
+            return $this->redirectToRoute('nines_blog_post_show', ['id' => $post->getId()]);
         }
 
-        return array(
+        return [
             'post' => $post,
             'edit_form' => $editForm->createView(),
-        );
+        ];
     }
 
     /**
      * Deletes a Post entity.
      *
-     *
-     * @param Request $request
-     * @param Post $post
-     *
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/delete", name="post_delete", methods={"GET"})
-
+     * @Route("/{id}/delete", name="nines_blog_post_delete", methods={"GET"})
      */
     public function deleteAction(Request $request, Post $post) {
         $em = $this->getDoctrine()->getManager();
@@ -172,7 +166,6 @@ class PostController extends Controller {
         $em->flush();
         $this->addFlash('success', 'The post was deleted.');
 
-        return $this->redirectToRoute('post_index');
+        return $this->redirectToRoute('nines_blog_post_index');
     }
-
 }

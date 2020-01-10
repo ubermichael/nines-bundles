@@ -1,111 +1,116 @@
 <?php
 
-namespace Nines\UserBundle\Tests\Controller;
+declare(strict_types=1);
 
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace Nines\UserBundle\Tests;
+
+use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UserBundle\Entity\User;
-use Nines\UserBundle\DataFixtures\ORM\LoadUser;
-use Nines\UtilBundle\Tests\Util\BaseTestCase;
+use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Symfony\Component\HttpFoundation\Response;
 
-class ProfileControllerTest extends BaseTestCase {
-
-    protected function getFixtures() {
+class ProfileControllerTest extends ControllerBaseCase {
+    protected function fixtures() : array {
         return [
-            LoadUser::class,
+            UserFixtures::class,
         ];
     }
 
-    /**
-     * @group anon
-     * @group index
-     */
-    public function testAnonProfile() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/profile/');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
+    public function testUserIndex() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/profile/');
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-    /**
-     * @group user
-     * @group index
-     */
-    public function testUserProfile() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/profile/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->filter('a.btn')->count());
-        $this->assertEquals(1, $crawler->selectLink('Edit')->count());
+    public function testAnonIndex() : void {
+        $crawler = $this->client->request('GET', '/profile/');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group anon
-     * @group edit
-     */
-    public function testAnonProfileEdit() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/profile/edit');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
-    }
-
-    /**
-     * @group user
-     * @group edit
-     */
-    public function testUserProfileEdit() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/profile/edit');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-        $form = $formCrawler->selectButton('Update')->form([
-            // DO STUFF HERE.
-            // 'profiles[FIELDNAME]' => 'FIELDVALUE',
+    public function testUserEdit() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/profile/edit');
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $form = $crawler->selectButton('Save')->form([
+            'profile[email]' => 'other@example.com',
+            'profile[fullname]' => 'New Name',
+            'profile[affiliation]' => 'New Department',
+            'profile[password]' => 'secret',
         ]);
+        $responseCrawler = $this->client->submit($form);
+        $this->assertResponseRedirects('/profile/', Response::HTTP_FOUND);
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('div.alert', 'Your profile has been updated.');
 
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect('/profile'));
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
-    }
-
-    /**
-     * @group anon
-     * @group edit
-     */
-    public function testAnonPasswordEdit() {
-        $client = $this->makeClient();
-        $crawler = $client->request('GET', '/profile/change-password');
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertTrue($client->getResponse()->isRedirect());
-    }
-
-    /**
-     * @group user
-     * @group edit
-     */
-    public function testUserPasswordEdit() {
-        $client = $this->makeClient(LoadUser::USER);
-        $crawler = $client->request('GET', '/profile/change-password');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-        $form = $formCrawler->selectButton('Update')->form([
-            // DO STUFF HERE.
-            // 'password[FIELDNAME]' => 'FIELDVALUE',
+        $user = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'other@example.com',
         ]);
-
-        $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect('/password'));
-        $responseCrawler = $client->followRedirect();
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        // $this->assertEquals(1, $responseCrawler->filter('td:contains("FIELDVALUE")')->count());
+        $this->assertNotNull($user);
     }
 
+    public function testUserEditWrongPassword() : void {
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/profile/edit');
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $form = $crawler->selectButton('Save')->form([
+            'profile[email]' => 'other@example.com',
+            'profile[fullname]' => 'Other User',
+            'profile[affiliation]' => 'Institution',
+            'profile[password]' => 'wrongpassword',
+        ]);
+        $responseCrawler = $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorTextContains('div.alert', 'The password does not match');
+        $user = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'other@example.com',
+        ]);
+        $this->assertNull($user);
+    }
 
+    public function testAnonEdit() : void {
+        $crawler = $this->client->request('GET', '/profile/edit');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserChangePassword() : void {
+        $user = $this->login('user.user');
+        $crawler = $this->client->request('GET', '/profile/password');
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $form = $crawler->selectButton('Save')->form([
+            'change_password[current_password]' => 'secret',
+            'change_password[new_password][first]' => 'othersecret',
+            'change_password[new_password][second]' => 'othersecret',
+        ]);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/profile/', Response::HTTP_FOUND);
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('div.alert', 'Your password has been updated.');
+
+        $encoder = $this->client->getContainer()->get('security.password_encoder');
+
+        // Refresh the user from the database.
+        $changedUser = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => $user->getEmail(),
+        ]);
+        $this->assertTrue($encoder->isPasswordValid($changedUser, 'othersecret'));
+    }
+
+    public function testUserChangePasswordFail() : void {
+        $user = $this->login('user.user');
+        $crawler = $this->client->request('GET', '/profile/password');
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $form = $crawler->selectButton('Save')->form([
+            'change_password[current_password]' => 'badpassword',
+            'change_password[new_password][first]' => 'othersecret',
+            'change_password[new_password][second]' => 'othersecret',
+        ]);
+        $this->client->submit($form);
+        $this->assertSelectorTextContains('div.alert', 'The password does not match.');
+    }
 }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -8,9 +16,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Nines\UtilBundle\Entity\ContentEntityInterface;
 use Nines\UtilBundle\Entity\ContentExcerptTrait;
 
-
 /**
- * Page
+ * Page.
  *
  * @ORM\Table(name="blog_page", indexes={
  *   @ORM\Index(name="blog_page_content", columns={"title","searchable"}, flags={"fulltext"})
@@ -18,8 +25,7 @@ use Nines\UtilBundle\Entity\ContentExcerptTrait;
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PageRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Page extends AbstractEntity  implements ContentEntityInterface {
-
+class Page extends AbstractEntity implements ContentEntityInterface {
     use ContentExcerptTrait;
 
     /**
@@ -33,13 +39,13 @@ class Page extends AbstractEntity  implements ContentEntityInterface {
     /**
      * True if the page is public. Defaults to false.
      *
-     * @var boolean
+     * @var bool
      * @ORM\Column(name="public", type="boolean")
      */
     private $public;
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(name="include_comments", type="boolean", nullable=false)
      */
     private $includeComments;
@@ -86,146 +92,132 @@ class Page extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Set public
+     * Set public.
      *
-     * @param boolean $public
+     * @param bool $public
      *
      * @return Page
      */
-    public function setPublic($public)
-    {
+    public function setPublic($public) {
         $this->public = $public;
 
         return $this;
     }
 
     /**
-     * Get public
+     * Get public.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getPublic()
-    {
+    public function getPublic() {
         return $this->public;
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
      *
      * @return Page
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->title = $title;
 
         return $this;
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
-    public function getTitle()
-    {
+    public function getTitle() {
         return $this->title;
     }
 
     /**
-     * Set searchable
+     * Set searchable.
      *
      * @param string $searchable
      *
      * @return Page
      */
-    public function setSearchable($searchable)
-    {
+    public function setSearchable($searchable) {
         $this->searchable = $searchable;
 
         return $this;
     }
 
     /**
-     * Get searchable
+     * Get searchable.
      *
      * @return string
      */
-    public function getSearchable()
-    {
+    public function getSearchable() {
         return $this->searchable;
     }
 
     /**
-     * Set user
-     *
-     * @param User $user
+     * Set user.
      *
      * @return Page
      */
-    public function setUser(User $user)
-    {
+    public function setUser(User $user) {
         $this->user = $user;
 
         return $this;
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return User
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
 
     /**
-     * Set weight
+     * Set weight.
      *
-     * @param integer $weight
+     * @param int $weight
      *
      * @return Page
      */
-    public function setWeight($weight)
-    {
+    public function setWeight($weight) {
         $this->weight = $weight;
 
         return $this;
     }
 
     /**
-     * Get weight
+     * Get weight.
      *
-     * @return integer
+     * @return int
      */
-    public function getWeight()
-    {
+    public function getWeight() {
         return $this->weight;
     }
 
     /**
-     * Set includeComments
+     * Set includeComments.
      *
-     * @param boolean $includeComments
+     * @param bool $includeComments
      *
      * @return Page
      */
-    public function setIncludeComments($includeComments)
-    {
+    public function setIncludeComments($includeComments) {
         $this->includeComments = $includeComments;
 
         return $this;
     }
 
     /**
-     * Get includeComments
+     * Get includeComments.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getIncludeComments()
-    {
+    public function getIncludeComments() {
         return $this->includeComments;
     }
 }

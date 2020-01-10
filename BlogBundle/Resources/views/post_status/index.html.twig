@@ -12,7 +12,7 @@
     <div class='btn-toolbar pull-right'>
         {% if is_granted('ROLE_BLOG_ADMIN') %}
             <div class='btn-group'>
-                <a href="{{ path('post_status_new') }}" class="btn btn-default">
+                <a href="{{ path('nines_blog_post_status_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New
                 </a>
             </div>
@@ -34,7 +34,7 @@
             {% for postStatus in postStatuses %}
                 <tr>
                     <td>
-                        <a href="{{ path('post_status_show', { 'id': postStatus.id }) }}">
+                        <a href="{{ path('nines_blog_post_status_show', { 'id': postStatus.id }) }}">
                             {{ postStatus.name }}
                         </a>
                     </td>

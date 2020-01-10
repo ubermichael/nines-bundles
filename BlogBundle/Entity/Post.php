@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -17,8 +25,7 @@ use Nines\UtilBundle\Entity\ContentExcerptTrait;
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Post extends AbstractEntity  implements ContentEntityInterface {
-
+class Post extends AbstractEntity implements ContentEntityInterface {
     use ContentExcerptTrait;
 
     /**
@@ -31,7 +38,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     private $title;
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(name="include_comments", type="boolean", nullable=false)
      */
     private $includeComments;
@@ -89,7 +96,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Set title
+     * Set title.
      *
      * @param string $title
      *
@@ -102,7 +109,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Get title
+     * Get title.
      *
      * @return string
      */
@@ -111,7 +118,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Set category
+     * Set category.
      *
      * @param PostCategory $category
      *
@@ -124,7 +131,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Get category
+     * Get category.
      *
      * @return PostCategory
      */
@@ -133,7 +140,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Set status
+     * Set status.
      *
      * @param PostStatus $status
      *
@@ -146,7 +153,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Get status
+     * Get status.
      *
      * @return PostStatus
      */
@@ -155,7 +162,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param User $user
      *
@@ -168,7 +175,7 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return User
      */
@@ -177,49 +184,45 @@ class Post extends AbstractEntity  implements ContentEntityInterface {
     }
 
     /**
-     * Set searchable
-     * 
+     * Set searchable.
+     *
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function setSearchable()
-    {
+    public function setSearchable() {
         $this->searchable = strip_tags($this->content);
 
         return $this;
     }
 
     /**
-     * Get searchable
+     * Get searchable.
      *
      * @return string
      */
-    public function getSearchable()
-    {
+    public function getSearchable() {
         return $this->searchable;
     }
 
     /**
-     * Set includeComments
+     * Set includeComments.
      *
-     * @param boolean $includeComments
+     * @param bool $includeComments
      *
      * @return Post
      */
-    public function setIncludeComments($includeComments)
-    {
+    public function setIncludeComments($includeComments) {
         $this->includeComments = $includeComments;
 
         return $this;
     }
 
     /**
-     * Get includeComments
+     * Get includeComments.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getIncludeComments()
-    {
+    public function getIncludeComments() {
         return $this->includeComments;
     }
 }

@@ -12,8 +12,10 @@ services:
     Nines\DublinCoreBundle\Controller\:
         resource: '../../Controller/*'
         public: true
-        tags: ['controller.service_arguments']
+        tags:
+            - 'controller.service_arguments'
+            - 'knp_paginator.injectable'
 
     Nines\DublinCoreBundle\Menu\Builder:
         tags:
-            - { name: knp_menu.menu_builder, method: dcMenu, alias: dc}
+            - { name: knp_menu.menu_builder, method: dcNavMenu, alias: nines_dc_elements }

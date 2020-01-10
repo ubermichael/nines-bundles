@@ -1,11 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\BlogBundle\Form;
 
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,53 +20,49 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * PostType form.
  */
 class PostType extends AbstractType {
-
     /**
      * Add form fields to $builder.
-     *
-     * @param FormBuilderInterface $builder
-     * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('title', null, array(
+    public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('title', null, [
             'label' => 'Title',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => '',
-            ),
-        ));
+            ],
+        ]);
         $builder->add('category');
         $builder->add('status');
-        $builder->add('excerpt', TextareaType::class, array(
+        $builder->add('excerpt', TextareaType::class, [
             'label' => 'Excerpt',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
-            ),
-        ));
-        $builder->add('content', TextareaType::class, array(
+            ],
+        ]);
+        $builder->add('content', TextareaType::class, [
             'label' => 'Content',
             'required' => true,
-            'attr' => array(
+            'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
-            ),
-        ));
-        $builder->add('includeComments', ChoiceType::class, array(
+            ],
+        ]);
+        $builder->add('includeComments', ChoiceType::class, [
             'label' => 'Include Comments',
             'expanded' => true,
             'multiple' => false,
-            'choices' => array(
+            'choices' => [
                 'Yes' => true,
                 'No' => false,
-            ),
+            ],
             'required' => true,
             'placeholder' => false,
-            'attr' => array(
+            'attr' => [
                 'help_block' => '',
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
@@ -67,13 +70,10 @@ class PostType extends AbstractType {
      *
      * Set default, optional, and required options passed to the
      * buildForm() method via the $options parameter.
-     *
-     * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(array(
-            'data_class' => 'Nines\BlogBundle\Entity\Post'
-        ));
+    public function configureOptions(OptionsResolver $resolver) : void {
+        $resolver->setDefaults([
+            'data_class' => 'Nines\BlogBundle\Entity\Post',
+        ]);
     }
-
 }

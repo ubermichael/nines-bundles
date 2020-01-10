@@ -1,0 +1,2 @@
+nines_user_security:
+  resource: '@NinesUserBundle/Controller/'

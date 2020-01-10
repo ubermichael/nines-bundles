@@ -1,7 +1,7 @@
 {
     "name": "ubermichael/nines",
     "description": "Some useful bundles.",
-    "type": "package",
+    "type": "symfony-bundle",
     "authors": [
         {
             "name": "Michael Joyce",
@@ -19,12 +19,21 @@
     },
     "require": {
         "php": ">=7.2.0",
-        "doctrine/doctrine-bundle": "^1.8",
-        "doctrine/orm": "^2.5",
-        "friendsofsymfony/ckeditor-bundle": "^1.1",
-        "friendsofsymfony/user-bundle": "^2.0",
-        "knplabs/knp-menu-bundle": "^2.2",
-        "knplabs/knp-paginator-bundle": "^4.0",
-        "symfony/templating": "^3.4"
+        "egulias/email-validator": "^2.1",
+        "knplabs/knp-menu-bundle": "^2.0",
+        "knplabs/knp-paginator-bundle": "^5.0",
+        "sensio/framework-extra-bundle": "^5.1",
+        "twig/string-extra": "^3.0"
+    },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "liip/test-fixtures-bundle": "^1.0.0",
+        "symfony/browser-kit": "4.4.*",
+        "symfony/css-selector": "4.4.*",
+        "symfony/debug-pack": "*",
+        "symfony/maker-bundle": "^1.0",
+        "symfony/phpunit-bridge": "^5.0",
+        "symfony/profiler-pack": "*",
+        "symfony/test-pack": "*"
     }
 }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Entity;
 
 use DateTime;
@@ -12,13 +20,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * and updated DateTimes.
  *
  * @ORM\MappedSuperclass
+ * @ORM\HasLifecycleCallbacks
  */
-abstract class AbstractEntity
-{
+abstract class AbstractEntity {
     /**
      * The entity's ID.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -50,80 +58,6 @@ abstract class AbstractEntity
      * parent::__construct().
      */
     public function __construct() {
-        $this->created = new DateTime();
-        $this->updated = new DateTime();
-    }
-
-    /**
-     * Get the ID.
-     *
-     * @return integer
-     */
-    public function getId() {
-        return $this->id;
-    }
-
-    /**
-     * Does nothing. Setting the created timestamp happens automatically. Exists
-     * to prevent a subclass accidentally setting a timestamp.
-     *
-     * @return void
-     */
-    public function setCreated(DateTime $created) {
-        $this->created = $created;
-    }
-
-    /**
-     * Get the created timestamp.
-     *
-     * @return DateTime
-     */
-    public function getCreated() {
-        return $this->created;
-    }
-
-    /**
-     * Does nothing. Setting the updated timestamp happens automatically.
-     *
-     * @return void
-     */
-    function setUpdated(DateTime $updated) {
-        $this->updated = $updated;
-    }
-
-    /**
-     * Get the updated timestamp.
-     *
-     * @return DateTime
-     */
-    public function getUpdated() {
-        return $this->updated;
-    }
-
-    /**
-     * Sets the created and updated timestamps. This method should be
-     * private or protected, but that interferes with the life cycle callbacks.
-     *
-     * @ORM\PrePersist()
-     *
-     * @return void
-     */
-    public final function prePersist() {
-        if( ! isset($this->created)) {
-            $this->created = new DateTime();
-            $this->updated = new DateTime();
-        }
-    }
-
-    /**
-     * Sets the updated timestamp.
-     *
-     * @ORM\PreUpdate()
-     *
-     * @return void
-     */
-    public final function preUpdate() {
-        $this->updated = new DateTime();
     }
 
     /**
@@ -133,4 +67,60 @@ abstract class AbstractEntity
      */
     abstract public function __toString();
 
+    /**
+     * Get the ID.
+     */
+    public function getId() : int {
+        return $this->id;
+    }
+
+    /**
+     * Does nothing. Setting the created timestamp happens automatically. Exists
+     * to prevent a subclass accidentally setting a timestamp.
+     */
+    public function setCreated(DateTime $created) : void {
+        $this->created = $created;
+    }
+
+    /**
+     * Get the created timestamp.
+     */
+    public function getCreated() : DateTime {
+        return $this->created;
+    }
+
+    /**
+     * Does nothing. Setting the updated timestamp happens automatically.
+     */
+    public function setUpdated(DateTime $updated) : void {
+    }
+
+    /**
+     * Get the updated timestamp.
+     */
+    public function getUpdated() : DateTime {
+        return $this->updated;
+    }
+
+    /**
+     * Sets the created and updated timestamps. This method should be
+     * private or protected, but that interferes with the life cycle callbacks.
+     *
+     * @ORM\PrePersist()
+     */
+    final public function prePersist() : void {
+        if ( ! isset($this->created)) {
+            $this->created = new DateTime();
+            $this->updated = new DateTime();
+        }
+    }
+
+    /**
+     * Sets the updated timestamp.
+     *
+     * @ORM\PreUpdate()
+     */
+    final public function preUpdate() : void {
+        $this->updated = new DateTime();
+    }
 }
