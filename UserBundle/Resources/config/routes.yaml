@@ -1,2 +1,15 @@
 nines_user_security:
-  resource: '@NinesUserBundle/Controller/'
+  type: annotation
+  prefix: /
+  resource: '@NinesUserBundle/Controller/SecurityController.php'
+
+nines_user_profile:
+  type: annotation
+  prefix: /profile
+  resource: '@NinesUserBundle/Controller/ProfileController.php'
+
+nines_user_admin:
+  type: annotation
+  prefix: /admin/user
+  resource: '@NinesUserBundle/Controller/AdminController.php'
+
