@@ -1,0 +1,12 @@
+nines_feedback:
+    default_status: submitted
+    public_status: published
+    subject: New feedback received
+    sender: noreply@example.com
+    recipients:
+        - user@example.com
+        - another@example.com
+    routing:
+        nines_blog:
+            class: Nines\BlogBundle\Entity\Page
+            route: nines_blog_page_show

@@ -1,0 +1,6 @@
+nines_user:
+  roles: [ ROLE_ADMIN, ROLE_USER_ADMIN ]
+  after_login_route: homepage
+  after_request_route: homepage
+  after_reset_route: homepage
+  after_logout_route: homepage

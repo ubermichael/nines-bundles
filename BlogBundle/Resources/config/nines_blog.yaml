@@ -1,0 +1,4 @@
+parameters:
+    nines_blog.excerpt_length: 100
+    nines_blog.homepage_posts: 3
+    nines_blog.menu_posts: 5

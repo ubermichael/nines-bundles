@@ -39,3 +39,8 @@ return [
     Nines\UtilBundle\NinesUtilBundle::class => ['all' => true],
 ];
 ```
+
+3. Copy the default configurations to `config/packages`
+
+```shell script
+cp venod
