@@ -26,6 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Element controller.
  *
  * @Route("/element")
+ * @IsGranted("ROLE_USER")
  */
 class ElementController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;

@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
- * @IsGranted("ROLE_ADMIN_USER")
+ * @IsGranted("ROLE_USER_ADMIN")
  */
 class AdminController extends AbstractController {
     protected function generatePassword() : string {
