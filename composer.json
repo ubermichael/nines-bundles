@@ -13,6 +13,7 @@
         "psr-4": {
             "Nines\\BlogBundle\\": "BlogBundle",
             "Nines\\DublinCoreBundle\\": "DublinCoreBundle",
+            "Nines\\EditorBundle\\": "EditorBundle",
             "Nines\\FeedbackBundle\\": "FeedbackBundle",
             "Nines\\UserBundle\\": "UserBundle",
             "Nines\\UtilBundle\\": "UtilBundle"
