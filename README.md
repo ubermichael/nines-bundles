@@ -6,7 +6,7 @@ Some useful bundles.
 Instalation
 -----------
 
-A Flex recipe isn't included. All steps are required. 
+A Flex recipe isn't included. 
 
 0. Set the environment variables
 
@@ -39,6 +39,12 @@ ROUTE_BASE=/path/to/public/index.php
         }
     ],
 }
+```
+
+And then download them.
+
+```shell
+$ composer update ubermichael/nines
 ```
 
 2. Enable the bundles you need.
@@ -91,7 +97,8 @@ nines_feedback:
   resource: '@NinesFeedbackBundle/Controller'
 ```
 
-5. Update the security configuration with the login settings and role checking.
+5. Update the security configuration with the login settings and role checking. Change
+the $APP_REMEMBER_ME variable to something appropriate.
 
 ```yaml
 # config/packages/security.yaml
@@ -154,8 +161,10 @@ parameters:
     asset.request_context.secure: auto
 ```
 
-7. Add the routing information to the framework settings.
+7. Add the routing information to the framework settings. Change $APP_NAME to something
+appropriate.
 ```yaml
+# config/packages/framework.yaml
 framework:
     session:
         name: $APP_NAME
@@ -185,7 +194,7 @@ $ ./bin/console doctrine:fixtures:load -n
 
 {# Optionally change the title from the default. #}
 {% set blog_menu = knp_menu_get('nines_blog_pages', [], {'title': 'About'}) %}
-{{ knp_menu_render('nines_blog_pages') }}
+{{ knp_menu_render('blog_menu') }}
 
 {# render the menu with the default title #}
 {{ knp_menu_render('nines_blog_posts') }}
