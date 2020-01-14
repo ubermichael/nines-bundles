@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Nines\UserBundle\Repository\UserRepository")
+ * @ORM\Table(name="nines_user")
  * @ORM\HasLifecycleCallbacks()
  */
 class User implements UserInterface {
