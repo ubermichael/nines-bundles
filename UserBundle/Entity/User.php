@@ -71,7 +71,7 @@ class User implements UserInterface {
 
     /**
      * @var array
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="array")
      */
     private $roles = [];
 
