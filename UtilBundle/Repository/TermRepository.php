@@ -26,7 +26,7 @@ abstract class TermRepository extends ServiceEntityRepository {
      *
      * @return Collection|Term[]
      */
-    public function typeaheadQuery($q) : Collection {
+    public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('v');
         $qb->where('v.label like :q');
         $qb->setParameter('q', '%' . $q . '%');
@@ -38,6 +38,8 @@ abstract class TermRepository extends ServiceEntityRepository {
      * Create a simple full-text search query on the term label and description.
      *
      * @param string $q
+     *
+     * @return Query
      */
     public function searchQuery($q) : Query {
         $qb = $this->createQueryBuilder('v');
