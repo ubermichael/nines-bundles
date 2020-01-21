@@ -13,6 +13,7 @@ namespace Nines\UtilBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
+use Nines\UtilBundle\Entity\AbstractTerm;
 
 /**
  * TermRepository.
@@ -24,7 +25,7 @@ abstract class TermRepository extends ServiceEntityRepository {
      *
      * @param string $q
      *
-     * @return Collection|Term[]
+     * @return Collection|AbstractTerm[]
      */
     public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('v');

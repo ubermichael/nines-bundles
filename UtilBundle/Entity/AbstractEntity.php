@@ -79,7 +79,6 @@ abstract class AbstractEntity {
      * to prevent a subclass accidentally setting a timestamp.
      */
     public function setCreated(DateTime $created) : void {
-        $this->created = $created;
     }
 
     /**
@@ -109,10 +108,8 @@ abstract class AbstractEntity {
      * @ORM\PrePersist()
      */
     final public function prePersist() : void {
-        if ( ! isset($this->created)) {
-            $this->created = new DateTime();
-            $this->updated = new DateTime();
-        }
+        $this->created = new DateTime();
+        $this->updated = new DateTime();
     }
 
     /**
