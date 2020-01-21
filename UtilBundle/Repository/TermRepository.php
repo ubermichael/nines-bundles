@@ -10,14 +10,15 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
 /**
  * TermRepository.
  */
-abstract class TermRepository extends EntityRepository {
+abstract class TermRepository extends ServiceEntityRepository {
+
     /**
      * Do a typeahead-style query and return the results.
      *
