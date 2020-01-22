@@ -13,24 +13,16 @@ class MatchAgainst extends FunctionNode {
     /**
      * @var PathExpression[]
      */
-    private $fieldExpressions;
+    private $fieldExpressions = [];
 
     /**
      * @var string
      */
-    private $query;
+    private $query = null;
 
-    private $boolean;
+    private $boolean = false;
 
-    private $expansion;
-
-    public function __construct($name) {
-        parent::__construct($name);
-        $this->fieldExpressions = [];
-        $this->query = null;
-        $this->boolean = false;
-        $this->expansion = false;
-    }
+    private $expansion = false;
 
     /**
      * @inheritDoc
