@@ -48,7 +48,7 @@
                     <tr>
                         <td>
                             <a href="{{ path('nines_feedback_comment_show', { 'id': comment.id }) }}">
-                                {{ comment.content|truncate(20) }}
+                                {{ comment.content|u.truncate(20) }}
                             </a>
                         </td>
                         <td>{{ comment.fullname }}</td>
