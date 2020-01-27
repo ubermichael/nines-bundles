@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface {
         $builder = new TreeBuilder('nines_editor');
         $builder->getRootNode()
             ->children()
-            ->scalarNode('upload_dir')->isRequired()->end()
+            ->scalarNode('upload_dir')->defaultNull()->end()
             ->end()
             ->end()
         ;

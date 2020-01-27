@@ -18,11 +18,19 @@ class MatchAgainst extends FunctionNode {
     /**
      * @var string
      */
-    private $query = null;
+    private $query;
 
-    private $boolean = false;
+    private $boolean;
 
-    private $expansion = false;
+    private $expansion;
+
+    public function __construct($name = 'match') {
+        parent::__construct($name);
+        $this->fieldExpressions = [];
+        $this->query = null;
+        $this->boolean = false;
+        $this->expansion = false;
+    }
 
     /**
      * @inheritDoc
