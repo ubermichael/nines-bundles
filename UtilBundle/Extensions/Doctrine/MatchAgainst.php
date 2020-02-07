@@ -36,7 +36,6 @@ class MatchAgainst extends FunctionNode {
      * @inheritDoc
      */
     public function getSql(SqlWalker $sqlWalker) {
-        dump($this);
         $fields = [];
         foreach($this->fieldExpressions as $expression) {
             $fields[] = $expression->dispatch($sqlWalker);
