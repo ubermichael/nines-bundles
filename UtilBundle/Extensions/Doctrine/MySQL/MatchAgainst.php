@@ -1,6 +1,6 @@
 <?php
 
-namespace Nines\UtilBundle\Extensions\Doctrine;
+namespace Nines\UtilBundle\Extensions\Doctrine\MySQL;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\PathExpression;
