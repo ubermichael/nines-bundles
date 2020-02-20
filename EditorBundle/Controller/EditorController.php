@@ -27,7 +27,7 @@ class EditorController extends AbstractController {
 
     private function getUploadDir() {
         $uploadDir = $this->getParameter('nines.editor.upload_dir');
-        if ('/' === ! $uploadDir[0]) {
+        if ('/' !== $uploadDir[0]) {
             $uploadDir = $this->getParameter('kernel.project_dir') . '/' . $uploadDir;
         }
 
