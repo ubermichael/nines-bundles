@@ -76,7 +76,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         if ( ! $user) {
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Email could not be found.');
+            throw new CustomUserMessageAuthenticationException('Invalid credentials.');
         }
 
         return $user;
@@ -90,6 +90,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      * Used to upgrade (rehash) the user's password automatically over time.
      *
      * @param mixed $credentials
+     *
+     * @return string|null
      */
     public function getPassword($credentials) : ?string {
         return $credentials['password'];
