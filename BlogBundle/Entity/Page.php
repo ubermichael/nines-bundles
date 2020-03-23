@@ -92,6 +92,7 @@ class Page extends AbstractEntity implements ContentEntityInterface {
         parent::__construct();
         $this->weight = 0;
         $this->public = false;
+        $this->homepage = false;
         $this->includeComments = false;
     }
 
