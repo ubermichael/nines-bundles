@@ -45,6 +45,14 @@ class Page extends AbstractEntity implements ContentEntityInterface {
     private $public;
 
     /**
+     * True if this is the home page. There can only be one.
+     *
+     * @var bool
+     * @ORM\Column(name="homepage", type="boolean", options={"default": 0})
+     */
+    private $homepage;
+
+    /**
      * @var bool
      * @ORM\Column(name="include_comments", type="boolean", nullable=false)
      */
@@ -111,6 +119,28 @@ class Page extends AbstractEntity implements ContentEntityInterface {
      */
     public function getPublic() {
         return $this->public;
+    }
+
+    /**
+     * Set homepage.
+     *
+     * @param bool $homepage
+     *
+     * @return Page
+     */
+    public function setHomepage($homepage) {
+        $this->homepage = $homepage;
+
+        return $this;
+    }
+
+    /**
+     * Get homepage.
+     *
+     * @return bool
+     */
+    public function getHomepage() {
+        return $this->homepage;
     }
 
     /**

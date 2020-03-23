@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\BlogBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Nines\BlogBundle\Entity\Page;
 
 /**
  * PageRepository.
@@ -52,5 +53,20 @@ class PageRepository extends EntityRepository {
         $qb->setParameter('q', $q);
 
         return $qb->getQuery();
+    }
+
+    public function clearHomepages(Page $page) {
+        $qb = $this->createQueryBuilder('e');
+        $qb->update(Page::class, 'e');
+        $qb->set('e.homepage', 0);
+        $qb->where('e.id <> :id');
+        $qb->setParameter('id', $page->getId());
+        return $qb->getQuery()->execute();
+    }
+
+    public function findHomepage() {
+        $qb = $this->createQueryBuilder('e');
+        $qb->where('e.homepage = 1');
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

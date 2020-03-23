@@ -143,7 +143,7 @@ class Builder implements ContainerAwareInterface {
         ]);
         $menu->setAttribute('dropdown', true);
         $pages = $this->em->getRepository('NinesBlogBundle:Page')->findBy(
-            ['public' => true],
+            ['public' => true, 'homepage' => false],
             ['weight' => 'ASC', 'title' => 'ASC']
         );
 

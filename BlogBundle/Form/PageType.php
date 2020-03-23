@@ -45,6 +45,20 @@ class PageType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
+        $builder->add('homepage', ChoiceType::class, [
+            'label' => 'Home page',
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
+            'required' => true,
+            'placeholder' => false,
+            'attr' => [
+                'help_block' => 'If Yes, then this page will be displayed on the home page.',
+            ],
+        ]);
         $builder->add('excerpt', TextareaType::class, [
             'label' => 'Excerpt',
             'required' => false,
