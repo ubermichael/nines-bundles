@@ -8,7 +8,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\UserBundle\Form\Profile;
+namespace Nines\UserBundle\Form\User;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType as PasswordWidget;
