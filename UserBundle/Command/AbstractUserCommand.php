@@ -50,8 +50,12 @@ abstract class AbstractUserCommand extends Command {
         }
     }
 
-    protected function ask(string $question, array $constraints = []) {
+    protected function question(string $question, array $constraints = [], $hidden = false) {
         $question = new Question($question);
+        if ($hidden) {
+            $question->setHidden(true);
+            $question->setHiddenFallback(false);
+        }
         if (count($constraints) > 0) {
             $question->setValidator(function ($answer) use ($constraints) {
                 $errors = $this->validator->validate($answer, $constraints);
@@ -71,7 +75,7 @@ abstract class AbstractUserCommand extends Command {
 
         foreach ($this->getArgs() as $arg) {
             if ( ! $input->getArgument($arg['name'])) {
-                $question = $this->ask($arg['question'], $arg['valid']);
+                $question = $this->question($arg['question'], $arg['valid']);
                 $input->setArgument($arg['name'], $helper->ask($input, $output, $question));
             }
         }

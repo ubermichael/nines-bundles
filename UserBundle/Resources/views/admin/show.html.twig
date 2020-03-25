@@ -46,9 +46,11 @@
         </tbody>
     </table>
 
-    <a href="{{ path('nines_user_admin_index') }}">back to list</a>
+    <a href="{{ path('nines_user_admin_index') }}">Back</a>
 
-    <a href="{{ path('nines_user_admin_edit', {'id': user.id}) }}">edit</a>
+    <a href="{{ path('nines_user_admin_edit', {'id': user.id}) }}">Edit</a>
+
+    <a href="{{ path('nines_user_admin_password', {'id': user.id}) }}">Password</a>
 
     {{ include('@NinesUser/admin/_delete_form.html.twig') }}
 {% endblock %}

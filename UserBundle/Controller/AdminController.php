@@ -11,8 +11,10 @@ declare(strict_types=1);
 namespace Nines\UserBundle\Controller;
 
 use Nines\UserBundle\Entity\User;
+use Nines\UserBundle\Form\Profile\UserPasswordType;
 use Nines\UserBundle\Form\User\UserType;
 use Nines\UserBundle\Repository\UserRepository;
+use Nines\UserBundle\Services\UserManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -106,7 +108,39 @@ class AdminController extends AbstractController {
     }
 
     /**
+     * @Route("/{id}/password", name="nines_user_admin_password", methods={"GET","POST"})
+     * @Template()
+     * @param Request $request
+     * @param User $user
+     * @param UserManager $manager
+     *
+     * @return array|RedirectResponse
+     */
+    public function password(Request $request, User $user, UserManager $manager) {
+        $form = $this->createForm(UserPasswordType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('new_password');
+            $manager->changePassword($user, $password);
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'The user password has been updated.');
+
+            return $this->redirectToRoute('nines_user_admin_index');
+        }
+
+        return [
+            'user' => $user,
+            'form' => $form->createView(),
+        ];
+    }
+
+    /**
      * @Route("/{id}", name="nines_user_admin_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param User $user
+     *
+     * @return Response
      */
     public function delete(Request $request, User $user) : Response {
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
