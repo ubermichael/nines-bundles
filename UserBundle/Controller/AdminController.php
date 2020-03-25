@@ -121,7 +121,7 @@ class AdminController extends AbstractController {
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $form->get('new_password');
+            $password = $form->get('new_password')->getData();
             $manager->changePassword($user, $password);
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The user password has been updated.');
