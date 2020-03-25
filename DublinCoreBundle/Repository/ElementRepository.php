@@ -12,7 +12,6 @@ namespace Nines\DublinCoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
 use Nines\DublinCoreBundle\Entity\Element;
 
 /**

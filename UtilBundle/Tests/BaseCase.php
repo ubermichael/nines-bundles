@@ -34,8 +34,6 @@ abstract class BaseCase extends WebTestCase {
 
     /**
      * Get a list of fixture classes to load.
-     *
-     * @return array
      */
     protected function fixtures() : array {
         return [];
@@ -45,22 +43,23 @@ abstract class BaseCase extends WebTestCase {
      * Get one data fixture. If $reload is true, the fixture will
      * be fetched from the database.
      *
-     * @param string $id
      * @param bool $reload
      *
-     * @return object|null
      * @throws ORMException
      * @throws OptimisticLockException
      * @throws TransactionRequiredException
+     *
+     * @return null|object
      */
     protected function getReference(string $id, $reload = false) {
-        if( ! $this->references->hasReference($id)) {
-            return null;
+        if ( ! $this->references->hasReference($id)) {
+            return;
         }
         $object = $this->references->getReference($id);
         if ( ! $reload) {
             return $object;
         }
+
         return $this->entityManager->find(get_class($object), $object->getId());
     }
 

@@ -23,8 +23,6 @@ abstract class ControllerBaseCase extends BaseCase {
 
     /**
      * @param $reference string The named reference loaded from a fixture.
-     *
-     * @return User
      */
     protected function login($reference) : User {
         /** @var User $user */

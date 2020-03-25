@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Extensions\Doctrine\MySQL;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
@@ -9,7 +17,6 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
 class MatchAgainst extends FunctionNode {
-
     /**
      * @var PathExpression[]
      */
@@ -33,39 +40,40 @@ class MatchAgainst extends FunctionNode {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getSql(SqlWalker $sqlWalker) {
         $fields = [];
-        foreach($this->fieldExpressions as $expression) {
+        foreach ($this->fieldExpressions as $expression) {
             $fields[] = $expression->dispatch($sqlWalker);
         }
         $against = $sqlWalker->walkStringPrimary($this->query);
-        if($this->boolean) {
+        if ($this->boolean) {
             $against .= ' IN BOOLEAN MODE';
         }
-        if($this->expansion) {
+        if ($this->expansion) {
             $against .= ' WITH QUERY EXPANSION';
         }
+
         return sprintf('MATCH (%s) AGAINST (%s)', implode(', ', $fields), $against);
     }
 
     /**
-     * @inheritDoc
-     * MATCH ( field [, field]* ) AGAINST ( query [ BOOLEAN [ EXPAND ]] )
+     * {@inheritdoc}
+     * MATCH ( field [, field]* ) AGAINST ( query [ BOOLEAN [ EXPAND ]] ).
      */
-    public function parse(Parser $parser) {
+    public function parse(Parser $parser) : void {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->fieldExpressions[] = $parser->StateFieldPathExpression();
         $lexer = $parser->getLexer();
-        while($lexer->isNextToken(Lexer::T_COMMA)) {
+        while ($lexer->isNextToken(Lexer::T_COMMA)) {
             $parser->match(Lexer::T_COMMA);
             $this->fieldExpressions[] = $parser->StateFieldPathExpression();
         }
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
 
-        if( strtolower($lexer->lookahead['value']) !== 'against') {
+        if ('against' !== strtolower($lexer->lookahead['value'])) {
             $parser->syntaxError('against');
         }
         $parser->match(Lexer::T_IDENTIFIER);
@@ -73,11 +81,11 @@ class MatchAgainst extends FunctionNode {
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->query = $parser->StringPrimary();
 
-        if (strtolower($lexer->lookahead['value']) === 'boolean') {
+        if ('boolean' === strtolower($lexer->lookahead['value'])) {
             $parser->match(Lexer::T_IDENTIFIER);
             $this->boolean = true;
         }
-        if (strtolower($lexer->lookahead['value']) === 'expand') {
+        if ('expand' === strtolower($lexer->lookahead['value'])) {
             $parser->match(Lexer::T_IDENTIFIER);
             $this->expansion = true;
         }

@@ -61,12 +61,14 @@ class PageRepository extends EntityRepository {
         $qb->set('e.homepage', 0);
         $qb->where('e.id <> :id');
         $qb->setParameter('id', $page->getId());
+
         return $qb->getQuery()->execute();
     }
 
     public function findHomepage() {
         $qb = $this->createQueryBuilder('e');
         $qb->where('e.homepage = 1');
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 }

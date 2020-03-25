@@ -27,6 +27,7 @@ class Year extends FunctionNode {
      */
     public function getSql(SqlWalker $sqlWalker) {
         $param = $sqlWalker->walkArithmeticPrimary($this->year);
+
         return "strftime('%Y', {$param})";
     }
 

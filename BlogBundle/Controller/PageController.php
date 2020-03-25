@@ -183,7 +183,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $page->setSearchable($text->plain($page->getContent()));
             $em = $this->getDoctrine()->getManager();
-            if($page->getHomepage()) {
+            if ($page->getHomepage()) {
                 // make sure all other pages are NOT the home page.
                 $repo = $em->getRepository(Page::class);
                 $repo->clearHomepages($page);

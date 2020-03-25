@@ -19,13 +19,12 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * TermRepository.
  */
 abstract class TermRepository extends ServiceEntityRepository {
-
     /**
      * Do a typeahead-style query and return the results.
      *
      * @param string $q
      *
-     * @return Collection|AbstractTerm[]
+     * @return AbstractTerm[]|Collection
      */
     public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('v');
@@ -39,8 +38,6 @@ abstract class TermRepository extends ServiceEntityRepository {
      * Create a simple full-text search query on the term label and description.
      *
      * @param string $q
-     *
-     * @return Query
      */
     public function searchQuery($q) : Query {
         $qb = $this->createQueryBuilder('v');

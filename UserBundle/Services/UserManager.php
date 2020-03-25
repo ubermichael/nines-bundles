@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class UserManager
+ * Class UserManager.
  *
  * Convient user management functions.
  */
@@ -97,8 +97,6 @@ class UserManager {
 
     /**
      * @required
-     *
-     * @param UserPasswordEncoderInterface $encoder
      */
     public function setEncoder(UserPasswordEncoderInterface $encoder) : void {
         $this->encoder = $encoder;
@@ -106,8 +104,6 @@ class UserManager {
 
     /**
      * @required
-     *
-     * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
@@ -115,8 +111,6 @@ class UserManager {
 
     /**
      * @required
-     *
-     * @param UserRepository $repository
      */
     public function setRepository(UserRepository $repository) : void {
         $this->repository = $repository;
@@ -124,52 +118,33 @@ class UserManager {
 
     /**
      * @required
-     *
-     * @param MailerInterface $mailer
      */
     public function setMailer(MailerInterface $mailer) : void {
         $this->mailer = $mailer;
     }
 
-    /**
-     * @return array
-     */
     public function getRoles() : array {
         return $this->roles;
     }
 
-    /**
-     * @return string
-     */
     public function getAfterLogin() : string {
         return $this->afterLogin;
     }
 
-    /**
-     * @return string
-     */
     public function getAfterRequest() : string {
         return $this->afterRequest;
     }
 
-    /**
-     * @return string
-     */
     public function getAfterReset() : string {
         return $this->afterReset;
     }
 
-    /**
-     * @return string
-     */
     public function getAfterLogout() : string {
         return $this->afterLogout;
     }
 
     /**
      * @param $email
-     *
-     * @return UserInterface|null
      */
     public function find($email) : ?UserInterface {
         return $this->repository->findOneByEmail($email);
@@ -178,7 +153,6 @@ class UserManager {
     /**
      * @param $token
      *
-     * @return UserInterface|null
      * @throws Exception
      */
     public function findByToken($token) : ?UserInterface {
@@ -223,7 +197,6 @@ class UserManager {
     /**
      * @param $password
      *
-     * @return string
      * @throws Exception
      */
     public function encodePassword(UserInterface $user, $password) : string {
@@ -231,7 +204,6 @@ class UserManager {
     }
 
     /**
-     * @param UserInterface $user
      * @param $password
      */
     public function changePassword(UserInterface $user, $password) : void {
@@ -239,17 +211,13 @@ class UserManager {
     }
 
     /**
-     * @param UserInterface $user
      * @param $password
-     *
-     * @return bool
      */
     public function validatePassword(UserInterface $user, $password) : bool {
         return $this->encoder->isPasswordValid($user, $password);
     }
 
     /**
-     * @param UserInterface $user
      * @param $role
      */
     public function promote(UserInterface $user, $role) : void {
@@ -260,7 +228,6 @@ class UserManager {
     }
 
     /**
-     * @param UserInterface $user
      * @param $role
      */
     public function demote(UserInterface $user, $role) : void {
@@ -271,9 +238,6 @@ class UserManager {
     }
 
     /**
-     * @param User $user
-     * @param array $data
-     *
      * @throws TransportExceptionInterface
      */
     public function sendReset(User $user, array $data) : void {
