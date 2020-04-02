@@ -39,6 +39,9 @@ class Text {
      * @return null|string|string[]
      */
     public function plain($content) {
+        if( ! $content) {
+            return "";
+        }
         $plain = strip_tags($content);
         $converted = html_entity_decode($plain, ENT_HTML5, 'UTF-8');
         $trimmed = preg_replace('/(^\\s+)|(\\s+$)/u', '', $converted);
