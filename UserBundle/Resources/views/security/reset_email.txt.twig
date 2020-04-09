@@ -1,7 +1,6 @@
 Hello {{ user.fullname }}.
 
-You requested a password reset email for $WEBSITE. Use the link below to
-reset your password. The link is only valid for 24 hours.
+Use the link below to reset your password. The link is only valid for 24 hours.
 
 {{ url('nines_user_security_reset_password', {'token': user.resetToken}) }}
 
