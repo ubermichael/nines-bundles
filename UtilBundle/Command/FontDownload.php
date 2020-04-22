@@ -64,6 +64,7 @@ class FontDownload extends Command {
     }
 
     protected function render($variant, $accepted) {
+        dump($accepted);
         return $this->twig->render('@NinesUtil/font/font.scss.twig', array(
             'name' => $variant['local'][0],
             'family' => $variant['fontFamily'],
@@ -109,7 +110,7 @@ class FontDownload extends Command {
                     'sink' => $filename,
                 ]);
             }
-            $filenames[] = $filename;
+            $filenames[$format] = $filename;
         }
         return $filenames;
     }
