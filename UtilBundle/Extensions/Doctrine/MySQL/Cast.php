@@ -63,10 +63,10 @@ class Cast extends FunctionNode {
         $this->field = $parser->SimpleArithmeticExpression();
         $parser->match(Lexer::T_AS);
         $parser->match(Lexer::T_IDENTIFIER);
-        $this->expr = $parser->getLexer()->token['value'];
+        $this->type = $parser->getLexer()->token['value'];
         while( ! $parser->getLexer()->isNextToken(Lexer::T_CLOSE_PARENTHESIS)) {
             $parser->match(Lexer::T_IDENTIFIER);
-            $this->expr .= ' ' . $parser->getLexer()->token['value'];
+            $this->type .= ' ' . $parser->getLexer()->token['value'];
         }
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
