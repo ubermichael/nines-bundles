@@ -209,3 +209,46 @@ $ ./bin/console doctrine:fixtures:load -n
 
 {{ knp_menu_render('nines_user_nav') }}
 ```
+
+10. Optional. Google Font Magic!
+
+Create a fonts configuration and then download the fonts and spit out a scss file. Don't forget to 
+add public/fonts and public/sass/_fonts.scss to your .gitignore.
+
+```twig
+# config/fonts.yaml
+
+fonts:
+  path: public/fonts
+  prefix: /pi/
+  sass: public/sass/_fonts.scss
+
+  families:
+    roboto:
+      styles: [ 'normal', 'italic' ]
+      weights: [100, 300, 400, 500, 700, 900]
+
+  formats: [ 'woff2', 'woff' ]
+  subsets: [ 'latin', 'latin-ext' ]
+
+  filename: "{id}-{weight}.{ext}"
+
+```
+
+```shell script
+./bin/console nines:fonts:download
+```
+
+If you feel adventurous, you can even add the command to composer.json.
+
+```json
+{
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "nines:fonts:download": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
+    }
+}
+```
