@@ -37,7 +37,7 @@ class Cast extends FunctionNode {
     /**
      * @var string
      */
-    private $expr = null;
+    private $type = null;
 
     public function __construct($name = 'cast') {
         parent::__construct($name);
@@ -47,7 +47,10 @@ class Cast extends FunctionNode {
      * {@inheritdoc}
      */
     public function getSql(SqlWalker $sqlWalker) {
-        return sprintf('CAST(%s AS %s)', $this->field, $this->expr);
+        return sprintf('CAST(%s AS %s)',
+                       $sqlWalker->walkSimpleArithmeticExpression($this->field),
+                       $this->type
+        );
     }
 
     /**
@@ -57,10 +60,14 @@ class Cast extends FunctionNode {
     public function parse(Parser $parser) : void {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
-        $this->field = $parser->StringPrimary();
+        $this->field = $parser->SimpleArithmeticExpression();
         $parser->match(Lexer::T_AS);
         $parser->match(Lexer::T_IDENTIFIER);
         $this->expr = $parser->getLexer()->token['value'];
+        while( ! $parser->getLexer()->isNextToken(Lexer::T_CLOSE_PARENTHESIS)) {
+            $parser->match(Lexer::T_IDENTIFIER);
+            $this->expr .= ' ' . $parser->getLexer()->token['value'];
+        }
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 }
