@@ -29,7 +29,6 @@ use Doctrine\ORM\Query\SqlWalker;
  *                   strtodate: Nines\UtilBundle\Extensions\Doctrine\MySQL\StrToDate
  */
 class StrToDate extends FunctionNode {
-
     private $dateString;
 
     private $dateFormat;
@@ -41,11 +40,9 @@ class StrToDate extends FunctionNode {
     }
 
     /**
-     * @param Parser $parser
-     *
      * @throws QueryException
      */
-    public function parse(Parser $parser) {
+    public function parse(Parser $parser) : void {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->dateString = $parser->ArithmeticPrimary();

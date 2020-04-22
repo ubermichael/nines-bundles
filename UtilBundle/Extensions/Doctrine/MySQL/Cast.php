@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Extensions\Doctrine\MySQL;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\AST\PathExpression;
 use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
@@ -32,12 +31,12 @@ class Cast extends FunctionNode {
     /**
      * @var string[]
      */
-    private $field = null;
+    private $field;
 
     /**
      * @var string
      */
-    private $type = null;
+    private $type;
 
     public function __construct($name = 'cast') {
         parent::__construct($name);
@@ -47,15 +46,16 @@ class Cast extends FunctionNode {
      * {@inheritdoc}
      */
     public function getSql(SqlWalker $sqlWalker) {
-        return sprintf('CAST(%s AS %s)',
-                       $sqlWalker->walkSimpleArithmeticExpression($this->field),
-                       $this->type
+        return sprintf(
+            'CAST(%s AS %s)',
+            $sqlWalker->walkSimpleArithmeticExpression($this->field),
+            $this->type
         );
     }
 
     /**
      * {@inheritdoc}
-     * CAST ( field AS expr )
+     * CAST ( field AS expr ).
      */
     public function parse(Parser $parser) : void {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -64,7 +64,7 @@ class Cast extends FunctionNode {
         $parser->match(Lexer::T_AS);
         $parser->match(Lexer::T_IDENTIFIER);
         $this->type = $parser->getLexer()->token['value'];
-        while( ! $parser->getLexer()->isNextToken(Lexer::T_CLOSE_PARENTHESIS)) {
+        while ( ! $parser->getLexer()->isNextToken(Lexer::T_CLOSE_PARENTHESIS)) {
             $parser->match(Lexer::T_IDENTIFIER);
             $this->type .= ' ' . $parser->getLexer()->token['value'];
         }

@@ -110,9 +110,6 @@ class AdminController extends AbstractController {
     /**
      * @Route("/{id}/password", name="nines_user_admin_password", methods={"GET","POST"})
      * @Template()
-     * @param Request $request
-     * @param User $user
-     * @param UserManager $manager
      *
      * @return array|RedirectResponse
      */
@@ -137,10 +134,6 @@ class AdminController extends AbstractController {
 
     /**
      * @Route("/{id}", name="nines_user_admin_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param User $user
-     *
-     * @return Response
      */
     public function delete(Request $request, User $user) : Response {
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {

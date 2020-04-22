@@ -105,11 +105,9 @@ class TitleCaser {
         $s = preg_replace('/\s*([[:punct:]])/u', '$1', $string);
 
         // punctuation stopword
-        $s = preg_replace_callback("/([[:punct:]])(\\s+)({$match})/iu", function (array $m) {
+        return preg_replace_callback("/([[:punct:]])(\\s+)({$match})/iu", function (array $m) {
             return $m[1] . ' ' . mb_convert_case($m[3], MB_CASE_TITLE, 'utf-8');
         }, $s);
-
-        return $s;
     }
 
     /**
@@ -121,11 +119,10 @@ class TitleCaser {
      */
     public function states($string) {
         $match = implode('|', $this->states);
-        $s = preg_replace_callback("/\\b({$match})\\b/iu", function (array $m) {
+
+        return preg_replace_callback("/\\b({$match})\\b/iu", function (array $m) {
             return mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8');
         }, $string);
-
-        return $s;
     }
 
     /**
@@ -136,11 +133,9 @@ class TitleCaser {
      * @return string
      */
     public function names($string) {
-        $s = preg_replace_callback("/\\b(Mc|Mac|O'|D')([a-z])/iu", function (array $m) {
+        return preg_replace_callback("/\\b(Mc|Mac|O'|D')([a-z])/iu", function (array $m) {
             return $m[1] . mb_convert_case($m[2], MB_CASE_UPPER, 'utf-8');
         }, $string);
-
-        return $s;
     }
 
     /**
@@ -151,11 +146,9 @@ class TitleCaser {
      * @return string
      */
     public function roman($string) {
-        $s = preg_replace_callback('/\b([ivxlcdm]+)\b/iu', function (array $m) {
+        return preg_replace_callback('/\b([ivxlcdm]+)\b/iu', function (array $m) {
             return mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8');
         }, $string);
-
-        return $s;
     }
 
     /**
@@ -167,11 +160,10 @@ class TitleCaser {
      */
     public function ordinals($string) {
         $match = implode('|', $this->ordinals);
-        $s = preg_replace_callback("/\\b([0-9]+)({$match})\\b/iu", function (array $m) {
+
+        return preg_replace_callback("/\\b([0-9]+)({$match})\\b/iu", function (array $m) {
             return $m[1] . mb_convert_case($m[2], MB_CASE_LOWER, 'utf-8');
         }, $string);
-
-        return $s;
     }
 
     /**
@@ -183,11 +175,10 @@ class TitleCaser {
      */
     public function exceptions($string) {
         $match = implode('|', array_keys($this->exceptions));
-        $s = preg_replace_callback("/\\b({$match})\\b/iu", function (array $m) {
+
+        return preg_replace_callback("/\\b({$match})\\b/iu", function (array $m) {
             return $this->exceptions[mb_convert_case($m[1], MB_CASE_LOWER, 'utf-8')];
         }, $string);
-
-        return $s;
     }
 
     public function trim($string) {

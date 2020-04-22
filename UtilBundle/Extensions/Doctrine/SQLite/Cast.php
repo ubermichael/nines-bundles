@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Extensions\Doctrine\SQLite;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\AST\PathExpression;
 use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
@@ -32,12 +31,12 @@ class Cast extends FunctionNode {
     /**
      * @var string[]
      */
-    private $field = null;
+    private $field;
 
     /**
      * @var string
      */
-    private $expr = null;
+    private $expr;
 
     public function __construct($name = 'cast') {
         parent::__construct($name);
@@ -52,7 +51,7 @@ class Cast extends FunctionNode {
 
     /**
      * {@inheritdoc}
-     * CAST ( field AS expr )
+     * CAST ( field AS expr ).
      */
     public function parse(Parser $parser) : void {
         $parser->match(Lexer::T_IDENTIFIER);
