@@ -8,7 +8,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\UtilBundle\Extensions\Doctrine\MySQL;
+namespace Nines\UtilBundle\Extensions\Doctrine\SQLite;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\PathExpression;
@@ -26,7 +26,7 @@ use Doctrine\ORM\Query\SqlWalker;
  *       orm:
  *           dql:
  *               string_functions:
- *                   cast: Nines\UtilBundle\Extensions\Doctrine\MySQL\Cast
+ *                   cast: Nines\UtilBundle\Extensions\Doctrine\SQLite\Cast
  */
 class Cast extends FunctionNode {
     /**
