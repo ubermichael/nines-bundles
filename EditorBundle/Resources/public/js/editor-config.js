@@ -21,16 +21,30 @@ function getTinyMceConfig(editorUploadPath) {
 
         style_formats_merge: true,
         style_formats: [{
-            title: 'Image Left', selector: 'img, figure', styles: {
-                'float': 'left',
-                'margin': '0 10px 0 10px',
+                title: 'Image Left',
+                selector: 'img, figure',
+                styles: {
+                    'float': 'left',
+                    'margin': '0 10px 0 10px'
+                }
             },
-        }, {
-            title: 'Image Right', selector: 'img, figure', styles: {
-                'float': 'right',
-                'margin': '0 10px 0 10px',
+            {
+                title: 'Image Center',
+                selector: 'img, figure',
+                styles: {
+                    position: 'relative',
+                    transform: 'translateX(-50%)',
+                    left: '50%'
+                }
             },
-        }],
+            {
+                title: 'Image Right',
+                selector: 'img, figure',
+                styles: {
+                    'float': 'right',
+                    'margin': '0 10px 0 10px'
+                }
+            }]
     };
 
 }
