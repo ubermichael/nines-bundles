@@ -19,7 +19,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
+/**
+ * Download and save fonts from Google Fonts and generate the CSS for them.
+ */
 class FontDownload extends Command {
     /**
      * @var LoggerInterface
@@ -30,6 +36,10 @@ class FontDownload extends Command {
      * @var Environment
      */
     private $twig;
+
+    /**
+     * @var string
+     */
     protected static $defaultName = 'nines:fonts:download';
 
     /**
@@ -43,8 +53,19 @@ class FontDownload extends Command {
         ;
     }
 
+    /**
+     * Render the CSS for one font family.
+     *
+     * @param $variant
+     * @param $accepted
+     *
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     protected function render($variant, $accepted) {
-        return $this->twig->render('@NinesUtil/font/font.scss.twig', [
+        $def = $this->twig->render('@NinesUtil/font/font.css.twig', [
             'name' => $variant['local'][0],
             'family' => $variant['fontFamily'],
             'locals' => $variant['local'],
@@ -52,15 +73,26 @@ class FontDownload extends Command {
             'formats' => $accepted,
             'style' => $variant['fontStyle'],
         ]);
+        return $def;
     }
 
+    /**
+     * Compare the font variant $variant returned from the API against the requested fonts.
+     *
+     * @param string $name
+     * @param array $variant
+     * @param array $styles
+     * @param array $weights
+     *
+     * @return bool true if the font should be included in the CSS and downloaded.
+     */
     protected function checkVariant($name, $variant, $styles, $weights) {
-        if ( ! in_array($variant['fontStyle'], $styles, true)) {
+        if ( ! in_array($variant['fontStyle'], $styles, false)) {
             $this->logger->info('Skipping style ' . $name . ' ' . $variant['fontStyle']);
 
             return false;
         }
-        if ( ! in_array($variant['fontWeight'], $weights, true)) {
+        if ( ! in_array($variant['fontWeight'], $weights, false)) {
             $this->logger->info('Skipping weight ' . $name . ' ' . $variant['fontWeight']);
 
             return false;
@@ -69,6 +101,16 @@ class FontDownload extends Command {
         return true;
     }
 
+    /**
+     * Download the font file from Google Fonts and store it.
+     *
+     * @param $name
+     * @param $variant
+     * @param $formats
+     * @param $filenameTemplate
+     *
+     * @return array
+     */
     protected function fetch($name, $variant, $formats, $filenameTemplate) {
         $client = new Client();
         $filenames = [];
@@ -98,6 +140,20 @@ class FontDownload extends Command {
         return $filenames;
     }
 
+    /**
+     * Process one font definition as returned by the API and return the rendered CSS for the font.
+     *
+     * @param $data
+     * @param $styles
+     * @param $weights
+     * @param $formats
+     * @param $filenameTemplate
+     *
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     protected function processFont($data, $styles, $weights, $formats, $filenameTemplate) {
         $sass = '';
         if ( ! file_exists(dirname($filenameTemplate))) {
@@ -117,6 +173,17 @@ class FontDownload extends Command {
         return $sass;
     }
 
+    /**
+     * Execute the command.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int {
         $config = Yaml::parseFile('config/fonts.yaml');
         $subsets = implode(',', $config['fonts']['subsets']);
@@ -124,27 +191,29 @@ class FontDownload extends Command {
         $filename = $config['fonts']['path'] . '/' . $config['fonts']['filename'];
         $formats = $config['fonts']['formats'];
         $client = new Client();
-        $sass = '';
+        $css = '';
         foreach ($families as $id => $data) {
             $url = "https://google-webfonts-helper.herokuapp.com/api/fonts/{$id}?subsets={$subsets}";
             $styles = $data['styles'];
             $weights = $data['weights'];
             $res = $client->get($url);
             $data = json_decode($res->getBody()->getContents(), true);
-            $sass .= $this->processFont($data, $styles, $weights, $formats, $filename);
+            $css .= $this->processFont($data, $styles, $weights, $formats, $filename);
         }
-        $sassFile = $config['fonts']['sass'];
-        if ( ! file_exists(dirname($sassFile))) {
-            mkdir(dirname($sassFile), 0755, true);
+        $cssFile = $config['fonts']['css'];
+        if ( ! file_exists(dirname($cssFile))) {
+            mkdir(dirname($cssFile), 0755, true);
         }
 
-        file_put_contents($config['fonts']['sass'], $sass);
+        file_put_contents($cssFile, $css);
 
         return 0;
     }
 
     /**
      * @required
+     *
+     * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
@@ -152,6 +221,8 @@ class FontDownload extends Command {
 
     /**
      * @required
+     *
+     * @param Environment $twig
      */
     public function setTwigEngine(Environment $twig) : void {
         $this->twig = $twig;
