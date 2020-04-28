@@ -56,12 +56,12 @@ class FontDownload extends Command {
 
     protected function checkVariant($name, $variant, $styles, $weights) {
         if ( ! in_array($variant['fontStyle'], $styles, true)) {
-            $this->logger->info('Skipping ' . $name . ' ' . $variant['fontStyle']);
+            $this->logger->info('Skipping style ' . $name . ' ' . $variant['fontStyle']);
 
             return false;
         }
         if ( ! in_array($variant['fontWeight'], $weights, true)) {
-            $this->logger->info('Skipping ' . $name . ' ' . $variant['fontWeight']);
+            $this->logger->info('Skipping weight ' . $name . ' ' . $variant['fontWeight']);
 
             return false;
         }
@@ -85,7 +85,7 @@ class FontDownload extends Command {
             }, $filenameTemplate);
 
             if (file_exists($filename)) {
-                $this->logger->notice('Skipped downloading ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
+                $this->logger->notice('Skipped existing ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
             } else {
                 $this->logger->notice('Downloading ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
                 $client->get($variant[$format], [
