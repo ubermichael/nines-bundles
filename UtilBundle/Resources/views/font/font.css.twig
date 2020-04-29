@@ -6,8 +6,8 @@
     font-weight: {{ weight }};
     src: {% for local in locals -%}local('{{ local|raw }}'),{%- endfor %}
 
-{% for format, path in formats %}
-    url('{{ asset(path)|raw }}') format('{{ format }}'){% if not loop.last %},{% else %};{% endif %}
+{% for format, filename in formats %}
+    url('{{ asset(prefix ~ '/' ~ filename)|raw }}') format('{{ format }}'){% if not loop.last %},{% else %};{% endif %}
 
 {% endfor %}
 }

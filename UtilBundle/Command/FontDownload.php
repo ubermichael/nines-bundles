@@ -56,6 +56,7 @@ class FontDownload extends Command {
     /**
      * Render the CSS for one font family.
      *
+     * @param $config
      * @param $variant
      * @param $accepted
      *
@@ -64,7 +65,7 @@ class FontDownload extends Command {
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function render($variant, $accepted) {
+    protected function render($config, $variant, $accepted) {
         $def = $this->twig->render('@NinesUtil/font/font.css.twig', [
             'name' => $variant['local'][0],
             'family' => $variant['fontFamily'],
@@ -72,26 +73,72 @@ class FontDownload extends Command {
             'weight' => $variant['fontWeight'],
             'formats' => $accepted,
             'style' => $variant['fontStyle'],
+            'prefix' => $config['prefix'],
         ]);
         return $def;
     }
 
     /**
+     * Download the font file from Google Fonts and store it.
+     *
+     * @param $id
+     * @param $name
+     * @param $variant
+     * @param $config
+     *
+     * @return array
+     */
+    protected function fetch($id, $name, $variant, $config) {
+        $client = new Client();
+        $filenames = [];
+        $filenameTemplate = $config['filename'];
+
+        foreach ($config['formats'] as $format) {
+            $callback = [
+                'id' => $variant['local'][1],
+                'style' => $variant['fontStyle'],
+                'weight' => $variant['fontWeight'],
+                'ext' => $format,
+            ];
+
+            $filename = preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($callback) {
+                return $callback[ $matches[1] ];
+            }, $filenameTemplate);
+            $file = $config['path'] . '/' . $filename;
+
+            if (file_exists($file)) {
+                $this->logger->notice('Skipped existing ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
+            }
+            else {
+                $this->logger->notice('Downloading ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
+                $client->get($variant[ $format ], [
+                    'sink' => $file,
+                ]);
+            }
+            $filenames[ $format ] = $filename;
+        }
+
+        return $filenames;
+    }
+
+    /**
      * Compare the font variant $variant returned from the API against the requested fonts.
      *
+     * @param $id
      * @param string $name
      * @param array $variant
-     * @param array $styles
-     * @param array $weights
+     * @param array $config
      *
      * @return bool true if the font should be included in the CSS and downloaded.
      */
-    protected function checkVariant($name, $variant, $styles, $weights) {
+    protected function checkVariant($id, $name, $variant, $config) {
+        $styles = $config['families'][ $id ]['styles'];
         if ( ! in_array($variant['fontStyle'], $styles, false)) {
             $this->logger->info('Skipping style ' . $name . ' ' . $variant['fontStyle']);
 
             return false;
         }
+        $weights = $config['families'][ $id ]['weights'];
         if ( ! in_array($variant['fontWeight'], $weights, false)) {
             $this->logger->info('Skipping weight ' . $name . ' ' . $variant['fontWeight']);
 
@@ -102,75 +149,32 @@ class FontDownload extends Command {
     }
 
     /**
-     * Download the font file from Google Fonts and store it.
-     *
-     * @param $name
-     * @param $variant
-     * @param $formats
-     * @param $filenameTemplate
-     *
-     * @return array
-     */
-    protected function fetch($name, $variant, $formats, $filenameTemplate) {
-        $client = new Client();
-        $filenames = [];
-        foreach ($formats as $format) {
-            $callback = [
-                'id' => $variant['local'][1],
-                'style' => $variant['fontStyle'],
-                'weight' => $variant['fontWeight'],
-                'ext' => $format,
-            ];
-
-            $filename = preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($callback) {
-                return $callback[$matches[1]];
-            }, $filenameTemplate);
-
-            if (file_exists($filename)) {
-                $this->logger->notice('Skipped existing ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
-            } else {
-                $this->logger->notice('Downloading ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
-                $client->get($variant[$format], [
-                    'sink' => $filename,
-                ]);
-            }
-            $filenames[$format] = $filename;
-        }
-
-        return $filenames;
-    }
-
-    /**
      * Process one font definition as returned by the API and return the rendered CSS for the font.
      *
+     * @param $id
      * @param $data
-     * @param $styles
-     * @param $weights
-     * @param $formats
-     * @param $filenameTemplate
+     * @param $config
      *
      * @return string
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function processFont($data, $styles, $weights, $formats, $filenameTemplate) {
-        $sass = '';
-        if ( ! file_exists(dirname($filenameTemplate))) {
-            mkdir(dirname($filenameTemplate), 0755, true);
-        }
+    protected function processFont($id, $data, $config) {
+        $css = '';
         foreach ($data['variants'] as $variant) {
             $accepted = [];
 
             $name = $variant['local'][1];
-            if ( ! $this->checkVariant($name, $variant, $styles, $weights)) {
+            if ( ! $this->checkVariant($id, $name, $variant, $config)) {
                 continue;
             }
-            $accepted = array_merge($accepted, $this->fetch($name, $variant, $formats, $filenameTemplate));
-            $sass .= $this->render($variant, $accepted);
+            $filenames = $this->fetch($id, $name, $variant, $config);
+            $accepted = array_merge($accepted, $filenames);
+            $css .= $this->render($config, $variant, $accepted);
         }
 
-        return $sass;
+        return $css;
     }
 
     /**
@@ -185,26 +189,30 @@ class FontDownload extends Command {
      * @throws SyntaxError
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int {
-        $config = Yaml::parseFile('config/fonts.yaml');
-        $subsets = implode(',', $config['fonts']['subsets']);
-        $families = $config['fonts']['families'];
-        $filename = $config['fonts']['path'] . '/' . $config['fonts']['filename'];
-        $formats = $config['fonts']['formats'];
+        $configData = Yaml::parseFile('config/fonts.yaml');
+        $config = $configData['fonts'];
+
         $client = new Client();
         $css = '';
-        foreach ($families as $id => $data) {
+
+        $path = $config['path'];
+        if ( ! file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        $subsets = implode(',', $config['subsets']);
+
+        foreach (array_keys($config['families']) as $id) {
             $url = "https://google-webfonts-helper.herokuapp.com/api/fonts/{$id}?subsets={$subsets}";
-            $styles = $data['styles'];
-            $weights = $data['weights'];
             $res = $client->get($url);
             $data = json_decode($res->getBody()->getContents(), true);
-            $css .= $this->processFont($data, $styles, $weights, $formats, $filename);
+            $css .= $this->processFont($id, $data, $config);
         }
-        $cssFile = $config['fonts']['css'];
+
+        $cssFile = $config['css'];
         if ( ! file_exists(dirname($cssFile))) {
             mkdir(dirname($cssFile), 0755, true);
         }
-
         file_put_contents($cssFile, $css);
 
         return 0;
