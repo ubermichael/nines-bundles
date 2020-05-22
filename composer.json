@@ -15,6 +15,7 @@
             "Nines\\DublinCoreBundle\\": "DublinCoreBundle",
             "Nines\\EditorBundle\\": "EditorBundle",
             "Nines\\FeedbackBundle\\": "FeedbackBundle",
+            "Nines\\MakerBundle\\": "MakerBundle",
             "Nines\\UserBundle\\": "UserBundle",
             "Nines\\UtilBundle\\": "UtilBundle"
         }
