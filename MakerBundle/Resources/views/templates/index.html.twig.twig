@@ -1,0 +1,113 @@
+{% autoescape false %}
+{{ "{% extends 'base.html.twig' %}" }}
+
+{{ '{% block title %}' }}{{ entity_class_name }} List{{'{% endblock %}' }}
+
+{{ "{% block pageheader %}" }}
+    <h1>{{ entity_class_name }} List</h1>
+    <p class="count">
+        Displaying {{ '{{ ' ~ entity_twig_var_plural  ~ "|length }}" }} {{ entity_twig_var_plural }} of {{ '{{ ' ~ entity_twig_var_plural  ~ ".getTotalItemCount }}" }} total.
+    </p>
+{{ " {% endblock %} "}}
+
+{{ "{% block body %}" }}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {{ "{% if is_granted('ROLE_ADMIN') %}" }}
+            <a href="{{ "{{ path('" ~ route_name ~ "_new') }}" }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus"></span> New
+            </a>
+            {{ "{% endif %}" }}
+
+            <a href="{{ "{{ path('" ~ route_name ~ "_search') }}" }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+
+                {%- for field in mapped_field_names %}
+                    {% if field in field_mappings|keys %}
+                       <th>{{ field|title }}</th>
+                    {% else %}
+                        {% set association = associations[field] %}
+                        {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
+                            <th>{{ field|title }}</th>
+                        {% endif %}
+                    {% endif %}
+                {%- endfor %}
+
+            </tr>
+        </thead>
+        <tbody>
+        {{ '{% for ' ~ entity_var_singular ~ ' in ' ~ entity_var_plural ~ ' %}' }}
+            <tr>
+
+                <td>
+                    <a href="{{ "{{ path('" ~ route_name ~ "_show', { 'id': " ~ entity_twig_var_singular ~ ".id" ~" }) }}" }}">
+                        {{ '{{ ' ~ entity_twig_var_singular ~ '.id' ~ ' }}' }}
+                    </a>
+                </td>
+
+        {%- for field in mapped_field_names %}
+            {%- if field in field_mappings|keys %}
+            {%- set mapping = field_mappings[field] %}
+
+            {%- if mapping.type in ['datetime'] %}
+
+                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
+
+            {%- elseif mapping.type in ['date'] %}
+
+                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}</td>
+
+            {%- elseif mapping.type in ['time'] %}
+
+                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date(\'H:i:s\') }}{% endif %}' }}</td>
+
+            {%- elseif mapping.type in ['array'] %}
+
+                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|join(\', \') }}{% endif %}' }}</td>
+
+            {%- elseif mapping.type in ['boolean'] %}
+
+                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}Yes{% else %}No{% endif %}' }}</td>
+
+            {% else %}
+
+                <td>
+                    {{ '{{ ' ~ entity_var_singular ~ '.' ~ field ~ ' }}' }}
+                </td>
+
+            {%- endif %}
+
+            {% else %}
+                {% set relation = relations[field] %}
+                {% set association = associations[field] %}
+                {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
+                <td>
+                    <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id": ' ~ entity_var_singular ~ '.' ~ field ~ '.id}) }}' }}'>
+                        {{ '{{ ' ~ entity_var_singular ~ '.' ~ field ~ ' }}' }}
+                    </a>
+                </td>
+                {% endif %}
+            {% endif %}
+
+        {%- endfor %}
+
+            </tr>
+        {{ '{% endfor %}' }}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ '{{ knp_pagination_render(' ~ entity_var_plural ~ ') }}' }}
+    </div>
+
+{{ "{% endblock %}" }}
+{% endautoescape %}

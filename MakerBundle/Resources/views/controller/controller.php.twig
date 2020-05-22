@@ -1,0 +1,190 @@
+<?php
+
+namespace {{ namespace }}\Controller;
+
+use {{ entity_full_class_name }};
+use {{ form_full_class_name }};
+use {{ repository_full_class_name }};
+
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Nines\UtilBundle\Controller\PaginatorTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
+/**
+ * @Route("/{{ route_name }}")
+ * @IsGranted("ROLE_USER")
+ */
+class {{ entity_class_name }}Controller extends AbstractController implements PaginatorAwareInterface
+{
+    use PaginatorTrait;
+
+    /**
+     * @Route("/", name="{{ route_name }}_index", methods={"GET"})
+     * @param Request $request
+     * @param {{ repository_class_name }} ${{ repository_var }}
+     *
+     * @Template()
+     *
+     * @return array
+     */
+    public function index(Request $request, {{ repository_class_name }} ${{ repository_var }}) : array
+    {
+        $query = ${{ repository_var }}->indexQuery();
+        $pageSize = $this->getParameter('page_size');
+        $page = $request->query->getint('page', 1);
+
+        return [
+            '{{ entity_twig_var_plural }}' => $this->paginator->paginate($query, $page, $pageSize),
+        ];
+    }
+
+    /**
+     * @Route("/search", name="{{ route_name }}_search", methods={"GET"})
+     *
+     * @Template()
+     *
+     * @return array
+     */
+    public function search(Request $request, {{ repository_class_name }} ${{ repository_var }}) {
+        $q = $request->query->get('q');
+        if ($q) {
+            $query = ${{ repository_var }}->searchQuery($q);
+            ${{ entity_var_plural }} = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
+        } else {
+            ${{ entity_var_plural }} = [];
+        }
+
+        return [
+            '{{ entity_twig_var_plural }}' => ${{ entity_var_plural }},
+            'q' => $q,
+        ];
+    }
+
+    /**
+     * @Route("/typeahead", name="{{ route_name }}_typeahead", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function typeahead(Request $request, {{ repository_class_name }} ${{ repository_var }}) {
+        $q = $request->query->get('q');
+        if ( ! $q) {
+            return new JsonResponse([]);
+        }
+        $data = [];
+        foreach (${{ repository_var }}->typeaheadSearch($q) as $result) {
+            $data[] = [
+                'id' => $result->getId(),
+                'text' => (string)$result,
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/new", name="{{ route_name }}_new", methods={"GET","POST"})
+     * @Template()
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @param Request $request
+     *
+     * @return array|RedirectResponse
+     */
+    public function new(Request $request) {
+        ${{ entity_var_singular }} = new {{ entity_class_name }}();
+        $form = $this->createForm({{ form_class_name }}::class, ${{ entity_var_singular }});
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist(${{ entity_var_singular }});
+            $entityManager->flush();
+            $this->addFlash('success', 'The new {{ entity_var_singular }} has been saved.');
+
+            return $this->redirectToRoute('{{ route_name }}_show', ['id' => ${{ entity_var_singular }}->getId()]);
+        }
+
+        return [
+            '{{ entity_var_singular }}' => ${{ entity_var_singular }},
+            'form' => $form->createView(),
+        ];
+    }
+
+    /**
+     * @Route("/new_popup", name="{{ route_name }}_new_popup", methods={"GET","POST"})
+     * @Template()
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @param Request $request
+     *
+     * @return array|RedirectResponse
+     */
+    public function new_popup(Request $request) {
+        return $this->new($request);
+    }
+
+    /**
+     * @Route("/{id}", name="{{ route_name }}_show", methods={"GET"})
+     * @Template()
+     * @param {{ entity_class_name }} ${{ entity_var_singular }}
+     *
+     * @return array
+     */
+    public function show({{ entity_class_name }} ${{ entity_var_singular }}) {
+        return [
+            '{{ entity_twig_var_singular }}' => ${{ entity_var_singular }},
+        ];
+    }
+
+    /**
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @Route("/{id}/edit", name="{{ route_name }}_edit", methods={"GET","POST"})
+     * @param Request $request
+     * @param {{ entity_class_name }} ${{ entity_var_singular }}
+     *
+     * @Template()
+     *
+     * @return array|RedirectResponse
+     */
+    public function edit(Request $request, {{ entity_class_name }} ${{ entity_var_singular }}) {
+        $form = $this->createForm({{ form_class_name }}::class, ${{ entity_var_singular }});
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'The updated {{ entity_var_singular }} has been saved.');
+
+            return $this->redirectToRoute('{{ route_name }}_show', ['id' => ${{ entity_var_singular }}->getId()]);
+        }
+
+        return [
+            '{{ entity_twig_var_singular }}' => ${{ entity_var_singular }},
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @Route("/{id}", name="{{ route_name }}_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param {{ entity_class_name }} ${{ entity_var_singular }}
+     *
+     * @return RedirectResponse
+     */
+    public function delete(Request $request, {{ entity_class_name }} ${{ entity_var_singular }}) {
+        if ($this->isCsrfTokenValid('delete' . ${{ entity_var_singular }}->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove(${{ entity_var_singular }});
+            $entityManager->flush();
+            $this->addFlash('success', 'The {{ entity_var_singular }} has been deleted.');
+        }
+
+        return $this->redirectToRoute('{{ route_name }}_index');
+    }
+}
