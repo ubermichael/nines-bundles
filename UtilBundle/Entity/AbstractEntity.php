@@ -65,7 +65,7 @@ abstract class AbstractEntity {
      *
      * @return string
      */
-    abstract public function __toString();
+    abstract public function __toString() : string;
 
     /**
      * Get the ID.
