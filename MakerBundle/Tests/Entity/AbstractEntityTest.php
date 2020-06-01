@@ -14,7 +14,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use PHPUnit\Framework\TestCase;
 
 class DummyEntity extends AbstractEntity {
-    public function __toString() {
+    public function __toString() : string {
         return 'dummy';
     }
 }

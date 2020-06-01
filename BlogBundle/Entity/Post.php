@@ -91,7 +91,7 @@ class Post extends AbstractEntity implements ContentEntityInterface {
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString() : string {
         return $this->title;
     }
 

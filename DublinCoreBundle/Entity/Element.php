@@ -52,7 +52,7 @@ class Element extends AbstractTerm {
         $this->fields = new ArrayCollection();
     }
 
-    public function __toString() : ?string {
+    public function __toString() : string {
         return parent::__toString();
     }
 

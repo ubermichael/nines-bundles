@@ -96,7 +96,7 @@ class Page extends AbstractEntity implements ContentEntityInterface {
         $this->includeComments = false;
     }
 
-    public function __toString() {
+    public function __toString() : string {
         return $this->title;
     }
 
