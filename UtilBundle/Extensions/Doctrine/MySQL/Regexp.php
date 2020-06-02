@@ -46,10 +46,10 @@ class Regexp extends FunctionNode {
         if ($this->options) {
             $options = $sqlWalker->walkStringPrimary($this->options);
         } else {
-            $options = '';
+            $options = "''";
         }
 
-        return sprintf("REGEXP_LIKE(%s, '%s', '%s')", $expression, $pattern, $options);
+        return sprintf("REGEXP_LIKE(%s, %s, %s)", $expression, $pattern, $options);
     }
 
     /**
@@ -65,7 +65,7 @@ class Regexp extends FunctionNode {
         $parser->match(Lexer::T_COMMA);
         $this->regex = $parser->StringPrimary();
 
-        if ('comma' === $lexer->lookahead['value']) {
+        if (Lexer::T_COMMA === $lexer->lookahead['type']) {
             $parser->match(Lexer::T_COMMA);
             $this->options = $parser->StringPrimary();
         }
