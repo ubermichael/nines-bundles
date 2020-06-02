@@ -60,13 +60,14 @@ class FontDownload extends Command {
      * @param $variant
      * @param $accepted
      *
-     * @return string
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     *
+     * @return string
      */
     protected function render($config, $variant, $accepted) {
-        $def = $this->twig->render('@NinesUtil/font/font.css.twig', [
+        return $this->twig->render('@NinesUtil/font/font.css.twig', [
             'name' => $variant['local'][0],
             'family' => $variant['fontFamily'],
             'locals' => $variant['local'],
@@ -75,7 +76,6 @@ class FontDownload extends Command {
             'style' => $variant['fontStyle'],
             'prefix' => $config['prefix'],
         ]);
-        return $def;
     }
 
     /**
@@ -102,20 +102,19 @@ class FontDownload extends Command {
             ];
 
             $filename = preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($callback) {
-                return $callback[ $matches[1] ];
+                return $callback[$matches[1]];
             }, $filenameTemplate);
             $file = $config['path'] . '/' . $filename;
 
             if (file_exists($file)) {
                 $this->logger->notice('Skipped existing ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
-            }
-            else {
+            } else {
                 $this->logger->notice('Downloading ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
-                $client->get($variant[ $format ], [
+                $client->get($variant[$format], [
                     'sink' => $file,
                 ]);
             }
-            $filenames[ $format ] = $filename;
+            $filenames[$format] = $filename;
         }
 
         return $filenames;
@@ -132,13 +131,13 @@ class FontDownload extends Command {
      * @return bool true if the font should be included in the CSS and downloaded.
      */
     protected function checkVariant($id, $name, $variant, $config) {
-        $styles = $config['families'][ $id ]['styles'];
+        $styles = $config['families'][$id]['styles'];
         if ( ! in_array($variant['fontStyle'], $styles, false)) {
             $this->logger->info('Skipping style ' . $name . ' ' . $variant['fontStyle']);
 
             return false;
         }
-        $weights = $config['families'][ $id ]['weights'];
+        $weights = $config['families'][$id]['weights'];
         if ( ! in_array($variant['fontWeight'], $weights, false)) {
             $this->logger->info('Skipping weight ' . $name . ' ' . $variant['fontWeight']);
 
@@ -155,10 +154,11 @@ class FontDownload extends Command {
      * @param $data
      * @param $config
      *
-     * @return string
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     *
+     * @return string
      */
     protected function processFont($id, $data, $config) {
         $css = '';
@@ -180,10 +180,6 @@ class FontDownload extends Command {
     /**
      * Execute the command.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -220,8 +216,6 @@ class FontDownload extends Command {
 
     /**
      * @required
-     *
-     * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
@@ -229,8 +223,6 @@ class FontDownload extends Command {
 
     /**
      * @required
-     *
-     * @param Environment $twig
      */
     public function setTwigEngine(Environment $twig) : void {
         $this->twig = $twig;

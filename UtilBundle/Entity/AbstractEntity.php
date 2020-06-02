@@ -62,8 +62,6 @@ abstract class AbstractEntity {
 
     /**
      * Force all entities to provide a stringify function.
-     *
-     * @return string
      */
     abstract public function __toString() : string;
 

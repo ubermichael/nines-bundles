@@ -28,7 +28,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Twig\Environment;
 
 abstract class AbstractNinesMaker implements MakerInterface {
-
     protected const GENERATED = ['id', 'created', 'updated'];
 
     /**
@@ -57,11 +56,6 @@ abstract class AbstractNinesMaker implements MakerInterface {
         }
     }
 
-    /**
-     * @param string $word
-     *
-     * @return string
-     */
     protected function pluralize(string $word) : string {
         if (null !== $this->inflector) {
             return $this->inflector->pluralize($word);
@@ -70,11 +64,6 @@ abstract class AbstractNinesMaker implements MakerInterface {
         return LegacyInflector::pluralize($word);
     }
 
-    /**
-     * @param string $word
-     *
-     * @return string
-     */
     protected function singularize(string $word) : string {
         if (null !== $this->inflector) {
             return $this->inflector->singularize($word);
@@ -175,7 +164,7 @@ abstract class AbstractNinesMaker implements MakerInterface {
         }
 
         $relations = [];
-        if ( $classMetadata && ! $shallow) {
+        if ($classMetadata && ! $shallow) {
             foreach ($classMetadata->associationMappings as $name => $association) {
                 $relations[$name] = $this->collect($generator, $this->shortName($association['targetEntity']), true);
             }
@@ -187,8 +176,8 @@ abstract class AbstractNinesMaker implements MakerInterface {
         }
 
         $mappings = $classMetadata ? $classMetadata->fieldMappings : [];
-        $mappedFieldNames = array_filter(array_keys($mappings), function($item) {
-            return ! in_array($item, self::GENERATED);
+        $mappedFieldNames = array_filter(array_keys($mappings), function ($item) {
+            return ! in_array($item, self::GENERATED, true);
         });
 
         return [
@@ -233,16 +222,12 @@ abstract class AbstractNinesMaker implements MakerInterface {
 
     /**
      * @required
-     *
-     * @param Environment $environment
      */
     public function setTwig(Environment $environment) : void {
         $this->twig = $environment;
     }
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     *
      * @required
      */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper) : void {
@@ -250,8 +235,6 @@ abstract class AbstractNinesMaker implements MakerInterface {
     }
 
     /**
-     * @param FormTypeRenderer $formTypeRenderer
-     *
      * @required
      */
     public function setFormTypeRenderer(FormTypeRenderer $formTypeRenderer) : void {

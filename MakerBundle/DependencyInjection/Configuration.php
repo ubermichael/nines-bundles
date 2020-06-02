@@ -20,7 +20,6 @@ class Configuration implements ConfigurationInterface {
      * @return TreeBuilder
      */
     public function getConfigTreeBuilder() {
-        $builder = new TreeBuilder('nines_maker');
-        return $builder;
+        return new TreeBuilder('nines_maker');
     }
 }

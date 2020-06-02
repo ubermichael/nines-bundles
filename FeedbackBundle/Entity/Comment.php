@@ -97,8 +97,6 @@ class Comment extends AbstractEntity {
 
     /**
      * Return the content of the comment.
-     *
-     * @return string
      */
     public function __toString() : string {
         return $this->content;

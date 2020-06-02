@@ -52,8 +52,6 @@ class CommentNote extends AbstractEntity {
 
     /**
      * Return the content of the note.
-     *
-     * @return string
      */
     public function __toString() : string {
         return $this->content;

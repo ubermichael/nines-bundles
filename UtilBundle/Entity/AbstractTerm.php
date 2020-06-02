@@ -64,8 +64,6 @@ abstract class AbstractTerm extends AbstractEntity {
 
     /**
      * Get the status label.
-     *
-     * @return string
      */
     public function __toString() : string {
         return $this->label;
