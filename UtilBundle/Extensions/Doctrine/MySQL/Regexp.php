@@ -27,14 +27,8 @@ class Regexp extends FunctionNode {
      */
     private $regex;
 
-    /**
-     * @var string
-     */
-    private $options;
-
     public function __construct($name = 'regexp') {
         parent::__construct($name);
-        $this->options = '';
     }
 
     /**
@@ -43,13 +37,8 @@ class Regexp extends FunctionNode {
     public function getSql(SqlWalker $sqlWalker) {
         $expression = $this->expr->dispatch($sqlWalker);
         $pattern = $sqlWalker->walkStringPrimary($this->regex);
-        if ($this->options) {
-            $options = $sqlWalker->walkStringPrimary($this->options);
-        } else {
-            $options = "''";
-        }
 
-        return sprintf("REGEXP_LIKE(%s, %s, %s)", $expression, $pattern, $options);
+        return sprintf("(%s REGEXP %s = 1)", $expression, $pattern);
     }
 
     /**
@@ -60,16 +49,9 @@ class Regexp extends FunctionNode {
         $lexer = $parser->getLexer();
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
-
         $this->expr = $parser->StateFieldPathExpression();
         $parser->match(Lexer::T_COMMA);
         $this->regex = $parser->StringPrimary();
-
-        if (Lexer::T_COMMA === $lexer->lookahead['type']) {
-            $parser->match(Lexer::T_COMMA);
-            $this->options = $parser->StringPrimary();
-        }
-
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 }
