@@ -38,7 +38,7 @@ class Regexp extends FunctionNode {
         $expression = $this->expr->dispatch($sqlWalker);
         $pattern = $sqlWalker->walkStringPrimary($this->regex);
 
-        return sprintf("(%s REGEXP %s = 1)", $expression, $pattern);
+        return sprintf("(%s REGEXP %s)", $expression, $pattern);
     }
 
     /**
