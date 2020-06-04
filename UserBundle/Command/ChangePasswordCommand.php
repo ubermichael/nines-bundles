@@ -35,11 +35,12 @@ class ChangePasswordCommand extends AbstractUserCommand {
     protected function getArgs() : array {
         return [
             ['name' => 'email', 'desc' => 'Email address for the account', 'question' => 'Email address: ', 'valid' => [new NotBlank(), new Email()]],
+            ['name' => 'password', 'desc' => 'New password for the account', 'question' => 'New password: ', 'valid' => [new NotBlank()], 'required' => false],
         ];
     }
 
     protected function configure() : void {
-        $this->setDescription('Email a passowrd reset to a user');
+        $this->setDescription('Change the password for a user');
         parent::configure();
     }
 
@@ -54,12 +55,16 @@ class ChangePasswordCommand extends AbstractUserCommand {
             return 1;
         }
 
-        $helper = $this->getHelper('question');
-        $password = $helper->ask($input, $output, $this->question('New password: ', [new Length(['min' => 8])], true));
-        $confirm = $helper->ask($input, $output, $this->question('Confirm password: ', [new Length(['min' => 8])], true));
+        if( ! $input->hasArgument('password')) {
+            $helper = $this->getHelper('question');
+            $password = $helper->ask($input, $output, $this->question('New password: ', [new Length(['min' => 8])], true));
+            $confirm = $helper->ask($input, $output, $this->question('Confirm password: ', [new Length(['min' => 8])], true));
 
-        if ($password !== $confirm) {
-            $output->writeln('The passwords do not match. The password had not been changed.');
+            if ($password !== $confirm) {
+                $output->writeln('The passwords do not match. The password had not been changed.');
+            }
+        } else {
+            $password = $input->getArgument('password');
         }
 
         $encoded = $this->manager->encodePassword($user, $password);

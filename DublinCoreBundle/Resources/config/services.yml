@@ -7,7 +7,7 @@ services:
 
     Nines\DublinCoreBundle\:
         resource: '../../*'
-        exclude: '../../{DataFixtures,DependencyInjection,Entity,Resources,Tests}'
+        exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
 
     Nines\DublinCoreBundle\Controller\:
         resource: '../../Controller/*'
