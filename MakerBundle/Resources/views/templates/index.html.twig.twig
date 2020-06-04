@@ -45,7 +45,7 @@
             </tr>
         </thead>
         <tbody>
-        {{ '{% for ' ~ entity_var_singular ~ ' in ' ~ entity_var_plural ~ ' %}' }}
+        {{ '{% for ' ~ entity_twig_var_singular ~ ' in ' ~ entity_twig_var_plural ~ ' %}' }}
             <tr>
 
                 <td>
@@ -60,28 +60,28 @@
 
             {%- if mapping.type in ['datetime'] %}
 
-                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
+                <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
 
             {%- elseif mapping.type in ['date'] %}
 
-                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}</td>
+                <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}</td>
 
             {%- elseif mapping.type in ['time'] %}
 
-                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date(\'H:i:s\') }}{% endif %}' }}</td>
+                <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'H:i:s\') }}{% endif %}' }}</td>
 
             {%- elseif mapping.type in ['array'] %}
 
-                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|join(\', \') }}{% endif %}' }}</td>
+                <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|join(\', \') }}{% endif %}' }}</td>
 
             {%- elseif mapping.type in ['boolean'] %}
 
-                <td>{{ '{% if ' ~ entity_var_singular ~ '.' ~ field ~ ' %}Yes{% else %}No{% endif %}' }}</td>
+                <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}Yes{% else %}No{% endif %}' }}</td>
 
             {% else %}
 
                 <td>
-                    {{ '{{ ' ~ entity_var_singular ~ '.' ~ field ~ ' }}' }}
+                    {{ '{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' }}' }}
                 </td>
 
             {%- endif %}
@@ -91,8 +91,8 @@
                 {% set association = associations[field] %}
                 {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
                 <td>
-                    <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id": ' ~ entity_var_singular ~ '.' ~ field ~ '.id}) }}' }}'>
-                        {{ '{{ ' ~ entity_var_singular ~ '.' ~ field ~ ' }}' }}
+                    <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id": ' ~ entity_twig_var_singular ~ '.' ~ field ~ '.id}) }}' }}'>
+                        {{ '{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' }}' }}
                     </a>
                 </td>
                 {% endif %}
@@ -106,7 +106,7 @@
     </table>
 
     <div class="navigation">
-        {{ '{{ knp_pagination_render(' ~ entity_var_plural ~ ') }}' }}
+        {{ '{{ knp_pagination_render(' ~ entity_twig_var_plural ~ ') }}' }}
     </div>
 
 {{ "{% endblock %}" }}
