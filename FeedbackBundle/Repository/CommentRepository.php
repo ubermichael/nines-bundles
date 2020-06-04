@@ -10,21 +10,27 @@ declare(strict_types=1);
 
 namespace Nines\FeedbackBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
+use Nines\FeedbackBundle\Entity\Comment;
 
 /**
  * Comment Repository.
  */
-class CommentRepository extends EntityRepository {
+class CommentRepository extends ServiceEntityRepository {
+    public function __construct(ManagerRegistry $registry) {
+        parent::__construct($registry, Comment::class);
+    }
+
     /**
      * Prepare a full-text search query and return it.
-     *
-     * @todo Add a $private parameter to include private/unpublished comments.
      *
      * @param string $q
      *
      * @return Query
+     * @todo Add a $private parameter to include private/unpublished comments.
+     *
      */
     public function fulltextQuery($q) {
         $qb = $this->createQueryBuilder('e');

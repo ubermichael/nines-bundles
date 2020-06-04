@@ -10,8 +10,15 @@ declare(strict_types=1);
 
 namespace Nines\FeedbackBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Nines\FeedbackBundle\Entity\CommentStatus;
+
 /**
  * Comment Status Repository.
  */
-class CommentStatusRepository extends \Doctrine\ORM\EntityRepository {
+class CommentStatusRepository extends ServiceEntityRepository {
+    public function __construct(ManagerRegistry $registry) {
+        parent::__construct($registry, CommentStatus::class);
+    }
 }

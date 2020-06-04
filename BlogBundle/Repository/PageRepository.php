@@ -10,13 +10,19 @@ declare(strict_types=1);
 
 namespace Nines\BlogBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Nines\BlogBundle\Entity\Page;
 
 /**
  * PageRepository.
  */
-class PageRepository extends EntityRepository {
+class PageRepository extends ServiceEntityRepository {
+    public function __construct(ManagerRegistry $registry) {
+        parent::__construct($registry, Page::class);
+    }
+
     /**
      * Get a query to list pages ordered by weight and respecting private pages.
      *
