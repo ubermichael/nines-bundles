@@ -50,7 +50,7 @@ class SecurityControllerTest extends ControllerBaseCase {
             [
                 'email' => 'user@example.com',
                 'password' => 'secret',
-                '_remember_me' => true,
+                'remember_me' => true,
             ]
         );
 

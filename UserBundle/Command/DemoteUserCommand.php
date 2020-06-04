@@ -24,7 +24,7 @@ class DemoteUserCommand extends AbstractUserCommand {
      */
     private $manager;
 
-    protected static $defaultName = 'nines:demote:user';
+    protected static $defaultName = 'nines:user:demote';
 
     public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {
         parent::__construct($validator, $em);

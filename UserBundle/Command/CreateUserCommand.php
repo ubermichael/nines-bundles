@@ -25,7 +25,7 @@ class CreateUserCommand extends AbstractUserCommand {
      */
     private $manager;
 
-    protected static $defaultName = 'nines:create:user';
+    protected static $defaultName = 'nines:user:create';
 
     public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {
         parent::__construct($validator, $em);

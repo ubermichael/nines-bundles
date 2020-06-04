@@ -24,7 +24,7 @@ class ResetPasswordCommand extends AbstractUserCommand {
      * @var UserManager
      */
     private $manager;
-    protected static $defaultName = 'nines:reset:user';
+    protected static $defaultName = 'nines:user:reset';
 
     public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {
         parent::__construct($validator, $em);

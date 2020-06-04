@@ -25,7 +25,7 @@ class ChangePasswordCommand extends AbstractUserCommand {
      * @var UserManager
      */
     private $manager;
-    protected static $defaultName = 'nines:change:user';
+    protected static $defaultName = 'nines:user:change';
 
     public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {
         parent::__construct($validator, $em);

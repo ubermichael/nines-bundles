@@ -24,7 +24,7 @@ class PromoteUserCommand extends AbstractUserCommand {
      */
     private $manager;
 
-    protected static $defaultName = 'nines:promote:user';
+    protected static $defaultName = 'nines:user:promote';
 
     public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {
         parent::__construct($validator, $em);
