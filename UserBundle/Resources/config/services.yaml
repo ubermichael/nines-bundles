@@ -15,7 +15,7 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     Nines\UserBundle\:
         resource: '../../'
-        exclude: '../../{DependencyInjection,Entity,Migrations,Tests}'
+        exclude: '../../{DataFixtures,DependencyInjection,Entity,Exception,Resources,Tests}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class

@@ -9,7 +9,7 @@ services:
 
     Nines\MakerBundle\:
         resource: '../../*'
-        exclude: '../../{Entity,Repository,Resources,Tests}'
+        exclude: '../../{DataFixtures,DependencyInjection,Entity,Resources,Tests}'
 
     Nines\MakerBundle\Maker\:
         resource: '../../Maker'
