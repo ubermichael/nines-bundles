@@ -1,10 +1,10 @@
 {% autoescape false %}
 {{ "{% extends 'base.html.twig' %}" }}
 
-{{ '{% block title %}' ~ entity_class_name ~ ' Search{% endblock %}' }}
+{{ '{% block title %}' ~ entity_class_name|camel_title ~ ' Search{% endblock %}' }}
 
 {{ " {% block pageheader %} "}}
-    <h1>{{ entity_class_name }} Search</h1>
+    <h1>{{ entity_class_name|camel_title }} Search</h1>
     {{ '{% if ' ~ entity_twig_var_plural  ~ "|length %}" }}
     <p class="count">
         Displaying {{ '{{ ' ~ entity_twig_var_plural  ~ "|length }}" }} {{ entity_twig_var_plural }} of {{ '{{ ' ~ entity_twig_var_plural  ~ ".getTotalItemCount }}" }} total.
@@ -51,7 +51,7 @@
 
             {%- for field in mapped_field_names %}
 
-                <th>{{ field|title }}</th>
+                <th>{{ field|camel_title }}</th>
             {%- endfor %}
 
         </tr>

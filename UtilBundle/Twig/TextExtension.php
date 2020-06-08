@@ -28,6 +28,7 @@ class TextExtension extends AbstractExtension {
             new TwigFilter('chr', [$this, 'chr']),
             new TwigFilter('class_name', [$this, 'className']),
             new TwigFilter('short_name', [$this, 'shortName']),
+            new TwigFilter('camel_title', [$this, 'camelTitle']),
         ];
     }
 
@@ -90,5 +91,10 @@ class TextExtension extends AbstractExtension {
         }
 
         return (new ReflectionClass($object))->getShortName();
+    }
+
+    public function camelTitle($name) {
+        $proper = preg_replace("/([[:lower:]])([[:upper:]])/u", '$1 $2', $name);
+        return mb_convert_case($proper, MB_CASE_TITLE);
     }
 }
