@@ -46,7 +46,10 @@ class MakeCrud extends AbstractNinesMaker {
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator) : void {
         foreach ($input->getArgument('name') as $name) {
             $params = $this->collect($generator, $name);
-
+            if ( ! class_exists($params['entity_full_class_name'])) {
+                $io->warning("Class not found: " . $params['entity_full_class_name']);
+                continue;
+            }
             foreach ($this->mapping($params) as $src => $dst) {
                 $data = $this->twig->render($src, $params);
                 $generator->dumpFile($dst, $data);
