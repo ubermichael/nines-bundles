@@ -65,7 +65,7 @@ class Text {
         $results = [];
         while (false !== $i) {
             $s = substr($text, max([0, $i - 60]), 120);
-            $results[] = preg_replace("/({$regex})/i", '<mark>$1</mark>', $s);
+            $results[] = preg_replace("/({$regex})/ui", '<mark>$1</mark>', $s);
             $i = stripos($text, $keyword, $i + 1);
         }
 
