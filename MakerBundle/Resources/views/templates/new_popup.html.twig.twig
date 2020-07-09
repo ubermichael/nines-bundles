@@ -1,7 +1,7 @@
 {% autoescape false %}
     {{ "{% extends 'popup.html.twig' %}" }}
 
-    {{ '{% block title %}' }}New {{ |camel_title|camel_title }} {{ '{% endblock %}' }}
+    {{ '{% block title %}' }}New {{ entity_class_name|camel_title }} {{ '{% endblock %}' }}
 
     {{ "{% block body %}" }}
     <h1>New {{ entity_class_name|camel_title }}</h1>
