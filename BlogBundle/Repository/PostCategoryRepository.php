@@ -43,7 +43,7 @@ class PostCategoryRepository extends ServiceEntityRepository {
             $qb->innerJoin('e.status', 's');
             $qb->andWhere('s.public = true');
         }
-        $qb->orderBy('e.id', 'ASC');
+        $qb->orderBy('e.id', 'DESC');
         $qb->setParameter('category', $postCategory);
 
         return $qb->getQuery();
