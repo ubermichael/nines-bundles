@@ -83,6 +83,9 @@ abstract class AbstractEntity {
      * Get the created timestamp.
      */
     public function getCreated() : DateTime {
+        if( ! $this->created) {
+            return new DateTime();
+        }
         return $this->created;
     }
 
