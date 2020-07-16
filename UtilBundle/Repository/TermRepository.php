@@ -20,6 +20,16 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  */
 abstract class TermRepository extends ServiceEntityRepository {
     /**
+     * @return Query
+     */
+    public function indexQuery() {
+        return $this->createQueryBuilder('v')
+            ->orderBy('v.label')
+            ->getQuery()
+            ;
+    }
+
+    /**
      * Do a typeahead-style query and return the results.
      *
      * @param string $q
