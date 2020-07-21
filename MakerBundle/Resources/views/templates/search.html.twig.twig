@@ -72,19 +72,19 @@
 
                     {%- if mapping.type in ['datetime'] %}
 
-                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
+                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
 
                     {%- elseif mapping.type in ['date'] %}
 
-                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}</td>
+                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}</td>
 
                     {%- elseif mapping.type in ['time'] %}
 
-                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|date(\'H:i:s\') }}{% endif %}' }}</td>
+                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'H:i:s\') }}{% endif %}' }}</td>
 
                     {%- elseif mapping.type in ['array'] %}
 
-                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_singularized ~ '.' ~ field ~ '|join(\', \') }}{% endif %}' }}</td>
+                        <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|join(\', \') }}{% endif %}' }}</td>
 
                     {%- elseif mapping.type in ['boolean'] %}
 
