@@ -167,7 +167,7 @@ class FontDownload extends Command {
             if(isset($variant['local']) && is_array($variant['local'])) {
                 $name = $variant['local'][1];
             } else {
-                $name = '';
+                $name = $id . '-' . $variant['fontStyle'];
             }
             if ( ! $this->checkVariant($id, $name, $variant, $config)) {
                 continue;
