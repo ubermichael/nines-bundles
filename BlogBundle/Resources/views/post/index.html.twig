@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>Blog Posts</h1>
     <p class="count">
         Displaying {{ posts|length }} posts of {{ posts.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class='btn-toolbar pull-right'>
@@ -36,11 +36,11 @@
                 {% endif %}
                 <div class="clearfix"></div>
             </div>
-            <div class="panel-body">  
+            <div class="panel-body">
                 {{ post.excerpt|raw }}
             </div>
-            <div class="panel-footer text-right">
-                Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in 
+            <div class="panel-footer text-right nines-author">
+                Posted {{ post.created|date }} by {{ post.user.fullname }} in
                 <a href="{{ path('nines_blog_post_category_show', {'id': post.category.id }) }}">
                     {{ post.category -}}
                 </a>.

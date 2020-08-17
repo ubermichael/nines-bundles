@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>Post Status</h1>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -40,11 +40,11 @@
             </tr>
             <tr>
                 <th>Created</th>
-                <td>{% if postStatus.created %}{{ postStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if postStatus.created %}{{ postStatus.created|date }}{% endif %}</td>
             </tr>
             <tr>
                 <th>Updated</th>
-                <td>{% if postStatus.updated %}{{ postStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if postStatus.updated %}{{ postStatus.updated|date }}{% endif %}</td>
             </tr>
         </tbody>
     </table>

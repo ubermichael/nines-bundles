@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>Page List</h1>
     <p class="count">
         Displaying {{ pages|length }} pages of {{ pages.getTotalItemCount }} total.
     </p>
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
     <div class='btn-toolbar pull-right'>
@@ -16,7 +16,7 @@
                 </a>
                 <a href="{{ path('nines_blog_page_sort') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-sort"></span> Sort
-                </a>                
+                </a>
             {% endif %}
             <a href="{{ path('nines_blog_page_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search
@@ -41,8 +41,8 @@
             <div class="panel-body">
                 {{ page.excerpt|raw }}
             </div>
-            <div class="panel-footer text-right">
-                Posted {{ page.created|date('Y-m-d H:i:s') }} by {{ page.user.fullname }}.
+            <div class="panel-footer text-right nines-author">
+                Posted {{ page.created|date }} by {{ page.user.fullname }}.
             </div>
         </div>
     {% endfor %}

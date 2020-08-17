@@ -41,8 +41,8 @@
                     <td>{{ postStatus.label }}</td>
                     <td>{{ postStatus.description|raw }}</td>
                     <td>{% if postStatus.public %}Yes{% else %}No{% endif %}</td>
-                    <td>{% if postStatus.created %}{{ postStatus.created|date('Y-m-d H:i:s') }}{% endif %}</td>
-                    <td>{% if postStatus.updated %}{{ postStatus.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
+                    <td>{% if postStatus.created %}{{ postStatus.created|date }}{% endif %}</td>
+                    <td>{% if postStatus.updated %}{{ postStatus.updated|date }}{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

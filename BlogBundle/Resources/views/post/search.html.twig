@@ -7,7 +7,7 @@
             Displaying {{ posts|length }} posts of {{ posts.getTotalItemCount }} total.
         </p>
     {% endif %}
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -60,8 +60,8 @@
                 <div class="panel-body">
                     {{ post.excerpt|raw }}
                 </div>
-                <div class="panel-footer text-right">
-                    Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in
+                <div class="panel-footer text-right nines-author">
+                    Posted {{ post.created|date }} by {{ post.user.fullname }} in
                     <a href="{{ path('nines_blog_post_category_show', {'id': post.category.id }) }}">
                         {{ post.category -}}
                     </a>.

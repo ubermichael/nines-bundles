@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %} 
+{% block pageheader %}
     <h1>Blog Search</h1>
     {% if posts|length > 0 %}
         <p class="count">
@@ -9,7 +9,7 @@
     {% elseif  q %}
         <p>Your search for <i>{{ q }}</i> returned zero results.</p>
     {% endif %}
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -47,11 +47,11 @@
                         <div class="clearfix"></div>
                     {% endif %}
                 </div>
-                <div class="panel-body"> 
+                <div class="panel-body">
                     <p>{{ post.excerpt|raw }}</p>
                 </div>
-                <div class="panel-footer text-right">
-                    Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in 
+                <div class="panel-footer text-right nines-author">
+                    Posted {{ post.created|date }} by {{ post.user.fullname }} in
                     <a href="{{ path('nines_blog_post_category_show', {'id': post.category.id }) }}">
                         {{ post.category -}}
                     </a>.

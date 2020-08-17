@@ -9,7 +9,7 @@
     {% elseif  q %}
         <p>Your search for <i>{{ q }}</i> returned zero results.</p>
     {% endif %}
-{% endblock %} 
+{% endblock %}
 
 {% block body %}
 
@@ -50,8 +50,8 @@
                 <div class="panel-body">
                     {{ page.excerpt|raw }}
                 </div>
-                <div class="panel-footer text-right">
-                    Posted {{ page.created|date('Y-m-d H:i:s') }} by {{ page.user.fullname }}.
+                <div class="panel-footer text-right nines-author">
+                    Posted {{ page.created|date }} by {{ page.user.fullname }}.
                 </div>
             </div>
         {% endfor %}

@@ -38,8 +38,8 @@
 
     {{ post.content|raw }}
 
-    <div class="text-right">
-        Posted {{ post.created|date('Y-m-d H:i:s') }} by {{ post.user.fullname }} in
+    <div class="text-right nines-author">
+        Posted {{ post.created|date }} by {{ post.user.fullname }} in
         <a href="{{ path('nines_blog_post_category_show', {'id': post.category.id }) }}">
             {{ post.category -}}
         </a>.

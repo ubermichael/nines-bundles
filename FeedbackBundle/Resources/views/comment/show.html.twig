@@ -85,7 +85,7 @@
                 <div class="panel-body">
                     {{ note.content }}
                 </div>
-                <div class="panel-footer text-right">By {{ note.user.fullname }} on {{ note.created|date }}</div>
+                <div class="panel-footer text-right nines-author">By {{ note.user.fullname }} on {{ note.created|date }}</div>
             </div>
         {% endfor %}
     {% endif %}
