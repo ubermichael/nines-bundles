@@ -94,7 +94,8 @@ class TextExtension extends AbstractExtension {
     }
 
     public function camelTitle($name) {
-        $proper = preg_replace("/([[:lower:]])([[:upper:]])/u", '$1 $2', $name);
+        $proper = preg_replace('/([[:lower:]])([[:upper:]])/u', '$1 $2', $name);
+
         return mb_convert_case($proper, MB_CASE_TITLE);
     }
 }

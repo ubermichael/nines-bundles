@@ -164,7 +164,7 @@ class FontDownload extends Command {
         foreach ($data['variants'] as $variant) {
             $accepted = [];
 
-            if(isset($variant['local']) && is_array($variant['local'])) {
+            if (isset($variant['local']) && is_array($variant['local'])) {
                 $name = $variant['local'][1];
             } else {
                 $name = $id . '-' . $variant['fontStyle'];

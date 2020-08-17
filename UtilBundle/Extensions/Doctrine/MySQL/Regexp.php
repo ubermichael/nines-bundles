@@ -38,12 +38,12 @@ class Regexp extends FunctionNode {
         $expression = $this->expr->dispatch($sqlWalker);
         $pattern = $sqlWalker->walkStringPrimary($this->regex);
 
-        return sprintf("(%s REGEXP %s)", $expression, $pattern);
+        return sprintf('(%s REGEXP %s)', $expression, $pattern);
     }
 
     /**
      * {@inheritdoc}
-     * regexp(field, pattern) = 1
+     * regexp(field, pattern) = 1.
      */
     public function parse(Parser $parser) : void {
         $lexer = $parser->getLexer();

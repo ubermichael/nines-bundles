@@ -55,7 +55,7 @@ class Convert extends FunctionNode {
 
     /**
      * {@inheritdoc}
-     * CONVERT ( field, expr )
+     * CONVERT ( field, expr ).
      */
     public function parse(Parser $parser) : void {
         $parser->match(Lexer::T_IDENTIFIER);

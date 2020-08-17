@@ -13,7 +13,6 @@ namespace Nines\FeedbackBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
-use Nines\BlogBundle\Entity\PostStatus;
 use Nines\FeedbackBundle\Entity\CommentNote;
 
 /**
@@ -30,8 +29,8 @@ class CommentNoteRepository extends ServiceEntityRepository {
      * @param string $q
      *
      * @return Query
-     * @todo Add a $private parameter to include private/unpublished comments.
      *
+     * @todo Add a $private parameter to include private/unpublished comments.
      */
     public function fulltextQuery($q) {
         $qb = $this->createQueryBuilder('e');

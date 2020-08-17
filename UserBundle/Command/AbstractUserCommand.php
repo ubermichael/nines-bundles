@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\UserBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\BlogBundle\Entity\Page;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -48,7 +47,7 @@ abstract class AbstractUserCommand extends Command {
     protected function configure() : void {
         foreach ($this->getArgs() as $arg) {
             $mode = InputArgument::REQUIRED;
-            if(isset($arg['required']) && $arg['required'] == false) {
+            if (isset($arg['required']) && false === $arg['required']) {
                 $mode = InputArgument::OPTIONAL;
             }
             $this->addArgument($arg['name'], $mode, $arg['desc']);

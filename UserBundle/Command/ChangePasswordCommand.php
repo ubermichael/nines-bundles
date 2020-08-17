@@ -55,7 +55,7 @@ class ChangePasswordCommand extends AbstractUserCommand {
             return 1;
         }
 
-        if( ! $input->hasArgument('password')) {
+        if ( ! $input->hasArgument('password')) {
             $helper = $this->getHelper('question');
             $password = $helper->ask($input, $output, $this->question('New password: ', [new Length(['min' => 8])], true));
             $confirm = $helper->ask($input, $output, $this->question('Confirm password: ', [new Length(['min' => 8])], true));

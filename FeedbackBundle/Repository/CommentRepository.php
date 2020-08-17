@@ -29,8 +29,8 @@ class CommentRepository extends ServiceEntityRepository {
      * @param string $q
      *
      * @return Query
-     * @todo Add a $private parameter to include private/unpublished comments.
      *
+     * @todo Add a $private parameter to include private/unpublished comments.
      */
     public function fulltextQuery($q) {
         $qb = $this->createQueryBuilder('e');
