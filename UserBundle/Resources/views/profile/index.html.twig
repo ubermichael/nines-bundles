@@ -5,14 +5,22 @@
 {% block body %}
     <h1>User</h1>
 
-    <table class="table">
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            <a href="{{ path('nines_user_profile_edit') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-edit"></span> Edit</a>
+            <a href="{{ path('nines_user_profile_password') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-lock"></span> Password</a>
+        </div>
+    </div>
+    <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
                 <th>Email</th>
                 <td>{{ user.email }}</td>
             </tr>
             <tr>
-                <th>Fullname</th>
+                <th>Full Name</th>
                 <td>{{ user.fullname }}</td>
             </tr>
             <tr>
@@ -29,15 +37,12 @@
             </tr>
             <tr>
                 <th>Created</th>
-                <td>{{ user.created ? user.created|date : '' }}</td>
+                <td>{{ user.created|date }}</td>
             </tr>
             <tr>
                 <th>Updated</th>
-                <td>{{ user.updated ? user.updated|date : '' }}</td>
+                <td>{{ user.updated|date }}</td>
             </tr>
         </tbody>
     </table>
-
-    <a href="{{ path('nines_user_profile_edit') }}">Edit profile</a> | <a href="{{ path('nines_user_profile_password') }}">Change Password</a>
-
 {% endblock %}

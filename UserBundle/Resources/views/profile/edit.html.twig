@@ -7,9 +7,13 @@
 
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <div class="form-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+            <input type='submit' class="btn btn-primary" value='Save'/>
+            <a href='{{ path('nines_user_profile_index') }}' class='btn btn-warning'>Cancel</a>
+        </div>
+    </div>
     {{ form_end(form) }}
-
-    <a href="{{ path('nines_user_profile_index') }}">Back</a>
 
 {% endblock %}

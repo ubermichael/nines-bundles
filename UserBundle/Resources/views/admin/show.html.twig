@@ -5,7 +5,25 @@
 {% block body %}
     <h1>User</h1>
 
-    <table class="table">
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            <a href="{{ path('nines_user_admin_edit', {'id': user.id}) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-edit"></span> Edit</a>
+            <a href="{{ path('nines_user_admin_password', {'id': user.id}) }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-lock"></span> Password</a>
+            <form method="post" action="{{ path('nines_user_admin_delete', {'id': user.id}) }}"
+                    onsubmit="return confirm('Are you sure you want to delete this item?');"
+                    style='display: inline'>
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                <button class="btn btn-warning">
+                    <span class='glyphicon glyphicon-trash'></span> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -20,7 +38,7 @@
                 <td>{{ user.email }}</td>
             </tr>
             <tr>
-                <th>Fullname</th>
+                <th>Full Name</th>
                 <td>{{ user.fullname }}</td>
             </tr>
             <tr>
@@ -37,20 +55,13 @@
             </tr>
             <tr>
                 <th>Created</th>
-                <td>{{ user.created ? user.created|date : '' }}</td>
+                <td>{{ user.created|date }}</td>
             </tr>
             <tr>
                 <th>Updated</th>
-                <td>{{ user.updated ? user.updated|date : '' }}</td>
+                <td>{{ user.updated|date }}</td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('nines_user_admin_index') }}">Back</a>
-
-    <a href="{{ path('nines_user_admin_edit', {'id': user.id}) }}">Edit</a>
-
-    <a href="{{ path('nines_user_admin_password', {'id': user.id}) }}">Password</a>
-
-    {{ include('@NinesUser/admin/_delete_form.html.twig') }}
 {% endblock %}
