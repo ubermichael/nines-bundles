@@ -43,7 +43,7 @@ class Regexp extends FunctionNode {
 
     /**
      * {@inheritdoc}
-     * YEAR(expr).
+     * regexp(field, pattern) = 1
      */
     public function parse(Parser $parser) : void {
         $lexer = $parser->getLexer();

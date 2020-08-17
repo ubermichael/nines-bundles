@@ -8,7 +8,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\UserBundle\Tests;
+namespace Nines\UserBundle\Tests\Controller;
 
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UserBundle\Entity\User;

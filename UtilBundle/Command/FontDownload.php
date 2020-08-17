@@ -68,8 +68,9 @@ class FontDownload extends Command {
      */
     protected function render($config, $variant, $accepted) {
         return $this->twig->render('@NinesUtil/font/font.css.twig', [
+            'name' => $variant['local'][0],
             'family' => $variant['fontFamily'],
-            'locals' => $variant['local'] ?? [],
+            'locals' => $variant['local'],
             'weight' => $variant['fontWeight'],
             'formats' => $accepted,
             'style' => $variant['fontStyle'],
@@ -94,7 +95,7 @@ class FontDownload extends Command {
 
         foreach ($config['formats'] as $format) {
             $callback = [
-                'id' => $name,
+                'id' => $variant['local'][1],
                 'style' => $variant['fontStyle'],
                 'weight' => $variant['fontWeight'],
                 'ext' => $format,

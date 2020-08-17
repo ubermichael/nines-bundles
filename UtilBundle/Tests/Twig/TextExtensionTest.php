@@ -8,8 +8,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\UtilBundle\Twig;
+namespace Nines\UtilBundle\Tests\Twig;
 
+use Nines\UtilBundle\Twig\TextExtension;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TextExtensionTest extends KernelTestCase {
