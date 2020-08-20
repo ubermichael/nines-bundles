@@ -104,12 +104,11 @@ abstract class AbstractEntity {
     }
 
     /**
-     * Sets the created and updated timestamps. This method should be
-     * private or protected, but that interferes with the life cycle callbacks.
+     * Sets the created and updated timestamps.
      *
      * @ORM\PrePersist()
      */
-    final public function prePersist() : void {
+    public function prePersist() : void {
         $this->created = new DateTime();
         $this->updated = new DateTime();
     }
@@ -119,7 +118,7 @@ abstract class AbstractEntity {
      *
      * @ORM\PreUpdate()
      */
-    final public function preUpdate() : void {
+    public function preUpdate() : void {
         $this->updated = new DateTime();
     }
 }
