@@ -48,12 +48,13 @@ abstract class TermRepository extends ServiceEntityRepository {
      * Create a simple full-text search query on the term label and description.
      *
      * @param string $q
+     * @return AbstractTerm[]|Collection
      */
-    public function searchQuery($q) : Query {
+    public function searchQuery($q) {
         $qb = $this->createQueryBuilder('v');
         $qb->where('MATCH(v.label, v.description) AGAINST (:q BOOLEAN) > 0.0');
         $qb->setParameter('q', $q);
 
-        return $qb->getQuery();
+        return $qb->getQuery()->execute();
     }
 }

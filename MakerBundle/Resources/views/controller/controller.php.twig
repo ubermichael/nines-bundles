@@ -79,7 +79,7 @@ class {{ entity_class_name }}Controller extends AbstractController implements Pa
             return new JsonResponse([]);
         }
         $data = [];
-        foreach (${{ repository_var }}->typeaheadSearch($q) as $result) {
+        foreach (${{ repository_var }}->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string)$result,

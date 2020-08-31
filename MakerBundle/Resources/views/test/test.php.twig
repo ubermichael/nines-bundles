@@ -130,8 +130,12 @@ class {{ test_class_name }} extends ControllerBaseCase {
         $this->assertEquals(4, count($json));
     }
 
-
     public function testAnonSearch() : void {
+        $repo = $this->createMock({{ repository_class_name }}::class);
+        $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
+        $this->client->disableReboot();
+        $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
+
         $crawler = $this->client->request('GET', '/{{ route_name }}/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
         if(self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
@@ -139,12 +143,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
             return;
         }
 
-        $repo = $this->createMock({{ repository_class_name }}::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
-
-        $form = $crawler->selectButton('Search')->form([
+        $form = $crawler->selectButton('btn-search')->form([
             'q' => '{{ entity_var_singular }}',
         ]);
 
@@ -154,16 +153,16 @@ class {{ test_class_name }} extends ControllerBaseCase {
     }
 
     public function testUserSearch() : void {
-        $crawler = $this->client->request('GET', '/{{ route_name }}/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
-
-        $this->login('user.user');
         $repo = $this->createMock({{ repository_class_name }}::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
         $this->client->disableReboot();
         $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
 
-        $form = $crawler->selectButton('Search')->form([
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/{{ route_name }}/search');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('btn-search')->form([
             'q' => '{{ entity_var_singular }}',
         ]);
 
@@ -173,16 +172,16 @@ class {{ test_class_name }} extends ControllerBaseCase {
     }
 
     public function testAdminSearch() : void {
-        $crawler = $this->client->request('GET', '/{{ route_name }}/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
-
-        $this->login('user.admin');
         $repo = $this->createMock({{ repository_class_name }}::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
         $this->client->disableReboot();
         $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
 
-        $form = $crawler->selectButton('Search')->form([
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/{{ route_name }}/search');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('btn-search')->form([
             'q' => '{{ entity_var_singular }}',
         ]);
 
@@ -363,7 +362,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
                 {%- set label = mapping['columnName'] | replace({'_': ' '}) | title | replace({' ': ''}) -%}
-                $this->assertEquals(1, $responseCrawler->filter('td:contains("New {{ label }}")')->count());
+                $this->assertEquals(1, $responseCrawler->filter('td:contains("{{ label }}")')->count());
             {% endif -%}
         {% endfor %}
     }
@@ -375,6 +374,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
     public function testAdminDelete() {
         $repo = self::$container->get({{ repository_class_name }}::class);
         $preCount = count($repo->findAll());
+
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/{{ route_name }}/1');
         $form = $crawler->selectButton('Delete')->form();
