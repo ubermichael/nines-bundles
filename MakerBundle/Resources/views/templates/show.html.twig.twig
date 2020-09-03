@@ -26,69 +26,8 @@
     </div>
     {{ "{% endif %}" }}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            {%  for field in mapped_field_names -%}
-            <tr>
-                <th>{{ field|camel_title }}</th>
-                <td>{% apply spaceless %}
-                    {% if field in field_mappings|keys %}
-                        {% set mapping = field_mappings[field] %}
-                        {% if mapping.type in ['datetime'] %}
-                            {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date }}{% endif %}' }}
-                        {% elseif mapping.type in ['date'] %}
-                            {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}
-                        {% elseif mapping.type in ['time'] %}
-                            {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'H:i:s\') }}{% endif %}' }}
-                        {% elseif mapping.type in ['array'] %}
-                            {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|join(\', \') }}{% endif %}' }}
-                        {% elseif mapping.type in ['boolean'] %}
-                            {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}Yes{% else %}No{% endif %}' }}
-                        {% else %}
-                            {{ '{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' }}' }}
-                        {% endif %}
-                    {% else %} {# if field in field_mappings#}
-                        {% set relation = relations[field] %}
-                        {% set association = associations[field] %}
-                        {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
-                        <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id": ' ~ entity_twig_var_singular ~ '.' ~ field ~ '.id}) }}' }}'>
-                            {{- '{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' }}' -}}
-                        </a>
-                        {% elseif association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_MANY') %}
-                            <ul>
-                                {{ '{% for ' ~ relation['entity_twig_var_singular'] ~ ' in ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %} '}}
-                                <li>
-                                    <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id":' ~ relation['entity_twig_var_singular'] ~ '.id }) }}' }}'>
-                                        {{ '{{ ' ~ relation['entity_twig_var_singular'] ~ ' }}' }}
-                                    </a>
-                                </li>
-                                {{ '{% endfor %}' }}
-                            </ul>
-                        {% elseif association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_MANY') %}
-                            <ul>
-                                {{ '{% for ' ~ relation['entity_twig_var_singular'] ~ ' in ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %} '}}
-                                <li>
-                                    <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id":' ~ relation['entity_twig_var_singular'] ~ '.id }) }}' }}'>
-                                        {{ '{{ ' ~ relation['entity_twig_var_singular'] ~ ' }}' }}
-                                    </a>
-                                </li>
-                                {{ '{% endfor %}' }}
-                            </ul>
-                        {% endif %}
-                    {% endif %}
-                {% endapply %}</td>
-            </tr>
-        {% endfor %}
-        <tr>
-            <th>Created</th>
-            <td>{{ '{{ ' ~ entity_twig_var_singular ~ '.created|date }}' }}</td>
-        </tr>
-        <tr>
-            <th>Updated</th>
-            <td>{{ '{{ ' ~ entity_twig_var_singular ~ '.updated|date }}' }}</td>
-        </tr>
-        </tbody>
-    </table>
+    {{ "{% embed '" ~ route_name ~ "/partial/detail.html.twig' %}" }}
+    {{ "{% endembed %}" }}
 
 {{ "{% endblock %}" }}
 {% endautoescape %}

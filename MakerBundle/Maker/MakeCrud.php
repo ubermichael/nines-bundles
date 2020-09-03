@@ -28,6 +28,9 @@ class MakeCrud extends AbstractNinesMaker {
             '@NinesMaker/templates/new_popup.html.twig.twig' => 'templates/' . $params['templates_path'] . '/new_popup.html.twig',
             '@NinesMaker/templates/edit.html.twig.twig' => 'templates/' . $params['templates_path'] . '/edit.html.twig',
             '@NinesMaker/templates/search.html.twig.twig' => 'templates/' . $params['templates_path'] . '/search.html.twig',
+            '@NinesMaker/templates/partial/table.html.twig.twig' => 'templates/' . $params['templates_path'] . '/partial/table.html.twig',
+            '@NinesMaker/templates/partial/form.html.twig.twig' => 'templates/' . $params['templates_path'] . '/partial/form.html.twig',
+            '@NinesMaker/templates/partial/detail.html.twig.twig' => 'templates/' . $params['templates_path'] . '/partial/detail.html.twig',
         ];
     }
 
