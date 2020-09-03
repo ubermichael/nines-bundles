@@ -48,6 +48,7 @@ abstract class TermRepository extends ServiceEntityRepository {
      * Create a simple full-text search query on the term label and description.
      *
      * @param string $q
+     *
      * @return AbstractTerm[]|Collection
      */
     public function searchQuery($q) {

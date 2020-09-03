@@ -100,7 +100,7 @@ class UserManager {
         $this->afterLogout = $afterLogout;
     }
 
-    public function setSender($sender) {
+    public function setSender($sender) : void {
         $this->sender = $sender;
     }
 
