@@ -1,6 +1,6 @@
 parameters:
     # comment notifications
-    nines_feedback.sender: ~
+    nines_feedback.sender: 'donotreply@%router.request_context.host%'
     nines_feedback.recipient: ~
     nines_feedback.subject: New feedback received
 
