@@ -79,6 +79,11 @@ class UserManager {
     private $afterLogout;
 
     /**
+     * @var string
+     */
+    private $sender;
+
+    /**
      * UserManager constructor.
      *
      * @param $afterLogin
@@ -93,6 +98,10 @@ class UserManager {
         $this->afterRequest = $afterRequest;
         $this->afterReset = $afterReset;
         $this->afterLogout = $afterLogout;
+    }
+
+    public function setSender($sender) {
+        $this->sender = $sender;
     }
 
     /**
@@ -242,7 +251,7 @@ class UserManager {
      */
     public function sendReset(User $user, array $data) : void {
         $email = new TemplatedEmail();
-        $email->from('noreply@host.com');
+        $email->from($this->sender);
         $email->to($user->getEmail());
         $email->subject('Password Reset Request');
 
