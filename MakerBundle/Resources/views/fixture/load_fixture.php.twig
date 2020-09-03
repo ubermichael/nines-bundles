@@ -52,10 +52,9 @@ class {{ fixture_class_name }} extends Fixture {{ implements }} {
 
             $em->persist($fixture);
             $this->setReference('{{ entity_class_name|lower }}.' . $i, $fixture);
-}
-
-$em->flush();
-}
+      }
+      $em->flush();
+    }
 
 {% if fkeys|length > 0 %}
     /**
@@ -68,7 +67,7 @@ $em->flush();
         {% set association = associations[field] %}
             {{ relation['fixture_class_name'] }}::class,
     {% endfor %}
-    ];
+      ];
     }
 {% endif %}
 
