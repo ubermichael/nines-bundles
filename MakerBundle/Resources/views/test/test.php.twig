@@ -297,7 +297,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/{{ route_name }}/new');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $form = $formCrawler->selectButton('Create')->form([
+        $form = $formCrawler->selectButton('Save')->form([
         {% for field in mapped_field_names %}
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
@@ -336,7 +336,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/{{ route_name }}/new_popup');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $form = $formCrawler->selectButton('Create')->form([
+        $form = $formCrawler->selectButton('Save')->form([
         {% for field in mapped_field_names %}
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
