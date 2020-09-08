@@ -30,8 +30,7 @@ class {{ form_class_name }} extends AbstractType {
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         {% for field in mapped_field_names %}
             {%- if field in field_mappings|keys %}
             {%- set mapping = field_mappings[field] %}
@@ -53,6 +52,16 @@ class {{ form_class_name }} extends AbstractType {
                         'help_block' => 'A URL link to the specificed publication',
                     ],
                 ]);
+                {%- elseif mapping.type in ['date', 'datetime'] %}
+                $builder->add('{{ field }}', DateType::class, array(
+                    'label' => '{{ label }}',
+                    'required' => {% if mapping['nullable'] == 1 %}false{% else %}true{% endif %},
+                    'widget' => 'single_text',
+                    'html5' => true,
+                    'attr' => array(
+                        'help_block' => '',
+                    ),
+                ));
                 {%- elseif mapping.type in ['string'] %}
                 $builder->add('{{ field }}', TextType::class, array(
                     'label' => '{{ label }}',
