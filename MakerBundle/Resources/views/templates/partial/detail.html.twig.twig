@@ -34,9 +34,11 @@
               <tr>
                 <th>{{ label }}</th>
                 <td>
+                {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}' }}
                   <a href='{{ '{{ path("' ~ relation['route_name'] ~ '_show", {"id": ' ~ entity_twig_var_singular ~ '.' ~ field ~ '.id}) }}' }}'>
                       {{- '{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' }}' -}}
                   </a>
+                  {{ '{% endif %}' }}
                 </td>
               </tr>
           {% endfor -%}
