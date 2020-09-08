@@ -1,4 +1,4 @@
-<?php
+{{ entity_twig_var_singular }}[{{ field }}]<?php
 
 namespace {{ namespace }}\Tests\Controller;
 
@@ -223,13 +223,13 @@ class {{ test_class_name }} extends ControllerBaseCase {
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
                 {%- set label = mapping['columnName'] | replace({'_': ' '}) | title | replace({' ': ''}) -%}
-                '{{ entity_var_singular }}[{{ field }}]' => 'Updated {{ label }}',
+                '{{ entity_twig_var_singular }}[{{ field }}]' => 'Updated {{ label }}',
             {% else -%}
                 {% set relation = relations[field] %}
                 {% set association = associations[field] %}
                 {% set label = relation['entity_class_name'] %}
                 {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
-                    '{{ entity_var_singular }}[{{ field }}]' => $this->getReference('{{field}}.1'),
+                    '{{ entity_twig_var_singular }}[{{ field }}]' => $this->getReference('{{field}}.1'),
                 {% endif %}
             {% endif -%}
         {%- endfor %}
@@ -302,13 +302,13 @@ class {{ test_class_name }} extends ControllerBaseCase {
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
                 {%- set label = mapping['columnName'] | replace({'_': ' '}) | title | replace({' ': ''}) -%}
-                '{{ entity_var_singular }}[{{ field }}]' => 'New {{ label }}',
+                '{{ entity_twig_var_singular }}[{{ field }}]' => 'New {{ label }}',
             {% else -%}
                 {% set relation = relations[field] %}
                 {% set association = associations[field] %}
                 {% set label = relation['entity_class_name'] %}
                 {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
-                    '{{ entity_var_singular }}[{{ field }}]' => $this->getReference('{{field}}.1'),
+                    '{{ entity_twig_var_singular }}[{{ field }}]' => $this->getReference('{{field}}.1'),
                 {% endif %}
             {% endif -%}
         {%- endfor %}
@@ -341,13 +341,13 @@ class {{ test_class_name }} extends ControllerBaseCase {
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
                 {%- set label = mapping['columnName'] | replace({'_': ' '}) | title | replace({' ': ''}) -%}
-                '{{ entity_var_singular }}[{{ field }}]' => 'New {{ label }}',
+                '{{ entity_twig_var_singular }}[{{ field }}]' => 'New {{ label }}',
             {% else -%}
                 {% set relation = relations[field] %}
                 {% set association = associations[field] %}
                 {% set label = relation['entity_class_name'] %}
                 {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
-                    '{{ entity_var_singular }}[{{ field }}]' => $this->getReference('{{field}}.1',
+                    '{{ entity_twig_var_singular }}[{{ field }}]' => $this->getReference('{{field}}.1',
                 {% endif %}
             {% endif -%}
         {%- endfor %}

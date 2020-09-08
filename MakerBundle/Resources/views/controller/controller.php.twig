@@ -111,7 +111,7 @@ class {{ entity_class_name }}Controller extends AbstractController implements Pa
         }
 
         return [
-            '{{ entity_var_singular }}' => ${{ entity_var_singular }},
+            '{{ entity_twig_var_singular }}' => ${{ entity_var_singular }},
             'form' => $form->createView(),
         ];
     }
