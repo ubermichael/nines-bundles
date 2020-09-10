@@ -29,6 +29,7 @@ class TextExtension extends AbstractExtension {
             new TwigFilter('class_name', [$this, 'className']),
             new TwigFilter('short_name', [$this, 'shortName']),
             new TwigFilter('camel_title', [$this, 'camelTitle']),
+            new TwigFilter('byte_size', [$this, 'byteSize']),
         ];
     }
 
@@ -97,5 +98,16 @@ class TextExtension extends AbstractExtension {
         $proper = preg_replace('/([[:lower:]])([[:upper:]])/u', '$1 $2', $name);
 
         return mb_convert_case($proper, MB_CASE_TITLE);
+    }
+
+    public function byteSize($bytes) {
+        if( ! $bytes) {
+            return '0b';
+        }
+        $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
+        $exp = floor(log($bytes, 1024));
+        $est = round($bytes / 1024 ** $exp, 1);
+
+        return $est . $units[$exp];
     }
 }
