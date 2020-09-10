@@ -2,16 +2,17 @@
 
 namespace {{ namespace }}\Form;
 
+{% set fkeys = associations|filter(v => v['type'] in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE'),constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE')] ) -%}
+
 use {{ entity_full_class_name }};
-{% for field in mapped_field_names %}
-    {%- if field not in field_mappings|keys %}
-    {%- set relation = relations[field] %}
-    use {{ relation['entity_full_class_name'] }};
-    {%- endif %}
+{% for field in fkeys|keys %}
+    {% set relation = relations[field] %}
+use {{ relation['entity_full_class_name'] }};
 {%- endfor %}
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -30,10 +31,8 @@ class {{ form_class_name }} extends AbstractType {
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         {% for field in mapped_field_names %}
-            {%- if field in field_mappings|keys %}
             {%- set mapping = field_mappings[field] %}
             {% set label = mapping['columnName']|replace({'_': ' '}) | title %}
                 {%- if mapping.type in ['array'] %}
@@ -50,9 +49,19 @@ class {{ form_class_name }} extends AbstractType {
                     'by_reference' => false,
                     'attr' => [
                         'class' => 'collection collection-simple',
-                        'help_block' => 'A URL link to the specificed publication',
+                        'help_block' => '',
                     ],
                 ]);
+                {%- elseif mapping.type in ['date', 'datetime'] %}
+                $builder->add('{{ field }}', DateType::class, array(
+                    'label' => '{{ label }}',
+                    'required' => {% if mapping['nullable'] == 1 %}false{% else %}true{% endif %},
+                    'widget' => 'single_text',
+                    'html5' => true,
+                    'attr' => array(
+                        'help_block' => '',
+                    ),
+                ));
                 {%- elseif mapping.type in ['string'] %}
                 $builder->add('{{ field }}', TextType::class, array(
                     'label' => '{{ label }}',
@@ -94,12 +103,14 @@ class {{ form_class_name }} extends AbstractType {
                     ),
                 ]);
                 {%- endif %}
+            {% endfor %}
 
-            {% else %}
-            {% set relation = relations[field] %}
-            {% set association = associations[field] %}
-            {% set label = relation['entity_class_name'] %}
-                {% if association['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE') %}
+            {% for field in fkeys|keys %}
+                {% set relation = relations[field] %}
+                {% set association = associations[field] %}
+                {% set label = relation['entity_class_name'] %}
+
+                {% if association['type'] in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE'), constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE')] %}
                     $builder->add('{{ field }}', Select2EntityType::class, [
                         'label' => '{{ label }}',
                         'class' => {{ relation['entity_class_name'] }}::class,
@@ -125,8 +136,6 @@ class {{ form_class_name }} extends AbstractType {
                         ),
                     ]);
                 {% endif %}
-            {% endif %}
-
 
         {%- endfor %}
 
