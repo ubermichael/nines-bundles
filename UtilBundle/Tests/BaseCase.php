@@ -32,6 +32,8 @@ abstract class BaseCase extends WebTestCase {
      */
     protected $references;
 
+    protected $cleanup;
+
     /**
      * Get a list of fixture classes to load.
      */
@@ -63,6 +65,21 @@ abstract class BaseCase extends WebTestCase {
         return $this->entityManager->find(get_class($object), $object->getId());
     }
 
+    public function cleanup($files) {
+        if( ! is_array($files)) {
+            $files = [$files];
+        }
+        foreach($files as $file) {
+            if($file instanceof \SplFileInfo) {
+                $this->cleanup[] = $file->getRealPath();
+            } else if(is_string($file)) {
+                $this->cleanup[] = $file;
+            } else {
+                throw new \Exception("Cannot clean up " . get_class($file));
+            }
+        }
+    }
+
     /**
      * Set up the container and fixtures.
      */
@@ -71,6 +88,7 @@ abstract class BaseCase extends WebTestCase {
         self::bootKernel();
         $this->entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->references = $this->loadFixtures($this->fixtures())->getReferenceRepository();
+        $this->cleanup = [];
     }
 
     /**
@@ -85,5 +103,10 @@ abstract class BaseCase extends WebTestCase {
             $this->entityManager = null;
         }
         parent::tearDown();
+        foreach($this->cleanup as $path) {
+            if(file_exists($path)) {
+                unlink($path);
+            }
+        }
     }
 }
