@@ -56,7 +56,7 @@ return [
     // ...
     Nines\BlogBundle\NinesBlogBundle::class => ['all' => true],
     Nines\DublinCoreBundle\NinesDublinCoreBundle::class => ['all' => true],
-    Nines\EditorBundle\NinesEditorBundle::class => ['all' => true],
+    Nines\EditorBundle\NinesMediaBundle::class => ['all' => true],
     Nines\FeedbackBundle\NinesFeedbackBundle::class => ['all' => true],
     Nines\UserBundle\NinesUserBundle::class => ['all' => true],
     Nines\UtilBundle\NinesUtilBundle::class => ['all' => true],

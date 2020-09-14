@@ -44,7 +44,7 @@ class AppKernel extends Kernel
         $bundles = [
 
             // ...
-            new Nines\EditorBundle\NinesEditorBundle(),
+            new Nines\EditorBundle\NinesMediaBundle(),
         ];
 
         // ...

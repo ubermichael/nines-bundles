@@ -23,6 +23,7 @@
     "require": {
         "php": ">=7.2.0",
         "ext-json": "*",
+        "ext-imagick": "*",
         "egulias/email-validator": "^2.1",
         "guzzlehttp/guzzle": "^6.5",
         "knplabs/knp-menu-bundle": "^2.0",
