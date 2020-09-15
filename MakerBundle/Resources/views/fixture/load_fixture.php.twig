@@ -47,7 +47,7 @@ class {{ fixture_class_name }} extends Fixture {{ implements }} {
             {% set relation = relations[field] %}
             {% set association = associations[field] %}
             {% set label = relation['entity_class_name'] %}
-            $fixture->set{{field|capitalize}}($this->getReference('{{field|lower}}.1'));
+            $fixture->set{{field|capitalize}}($this->getReference('{{field|lower}}.' . $i));
         {% endfor -%}
 
             $em->persist($fixture);

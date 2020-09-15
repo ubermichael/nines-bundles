@@ -136,7 +136,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
         $repo = $this->createMock({{ repository_class_name }}::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
+        $this->client->getContainer()->set('test.'.{{ repository_class_name }}::class, $repo);
 
         $crawler = $this->client->request('GET', '/{{ route_name }}/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -157,7 +157,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
         $repo = $this->createMock({{ repository_class_name }}::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
+        $this->client->getContainer()->set('test.'.{{ repository_class_name }}::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/{{ route_name }}/search');
@@ -175,7 +175,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
         $repo = $this->createMock({{ repository_class_name }}::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('{{ entity_class_name|lower }}.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set({{ repository_class_name }}::class, $repo);
+        $this->client->getContainer()->set('test.'.{{ repository_class_name }}::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/{{ route_name }}/search');
