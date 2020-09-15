@@ -361,7 +361,7 @@ class {{ test_class_name }} extends ControllerBaseCase {
             {%- if field in field_mappings|keys %}
                 {%- set mapping = field_mappings[field] %}
                 {%- set label = mapping['columnName'] | replace({'_': ' '}) | title | replace({' ': ''}) -%}
-                $this->assertEquals(1, $responseCrawler->filter('td:contains("{{ label }}")')->count());
+                $this->assertEquals(1, $responseCrawler->filter('td:contains("New {{ label }}")')->count());
             {% endif -%}
         {% endfor %}
     }
