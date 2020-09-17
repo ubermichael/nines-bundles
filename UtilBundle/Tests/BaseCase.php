@@ -32,6 +32,9 @@ abstract class BaseCase extends WebTestCase {
      */
     protected $references;
 
+    /**
+     * @var array|string[]|SplFileInfo[]
+     */
     protected $cleanup;
 
     /**
@@ -65,7 +68,7 @@ abstract class BaseCase extends WebTestCase {
         return $this->entityManager->find(get_class($object), $object->getId());
     }
 
-    public function cleanup($files) {
+    protected function cleanup($files) {
         if( ! is_array($files)) {
             $files = [$files];
         }
