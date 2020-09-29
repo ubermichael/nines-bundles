@@ -48,7 +48,7 @@ class {{ repository_class_name }} extends ServiceEntityRepository
     }
 
     {% for index in indexes %}
-        {%- if 'fulltext' in index['flags'] %}
+        {%- if index['flags'] is defined and 'fulltext' in index['flags'] %}
             {%- set name -%}
                 {%- for column in index['columns'] %}
                     {{- column | capitalize -}}
