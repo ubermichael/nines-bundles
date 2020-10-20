@@ -33,7 +33,7 @@ abstract class BaseCase extends WebTestCase {
     protected $references;
 
     /**
-     * @var array|string[]|SplFileInfo[]
+     * @var array|SplFileInfo[]|string[]
      */
     protected $cleanup;
 
@@ -68,17 +68,19 @@ abstract class BaseCase extends WebTestCase {
         return $this->entityManager->find(get_class($object), $object->getId());
     }
 
-    protected function cleanup($files) {
-        if( ! is_array($files)) {
+    protected function cleanup($files) : void {
+        if ( ! is_array($files)) {
             $files = [$files];
         }
-        foreach($files as $file) {
-            if($file instanceof \SplFileInfo) {
+        foreach ($files as $file) {
+            if ($file instanceof \SplFileInfo) {
                 $this->cleanup[] = $file->getRealPath();
-            } else if(is_string($file)) {
-                $this->cleanup[] = $file;
             } else {
-                throw new \Exception("Cannot clean up " . get_class($file));
+                if (is_string($file)) {
+                    $this->cleanup[] = $file;
+                } else {
+                    throw new \Exception('Cannot clean up ' . get_class($file));
+                }
             }
         }
     }
@@ -106,8 +108,8 @@ abstract class BaseCase extends WebTestCase {
             $this->entityManager = null;
         }
         parent::tearDown();
-        foreach($this->cleanup as $path) {
-            if(file_exists($path)) {
+        foreach ($this->cleanup as $path) {
+            if (file_exists($path)) {
                 unlink($path);
             }
         }

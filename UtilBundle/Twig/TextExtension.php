@@ -101,7 +101,7 @@ class TextExtension extends AbstractExtension {
     }
 
     public function byteSize($bytes) {
-        if( ! $bytes) {
+        if ( ! $bytes) {
             return '0b';
         }
         $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
