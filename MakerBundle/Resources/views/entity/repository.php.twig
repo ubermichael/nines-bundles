@@ -63,7 +63,7 @@ class {{ repository_class_name }} extends ServiceEntityRepository
     public function search{{ name }}Query($q) {
         $qb = $this->createQueryBuilder('{{ entity_var_singular }}');
         $qb->addSelect('MATCH ({% for column in index['columns'] %}{{ entity_var_singular }}.{{ column }}{% if not loop.last %}, {% endif %}{% endfor %}) AGAINST(:q BOOLEAN) as HIDDEN score');
-        $qb->andWhere('score > 0');
+        $qb->andHaving('score > 0');
         $qb->orderBy('score', 'DESC');
         $qb->setParameter('q', $q);
 
