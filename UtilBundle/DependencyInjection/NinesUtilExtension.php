@@ -27,11 +27,17 @@ class NinesUtilExtension extends Extension {
      */
     public function load(array $configs, ContainerBuilder $container) : void {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
         $definition = $container->getDefinition(Text::class);
         $definition->replaceArgument('$defaultTrimLength', $config['trim_length']);
+
+        $map = [];
+        foreach ($config['routing'] as $routing) {
+            $map[$routing['class']] = $routing['route'];
+        }
+        $container->setParameter('nines_util.routing', $map);
     }
 }

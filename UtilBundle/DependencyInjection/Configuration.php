@@ -25,6 +25,13 @@ class Configuration implements ConfigurationInterface {
             ->getRootNode()
             ->children()
             ->scalarNode('trim_length')->defaultValue(50)->end()
+            ->arrayNode('routing')
+            ->prototype('array')
+            ->children()
+            ->scalarNode('class')->end()
+            ->scalarNode('route')->end()
+            ->end()
+            ->end()
             ->end()
             ->end()
         ;
