@@ -36,7 +36,7 @@ class AdminController extends AbstractController {
 
     /**
      * @Route("/", name="nines_user_admin_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function index(UserRepository $userRepository) : array {
         return [
@@ -45,8 +45,8 @@ class AdminController extends AbstractController {
     }
 
     /**
-     * @Route("/new", name="nines_user_admin_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="nines_user_admin_new", methods={"GET", "POST"})
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -75,7 +75,7 @@ class AdminController extends AbstractController {
 
     /**
      * @Route("/{id}", name="nines_user_admin_show", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function show(User $user) : array {
         return [
@@ -84,8 +84,8 @@ class AdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/edit", name="nines_user_admin_edit", methods={"GET","POST"})
-     * @Template()
+     * @Route("/{id}/edit", name="nines_user_admin_edit", methods={"GET", "POST"})
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -108,8 +108,8 @@ class AdminController extends AbstractController {
     }
 
     /**
-     * @Route("/{id}/password", name="nines_user_admin_password", methods={"GET","POST"})
-     * @Template()
+     * @Route("/{id}/password", name="nines_user_admin_password", methods={"GET", "POST"})
+     * @Template
      *
      * @return array|RedirectResponse
      */

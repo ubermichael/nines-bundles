@@ -39,7 +39,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
      *
      * @Route("/", name="nines_blog_post_category_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -70,6 +70,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(PostCategory::class);
         $data = [];
+
         foreach ($repo->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -88,7 +89,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
      * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new", name="nines_blog_post_category_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $postCategory = new PostCategory();
@@ -119,7 +120,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
      * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new_popup", name="nines_blog_post_category_new_popup", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function newPopupAction(Request $request) {
         return $this->newAction($request);
@@ -132,7 +133,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
      *
      * @Route("/{id}", name="nines_blog_post_category_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Request $request, PostCategory $postCategory) {
         $repo = $this->getDoctrine()->getManager()->getRepository(PostCategory::class);
@@ -154,7 +155,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
      * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="nines_blog_post_category_edit", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, PostCategory $postCategory) {
         $editForm = $this->createForm(PostCategoryType::class, $postCategory);

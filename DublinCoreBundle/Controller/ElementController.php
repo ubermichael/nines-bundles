@@ -38,7 +38,7 @@ class ElementController extends AbstractController implements PaginatorAwareInte
      *
      * @Route("/", name="element_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -59,9 +59,9 @@ class ElementController extends AbstractController implements PaginatorAwareInte
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_DC_ADMIN")
-     * @Route("/new", name="element_new", methods={"GET","POST"})
+     * @Route("/new", name="element_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $element = new Element();
@@ -91,7 +91,7 @@ class ElementController extends AbstractController implements PaginatorAwareInte
      *
      * @Route("/{id}", name="element_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Element $element) {
         return [
@@ -105,9 +105,9 @@ class ElementController extends AbstractController implements PaginatorAwareInte
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_DC_ADMIN")
-     * @Route("/{id}/edit", name="element_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="element_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, Element $element) {
         $editForm = $this->createForm(ElementType::class, $element);

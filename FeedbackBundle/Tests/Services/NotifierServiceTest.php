@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\FeedbackBundle\Tests\Services;
 
-use DateTime;
+use DateTimeImmutable;
 use Exception;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Services\CommentService;
@@ -45,7 +45,7 @@ class NotifierServiceTest extends ServiceBaseCase {
         $comment = $this->createMock(Comment::class);
         $comment->method('getFullname')->willReturn('Alicia');
         $comment->method('getFollowUp')->willReturn(false);
-        $comment->method('getCreated')->willReturn(new DateTime());
+        $comment->method('getCreated')->willReturn(new DateTimeImmutable());
         $comment->method('getContent')->willReturn('This is a comment.');
 
         return $comment;
@@ -53,7 +53,7 @@ class NotifierServiceTest extends ServiceBaseCase {
 
     private function getMockMailer() {
         $mailer = $this->createMock(MailerInterface::class);
-        $mailer->method('send')->will($this->returnArgument(0));
+        $mailer->method('send')->willReturnArgument(0);
 
         return $mailer;
     }

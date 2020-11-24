@@ -37,6 +37,7 @@ class NinesFeedbackExtension extends Extension {
         $container->setParameter('nines_feedback.recipients', $config['recipients']);
 
         $map = [];
+
         foreach ($config['routing'] as $routing) {
             $map[$routing['class']] = $routing['route'];
         }

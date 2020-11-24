@@ -30,7 +30,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController {
     /**
      * @Route("/login", name="nines_user_security_login")
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -52,7 +52,7 @@ class SecurityController extends AbstractController {
 
     /**
      * @Route("/request", name="nines_user_security_request_token", methods={"GET", "POST"})
-     * @Template()
+     * @Template
      * @IsGranted("IS_AUTHENTICATED_ANONYMOUSLY")
      *
      * @throws Exception
@@ -113,6 +113,7 @@ class SecurityController extends AbstractController {
 
             return $this->redirectToRoute('nines_user_security_login');
         }
+
         foreach ($form->getErrors(true, true) as $error) {
             $this->addFlash('error', $error->getMessage());
         }

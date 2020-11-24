@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class ProfileController extends AbstractController {
     /**
      * @Route("/", name="nines_user_profile_index", methods={"GET"})
-     * @Template()
+     * @Template
      */
     public function index() : array {
         $user = $this->getUser();
@@ -38,8 +38,8 @@ class ProfileController extends AbstractController {
     }
 
     /**
-     * @Route("/edit", name="nines_user_profile_edit", methods={"GET","POST"})
-     * @Template()
+     * @Route("/edit", name="nines_user_profile_edit", methods={"GET", "POST"})
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -64,8 +64,8 @@ class ProfileController extends AbstractController {
     }
 
     /**
-     * @Route("/password", name="nines_user_profile_password", methods={"GET","POST"})
-     * @Template()
+     * @Route("/password", name="nines_user_profile_password", methods={"GET", "POST"})
+     * @Template
      *
      * @return array|RedirectResponse
      */

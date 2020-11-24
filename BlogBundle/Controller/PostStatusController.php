@@ -39,7 +39,7 @@ class PostStatusController extends AbstractController implements PaginatorAwareI
      *
      * @Route("/", name="nines_blog_post_status_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -70,6 +70,7 @@ class PostStatusController extends AbstractController implements PaginatorAwareI
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(PostStatus::class);
         $data = [];
+
         foreach ($repo->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -86,9 +87,9 @@ class PostStatusController extends AbstractController implements PaginatorAwareI
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="nines_blog_post_status_new", methods={"GET","POST"})
+     * @Route("/new", name="nines_blog_post_status_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $postStatus = new PostStatus();
@@ -117,9 +118,9 @@ class PostStatusController extends AbstractController implements PaginatorAwareI
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new_popup", name="nines_blog_post_status_new_popup", methods={"GET","POST"})
+     * @Route("/new_popup", name="nines_blog_post_status_new_popup", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newPopupAction(Request $request) {
         return $this->newAction($request);
@@ -132,7 +133,7 @@ class PostStatusController extends AbstractController implements PaginatorAwareI
      *
      * @Route("/{id}", name="nines_blog_post_status_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(PostStatus $postStatus) {
         return [
@@ -146,9 +147,9 @@ class PostStatusController extends AbstractController implements PaginatorAwareI
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="nines_blog_post_status_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="nines_blog_post_status_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, PostStatus $postStatus) {
         $editForm = $this->createForm(PostStatusType::class, $postStatus);

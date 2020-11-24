@@ -54,6 +54,7 @@ class MakeCrud extends AbstractNinesMaker {
 
                 continue;
             }
+
             foreach ($this->mapping($params) as $src => $dst) {
                 $data = $this->twig->render($src, $params);
                 $generator->dumpFile($dst, $data);

@@ -90,19 +90,19 @@ class UserManagerTest extends ServiceBaseCase {
 
     public function testGeneratePassword() : void {
         $password = $this->manager->generatePassword();
-        $this->assertGreaterThan(20, strlen($password));
+        $this->assertGreaterThan(20, mb_strlen($password));
     }
 
     public function testGenerateToken() : void {
         $token = $this->manager->generateToken();
-        $this->assertGreaterThan(20, strlen($token));
+        $this->assertGreaterThan(20, mb_strlen($token));
     }
 
     public function testReset() : void {
         /** @var User $user */
         $user = $this->references->getReference('user.inactive');
         $this->manager->requestReset($user);
-        $this->assertGreaterThan(20, strlen($user->getResetToken()));
+        $this->assertGreaterThan(20, mb_strlen($user->getResetToken()));
         $this->assertGreaterThan(new DateTimeImmutable(), $user->getResetExpiry());
     }
 
@@ -110,14 +110,14 @@ class UserManagerTest extends ServiceBaseCase {
         /** @var User $user */
         $user = $this->references->getReference('user.user');
         $encoded = $this->manager->encodePassword($user, 'abcdefg');
-        $this->assertGreaterThan(30, strlen($encoded));
+        $this->assertGreaterThan(30, mb_strlen($encoded));
     }
 
     public function testChangePassword() : void {
         /** @var User $user */
         $user = $this->references->getReference('user.user');
         $this->manager->changePassword($user, 'abcdefg');
-        $this->assertGreaterThan(30, strlen($user->getPassword()));
+        $this->assertGreaterThan(30, mb_strlen($user->getPassword()));
     }
 
     public function testValidatePassword() : void {

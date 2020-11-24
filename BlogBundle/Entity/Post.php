@@ -20,7 +20,7 @@ use Nines\UtilBundle\Entity\ContentExcerptTrait;
  * A blog post.
  *
  * @ORM\Table(name="blog_post", indexes={
- *   @ORM\Index(name="blog_post_content", columns={"title","searchable"}, flags={"fulltext"})
+ *     @ORM\Index(name="blog_post_content", columns={"title", "searchable"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostRepository")
  * @ORM\HasLifecycleCallbacks
@@ -122,7 +122,7 @@ class Post extends AbstractEntity implements ContentEntityInterface {
      *
      * @return Post
      */
-    public function setCategory(PostCategory $category = null) {
+    public function setCategory(?PostCategory $category = null) {
         $this->category = $category;
 
         return $this;
@@ -144,7 +144,7 @@ class Post extends AbstractEntity implements ContentEntityInterface {
      *
      * @return Post
      */
-    public function setStatus(PostStatus $status = null) {
+    public function setStatus(?PostStatus $status = null) {
         $this->status = $status;
 
         return $this;
@@ -166,7 +166,7 @@ class Post extends AbstractEntity implements ContentEntityInterface {
      *
      * @return Post
      */
-    public function setUser(User $user = null) {
+    public function setUser(?User $user = null) {
         $this->user = $user;
 
         return $this;

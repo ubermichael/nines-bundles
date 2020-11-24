@@ -38,7 +38,7 @@ class PostController extends AbstractController implements PaginatorAwareInterfa
      *
      * @Route("/", name="nines_blog_post_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
         $em = $this->getDoctrine()->getManager();
@@ -58,7 +58,7 @@ class PostController extends AbstractController implements PaginatorAwareInterfa
      *
      * @Route("/search", name="nines_blog_post_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function searchAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -83,9 +83,9 @@ class PostController extends AbstractController implements PaginatorAwareInterfa
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="nines_blog_post_new", methods={"GET","POST"})
+     * @Route("/new", name="nines_blog_post_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $post = new Post();
@@ -116,7 +116,7 @@ class PostController extends AbstractController implements PaginatorAwareInterfa
      *
      * @Route("/{id}", name="nines_blog_post_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Post $post) {
         return [
@@ -130,9 +130,9 @@ class PostController extends AbstractController implements PaginatorAwareInterfa
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="nines_blog_post_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="nines_blog_post_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, Post $post) {
         $editForm = $this->createForm(PostType::class, $post);

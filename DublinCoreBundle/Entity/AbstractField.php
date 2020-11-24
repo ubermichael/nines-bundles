@@ -65,7 +65,7 @@ abstract class AbstractField extends AbstractEntity {
      *
      * @return AbstractField
      */
-    public function setElement(Element $element = null) {
+    public function setElement(?Element $element = null) {
         $this->element = $element;
 
         return $this;

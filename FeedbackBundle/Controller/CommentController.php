@@ -46,7 +46,7 @@ class CommentController extends AbstractController implements PaginatorAwareInte
      * @Route("/", name="nines_feedback_comment_index", methods={"GET"})
      * @IsGranted("ROLE_COMMENT_ADMIN")
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, CommentService $service) {
         $em = $this->getDoctrine()->getManager();
@@ -80,7 +80,7 @@ class CommentController extends AbstractController implements PaginatorAwareInte
      * @Route("/fulltext", name="nines_feedback_comment_fulltext", methods={"GET"})
      *
      * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -108,7 +108,7 @@ class CommentController extends AbstractController implements PaginatorAwareInte
      *
      * @Route("/post", name="nines_feedback_comment_post", methods={"POST"})
      *
-     * @Template()
+     * @Template
      *
      * @throws Exception
      * @throws TransportExceptionInterface
@@ -147,10 +147,10 @@ class CommentController extends AbstractController implements PaginatorAwareInte
     /**
      * Finds and displays a Comment entity.
      *
-     * @Route("/{id}", name="nines_feedback_comment_show", methods={"GET","POST"})
+     * @Route("/{id}", name="nines_feedback_comment_show", methods={"GET", "POST"})
      *
      * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */

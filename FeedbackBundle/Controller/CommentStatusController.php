@@ -38,7 +38,7 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
      *
      * @Route("/", name="nines_feedback_comment_status_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -59,9 +59,9 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Route("/new", name="nines_feedback_comment_status_new", methods={"GET","POST"})
+     * @Route("/new", name="nines_feedback_comment_status_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $commentStatus = new CommentStatus();
@@ -91,7 +91,7 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
      *
      * @Route("/{id}", name="nines_feedback_comment_status_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(CommentStatus $commentStatus) {
         return [
@@ -105,9 +105,9 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Route("/{id}/edit", name="nines_feedback_comment_status_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="nines_feedback_comment_status_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, CommentStatus $commentStatus) {
         $editForm = $this->createForm(CommentStatusType::class, $commentStatus);

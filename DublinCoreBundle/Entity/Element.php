@@ -19,11 +19,11 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * Element.
  *
  * @ORM\Table(
- *  name="element",
- *  uniqueConstraints={
- *      @ORM\UniqueConstraint(columns={"uri"})
- *  }),
- * @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
+ *     name="element",
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(columns={"uri"})
+ *     }),
+ *     @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
  */
 class Element extends AbstractTerm {
     /**

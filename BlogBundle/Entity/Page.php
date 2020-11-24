@@ -20,7 +20,7 @@ use Nines\UtilBundle\Entity\ContentExcerptTrait;
  * Page.
  *
  * @ORM\Table(name="blog_page", indexes={
- *   @ORM\Index(name="blog_page_content", columns={"title","searchable"}, flags={"fulltext"})
+ *     @ORM\Index(name="blog_page_content", columns={"title", "searchable"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PageRepository")
  * @ORM\HasLifecycleCallbacks

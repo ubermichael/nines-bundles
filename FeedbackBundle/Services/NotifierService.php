@@ -202,6 +202,7 @@ class NotifierService {
         $email = new TemplatedEmail();
         $email->from($this->sender);
         $email->to('dhil@sfu.ca');
+
         foreach ($this->recipients as $recipient) {
             $email->addBcc($recipient);
         }

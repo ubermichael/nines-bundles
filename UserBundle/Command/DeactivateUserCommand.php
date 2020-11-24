@@ -23,6 +23,7 @@ class DeactivateUserCommand extends AbstractUserCommand {
      * @var UserManager
      */
     private $manager;
+
     protected static $defaultName = 'nines:user:deactivate';
 
     public function __construct(UserManager $manager, ValidatorInterface $validator, EntityManagerInterface $em) {

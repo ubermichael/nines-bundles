@@ -39,7 +39,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      *
      * @Route("/", name="nines_blog_page_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
         $em = $this->getDoctrine()->getManager();
@@ -53,9 +53,9 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
     }
 
     /**
-     * @Route("/sort", name="nines_blog_page_sort", methods={"GET","POST"})
+     * @Route("/sort", name="nines_blog_page_sort", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      * @IsGranted("ROLE_BLOG_ADMIN")
      *
      * @return array
@@ -67,6 +67,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
         if ('POST' === $request->getMethod()) {
             $order = $request->request->get('order');
             $list = explode(',', $order);
+
             for ($i = 0; $i < count($list); $i++) {
                 $page = $repo->find($list[$i]);
                 $page->setWeight($i + 1);
@@ -92,7 +93,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      *
      * @Route("/search", name="nines_blog_page_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -120,9 +121,9 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="nines_blog_page_new", methods={"GET","POST"})
+     * @Route("/new", name="nines_blog_page_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request, Text $text) {
         $page = new Page();
@@ -154,7 +155,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      *
      * @Route("/{id}", name="nines_blog_page_show", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function showAction(Page $page) {
         if ( ! $page->getPublic()) {
@@ -172,9 +173,9 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="nines_blog_page_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="nines_blog_page_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function editAction(Request $request, Page $page, Text $text) {
         $editForm = $this->createForm(PageType::class, $page);

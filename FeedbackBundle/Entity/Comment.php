@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Comment.
  *
  * @ORM\Table(name="comment", indexes={
- *  @ORM\Index(name="comment_ft_idx", columns={"fullname", "content"}, flags={"fulltext"})
+ *     @ORM\Index(name="comment_ft_idx", columns={"fullname", "content"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentRepository")
  */
@@ -37,7 +37,7 @@ class Comment extends AbstractEntity {
      *
      * @var string
      * @ORM\Column(type="string", length=120)
-     * @Assert\Email()
+     * @Assert\Email
      */
     private $email;
 

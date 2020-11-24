@@ -38,7 +38,7 @@ class CommentNoteController extends AbstractController implements PaginatorAware
      *
      * @Route("/", name="nines_feedback_comment_note_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function indexAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -59,9 +59,9 @@ class CommentNoteController extends AbstractController implements PaginatorAware
      * @return array|RedirectResponse
      *
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/new", name="nines_feedback_comment_note_new", methods={"GET","POST"})
+     * @Route("/new", name="nines_feedback_comment_note_new", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      */
     public function newAction(Request $request) {
         $commentNote = new CommentNote();

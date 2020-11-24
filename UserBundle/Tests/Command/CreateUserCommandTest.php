@@ -49,10 +49,9 @@ class CreateUserCommandTest extends KernelTestCase {
         $this->assertStringStartsWith('$argon2id$', $user->getPassword());
     }
 
-    /**
-     * @expectedException \Doctrine\DBAL\Exception\UniqueConstraintViolationException
-     */
     public function testExecuteDuplicate() : void {
+        $this->expectException(\Doctrine\DBAL\Exception\UniqueConstraintViolationException::class);
+
         $this->tester->execute([
             'email' => 'user@example.com',
             'fullname' => 'New User',

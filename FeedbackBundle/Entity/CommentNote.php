@@ -18,7 +18,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * Comment Note.
  *
  * @ORM\Table(name="comment_note", indexes={
- *  @ORM\Index(name="commentnote_ft_idx",  columns={"content"},  flags={"fulltext"})
+ *     @ORM\Index(name="commentnote_ft_idx",  columns={"content"},  flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentNoteRepository")
  */
@@ -86,7 +86,7 @@ class CommentNote extends AbstractEntity {
      *
      * @return CommentNote
      */
-    public function setComment(Comment $comment = null) {
+    public function setComment(?Comment $comment = null) {
         $this->comment = $comment;
 
         return $this;
@@ -108,7 +108,7 @@ class CommentNote extends AbstractEntity {
      *
      * @return CommentNote
      */
-    public function setUser(User $user = null) {
+    public function setUser(?User $user = null) {
         $this->user = $user;
 
         return $this;
