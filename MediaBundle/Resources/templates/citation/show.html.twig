@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Citation Details {% endblock %}
+
+ {% block pageheader %}
+     <h1>Citation Details</h1>
+ {% endblock %}
+
+{% block body %}
+
+    {% embed '@NinesUtil/citation/partial/detail.html.twig' %}
+    {% endembed %}
+
+{% endblock %}

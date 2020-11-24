@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Controller;
 
+use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Entity\Reference;
 use Nines\UtilBundle\Repository\ReferenceRepository;
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Services\ReferenceManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

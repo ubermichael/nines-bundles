@@ -35,6 +35,7 @@ class NinesUtilExtension extends Extension {
         $definition->replaceArgument('$defaultTrimLength', $config['trim_length']);
 
         $map = [];
+
         foreach ($config['routing'] as $routing) {
             $map[$routing['class']] = $routing['route'];
         }

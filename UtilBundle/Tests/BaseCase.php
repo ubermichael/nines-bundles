@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
+use Exception;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -72,6 +73,7 @@ abstract class BaseCase extends WebTestCase {
         if ( ! is_array($files)) {
             $files = [$files];
         }
+
         foreach ($files as $file) {
             if ($file instanceof \SplFileInfo) {
                 $this->cleanup[] = $file->getRealPath();
@@ -79,7 +81,7 @@ abstract class BaseCase extends WebTestCase {
                 if (is_string($file)) {
                     $this->cleanup[] = $file;
                 } else {
-                    throw new \Exception('Cannot clean up ' . get_class($file));
+                    throw new Exception('Cannot clean up ' . get_class($file));
                 }
             }
         }
@@ -108,6 +110,7 @@ abstract class BaseCase extends WebTestCase {
             $this->entityManager = null;
         }
         parent::tearDown();
+
         foreach ($this->cleanup as $path) {
             if (file_exists($path)) {
                 unlink($path);

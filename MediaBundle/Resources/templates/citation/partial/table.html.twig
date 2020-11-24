@@ -1,0 +1,28 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Citation</th>
+            <th>Description</th>
+            <th>Entity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for citation in citations %}
+            <tr>
+                <td>
+                    <a href="{{ path('citation_show', { 'id': citation.id }) }}">
+                        {{ citation.citation|raw }}
+                    </a>
+                </td>
+                <td>
+                    {{ citation.description|raw }}
+                </td>
+                <td>
+                    <a href='{{ citation_manager.linkToEntity(citation) }}'>
+                        {{ citation_manager.findEntity(citation) }}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

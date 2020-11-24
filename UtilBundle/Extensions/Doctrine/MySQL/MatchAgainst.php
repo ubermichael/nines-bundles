@@ -44,6 +44,7 @@ class MatchAgainst extends FunctionNode {
      */
     public function getSql(SqlWalker $sqlWalker) {
         $fields = [];
+
         foreach ($this->fieldExpressions as $expression) {
             $fields[] = $expression->dispatch($sqlWalker);
         }
@@ -73,7 +74,7 @@ class MatchAgainst extends FunctionNode {
         }
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
 
-        if ('against' !== strtolower($lexer->lookahead['value'])) {
+        if ('against' !== mb_strtolower($lexer->lookahead['value'])) {
             $parser->syntaxError('against');
         }
         $parser->match(Lexer::T_IDENTIFIER);
@@ -81,11 +82,11 @@ class MatchAgainst extends FunctionNode {
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->query = $parser->StringPrimary();
 
-        if ('boolean' === strtolower($lexer->lookahead['value'])) {
+        if ('boolean' === mb_strtolower($lexer->lookahead['value'])) {
             $parser->match(Lexer::T_IDENTIFIER);
             $this->boolean = true;
         }
-        if ('expand' === strtolower($lexer->lookahead['value'])) {
+        if ('expand' === mb_strtolower($lexer->lookahead['value'])) {
             $parser->match(Lexer::T_IDENTIFIER);
             $this->expansion = true;
         }
