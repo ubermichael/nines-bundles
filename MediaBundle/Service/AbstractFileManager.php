@@ -8,7 +8,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\MediaBundle\Services;
+namespace Nines\MediaBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -42,7 +42,7 @@ abstract class AbstractFileManager {
      */
     protected $em;
 
-    public function __construct(LoggerInterface $logger, $root) {
+    public function __construct(LoggerInterface $logger, $root = 'data') {
         $this->logger = $logger;
         $this->root = $root;
     }

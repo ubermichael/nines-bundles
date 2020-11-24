@@ -13,7 +13,7 @@ namespace Nines\MediaBundle\Controller;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Repository\ImageRepository;
-use Nines\MediaBundle\Services\ImageManager;
+use Nines\MediaBundle\Service\ImageManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

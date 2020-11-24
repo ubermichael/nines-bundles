@@ -8,7 +8,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\MediaBundle\Services;
+namespace Nines\MediaBundle\Service;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\EventSubscriber;

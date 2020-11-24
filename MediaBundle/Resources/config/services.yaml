@@ -4,26 +4,26 @@ services:
     autoconfigure: true
     public: true
 
-    Nines\MediaBundle\:
-      resource: '../../*'
-      exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
+  Nines\MediaBundle\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
 
-    Nines\MediaBundle\Controller\:
-      resource: '../../Controller'
-      tags: ['controller.service_arguments', 'knp_paginator.injectable']
+  Nines\MediaBundle\Controller\:
+    resource: '../../Controller/*'
+    tags: [ 'controller.service_arguments', 'knp_paginator.injectable' ]
 
-    Nines\MediaBundle\Service\ContributionManager:
-      tags:
-        - { name: 'doctrine.event_subscriber' }
+  Nines\MediaBundle\Service\ContributionManager:
+    tags:
+      - { name: 'doctrine.event_subscriber' }
 
-    Nines\MediaBundle\Service\LinkManager:
-      arguments:
-        $routing: '%nines_util.routing%'
-      tags:
-        - { name: 'doctrine.event_subscriber' }
+  Nines\MediaBundle\Service\LinkManager:
+    arguments:
+      $routing: '%nines_util.routing%'
+    tags:
+      - { name: 'doctrine.event_subscriber' }
 
-    Nines\MediaBundle\Service\CitationManager:
-      arguments:
-        $routing: '%nines_util.routing%'
-      tags:
-        - { name: 'doctrine.event_subscriber' }
+  Nines\MediaBundle\Service\CitationManager:
+    arguments:
+      $routing: '%nines_util.routing%'
+    tags:
+      - { name: 'doctrine.event_subscriber' }

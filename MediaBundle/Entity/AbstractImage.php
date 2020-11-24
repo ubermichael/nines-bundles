@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Nines\MediaBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**

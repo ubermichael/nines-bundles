@@ -13,7 +13,7 @@ namespace Nines\MediaBundle\Controller;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Form\ImageType;
-use Nines\MediaBundle\Services\AbstractFileManager;
+use Nines\MediaBundle\Service\AbstractFileManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;

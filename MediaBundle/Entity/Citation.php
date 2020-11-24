@@ -14,6 +14,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Nines\MediaBundle\Repository\CitationRepository;
+use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
  * @ORM\Entity(repositoryClass=CitationRepository::class)
