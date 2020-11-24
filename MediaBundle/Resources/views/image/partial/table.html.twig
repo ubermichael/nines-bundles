@@ -9,26 +9,26 @@
         </tr>
     </thead>
     <tbody>
-        {% for link in links %}
+        {% for image in images %}
             <tr>
                 <td>
-                    <a href="{{ path('nines_media_link_show', { 'id': link.id }) }}">
-                        {{ link.id }}
+                    <a href="{{ path('nines_media_image_show', { 'id': image.id }) }}">
+                        {{ image.id }}
                     </a>
                 </td>
                 <td>
-                    {{ link_manager.entityType(link) }}
-                    <a href='{{ link_manager.linkToEntity(link) }}'>
-                        {{ link_manager.findEntity(link) }}
+                    {{ image_manager.entityType(image) }}
+                    <a href='{{ image_manager.imageToEntity(image) }}'>
+                        {{ image_manager.findEntity(image) }}
                     </a>
                 </td>
 
                 <td>
-                    {{ link.url }}
+                    {{ image.url }}
                 </td>
 
                 <td>
-                    {{ link.text }}
+                    {{ image.text }}
                 </td>
 
             </tr>

@@ -110,7 +110,7 @@ class ImageManager extends AbstractFileManager {
             try {
                 $fs->remove($entity->getImageFile());
             } catch (IOExceptionInterface $ex) {
-                $this->logger->error("An error occured removing {$ex->getPath()}: {$ex->getMessage()}");
+                $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
             }
         }
         if ($entity instanceof ImageContainerInterface) {

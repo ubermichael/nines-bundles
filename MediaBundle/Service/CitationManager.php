@@ -172,6 +172,10 @@ class CitationManager implements EventSubscriber {
     public function linkToEntity($citation) {
         list($class, $id) = explode(':', $citation->getEntity());
 
+        if( ! isset($this->routing[$class])) {
+            $this->logger->error('No routing information for ' . $class);
+            return null;
+        }
         return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 

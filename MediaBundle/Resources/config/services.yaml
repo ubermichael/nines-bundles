@@ -18,6 +18,10 @@ services:
         resource: '../../Controller/*'
         tags: [ 'controller.service_arguments', 'knp_paginator.injectable' ]
 
+    Nines\MediaBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: navMenu, alias: nines_media}
+
     Nines\MediaBundle\Service\ContributionManager:
         tags:
             - { name: 'doctrine.event_subscriber' }

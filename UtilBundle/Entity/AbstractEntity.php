@@ -39,8 +39,8 @@ abstract class AbstractEntity {
     /**
      * The DateTime the entity was created (persisted really).
      *
-     * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      * @Groups({"shallow"})
      */
     protected $created;
@@ -48,14 +48,14 @@ abstract class AbstractEntity {
     /**
      * The DateTime the entity was last updated.
      *
-     * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      * @Groups({"shallow"})
      */
     protected $updated;
 
     /**
-     * Constructor. Does nothing. Exists incase a subclass accidentally calls
+     * Constructor. Does nothing. Exists in case a subclass accidentally calls
      * parent::__construct().
      */
     public function __construct() {

@@ -10,7 +10,7 @@
         {% for citation in citations %}
             <tr>
                 <td>
-                    <a href="{{ path('citation_show', { 'id': citation.id }) }}">
+                    <a href="{{ path('nines_media_citation_show', { 'id': citation.id }) }}">
                         {{ citation.citation|raw }}
                     </a>
                 </td>

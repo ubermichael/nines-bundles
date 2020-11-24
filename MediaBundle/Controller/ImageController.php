@@ -30,7 +30,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     use PaginatorTrait;
 
     /**
-     * @Route("/", name="image_index", methods={"GET"})
+     * @Route("/", name="nines_media_image_index", methods={"GET"})
      *
      * @Template
      */
@@ -45,7 +45,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     }
 
     /**
-     * @Route("/search", name="image_search", methods={"GET"})
+     * @Route("/search", name="nines_media_image_search", methods={"GET"})
      *
      * @Template
      *
@@ -67,7 +67,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     }
 
     /**
-     * @Route("/typeahead", name="image_typeahead", methods={"GET"})
+     * @Route("/typeahead", name="nines_media_image_typeahead", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -89,7 +89,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     }
 
     /**
-     * @Route("/{id}", name="image_show", methods={"GET"})
+     * @Route("/{id}", name="nines_media_image_show", methods={"GET"})
      * @Template
      *
      * @return array
@@ -102,7 +102,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     }
 
     /**
-     * @Route("/{id}/view", name="image_view", methods={"GET"})
+     * @Route("/{id}/view", name="nines_media_image_view", methods={"GET"})
      *
      * @return BinaryFileResponse
      */
@@ -115,7 +115,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     }
 
     /**
-     * @Route("/{id}/thumb", name="image_thumb", methods={"GET"})
+     * @Route("/{id}/thumb", name="nines_media_image_thumb", methods={"GET"})
      *
      * @return BinaryFileResponse
      */

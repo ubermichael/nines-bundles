@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Service\AbstractFileManager;
+use Nines\MediaBundle\Service\ImageManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -24,27 +24,35 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ImageType extends AbstractType {
     /**
+     * @var ImageManager
+     */
+    private $imageManager;
+
+    public function __construct(ImageManager $imageManager) {
+        $this->imageManager = $imageManager;
+    }
+
+    /**
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
-        $size = AbstractFileManager::getMaxUploadSize(false);
         $builder->add('imageFile', FileType::class, [
             'label' => 'Image',
             'required' => true,
             'attr' => [
-                'help_block' => "Select a file to upload which is less than {$size} in size.",
-                'data-maxsize' => AbstractFileManager::getMaxUploadSize(),
+                'help_block' => "Select a file to upload which is less than {$this->imageManager->getMaxUploadSize(false)} in size.",
+                'data-maxsize' => $this->imageManager->getMaxUploadSize(),
             ],
         ]);
         $builder->add('public', ChoiceType::class, [
             'label' => 'Public',
             'expanded' => true,
             'multiple' => false,
-            'choices' => [
-                'Yes' => true,
-                'No' => false,
-            ],
             'required' => true,
+            'choices' => [
+                'No' => 0,
+                'Yes' => 1,
+            ],
             'attr' => [
                 'help_block' => '',
             ],

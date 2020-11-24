@@ -27,7 +27,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
     use PaginatorTrait;
 
     /**
-     * @Route("/", name="citation_index", methods={"GET"})
+     * @Route("/", name="nines_media_citation_index", methods={"GET"})
      *
      * @Template
      */
@@ -43,7 +43,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @Route("/search", name="citation_search", methods={"GET"})
+     * @Route("/search", name="nines_media_citation_search", methods={"GET"})
      *
      * @Template
      */
@@ -64,7 +64,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @Route("/{id}", name="Citation_show", methods={"GET"})
+     * @Route("/{id}", name="nines_media_citation_show", methods={"GET"})
      * @Template
      */
     public function show(Citation $citation, CitationManager $citationManager) : array {

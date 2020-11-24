@@ -163,6 +163,9 @@ class LinkManager implements EventSubscriber {
     public function linkToEntity($link) {
         list($class, $id) = explode(':', $link->getEntity());
 
+        if( ! isset($this->routing[$class])) {
+            $this->logger->error('No routing information for ' . $class);
+        }
         return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 

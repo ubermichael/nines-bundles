@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Citation List{% endblock %}
+{% block title %}Image List{% endblock %}
 
 {% block pageheader %}
-    <h1>Citation List</h1>
+    <h1>Image List</h1>
     <p class="count">
-        Displaying {{ citations|length }} citations of {{ citations.getTotalItemCount }} total.
+        Displaying {{ images|length }} images of {{ images.getTotalItemCount }} total.
     </p>
 {% endblock %}
 
@@ -13,16 +13,16 @@
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            <a href="{{ path('nines_media_citation_search') }}" class="btn btn-default">
+            <a href="{{ path('nines_media_image_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
-    {% embed '@NinesMedia/citation/partial/table.html.twig' %}
+    {% embed '@NinesMedia/image/partial/table.html.twig' %}
     {% endembed %}
 
     <div class="navigation">
-        {{ knp_pagination_render(citations) }}
+        {{ knp_pagination_render(images) }}
     </div>
 
 {% endblock %}

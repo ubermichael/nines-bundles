@@ -27,7 +27,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     use PaginatorTrait;
 
     /**
-     * @Route("/", name="link_index", methods={"GET"})
+     * @Route("/", name="nines_media_link_index", methods={"GET"})
      *
      * @Template
      */
@@ -43,7 +43,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     }
 
     /**
-     * @Route("/search", name="link_search", methods={"GET"})
+     * @Route("/search", name="nines_media_link_search", methods={"GET"})
      *
      * @Template
      */
@@ -64,7 +64,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     }
 
     /**
-     * @Route("/{id}", name="link_show", methods={"GET"})
+     * @Route("/{id}", name="nines_media_link_show", methods={"GET"})
      * @Template
      */
     public function show(Link $link, LinkManager $linkManager) : array {
