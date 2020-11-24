@@ -1,29 +1,46 @@
+parameters:
+    nines_media.root: 'data'
+    nines_media.routing: ~
+    nines_media.thumb.width: 450
+    nines_media.thumb.height: 350
+
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-    public: true
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
 
-  Nines\MediaBundle\:
-    resource: '../../*'
-    exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
+    Nines\MediaBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
 
-  Nines\MediaBundle\Controller\:
-    resource: '../../Controller/*'
-    tags: [ 'controller.service_arguments', 'knp_paginator.injectable' ]
+    Nines\MediaBundle\Controller\:
+        resource: '../../Controller/*'
+        tags: [ 'controller.service_arguments', 'knp_paginator.injectable' ]
 
-  Nines\MediaBundle\Service\ContributionManager:
-    tags:
-      - { name: 'doctrine.event_subscriber' }
+    Nines\MediaBundle\Service\ContributionManager:
+        tags:
+            - { name: 'doctrine.event_subscriber' }
 
-  Nines\MediaBundle\Service\LinkManager:
-    arguments:
-      $routing: '%nines_util.routing%'
-    tags:
-      - { name: 'doctrine.event_subscriber' }
+    Nines\MediaBundle\Service\LinkManager:
+        arguments:
+            $routing: '%nines_util.routing%'
+        tags:
+            - { name: 'doctrine.event_subscriber' }
 
-  Nines\MediaBundle\Service\CitationManager:
-    arguments:
-      $routing: '%nines_util.routing%'
-    tags:
-      - { name: 'doctrine.event_subscriber' }
+    Nines\MediaBundle\Service\CitationManager:
+        arguments:
+            $routing: '%nines_media.routing%'
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
+    Nines\MediaBundle\Service\ImageManager:
+        arguments:
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/images' ] ]
+
+    Nines\MediaBundle\Service\Thumbnailer:
+        calls:
+            - [ setHeight, [ '%nines_media.thumb.height%' ] ]
+            - [ setWidth, [ '%nines_media.thumb.width%' ] ]

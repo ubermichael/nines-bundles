@@ -24,6 +24,9 @@ class Configuration implements ConfigurationInterface {
         $builder
             ->getRootNode()
             ->children()
+            ->scalarNode('root')->defaultValue('data')->end()
+            ->scalarNode('thumb_width')->defaultValue(450)->end()
+            ->scalarNode('thumb_height')->defaultValue(350)->end()
             ->arrayNode('routing')
             ->prototype('array')
             ->children()

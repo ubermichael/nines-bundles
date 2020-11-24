@@ -42,7 +42,7 @@ abstract class AbstractFileManager {
      */
     protected $em;
 
-    public function __construct(LoggerInterface $logger, $root = 'data') {
+    public function __construct(LoggerInterface $logger, $root) {
         $this->logger = $logger;
         $this->root = $root;
     }

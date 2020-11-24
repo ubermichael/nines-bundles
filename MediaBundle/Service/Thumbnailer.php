@@ -49,7 +49,7 @@ class Thumbnailer {
 
         $magick = new Imagick($file->getPathname());
         $magick->setBackgroundColor(new ImagickPixel('white'));
-        $magick->thumbnailimage($this->width, $this->height, true, false);
+        $magick->thumbnailImage($this->width, $this->height, true, false);
         $magick->setImageFormat('png32');
         $path = $file->getPath() . '/' . $thumbname;
 
