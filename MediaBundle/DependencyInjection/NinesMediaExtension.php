@@ -12,7 +12,6 @@ namespace Nines\MediaBundle\DependencyInjection;
 
 use Exception;
 use InvalidArgumentException;
-use Nines\UtilBundle\Services\Text;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -37,6 +36,7 @@ class NinesMediaExtension extends Extension {
         $container->setParameter('nines_media.thumb.height', $config['thumb_height']);
 
         $map = [];
+
         foreach ($config['routing'] as $routing) {
             $map[$routing['class']] = $routing['route'];
         }

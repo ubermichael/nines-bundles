@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\Collection;
 
 trait CitationTrait {
     /**
-     * @var Collection|Citation[]
+     * @var Citation[]|Collection
      */
     protected $Citations;
 

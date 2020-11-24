@@ -14,8 +14,8 @@ use DateTimeImmutable;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Nines\UserBundle\Entity\User;
 use Nines\MediaBundle\Entity\ContributorInterface;
+use Nines\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**

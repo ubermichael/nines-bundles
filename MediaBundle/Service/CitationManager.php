@@ -16,10 +16,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Exception;
-use Nines\UtilBundle\Entity\AbstractEntity;
 use Nines\MediaBundle\Entity\Citation;
 use Nines\MediaBundle\Entity\CitationInterface;
 use Nines\MediaBundle\Repository\CitationRepository;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -134,7 +134,7 @@ class CitationManager implements EventSubscriber {
      *
      * @param mixed $entity
      *
-     * @return Collection|Citation[]
+     * @return Citation[]|Collection
      */
     public function findCitations($entity) {
         $class = get_class($entity);
@@ -172,10 +172,12 @@ class CitationManager implements EventSubscriber {
     public function linkToEntity($citation) {
         list($class, $id) = explode(':', $citation->getEntity());
 
-        if( ! isset($this->routing[$class])) {
+        if ( ! isset($this->routing[$class])) {
             $this->logger->error('No routing information for ' . $class);
-            return null;
+
+            return;
         }
+
         return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 

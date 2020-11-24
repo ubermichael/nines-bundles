@@ -16,10 +16,10 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Nines\UtilBundle\Entity\AbstractEntity;
 use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
 use Nines\MediaBundle\Repository\LinkRepository;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -163,9 +163,10 @@ class LinkManager implements EventSubscriber {
     public function linkToEntity($link) {
         list($class, $id) = explode(':', $link->getEntity());
 
-        if( ! isset($this->routing[$class])) {
+        if ( ! isset($this->routing[$class])) {
             $this->logger->error('No routing information for ' . $class);
         }
+
         return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 
