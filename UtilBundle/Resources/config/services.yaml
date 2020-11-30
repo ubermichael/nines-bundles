@@ -29,19 +29,3 @@ services:
     Nines\UtilBundle\Twig\TextExtension:
         tags:
             - { name : twig.extension }
-
-    Nines\UtilBundle\Services\ContributionManager:
-        tags:
-            - { name: 'doctrine.event_subscriber' }
-
-    Nines\UtilBundle\Services\LinkManager:
-        arguments:
-            $routing: '%nines_util.routing%'
-        tags:
-            - { name: 'doctrine.event_subscriber' }
-
-    Nines\UtilBundle\Services\ReferenceManager:
-        arguments:
-            $routing: '%nines_util.routing%'
-        tags:
-            - { name: 'doctrine.event_subscriber' }

@@ -33,11 +33,5 @@ class NinesUtilExtension extends Extension {
         $config = $this->processConfiguration($configuration, $configs);
         $definition = $container->getDefinition(Text::class);
         $definition->replaceArgument('$defaultTrimLength', $config['trim_length']);
-
-        $map = [];
-        foreach ($config['routing'] as $routing) {
-            $map[$routing['class']] = $routing['route'];
-        }
-        $container->setParameter('nines_util.routing', $map);
     }
 }
