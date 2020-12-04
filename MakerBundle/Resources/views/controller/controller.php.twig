@@ -37,7 +37,7 @@ class {{ entity_class_name }}Controller extends AbstractController implements Pa
     public function index(Request $request, {{ repository_class_name }} ${{ repository_var }}) : array
     {
         $query = ${{ repository_var }}->indexQuery();
-        $pageSize = $this->getParameter('page_size');
+        $pageSize = (int)$this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
         return [

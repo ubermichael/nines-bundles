@@ -36,7 +36,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
      */
     public function index(Request $request, ImageRepository $imageRepository) : array {
         $query = $imageRepository->indexQuery();
-        $pageSize = $this->getParameter('page_size');
+        $pageSize = (int)$this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
         return [
