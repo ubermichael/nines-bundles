@@ -28,7 +28,7 @@ services:
 
     Nines\MediaBundle\Service\LinkManager:
         arguments:
-            $routing: '%nines_util.routing%'
+            $routing: '%nines_media.routing%'
         tags:
             - { name: 'doctrine.event_subscriber' }
 
