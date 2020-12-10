@@ -232,7 +232,11 @@ class Image extends AbstractEntity {
         return $this->entity;
     }
 
-    public function setEntity(AbstractEntity $entity) : void {
+    public function setEntity($entity) : void {
+        if(is_string($entity)) {
+            $this->entity = $entity;
+            return;
+        }
         if ( ! $entity->getId()) {
             throw new Exception('Image entities must be persisted.');
         }

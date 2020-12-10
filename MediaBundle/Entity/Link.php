@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=LinkRepository::class)
@@ -32,6 +33,7 @@ class Link extends AbstractEntity {
 
     /**
      * @var string
+     * @Assert\Url
      * @ORM\Column(type="string", length=128, nullable=false)
      */
     private $url;

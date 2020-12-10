@@ -40,12 +40,13 @@ class ImageFixtures extends Fixture {
             $fixture->setImageSize($i);
             $fixture->setImageWidth($i);
             $fixture->setImageHeight($i);
+            $fixture->setMimeType("image/png");
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
             $fixture->setLicense("<p>This is paragraph {$i}</p>");
             $fixture->setEntity('stdClass:' . $i);
 
             $em->persist($fixture);
-            $this->setCitation('image.' . $i, $fixture);
+            $this->setReference('image.' . $i, $fixture);
         }
         $em->flush();
     }
