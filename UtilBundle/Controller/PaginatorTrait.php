@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Controller;
 
-use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * Convienence trait for the use of paginators.
@@ -25,7 +25,7 @@ trait PaginatorTrait {
     /**
      * Set the paginator service.
      */
-    public function setPaginator(Paginator $paginator) : PaginatorAwareInterface {
+    public function setPaginator(PaginatorInterface $paginator) : self {
         $this->paginator = $paginator;
 
         return $this;
