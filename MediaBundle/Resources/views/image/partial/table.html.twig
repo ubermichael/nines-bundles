@@ -1,0 +1,37 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Entity</th>
+            <th>Url</th>
+            <th>Text</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for image in images %}
+            <tr>
+                <td>
+                    <a href="{{ path('nines_media_image_show', { 'id': image.id }) }}">
+                        {{ image.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ image_manager.entityType(image) }}
+                    <a href='{{ image_manager.imageToEntity(image) }}'>
+                        {{ image_manager.findEntity(image) }}
+                    </a>
+                </td>
+
+                <td>
+                    {{ image.url }}
+                </td>
+
+                <td>
+                    {{ image.text }}
+                </td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

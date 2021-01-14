@@ -220,6 +220,7 @@ class TitleCaser {
             // remove non-word chars at start.
         ];
         $title = mb_convert_case($string, MB_CASE_LOWER, 'utf-8');
+
         foreach ($filters as $pattern => $replacement) {
             $title = preg_replace($pattern, $replacement, $title);
         }

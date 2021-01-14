@@ -19,14 +19,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @ORM\MappedSuperclass
  * @ORM\Table(
- *  indexes={
- *      @ORM\Index(columns={"label"}, flags={"fulltext"}),
- *      @ORM\Index(columns={"description"}, flags={"fulltext"}),
- *      @ORM\Index(columns={"label", "description"}, flags={"fulltext"})
- *  },
- *  uniqueConstraints={
- *      @ORM\UniqueConstraint(columns={"name"})
- *  }
+ *     indexes={
+ *         @ORM\Index(columns={"label"}, flags={"fulltext"}),
+ *         @ORM\Index(columns={"description"}, flags={"fulltext"}),
+ *         @ORM\Index(columns={"label", "description"}, flags={"fulltext"})
+ *     },
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(columns={"name"})
+ *     }
  * )
  */
 abstract class AbstractTerm extends AbstractEntity {

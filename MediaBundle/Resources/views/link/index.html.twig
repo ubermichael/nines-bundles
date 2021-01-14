@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Link List{% endblock %}
+
+{% block pageheader %}
+    <h1>Link List</h1>
+    <p class="count">
+        Displaying {{ links|length }} links of {{ links.getTotalItemCount }} total.
+    </p>
+{% endblock %}
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            <a href="{{ path('nines_media_link_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search </a>
+        </div>
+    </div>
+
+    {% embed '@NinesMedia/link/partial/table.html.twig' %}
+    {% endembed %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(links) }}
+    </div>
+
+{% endblock %}

@@ -161,6 +161,7 @@ class FontDownload extends Command {
      */
     protected function processFont($id, $data, $config) {
         $css = '';
+
         foreach ($data['variants'] as $variant) {
             $accepted = [];
 

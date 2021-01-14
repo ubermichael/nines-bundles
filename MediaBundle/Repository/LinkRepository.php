@@ -8,12 +8,12 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\UtilBundle\Repository;
+namespace Nines\MediaBundle\Repository;
 
-use Nines\UtilBundle\Entity\Link;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use Nines\MediaBundle\Entity\Link;
 
 /**
  * @method null|Link find($id, $lockMode = null, $lockVersion = null)

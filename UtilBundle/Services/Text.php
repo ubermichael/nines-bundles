@@ -60,13 +60,13 @@ class Text {
      */
     public function searchHighlight($content, $keyword) {
         $text = $this->plain($content);
-        $i = stripos($text, $keyword);
+        $i = mb_stripos($text, $keyword);
         $regex = preg_quote($keyword);
         $results = [];
         while (false !== $i) {
-            $s = substr($text, max([0, $i - 60]), 120);
+            $s = mb_substr($text, max([0, $i - 60]), 120);
             $results[] = preg_replace("/({$regex})/ui", '<mark>$1</mark>', $s);
-            $i = stripos($text, $keyword, $i + 1);
+            $i = mb_stripos($text, $keyword, $i + 1);
         }
 
         return array_unique($results);

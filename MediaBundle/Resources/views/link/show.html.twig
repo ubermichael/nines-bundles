@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Link Details {% endblock %}
+
+ {% block pageheader %}
+     <h1>Link Details</h1>
+ {% endblock %}
+
+{% block body %}
+
+    {% embed '@NinesMedia/link/partial/detail.html.twig' %}
+    {% endembed %}
+
+{% endblock %}

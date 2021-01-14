@@ -8,36 +8,36 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\UtilBundle\Form;
+namespace Nines\MediaBundle\Form;
 
-use Nines\UtilBundle\Entity\Link;
+use Nines\MediaBundle\Entity\Citation;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Link form.
+ * Citation form.
  */
-class LinkType extends AbstractType {
-
+class CitationType extends AbstractType {
     /**
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
-        $builder->add('url', UrlType::class, [
-            'label' => 'Url',
+        $builder->add('citation', TextareaType::class, [
+            'label' => 'Citation',
             'required' => true,
             'attr' => [
                 'help_block' => '',
+                'class' => 'tinymce',
             ],
         ]);
-        $builder->add('text', TextType::class, [
-            'label' => 'Text',
+        $builder->add('description', TextareaType::class, [
+            'label' => 'Description',
             'required' => false,
             'attr' => [
                 'help_block' => '',
+                'class' => 'tinymce',
             ],
         ]);
     }
@@ -50,7 +50,7 @@ class LinkType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) : void {
         $resolver->setDefaults([
-            'data_class' => Link::class,
+            'data_class' => Citation::class,
         ]);
     }
 }

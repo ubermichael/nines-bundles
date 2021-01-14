@@ -1,0 +1,44 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Entity</th>
+            <td>
+                {{ link_manager.entityType(link) }}
+                <a href='{{ link_manager.linkToEntity(link) }}'>
+                    {{ link_manager.findEntity(link) }}
+                </a><br />
+                {{ link.entity }}
+            </td>
+        </tr>
+        <tr>
+            <th>Url</th>
+            <td>
+                {{ link.url }}
+            </td>
+        </tr>
+        <tr>
+            <th>Text</th>
+            <td>
+                {{ link.text }}
+            </td>
+        </tr>
+        <tr>
+            <th>HTML</th>
+            <td>{{ link }}</td>
+        </tr>
+        <tr>
+            <th>Rendered</th>
+            <td>{{ link|raw }}</td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ link.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ link.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Entity;
 
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -38,8 +39,8 @@ abstract class AbstractEntity {
     /**
      * The DateTime the entity was created (persisted really).
      *
-     * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      * @Groups({"shallow"})
      */
     protected $created;
@@ -47,14 +48,14 @@ abstract class AbstractEntity {
     /**
      * The DateTime the entity was last updated.
      *
-     * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      * @Groups({"shallow"})
      */
     protected $updated;
 
     /**
-     * Constructor. Does nothing. Exists incase a subclass accidentally calls
+     * Constructor. Does nothing. Exists in case a subclass accidentally calls
      * parent::__construct().
      */
     public function __construct() {
@@ -76,15 +77,15 @@ abstract class AbstractEntity {
      * Does nothing. Setting the created timestamp happens automatically. Exists
      * to prevent a subclass accidentally setting a timestamp.
      */
-    public function setCreated(DateTime $created) : void {
+    public function setCreated(DateTimeImmutable $created) : void {
     }
 
     /**
      * Get the created timestamp.
      */
-    public function getCreated() : DateTime {
+    public function getCreated() : DateTimeImmutable {
         if ( ! $this->created) {
-            return new DateTime();
+            return new DateTimeImmutable();
         }
 
         return $this->created;
@@ -93,32 +94,32 @@ abstract class AbstractEntity {
     /**
      * Does nothing. Setting the updated timestamp happens automatically.
      */
-    public function setUpdated(DateTime $updated) : void {
+    public function setUpdated(DateTimeImmutable $updated) : void {
     }
 
     /**
      * Get the updated timestamp.
      */
-    public function getUpdated() : DateTime {
+    public function getUpdated() : DateTimeImmutable {
         return $this->updated;
     }
 
     /**
      * Sets the created and updated timestamps.
      *
-     * @ORM\PrePersist()
+     * @ORM\PrePersist
      */
     public function prePersist() : void {
-        $this->created = new DateTime();
-        $this->updated = new DateTime();
+        $this->created = new DateTimeImmutable();
+        $this->updated = new DateTimeImmutable();
     }
 
     /**
      * Sets the updated timestamp.
      *
-     * @ORM\PreUpdate()
+     * @ORM\PreUpdate
      */
     public function preUpdate() : void {
-        $this->updated = new DateTime();
+        $this->updated = new DateTimeImmutable();
     }
 }

@@ -25,7 +25,7 @@ class TextExtensionTest extends KernelTestCase {
 
     public function testGetFilters() : void {
         $filters = $this->twig->getFilters();
-        $this->assertSame(4, count($filters));
+        $this->assertCount(4, $filters);
     }
 
     /**
