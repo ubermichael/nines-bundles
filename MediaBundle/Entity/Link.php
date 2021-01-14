@@ -34,7 +34,7 @@ class Link extends AbstractEntity {
     /**
      * @var string
      * @Assert\Url
-     * @ORM\Column(type="string", length=128, nullable=false)
+     * @ORM\Column(type="string", length=400, nullable=false)
      */
     private $url;
 
