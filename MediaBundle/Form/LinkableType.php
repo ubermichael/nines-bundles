@@ -44,6 +44,7 @@ class LinkableType {
                 'class' => 'collection collection-complex',
                 'help_block' => '',
             ],
+            'mapped' => false,
             'data' => $options['data']->getLinks(),
         ]);
     }
