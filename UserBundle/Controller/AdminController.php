@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\UserBundle\Controller;
 
 use Nines\UserBundle\Entity\User;
-use Nines\UserBundle\Form\Profile\UserPasswordType;
+use Nines\UserBundle\Form\User\UserPasswordType;
 use Nines\UserBundle\Form\User\UserType;
 use Nines\UserBundle\Repository\UserRepository;
 use Nines\UserBundle\Services\UserManager;
