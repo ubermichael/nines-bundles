@@ -29,6 +29,12 @@ class Page extends AbstractEntity implements ContentEntityInterface {
     use ContentExcerptTrait;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    private $inMenu;
+
+    /**
      * Heavier weighted pages will sort to the bottom.
      *
      * @var int
@@ -94,6 +100,7 @@ class Page extends AbstractEntity implements ContentEntityInterface {
         $this->public = false;
         $this->homepage = false;
         $this->includeComments = false;
+        $this->inMenu = true;
     }
 
     public function __toString() : string {
@@ -250,5 +257,17 @@ class Page extends AbstractEntity implements ContentEntityInterface {
      */
     public function getIncludeComments() {
         return $this->includeComments;
+    }
+
+    public function getInMenu(): ?bool
+    {
+        return $this->inMenu;
+    }
+
+    public function setInMenu(bool $inMenu): self
+    {
+        $this->inMenu = $inMenu;
+
+        return $this;
     }
 }

@@ -42,7 +42,21 @@ class PageType extends AbstractType {
             'required' => true,
             'placeholder' => false,
             'attr' => [
-                'help_block' => '',
+                'help_block' => 'Set to no to require users to login before showing this page.',
+            ],
+        ]);
+        $builder->add('inMenu', ChoiceType::class, [
+            'label' => 'In Menu',
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
+            'required' => true,
+            'placeholder' => true,
+            'attr' => [
+                'help_block' => 'Set to no to exclude this page from the menuing system.',
             ],
         ]);
         $builder->add('homepage', ChoiceType::class, [

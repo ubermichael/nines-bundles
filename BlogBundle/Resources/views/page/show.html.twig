@@ -26,7 +26,10 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2 class="panel-title">
-                    Excerpt
+                    Excerpt <span class='pull-right'>
+                        {% if page.public %}Public{% else %}Private{% endif %},
+                        {% if page.inMenu %}In Menu{% else %}Not In Menu{% endif %}
+                    </span>
                 </h2>
             </div>
             <div class="panel-body">
@@ -34,7 +37,6 @@
             </div>
         </div>
     {% endif %}
-
 
     {{ page.content | raw }}
 

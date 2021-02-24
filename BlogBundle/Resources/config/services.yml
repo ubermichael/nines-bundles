@@ -12,7 +12,7 @@ services:
 
     Nines\BlogBundle\:
         resource: '../../*'
-        exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Resources,Tests}'
 
     Nines\BlogBundle\Controller\:
         resource: '../../Controller/*'

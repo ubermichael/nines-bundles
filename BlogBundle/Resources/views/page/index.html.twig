@@ -34,7 +34,10 @@
                     </a>
                 </h2>
                 {% if is_granted('ROLE_BLOG_ADMIN') %}
-                    <div class="panel-title pull-right">{% if page.public %}Public{% else %}Private{% endif %}</div>
+                    <div class="panel-title pull-right">
+                        {% if page.public %}Public{% else %}Private{% endif %},
+                        {% if page.inMenu %}In Menu{% else %}Not In Menu{% endif %}
+                    </div>
                 {% endif %}
                 <div class="clearfix"></div>
             </div>
