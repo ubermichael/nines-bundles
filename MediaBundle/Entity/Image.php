@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * @ORM\Entity(repositoryClass=ImageRepository::class)
  * @ORM\Table(indexes={
- *  @ORM\Index(columns={"original_name", "description"}, flags={"fulltext"})
+ *     @ORM\Index(columns={"original_name", "description"}, flags={"fulltext"})
  * })
  */
 class Image extends AbstractEntity {
@@ -236,8 +236,9 @@ class Image extends AbstractEntity {
     }
 
     public function setEntity($entity) : void {
-        if(is_string($entity)) {
+        if (is_string($entity)) {
             $this->entity = $entity;
+
             return;
         }
         if ( ! $entity->getId()) {

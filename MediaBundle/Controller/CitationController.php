@@ -33,7 +33,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
      */
     public function index(Request $request, CitationRepository $citationRepository, CitationManager $citationManager) : array {
         $query = $citationRepository->indexQuery();
-        $pageSize = (int)$this->getParameter('page_size');
+        $pageSize = (int) $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
         return [

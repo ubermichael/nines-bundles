@@ -10,14 +10,13 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Controller;
 
-use App\Entity\Person;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Repository\ImageRepository;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,7 +39,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
      */
     public function index(Request $request, ImageRepository $imageRepository) : array {
         $query = $imageRepository->indexQuery();
-        $pageSize = (int)$this->getParameter('page_size');
+        $pageSize = (int) $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
         return [

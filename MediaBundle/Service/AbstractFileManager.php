@@ -10,20 +10,12 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Service;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Entity\ImageContainerInterface;
-use Nines\UtilBundle\Entity\AbstractEntity;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
-use ReflectionException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * File management base class
+ * File management base class.
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
@@ -137,8 +129,7 @@ abstract class AbstractFileManager {
     /**
      * @required
      */
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
     }
-
 }

@@ -33,7 +33,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
      */
     public function index(Request $request, LinkRepository $linkRepository, LinkManager $linkManager) : array {
         $query = $linkRepository->indexQuery();
-        $pageSize = (int)$this->getParameter('page_size');
+        $pageSize = (int) $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
         return [

@@ -16,11 +16,9 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Exception;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -155,7 +153,7 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
      * @return mixed
      */
     public function findEntity(Image $image) {
-        [$class, $id] = explode(':', $image->getEntity());
+        list($class, $id) = explode(':', $image->getEntity());
         if ($this->em->getMetadataFactory()->isTransient($class)) {
             return;
         }
@@ -216,10 +214,11 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     }
 
     public function linkToEntity(Image $image) {
-        [$class, $id] = explode(':', $image->getEntity());
+        list($class, $id) = explode(':', $image->getEntity());
 
         if ( ! isset($this->routing[$class])) {
             $this->logger->error('No routing information for ' . $class);
+
             return '';
         }
 
@@ -232,5 +231,4 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     public function setRouter(UrlGeneratorInterface $router) : void {
         $this->router = $router;
     }
-
 }

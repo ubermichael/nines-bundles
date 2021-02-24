@@ -29,7 +29,7 @@ class ImageRepository extends AbstractImageRepository {
         $qb->addSelect('MATCH (e.originalName, e.description) AGAINST(:q BOOLEAN) as HIDDEN score');
         $qb->orderBy('score', 'desc');
         $qb->setParameter('q', $q);
-        $qb->andHaving("score > 0");
+        $qb->andHaving('score > 0');
 
         return $qb->getQuery();
     }

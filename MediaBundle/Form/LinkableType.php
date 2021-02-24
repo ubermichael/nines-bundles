@@ -12,22 +12,17 @@ namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Link form.
  */
 class LinkableType {
-
-    public static function add(FormBuilderInterface $builder, $options) {
+    public static function add(FormBuilderInterface $builder, $options) : void {
         $entity = $options['data'];
-        if( ! $entity instanceof LinkableInterface) {
+        if ( ! $entity instanceof LinkableInterface) {
             throw new UnexpectedTypeException($entity, LinkableInterface::class);
         }
         $builder->add('links', CollectionType::class, [
@@ -47,5 +42,4 @@ class LinkableType {
             'data' => $options['data']->getLinks(),
         ]);
     }
-
 }

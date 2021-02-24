@@ -26,7 +26,7 @@ use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Link management service for Symfony
+ * Link management service for Symfony.
  */
 class LinkManager implements EventSubscriber {
     /**
