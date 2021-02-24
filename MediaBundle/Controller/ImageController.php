@@ -10,21 +10,25 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Controller;
 
+use App\Entity\Person;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Repository\ImageRepository;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/image")
+ * @IsGranted("ROLE_CONTENT_ADMIN")
  */
 class ImageController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -125,5 +129,21 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
         }
 
         return new BinaryFileResponse($image->getThumbFile());
+    }
+
+    /**
+     * @Route("/{id}", name="nines_media_image_delete", methods={"DELETE"})
+     *
+     * @return RedirectResponse
+     */
+    public function delete(Request $request, Image $image) {
+        if ($this->isCsrfTokenValid('delete' . $image->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($image);
+            $entityManager->flush();
+            $this->addFlash('success', 'The image has been deleted.');
+        }
+
+        return $this->redirectToRoute('nines_media_image_index');
     }
 }

@@ -1,11 +1,11 @@
 <table class="table table-bordered table-condensed table-hover table-striped">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>Original Name</th>
+            <th>Size</th>
+            <th>Description</th>
+            <th>License</th>
             <th>Entity</th>
-            <th>Url</th>
-            <th>Text</th>
-
         </tr>
     </thead>
     <tbody>
@@ -13,22 +13,23 @@
             <tr>
                 <td>
                     <a href="{{ path('nines_media_image_show', { 'id': image.id }) }}">
-                        {{ image.id }}
+                        {{ image.originalName }}
                     </a>
                 </td>
                 <td>
-                    {{ image_manager.entityType(image) }}
-                    <a href='{{ image_manager.imageToEntity(image) }}'>
-                        {{ image_manager.findEntity(image) }}
-                    </a>
+                    {{ image.imageWidth }}x{{ image.imageHeight }} {{ image.imageSize|byte_size }}
                 </td>
 
                 <td>
-                    {{ image.url }}
+                    {{ image.description|raw }}
                 </td>
 
                 <td>
-                    {{ image.text }}
+                    {{ image.license|raw }}
+                </td>
+
+                <td>
+                    {{ image.entity }}
                 </td>
 
             </tr>

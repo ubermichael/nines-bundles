@@ -1,3 +1,19 @@
-{% for image in entity.images %}
-    {{ image|raw }} <br />
+{% set cols = 3 %}
+{% set colspan = 'col-sm-' ~ (12 // cols) %}
+{% set rows = (images|length / cols)|round(0, 'ceil') %}
+
+{% for row in 0 .. (rows - 1) %}
+    <div class="row">
+        {% for col in 0 .. (cols - 1) %}
+            {% set index = (row * cols + col)|number_format %}
+
+            {% if images[index] is defined %}
+                {% set image = images[index] %}
+                <div class="col-xs-12 {{ colspan }}">
+                    {% embed '@NinesMedia/image/partial/thumbnail.html.twig' with {'image': image} %}
+                    {% endembed %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endfor %}

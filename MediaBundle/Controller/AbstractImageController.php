@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class AbstractImageController extends AbstractController {
-    public function newImageAction(Request $request, ImageContainerInterface $container, $route) {
+    protected function newImageAction(Request $request, ImageContainerInterface $container, $route) {
         $image = new Image();
         $form = $this->createForm(ImageType::class, $image);
         $form->handleRequest($request);
@@ -39,10 +39,11 @@ abstract class AbstractImageController extends AbstractController {
             'image' => $image,
             'form' => $form->createView(),
             'entity' => $container,
+            'route' => $route,
         ];
     }
 
-    public function editImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
+    protected function editImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
         if ( ! $container->hasImage($image)) {
             throw new NotFoundHttpException('That image is not associated.');
         }
@@ -77,10 +78,11 @@ abstract class AbstractImageController extends AbstractController {
             'image' => $image,
             'form' => $form->createView(),
             'entity' => $container,
+            'route' => $route,
         ];
     }
 
-    public function deleteImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
+    protected function deleteImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
         if ( ! $this->isCsrfTokenValid('delete' . $image->getId(), $request->request->get('_token'))) {
             $this->addFlash('warning', 'Invalid security token.');
 

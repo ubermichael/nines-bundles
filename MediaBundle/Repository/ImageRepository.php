@@ -23,4 +23,14 @@ class ImageRepository extends AbstractImageRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Image::class);
     }
+
+    public function searchQuery($q) {
+        $qb = $this->createQueryBuilder('e');
+        $qb->addSelect('MATCH (e.originalName, e.description) AGAINST(:q BOOLEAN) as HIDDEN score');
+        $qb->orderBy('score', 'desc');
+        $qb->setParameter('q', $q);
+        $qb->andHaving("score > 0");
+
+        return $qb->getQuery();
+    }
 }

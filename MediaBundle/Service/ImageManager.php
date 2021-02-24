@@ -10,25 +10,50 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Service;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Events;
+use Exception;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
+use Nines\UtilBundle\Entity\AbstractEntity;
+use Psr\Log\LoggerInterface;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of FileUploader.
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class ImageManager extends AbstractFileManager {
+class ImageManager extends AbstractFileManager implements EventSubscriber {
     /**
      * @var Thumbnailer
      */
     private $thumbnailer;
+
+    /**
+     * @var array
+     */
+    private $routing;
+
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private $router;
+
+    public function __construct($root, $routing) {
+        parent::__construct($root);
+        $this->routing = $routing;
+    }
 
     protected function uploadFile(Image $image) : void {
         $file = $image->getImageFile();
@@ -50,12 +75,6 @@ class ImageManager extends AbstractFileManager {
         $image->setImageHeight($dimensions[1]);
         $thumbPath = $this->thumbnailer->thumbnail($image);
         $image->setThumbPath($thumbPath);
-    }
-
-    public function findEntity(Image $image) {
-        list($class, $id) = explode(':', $image->getEntity());
-
-        return $this->em->find($class, $id);
     }
 
     /**
@@ -120,4 +139,98 @@ class ImageManager extends AbstractFileManager {
             $this->em->flush();
         }
     }
+
+    public function getSubscribedEvents() {
+        return [
+            Events::prePersist,
+            Events::preUpdate,
+            Events::postLoad,
+            Events::postRemove,
+        ];
+    }
+
+    /**
+     * Find the entity corresponding to a comment.
+     *
+     * @return mixed
+     */
+    public function findEntity(Image $image) {
+        [$class, $id] = explode(':', $image->getEntity());
+        if ($this->em->getMetadataFactory()->isTransient($class)) {
+            return;
+        }
+
+        return $this->em->getRepository($class)->find($id);
+    }
+
+    /**
+     * Return the short class name for the entity a image refers to.
+     */
+    public function entityType(Image $image) : ?string {
+        $entity = $this->findEntity($image);
+        if ( ! $entity) {
+            return null;
+        }
+
+        try {
+            $reflection = new ReflectionClass($entity);
+        } catch (ReflectionException $e) {
+            $this->logger->error('Cannot find entity for image ' . $image->getEntity());
+
+            return null;
+        }
+
+        return $reflection->getShortName();
+    }
+
+    public function acceptsImages(AbstractEntity $entity) : bool {
+        return $entity instanceof ImageContainerInterface;
+    }
+
+    /**
+     * Find the links for an entity.
+     *
+     * @param mixed $entity
+     *
+     * @return Collection|Link[]
+     */
+    public function findLinks(ImageContainerInterface $entity) {
+        $class = ClassUtils::getClass($entity);
+
+        return $this->linkRepository->findBy([
+            'entity' => $class . ':' . $entity->getId(),
+        ]);
+    }
+
+    public function setLinks(ImageContainerInterface $entity, $images) : void {
+        foreach ($entity->getImages() as $image) {
+            if ($this->em->contains($image)) {
+                $this->em->remove($image);
+            }
+        }
+        $entity->setLinks($images);
+
+        foreach ($images as $image) {
+            $this->em->persist($image);
+        }
+    }
+
+    public function linkToEntity(Image $image) {
+        [$class, $id] = explode(':', $image->getEntity());
+
+        if ( ! isset($this->routing[$class])) {
+            $this->logger->error('No routing information for ' . $class);
+            return '';
+        }
+
+        return $this->router->generate($this->routing[$class], ['id' => $id]);
+    }
+
+    /**
+     * @required
+     */
+    public function setRouter(UrlGeneratorInterface $router) : void {
+        $this->router = $router;
+    }
+
 }

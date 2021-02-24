@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Image{% endblock %}
+
+{% block body %}
+    <h1>New Image</h1>
+    <p>Use the form below to add an image to <a href='{{ path(route, {'id': entity.id}) }}'>{{ entity }}</a>.</p>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="form-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+            <input type="submit" value="Create" class="btn btn-primary" />
+            <a href="{{ path(route, {'id': entity.id}) }}" class="btn btn-warning">Cancel</a>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

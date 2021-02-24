@@ -1,35 +1,62 @@
 <table class='table table-bordered table-condensed table-hover table-striped'>
     <tbody>
         <tr>
+            <th>Public</th>
+            <td>
+                {% if image.public %}Yes{% else %}No{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Original Name</th>
+            <td>
+                {{ image.originalName }}
+            </td>
+        </tr>
+        <tr>
+            <th>Image Path</th>
+            <td>
+                {{ image.imagePath }}
+            </td>
+        </tr>
+        <tr>
+            <th>Thumb Path</th>
+            <td>
+                {{ image.thumbPath }}
+            </td>
+        </tr>
+        <tr>
+            <th>Image Size</th>
+            <td>
+                {{ image.imageWidth }}x{{ image.imageHeight }} {{ image.imageSize|byte_size }}
+            </td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>
+                {{ image.description|raw }}
+            </td>
+        </tr>
+        <tr>
+            <th>License</th>
+            <td>
+                {{ image.license|raw }}
+            </td>
+        </tr>
+        <tr>
             <th>Entity</th>
             <td>
-                {{ image_manager.entityType(image) }}
-                <a href='{{ image_manager.imageToEntity(image) }}'>
-                    {{ image_manager.findEntity(image) }}
-                </a><br />
-                {{ image.entity }}
+                {% set entity = manager.findEntity(image) %}
+                {% if entity %}
+                    {{ entity|short_name|camel_title }}
+                    <a href='{{ manager.linkToEntity(image) }}'>
+                         {{ entity }}
+                    </a>
+                {% else %}
+                    <i>Unknown ({{ image.entity }})</i>
+                {% endif %}
             </td>
         </tr>
-        <tr>
-            <th>Url</th>
-            <td>
-                {{ image.url }}
-            </td>
-        </tr>
-        <tr>
-            <th>Text</th>
-            <td>
-                {{ image.text }}
-            </td>
-        </tr>
-        <tr>
-            <th>HTML</th>
-            <td>{{ image }}</td>
-        </tr>
-        <tr>
-            <th>Rendered</th>
-            <td>{{ image|raw }}</td>
-        </tr>
+
         <tr>
             <th>Created</th>
             <td>{{ image.created|date }}</td>

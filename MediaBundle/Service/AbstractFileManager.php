@@ -10,12 +10,20 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Service;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\ImageContainerInterface;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Description of FileUploader.
+ * File management base class
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
@@ -42,8 +50,7 @@ abstract class AbstractFileManager {
      */
     protected $em;
 
-    public function __construct(LoggerInterface $logger, $root) {
-        $this->logger = $logger;
+    public function __construct($root) {
         $this->root = $root;
     }
 
@@ -90,13 +97,6 @@ abstract class AbstractFileManager {
         return round($bytes);
     }
 
-    /**
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $em) : void {
-        $this->em = $em;
-    }
-
     public function setUploadDir($dir) : void {
         if ('/' !== $dir[0]) {
             $this->uploadDir = $this->root . '/' . $dir;
@@ -126,4 +126,19 @@ abstract class AbstractFileManager {
 
         return $filename;
     }
+
+    /**
+     * @required
+     */
+    public function setEntityManager(EntityManagerInterface $em) : void {
+        $this->em = $em;
+    }
+
+    /**
+     * @required
+     */
+    public function setLogger(LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
+
 }
