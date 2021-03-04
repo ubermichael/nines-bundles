@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -259,13 +259,11 @@ class Page extends AbstractEntity implements ContentEntityInterface {
         return $this->includeComments;
     }
 
-    public function getInMenu(): ?bool
-    {
+    public function getInMenu() : ?bool {
         return $this->inMenu;
     }
 
-    public function setInMenu(bool $inMenu): self
-    {
+    public function setInMenu(bool $inMenu) : self {
         $this->inMenu = $inMenu;
 
         return $this;

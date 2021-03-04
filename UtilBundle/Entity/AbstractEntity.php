@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -13,7 +13,7 @@ namespace Nines\UtilBundle\Entity;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Nines\SolrBundle\Annotation as Solr;
 
 /**
  * AbstractEntity adds id, created, and updated fields along with the
@@ -32,7 +32,8 @@ abstract class AbstractEntity {
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Groups({"shallow"})
+     *
+     * @Solr\Id
      */
     protected $id;
 
@@ -41,7 +42,8 @@ abstract class AbstractEntity {
      *
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"shallow"})
+     *
+     * @Solr\Field(type="datetime")
      */
     protected $created;
 
@@ -50,7 +52,8 @@ abstract class AbstractEntity {
      *
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"shallow"})
+     *
+     * @Solr\Field(type="datetime")
      */
     protected $updated;
 
