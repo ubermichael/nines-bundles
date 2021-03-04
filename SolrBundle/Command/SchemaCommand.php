@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,11 +28,12 @@ class SchemaCommand extends Command {
      */
     private $copyFields;
 
-    protected static $defaultName = 'nines:solr:schema';
     /**
-     * @var EntityMapper|null
+     * @var null|EntityMapper
      */
     private $mapper;
+
+    protected static $defaultName = 'nines:solr:schema';
 
     public function __construct(EntityMapperBuilder $builder) {
         parent::__construct(self::$defaultName);

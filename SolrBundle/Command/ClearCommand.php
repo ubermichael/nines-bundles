@@ -3,16 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\SolrBundle\Command;
 
-use Exception;
 use Nines\SolrBundle\Client\Builder;
-use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,6 +37,7 @@ class ClearCommand extends Command {
         $result = $client->update($update);
 
         $output->writeln($result->getStatus() . ' documents deleted in ' . $result->getQueryTime() . 'ms');
+
         return 0;
     }
 }
