@@ -17,10 +17,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PingCommand extends Command {
+class ClearCommand extends Command {
     private $builder;
 
-    protected static $defaultName = 'nines:solr:ping';
+    protected static $defaultName = 'nines:solr:clear';
 
     public function __construct(Builder $builder) {
         parent::__construct();
@@ -28,23 +28,17 @@ class PingCommand extends Command {
     }
 
     protected function configure() : void {
-        $this->setDescription('Ping the solr server.');
+        $this->setDescription('Clear the index.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $client = $this->builder->build();
-        $ping = $client->createPing(['omitheader' => false]);
+        $update = $client->createUpdate();
+        $update->addDeleteQuery('*:*');
+        $update->addCommit();
+        $result = $client->update($update);
 
-        try {
-            $result = $client->ping($ping);
-            $output->writeln('Solarium library version: ' . Client::VERSION);
-            $output->writeln($result->getResponse()->getStatusCode() . ' ' . $result->getResponse()->getStatusMessage());
-            $json = json_decode($result->getResponse()->getBody());
-            $output->writeln('Ping: ' . $json->responseHeader->QTime . 'ms');
-        } catch (Exception $e) {
-            $output->writeln('Ping failed: ' . $e->getMessage());
-        }
-
+        $output->writeln($result->getStatus() . ' documents deleted in ' . $result->getQueryTime() . 'ms');
         return 0;
     }
 }
