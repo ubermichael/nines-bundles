@@ -10,7 +10,15 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Mapper;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Nines\SolrBundle\Annotation\Document;
+use Nines\SolrBundle\Annotation\Field;
+use Nines\SolrBundle\Annotation\Id;
+use ReflectionClass;
+use ReflectionProperty;
 
 class EntityMapperBuilder {
     /**
@@ -23,11 +31,80 @@ class EntityMapperBuilder {
      */
     private $copyFields;
 
+    /**
+     * @var EntityMapper|null
+     */
     private static $entityMapper;
 
-    private static function createMapping() {
-        // do stuff.
-        return new EntityMapper();
+    /**
+     * @param ReflectionProperty[] $properties
+     *
+     * @throws Exception
+     */
+    private function getIdentifier($properties) {
+        $identifier = null;
+        $reader = new AnnotationReader();
+
+        foreach ($properties as $property) {
+            $annotation = $reader->getPropertyAnnotation($property, Id::class);
+            if ( ! $annotation) {
+                continue;
+            }
+            if ($identifier) {
+                throw new Exception('Cannot have two identifiers in ' . $property->getDeclaringClass()->getName());
+            }
+            $identifier = $property;
+        }
+
+        return $identifier;
+    }
+
+    private function getProperties(ReflectionClass $rc) {
+        $properties = [];
+        do {
+            foreach ($rc->getProperties() as $property) {
+                $properties[$property->getName()] = $property;
+            }
+        } while ($rc = $rc->getParentClass());
+
+        return $properties;
+    }
+
+    private function createMapping() {
+        $mapping = new EntityMapper();
+        $mapping->setCopyFields($this->copyFields);
+
+        AnnotationRegistry::registerLoader('class_exists');
+        $reader = new AnnotationReader();
+        $metadata = $this->em->getMetadataFactory()->getAllMetadata();
+
+        foreach ($metadata as $meta) {
+            $reflection = $meta->getReflectionClass();
+            $classAnnotation = $reader->getClassAnnotation($reflection, Document::class);
+
+            if ( ! $classAnnotation) {
+                continue;
+            }
+            $properties = $this->getProperties($reflection);
+            $identifier = $this->getIdentifier($properties);
+
+            $mapping->addClass($meta->getName());
+            $mapping->addId($meta->getName(), $identifier->getName());
+
+            foreach ($properties as $property) {
+                $propAnnotation = $reader->getPropertyAnnotation($property, Field::class);
+                if ( ! $propAnnotation) {
+                    continue;
+                }
+                if ( ! $propAnnotation->name) {
+                    $propAnnotation->name = mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
+                }
+                $propAnnotation->name .= Field::TYPE_MAP[$propAnnotation->type];
+                $mapping->addField($meta->getName(), $property->getName(), $propAnnotation->name);
+            }
+        }
+
+        return $mapping;
     }
 
     public function build() {
