@@ -30,7 +30,7 @@
           {%- if field in field_mappings|keys %}
           {%- set mapping = field_mappings[field] %}
 
-          {%- if mapping.type in ['datetime'] %}
+          {%- if mapping.type in ['datetime', 'datetime_immutable'] %}
 
               <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
 

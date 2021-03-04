@@ -7,7 +7,7 @@
             <th>{{ field|camel_title }}</th>
             <td>
                 {% set mapping = field_mappings[field] %}
-                    {% if mapping.type in ['datetime'] %}
+                    {% if mapping.type in ['datetime', 'datetime_immutable'] %}
                         {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date }}{% endif %}' }}
                     {% elseif mapping.type in ['date'] %}
                         {{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date(\'Y-m-d\') }}{% endif %}' }}
