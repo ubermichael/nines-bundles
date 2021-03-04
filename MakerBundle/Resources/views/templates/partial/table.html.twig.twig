@@ -32,7 +32,7 @@
 
           {%- if mapping.type in ['datetime', 'datetime_immutable'] %}
 
-              <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date) }}{% endif %}' }}</td>
+              <td>{{ '{% if ' ~ entity_twig_var_singular ~ '.' ~ field ~ ' %}{{ ' ~ entity_twig_var_singular ~ '.' ~ field ~ '|date }}{% endif %}' }}</td>
 
           {%- elseif mapping.type in ['date'] %}
 
