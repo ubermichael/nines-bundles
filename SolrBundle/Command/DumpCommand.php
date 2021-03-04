@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -24,12 +24,12 @@ class DumpCommand extends Command {
      */
     private $em;
 
-    protected static $defaultName = 'nines:solr:dump';
-
     /**
-     * @var EntityMapper|null
+     * @var null|EntityMapper
      */
     private $mapper;
+
+    protected static $defaultName = 'nines:solr:dump';
 
     public function __construct(EntityMapperBuilder $builder) {
         parent::__construct(self::$defaultName);
@@ -45,15 +45,16 @@ class DumpCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output) {
         $class = $input->getArgument('class');
         dump($class);
-        if(strpos($class, '\\') === false) {
+        if (false === mb_strpos($class, '\\')) {
             $class = 'App\\Entity\\' . $class;
         }
         $id = $input->getArgument('id');
         $entity = $this->em->find($class, $id);
-        if( ! $entity) {
-            $output->writeln("Entity not found.");
+        if ( ! $entity) {
+            $output->writeln('Entity not found.');
         }
         dump($this->mapper->mapEntity($entity));
+
         return 0;
     }
 
