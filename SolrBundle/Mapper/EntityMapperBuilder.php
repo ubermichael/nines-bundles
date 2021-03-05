@@ -89,18 +89,21 @@ class EntityMapperBuilder {
             $identifier = $this->getIdentifier($properties);
 
             $mapping->addClass($meta->getName());
-            $mapping->addId($meta->getName(), $identifier->getName());
+            $mapping->addId($meta->getName(), $identifier->getName(), [
+                'getter' => $propAnnotation->getter ?? 'get' . ucfirst($identifier->getName()),
+            ]);
 
             foreach ($properties as $property) {
                 $propAnnotation = $reader->getPropertyAnnotation($property, Field::class);
                 if ( ! $propAnnotation) {
                     continue;
                 }
-                if ( ! $propAnnotation->name) {
-                    $propAnnotation->name = mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
-                }
-                $propAnnotation->name .= Field::TYPE_MAP[$propAnnotation->type];
-                $mapping->addField($meta->getName(), $property->getName(), $propAnnotation->name);
+                $fieldName = $propAnnotation->name ?? mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
+                $fieldName .= Field::TYPE_MAP[$propAnnotation->type];
+                $mapping->addField($meta->getName(), $property->getName(), $fieldName, [
+                    'mutator' => $propAnnotation->mutator,
+                    'getter' => $propAnnotation->getter ?? 'get' . ucfirst($property->getName())
+                ]);
             }
         }
 

@@ -43,7 +43,7 @@ abstract class AbstractEntity {
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      *
-     * @Solr\Field(type="datetime")
+     * @Solr\Field(type="datetime", mutator="format('Y-m-d\TH:i:sP')")
      */
     protected $created;
 
@@ -53,7 +53,7 @@ abstract class AbstractEntity {
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      *
-     * @Solr\Field(type="datetime")
+     * @Solr\Field(type="datetime", mutator="format('Y-m-d\TH:i:sP')")
      */
     protected $updated;
 

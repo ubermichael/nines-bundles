@@ -49,8 +49,7 @@ class Field {
     public $name;
 
     /**
-     * A method from the indexed entity, called to get a string representation
-     * the indexed field.
+     * A method from the indexed entity.
      *
      * @var string
      */
@@ -63,4 +62,12 @@ class Field {
      * @var string
      */
     public $filter;
+
+    /**
+     * A callable function on the field's object. For dates this could be
+     * format('Y-m-d').
+     *
+     * @var string
+     */
+    public $mutator;
 }
