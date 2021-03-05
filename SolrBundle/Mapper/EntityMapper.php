@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\SolrBundle\Mapper;
+
+use ReflectionMethod;
 
 class EntityMapper {
     /**
@@ -33,17 +35,54 @@ class EntityMapper {
     }
 
     public function addClass($class) : void {
-        $this->entityMap[$class] = [
-            'class_s' => $class,
+        $this->entityMap[$class] = [];
+    }
+
+    public function addId($class, $name, $options) : void {
+        $this->entityMap[$class]['_id'] = [
+            'field' => $name,
+            'mutator' => null,
+            'getter' => $options['getter'],
         ];
     }
 
-    public function addId($class, $name) : void {
-        $this->entityMap[$class]['id'] = $name;
+    public function getMethodDefinition($string) {
+        if ( ! $string) {
+            return;
+        }
+
+        $definition = [
+            'method' => $string,
+            'args' => null,
+        ];
+
+        if (false !== ($n = mb_strpos($string, '('))) {
+            $definition['method'] = mb_substr($string, 0, $n);
+            $args = explode(',', mb_substr($string, $n + 1, -1));
+            $definition['args'] = array_map(function ($s) {
+                return trim($s, " \t\n\r\0\x0B'\"");
+            }, $args);
+        }
+
+        return $definition;
     }
 
-    public function addField($class, $name, $solr) : void {
-        $this->entityMap[$class][$name] = $solr;
+    public function addField($class, $name, $solr, $options) : void {
+        $this->entityMap[$class][$name] = [
+            'field' => $solr,
+            'mutator' => $this->getMethodDefinition($options['mutator']),
+            'getter' => $this->getMethodDefinition($options['getter']),
+        ];
+    }
+
+    public function invoke($obj, $method, $args) {
+        if ($args && count($args) > 0) {
+            $ref = new ReflectionMethod($obj, $method);
+
+            return $ref->invokeArgs($obj, $args);
+        }
+
+        return $obj->{$method}();
     }
 
     public function mapEntity($entity) {
@@ -51,17 +90,24 @@ class EntityMapper {
         if ( ! isset($this->entityMap[$class])) {
             return;
         }
+
+        $idGetter = $this->entityMap[$class]['_id']['getter'];
         $map = [
-            'class_s' => $this->entityMap[$class]['class_s'],
+            'id' => $class . ':' . $entity->{$idGetter}(),
+            'class_s' => $class,
         ];
 
         foreach ($this->entityMap[$class] as $k => $v) {
-            if (in_array($v, $map, true)) {
+            if (in_array($v['field'], ['id', 'class_s'], true)) {
                 continue;
             }
-            $getter = 'get' . lcfirst($k);
-            $map[$v] = $entity->{$getter}();
+            $data = $this->invoke($entity, $v['getter']['method'], $v['getter']['args']);
+            if ($v['mutator']) {
+                $data = $this->invoke($data, $v['mutator']['method'], $v['mutator']['args']);
+            }
+            $map[$v['field']] = $data;
         }
+        dump($this->entityMap);
 
         return $map;
     }
