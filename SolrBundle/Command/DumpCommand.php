@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -44,7 +44,6 @@ class DumpCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $class = $input->getArgument('class');
-        dump($class);
         if (false === mb_strpos($class, '\\')) {
             $class = 'App\\Entity\\' . $class;
         }

@@ -46,6 +46,10 @@ class EntityMapper {
         ];
     }
 
+    public function getMappedClasses() {
+        return array_keys($this->entityMap);
+    }
+
     public function getMethodDefinition($string) {
         if ( ! $string) {
             return;
@@ -76,6 +80,9 @@ class EntityMapper {
     }
 
     public function invoke($obj, $method, $args) {
+        if ( ! $obj) {
+            return;
+        }
         if ($args && count($args) > 0) {
             $ref = new ReflectionMethod($obj, $method);
 
@@ -86,6 +93,9 @@ class EntityMapper {
     }
 
     public function mapEntity($entity) {
+        if ( ! $entity) {
+            return;
+        }
         $class = get_class($entity);
         if ( ! isset($this->entityMap[$class])) {
             return;
@@ -107,7 +117,6 @@ class EntityMapper {
             }
             $map[$v['field']] = $data;
         }
-        dump($this->entityMap);
 
         return $map;
     }
