@@ -5,9 +5,13 @@ namespace {{ namespace }}\Form;
 {% set fkeys = associations|filter(v => v['type'] in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE'),constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE')] ) -%}
 
 use {{ entity_full_class_name }};
+{% set seen = [] %}
 {% for field in fkeys|keys %}
-    {% set relation = relations[field] %}
-use {{ relation['entity_full_class_name'] }};
+{% set relation = relations[field]['entity_full_class_name'] %}
+{% if relation not in seen %}
+{% set seen = seen|merge([relation]) %}
+use {{ relation }};
+{% endif %}
 {%- endfor %}
 
 use Symfony\Component\Form\AbstractType;
