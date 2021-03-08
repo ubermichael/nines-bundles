@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\SolrBundle\Command;
 
+use Exception;
 use Nines\SolrBundle\Client\Builder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,9 +35,13 @@ class ClearCommand extends Command {
         $update = $client->createUpdate();
         $update->addDeleteQuery('*:*');
         $update->addCommit();
-        $result = $client->update($update);
 
-        $output->writeln($result->getStatus() . ' documents deleted in ' . $result->getQueryTime() . 'ms');
+        try {
+            $result = $client->update($update);
+        } catch (Exception $e) {
+            dump($e);
+        }
+        $output->writeln($result->getResponse()->getStatusMessage() . ' all documents deleted in ' . $result->getQueryTime() . 'ms');
 
         return 0;
     }
