@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<'HEADER'
-(c) 2020 Michael Joyce <mjoyce@sfu.ca>
+(c) 2021 Michael Joyce <mjoyce@sfu.ca>
 This source file is subject to the GPL v2, bundled
 with this source code in the file LICENSE.
 HEADER;
@@ -58,7 +58,6 @@ return PhpCsFixer\Config::create()
         'compact_nullable_typehint' => true,
         'concat_space' => ['spacing' => 'one'],
 
-        'date_time_immutable' => true,
         'declare_strict_types' => true,
         'dir_constant' => true,
 
