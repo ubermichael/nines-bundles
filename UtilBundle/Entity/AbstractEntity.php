@@ -13,7 +13,6 @@ namespace Nines\UtilBundle\Entity;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Nines\SolrBundle\Annotation as Solr;
 
 /**
  * AbstractEntity adds id, created, and updated fields along with the
@@ -32,8 +31,6 @@ abstract class AbstractEntity {
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @Solr\Id
      */
     protected $id;
 
@@ -42,8 +39,6 @@ abstract class AbstractEntity {
      *
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
-     *
-     * @Solr\Field(type="datetime")
      */
     protected $created;
 
@@ -52,8 +47,6 @@ abstract class AbstractEntity {
      *
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
-     *
-     * @Solr\Field(type="datetime")
      */
     protected $updated;
 
