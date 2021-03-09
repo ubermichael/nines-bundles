@@ -21,17 +21,16 @@ class EntityMapper {
     private $entityMap;
 
     /**
-     * Maps solr fields to doctrine entity.
-     */
-    private $fieldMap;
-
-    /**
      * @var array
      */
     private $copyFields;
 
     public function __construct() {
         $this->copyFields = [];
+    }
+
+    public function getMap() {
+        return $this->entityMap;
     }
 
     public function addClass($class) : void {
@@ -81,20 +80,27 @@ class EntityMapper {
 
     public function invoke($obj, $method, $args) {
         if ( ! $obj) {
-            return;
+            return null;
         }
-        if ($args && count($args) > 0) {
-            $ref = new ReflectionMethod($obj, $method);
+        $call = function($object) use ($method, $args) {
+            if ($args && count($args) > 0) {
+                $ref = new ReflectionMethod($object, $method);
 
-            return $ref->invokeArgs($obj, $args);
+                return $ref->invokeArgs($object, $args);
+            }
+
+            return $object->{$method}();
+        };
+
+        if(is_array($obj)) {
+            return array_map($call, $obj);
         }
-
-        return $obj->{$method}();
+        return $call($obj);
     }
 
     public function mapEntity($entity) {
         if ( ! $entity) {
-            return;
+            return null;
         }
         $class = get_class($entity);
         if ( ! isset($this->entityMap[$class])) {

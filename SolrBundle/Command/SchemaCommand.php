@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -45,7 +46,19 @@ class SchemaCommand extends Command {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        dump($this->mapper);
+        $map = $this->mapper->getMap();
+        foreach($this->mapper->getMappedClasses() as $class) {
+            $output->writeln($class);
+            $table = new Table($output);
+            $table->setHeaders(['name', 'field', 'getter', 'mutator']);
+            foreach($map[$class] as $k => $data) {
+                $row = [$k, $data['field']];
+                $row[] = $data['getter']['method'] ?? $data['getter'];
+                $row[] = $data['mutator']['method'] ?? $data['mutator'];
+                $table->addRow($row);
+            }
+            $table->render();
+        }
 
         return 0;
     }
