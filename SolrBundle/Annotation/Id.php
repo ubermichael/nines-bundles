@@ -14,4 +14,15 @@ namespace Nines\SolrBundle\Annotation;
  * @Annotation
  */
 class Id {
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * A method from the indexed entity.
+     *
+     * @var string
+     */
+    public $getter;
 }

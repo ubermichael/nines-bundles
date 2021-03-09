@@ -15,4 +15,7 @@ namespace Nines\SolrBundle\Annotation;
  * @Target({"CLASS"})
  */
 class Document {
+
+    public $facet;
+
 }

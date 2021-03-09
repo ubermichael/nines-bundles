@@ -40,8 +40,9 @@ class EntityMapperBuilder {
      * @param ReflectionProperty[] $properties
      *
      * @throws Exception
+     * @return ReflectionProperty
      */
-    private function getIdentifier($properties) {
+    private function getIdentifier($properties) : ?ReflectionProperty {
         $identifier = null;
         $reader = new AnnotationReader();
 
@@ -55,10 +56,14 @@ class EntityMapperBuilder {
             }
             $identifier = $property;
         }
-
         return $identifier;
     }
 
+    /**
+     * @param ReflectionClass $rc
+     *
+     * @return ReflectionProperty[]
+     */
     private function getProperties(ReflectionClass $rc) {
         $properties = [];
         do {
@@ -85,12 +90,14 @@ class EntityMapperBuilder {
             if ( ! $classAnnotation) {
                 continue;
             }
+
             $properties = $this->getProperties($reflection);
             $identifier = $this->getIdentifier($properties);
-
             $mapping->addClass($meta->getName());
+
+            $idAnnotation = $reader->getPropertyAnnotation($identifier, Id::class);
             $mapping->addId($meta->getName(), $identifier->getName(), [
-                'getter' => $propAnnotation->getter ?? 'get' . ucfirst($identifier->getName()),
+                'getter' => $idAnnotation->getter ?? 'get' . ucfirst($identifier->getName()),
             ]);
 
             foreach ($properties as $property) {
