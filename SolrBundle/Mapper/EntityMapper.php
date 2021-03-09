@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Mapper;
 
+use Doctrine\Common\Util\ClassUtils;
+use ReflectionClass;
 use ReflectionMethod;
 
 class EntityMapper {
@@ -102,9 +104,9 @@ class EntityMapper {
         if ( ! $entity) {
             return null;
         }
-        $class = get_class($entity);
+        $class = ClassUtils::getClass($entity);
         if ( ! isset($this->entityMap[$class])) {
-            return;
+            return null;
         }
 
         $idGetter = $this->entityMap[$class]['_id']['getter'];
@@ -112,6 +114,9 @@ class EntityMapper {
             'id' => $class . ':' . $entity->{$idGetter}(),
             'class_s' => $class,
         ];
+        foreach($this->entityMap[$class]['_fixed'] as $k => $v) {
+            $map[$k] = $v;
+        }
 
         foreach ($this->entityMap[$class] as $k => $v) {
             if (in_array($v['field'], ['id', 'class_s'], true)) {
