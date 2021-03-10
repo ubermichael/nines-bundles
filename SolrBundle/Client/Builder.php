@@ -12,7 +12,9 @@ namespace Nines\SolrBundle\Client;
 
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\AdapterInterface;
+use Solarium\Core\Client\Adapter\Curl;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Builder {
     private $config;
@@ -32,9 +34,9 @@ class Builder {
 
     public function build(?AdapterInterface $adapter = null) {
         if ( ! $adapter) {
-            $adapter = new \Solarium\Core\Client\Adapter\Curl();
+            $adapter = new Curl();
         }
-        $eventDispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+        $eventDispatcher = new EventDispatcher();
 
         return new Client($adapter, $eventDispatcher, $this->config);
     }
