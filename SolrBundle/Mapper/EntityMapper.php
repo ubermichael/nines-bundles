@@ -36,7 +36,9 @@ class EntityMapper {
     }
 
     public function addClass($class) : void {
-        $this->entityMap[$class] = [];
+        $this->entityMap[$class] = [
+            '_fixed' => [],
+        ];
     }
 
     public function addId($class, $name, $options) : void {
@@ -47,13 +49,17 @@ class EntityMapper {
         ];
     }
 
+    public function addFixed($class, $name, $value) : void {
+        $this->entityMap[$class]['_fixed'][$name] = $value;
+    }
+
     public function getMappedClasses() {
         return array_keys($this->entityMap);
     }
 
     public function getMethodDefinition($string) {
         if ( ! $string) {
-            return;
+            return null;
         }
 
         $definition = [
@@ -119,6 +125,12 @@ class EntityMapper {
         }
 
         foreach ($this->entityMap[$class] as $k => $v) {
+            if($k === '_fixed') {
+                foreach($v as $name => $value) {
+                    $map[$name] = $value;
+                }
+                continue;
+            }
             if (in_array($v['field'], ['id', 'class_s'], true)) {
                 continue;
             }
