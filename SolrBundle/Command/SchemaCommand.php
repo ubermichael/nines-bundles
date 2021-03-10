@@ -52,9 +52,17 @@ class SchemaCommand extends Command {
             $table = new Table($output);
             $table->setHeaders(['name', 'field', 'getter', 'mutator']);
             foreach($map[$class] as $k => $data) {
-                $row = [$k, $data['field']];
-                $row[] = $data['getter']['method'] ?? $data['getter'];
-                $row[] = $data['mutator']['method'] ?? $data['mutator'];
+                $row = [$k];
+                if($k === '_fixed') {
+                    foreach($data as $name => $value) {
+                        $row[] = $name;
+                        $row[] = $value;
+                    }
+                } else {
+                    $row[] = $data['field'];
+                    $row[] = $data['getter']['method'] ?? $data['getter'];
+                    $row[] = $data['mutator']['method'] ?? $data['mutator'];
+                }
                 $table->addRow($row);
             }
             $table->render();

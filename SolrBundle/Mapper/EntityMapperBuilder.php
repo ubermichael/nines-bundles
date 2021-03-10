@@ -99,6 +99,7 @@ class EntityMapperBuilder {
             $mapping->addId($meta->getName(), $identifier->getName(), [
                 'getter' => $idAnnotation->getter ?? 'get' . ucfirst($identifier->getName()),
             ]);
+            $mapping->addFixed($meta->getName(), 'type_s', $classAnnotation->facet ?? $reflection->getShortName());
 
             foreach ($properties as $property) {
                 $propAnnotation = $reader->getPropertyAnnotation($property, Field::class);
