@@ -96,7 +96,7 @@ class EntityMapperBuilder {
 
             /** @var ReflectionProperty $idProperty */
             /** @var Annotation $idAnnotation */
-            [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
+            list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
             $idMeta = new IdMetadata();
             $idMeta->setName($idProperty->getName());
             $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));

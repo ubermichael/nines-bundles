@@ -111,11 +111,11 @@ class EntityMetadata extends Metadata {
     public function addFieldMetadata(FieldMetadata $fieldMetadata) : self {
         $this->fieldMetadata[$fieldMetadata->getFieldName()] = $fieldMetadata;
         $this->solrFields[$fieldMetadata->getSolrName()] = $fieldMetadata->getFieldName();
+
         return $this;
     }
 
-    public function fetch(AbstractEntity $entity) {
+    public function fetch(AbstractEntity $entity) : void {
         // do nothing. doesn't make sense here.
     }
-
 }

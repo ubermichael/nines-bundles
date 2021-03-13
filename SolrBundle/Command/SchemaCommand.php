@@ -49,28 +49,30 @@ class SchemaCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $classes = $input->getArgument('classes');
-        if( ! $classes) {
+        if ( ! $classes) {
             $classes = $this->mapper->getClasses();
         }
 
-        foreach($classes as $class) {
-            if(strpos($class, '\\') === false) {
+        foreach ($classes as $class) {
+            if (false === mb_strpos($class, '\\')) {
                 $class = 'App\\Entity\\' . $class;
             }
             $output->writeln($class);
             $entityMeta = $this->mapper->getEntityMetadata($class);
-            if( ! $entityMeta) {
-                $output->writeln("Not mapped");
+            if ( ! $entityMeta) {
+                $output->writeln('Not mapped');
                 continue;
             }
             $idMeta = $entityMeta->getId();
-            $output->writeln("  id => " . $class . ':' . $idMeta->getGetter());
-            foreach($entityMeta->getFixed() as $k => $v) {
+            $output->writeln('  id => ' . $class . ':' . $idMeta->getGetter());
+
+            foreach ($entityMeta->getFixed() as $k => $v) {
                 $output->writeln("  {$k} => {$v}");
             }
             $table = new Table($output);
             $table->setHeaders(['name', 'field', 'getter', 'mutator', 'filters']);
-            foreach($entityMeta->getFieldMetadata() as $fieldMeta) {
+
+            foreach ($entityMeta->getFieldMetadata() as $fieldMeta) {
                 $row = [
                     $fieldMeta->getSolrName(),
                     $fieldMeta->getFieldName(),

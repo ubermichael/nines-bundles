@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Metadata;
 
 use Nines\UtilBundle\Entity\AbstractEntity;
+use ReflectionFunction;
 use ReflectionMethod;
 
 class FieldMetadata extends Metadata {
@@ -86,12 +87,12 @@ class FieldMetadata extends Metadata {
     }
 
     public function setFilters(?array $filters) : self {
-        if( ! $filters) {
+        if ( ! $filters) {
             $this->filters = [];
             $this->filterArgs = [];
         } else {
             foreach ($filters as $filter) {
-                [$name, $args] = $this->parseFunctionCall($filter);
+                list($name, $args) = $this->parseFunctionCall($filter);
                 $this->filters[] = $name;
                 $this->filterArgs[] = $args;
             }
@@ -113,7 +114,7 @@ class FieldMetadata extends Metadata {
     }
 
     public function addFilter(string $filter) : self {
-        [$name, $args] = $this->parseFunctionCall($filter);
+        list($name, $args) = $this->parseFunctionCall($filter);
         $this->filters[] = $name;
         $this->filterArgs = $args;
 
@@ -145,7 +146,7 @@ class FieldMetadata extends Metadata {
     }
 
     public function setGetter(string $getter) : self {
-        [$name, $args] = $this->parseFunctionCall($getter);
+        list($name, $args) = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
@@ -161,7 +162,7 @@ class FieldMetadata extends Metadata {
             $this->mutator = null;
             $this->mutatorArgs = [];
         } else {
-            [$name, $args] = $this->parseFunctionCall($mutator);
+            list($name, $args) = $this->parseFunctionCall($mutator);
             $this->mutator = $name;
             $this->mutatorArgs = $args;
         }
@@ -171,7 +172,7 @@ class FieldMetadata extends Metadata {
 
     public function fetch(AbstractEntity $entity) {
         $data = null;
-        if($this->getterArgs) {
+        if ($this->getterArgs) {
             $ref = new ReflectionMethod($entity, $this->getter);
             $data = $ref->invokeArgs($entity, $this->getterArgs);
         } else {
@@ -179,12 +180,12 @@ class FieldMetadata extends Metadata {
             $data = $entity->{$method}();
         }
 
-        if( ! $data) {
+        if ( ! $data) {
             return $data;
         }
 
-        if($this->mutator) {
-            if($this->mutatorArgs) {
+        if ($this->mutator) {
+            if ($this->mutatorArgs) {
                 $ref = new ReflectionMethod($data, $this->mutator);
                 $data = $ref->invokeArgs($data, $this->mutatorArgs);
             } else {
@@ -193,10 +194,10 @@ class FieldMetadata extends Metadata {
             }
         }
 
-        foreach($this->filters as $n => $filter) {
+        foreach ($this->filters as $n => $filter) {
             $args = $this->filterArgs[$n];
-            if($args) {
-                $ref = new \ReflectionFunction($filter);
+            if ($args) {
+                $ref = new ReflectionFunction($filter);
                 $args = array_merge([$data], $args);
                 $data = $ref->invokeArgs($args);
             } else {

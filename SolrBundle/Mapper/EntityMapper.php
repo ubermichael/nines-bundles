@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace Nines\SolrBundle\Mapper;
-
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +18,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Solarium\QueryType\Select\Result\Document;
 
 class EntityMapper {
-
     /**
      * @var EntityManagerInterface;
      */
@@ -27,16 +32,16 @@ class EntityMapper {
         $this->map = [];
     }
 
-    public function addEntity(EntityMetadata $entityMetadata) {
+    public function addEntity(EntityMetadata $entityMetadata) : void {
         $this->map[$entityMetadata->getClass()] = $entityMetadata;
     }
 
     public function toDocument(?AbstractEntity $entity) {
-        if( ! $entity) {
+        if ( ! $entity) {
             return null;
         }
         $class = ClassUtils::getClass($entity);
-        if( !($entityMeta = ($this->map[$class] ?? null))) {
+        if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
             return null;
         }
 
@@ -45,7 +50,7 @@ class EntityMapper {
             'id' => $entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity),
         ], $entityMeta->getFixed());
 
-        foreach($entityMeta->getFieldMetadata() as $fieldMetadata) {
+        foreach ($entityMeta->getFieldMetadata() as $fieldMetadata) {
             $data[$fieldMetadata->getSolrName()] = $fieldMetadata->fetch($entity);
         }
 
@@ -53,21 +58,23 @@ class EntityMapper {
     }
 
     public function toEntity(Document $document) {
-        [$class, $id] = explode(":", $document->id);
-        if( ! class_exists($class)) {
+        list($class, $id) = explode(':', $document->id);
+        if ( ! class_exists($class)) {
             throw new Exception("Unknown class: {$class}");
         }
+
         return $this->em->find($class, $id);
     }
 
-    public function setEntityManager(EntityManagerInterface $em) {
+    public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
     }
 
     public function getEntityMetadata($class) {
-        if( ! isset($this->map[$class])) {
-            return null;
+        if ( ! isset($this->map[$class])) {
+            return;
         }
+
         return $this->map[$class];
     }
 

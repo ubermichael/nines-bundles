@@ -13,11 +13,10 @@ namespace Nines\SolrBundle\Metadata;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 abstract class Metadata {
+    abstract public function fetch(AbstractEntity $entity);
 
     /**
      * @param $string
-     *
-     * @return array
      */
     protected function parseFunctionCall(string $string) : array {
         $name = $string;
@@ -31,6 +30,4 @@ abstract class Metadata {
 
         return [$name, $args];
     }
-
-    abstract public function fetch(AbstractEntity $entity);
 }
