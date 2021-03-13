@@ -15,6 +15,7 @@ use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -43,26 +44,40 @@ class SchemaCommand extends Command {
 
     protected function configure() : void {
         $this->setDescription('Show the solr schema.');
+        $this->addArgument('classes', InputArgument::IS_ARRAY, 'List of classes to map');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $map = $this->mapper->getMap();
-        foreach($this->mapper->getMappedClasses() as $class) {
+        $classes = $input->getArgument('classes');
+        if( ! $classes) {
+            $classes = $this->mapper->getClasses();
+        }
+
+        foreach($classes as $class) {
+            if(strpos($class, '\\') === false) {
+                $class = 'App\\Entity\\' . $class;
+            }
             $output->writeln($class);
+            $entityMeta = $this->mapper->getEntityMetadata($class);
+            if( ! $entityMeta) {
+                $output->writeln("Not mapped");
+                continue;
+            }
+            $idMeta = $entityMeta->getId();
+            $output->writeln("  id => " . $class . ':' . $idMeta->getGetter());
+            foreach($entityMeta->getFixed() as $k => $v) {
+                $output->writeln("  {$k} => {$v}");
+            }
             $table = new Table($output);
-            $table->setHeaders(['name', 'field', 'getter', 'mutator']);
-            foreach($map[$class] as $k => $data) {
-                $row = [$k];
-                if($k === '_fixed') {
-                    foreach($data as $name => $value) {
-                        $row[] = $name;
-                        $row[] = $value;
-                    }
-                } else {
-                    $row[] = $data['field'];
-                    $row[] = $data['getter']['method'] ?? $data['getter'];
-                    $row[] = $data['mutator']['method'] ?? $data['mutator'];
-                }
+            $table->setHeaders(['name', 'field', 'getter', 'mutator', 'filters']);
+            foreach($entityMeta->getFieldMetadata() as $fieldMeta) {
+                $row = [
+                    $fieldMeta->getSolrName(),
+                    $fieldMeta->getFieldName(),
+                    $fieldMeta->getGetter(),
+                    $fieldMeta->getMutator(),
+                    implode(',', $fieldMeta->getFilters()),
+                ];
                 $table->addRow($row);
             }
             $table->render();

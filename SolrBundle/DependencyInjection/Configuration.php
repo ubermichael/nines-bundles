@@ -27,11 +27,6 @@ class Configuration implements ConfigurationInterface {
             ->scalarNode('port')->defaultValue(8983)->end()
             ->scalarNode('path')->defaultNull('/')->end()
             ->scalarNode('core')->defaultNull('solr')->end()
-            ->arrayNode('copy_fields')->prototype('array')->children()
-            ->scalarNode('from')->end()
-            ->scalarNode('to')->end()
-            ->end()->end()
-            ->end()
             ->end()
         ;
 

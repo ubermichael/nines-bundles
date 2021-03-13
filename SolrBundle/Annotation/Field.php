@@ -62,4 +62,9 @@ class Field {
      * @var string
      */
     public $mutator;
+
+    /**
+     * @var array
+     */
+    public $filters;
 }

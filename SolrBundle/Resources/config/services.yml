@@ -10,11 +10,3 @@ services:
   Nines\SolrBundle\:
     resource: '../../'
     exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
-
-  Nines\SolrBundle\Command\SchemaCommand:
-    calls:
-      - setCopyFields: [ '%nines.solr.copy_fields%' ]
-
-  Nines\SolrBundle\Mapper\EntityMapperBuilder:
-    calls:
-      - setCopyFields: [ '%nines.solr.copy_fields%' ]
