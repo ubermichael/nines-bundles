@@ -52,7 +52,7 @@ class DumpCommand extends Command {
         if ( ! $entity) {
             $output->writeln('Entity not found.');
         }
-        dump($this->mapper->mapEntity($entity));
+        dump($this->mapper->toDocument($entity));
 
         return 0;
     }

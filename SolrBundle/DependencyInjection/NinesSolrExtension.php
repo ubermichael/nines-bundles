@@ -35,6 +35,5 @@ class NinesSolrExtension extends Extension {
         $container->setParameter('nines.solr.port', $config['port']);
         $container->setParameter('nines.solr.path', $config['path']);
         $container->setParameter('nines.solr.core', $config['core']);
-        $container->setParameter('nines.solr.copy_fields', $config['copy_fields']);
     }
 }

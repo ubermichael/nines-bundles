@@ -13,10 +13,14 @@ namespace Nines\SolrBundle\Mapper;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Annotation;
 use Exception;
 use Nines\SolrBundle\Annotation\Document;
 use Nines\SolrBundle\Annotation\Field;
 use Nines\SolrBundle\Annotation\Id;
+use Nines\SolrBundle\Metadata\EntityMetadata;
+use Nines\SolrBundle\Metadata\FieldMetadata;
+use Nines\SolrBundle\Metadata\IdMetadata;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -27,41 +31,37 @@ class EntityMapperBuilder {
     private $em;
 
     /**
-     * @var array
+     * @var EntityMapper
      */
-    private $copyFields;
+    private static $mapper;
 
     /**
-     * @var null|EntityMapper
-     */
-    private static $entityMapper;
-
-    /**
-     * @param ReflectionProperty[] $properties
+     * @param AnnotationReader $reader
+     * @param ReflectionProperty[] $reflectionProperties
      *
      * @throws Exception
-     * @return ReflectionProperty
+     *
+     * @return array of Annotation, ReflectionProperty
      */
-    private function getIdentifier($properties) : ?ReflectionProperty {
-        $identifier = null;
-        $reader = new AnnotationReader();
+    private function getIdProperty($reader, $reflectionProperties) {
+        $idProperty = null;
+        $annotation = null;
 
-        foreach ($properties as $property) {
-            $annotation = $reader->getPropertyAnnotation($property, Id::class);
+        foreach ($reflectionProperties as $reflectionProperty) {
+            $annotation = $reader->getPropertyAnnotation($reflectionProperty, Id::class);
             if ( ! $annotation) {
                 continue;
             }
-            if ($identifier) {
-                throw new Exception('Cannot have two identifiers in ' . $property->getDeclaringClass()->getName());
+            if ($idProperty) {
+                throw new Exception('Cannot have two identifiers in ' . $reflectionProperty->getDeclaringClass()->getName());
             }
-            $identifier = $property;
+            $idProperty = $reflectionProperty;
         }
-        return $identifier;
+
+        return [$annotation, $idProperty];
     }
 
     /**
-     * @param ReflectionClass $rc
-     *
      * @return ReflectionProperty[]
      */
     private function getProperties(ReflectionClass $rc) {
@@ -75,55 +75,60 @@ class EntityMapperBuilder {
         return $properties;
     }
 
-    private function createMapping() {
-        $mapping = new EntityMapper();
-        $mapping->setCopyFields($this->copyFields);
+    private function createMapper() : EntityMapper {
+        $mapper = new EntityMapper();
 
         AnnotationRegistry::registerLoader('class_exists');
         $reader = new AnnotationReader();
-        $metadata = $this->em->getMetadataFactory()->getAllMetadata();
+        $this->em->getMetadataFactory()->getAllMetadata();
 
-        foreach ($metadata as $meta) {
-            $reflection = $meta->getReflectionClass();
-            $classAnnotation = $reader->getClassAnnotation($reflection, Document::class);
-
+        foreach ($this->em->getMetadataFactory()->getAllMetadata() as $meta) {
+            $reflectionClass = $meta->getReflectionClass();
+            $classAnnotation = $reader->getClassAnnotation($reflectionClass, Document::class);
             if ( ! $classAnnotation) {
                 continue;
             }
+            $properties = $this->getProperties($reflectionClass);
 
-            $properties = $this->getProperties($reflection);
-            $identifier = $this->getIdentifier($properties);
-            $mapping->addClass($meta->getName());
+            $entityMeta = new EntityMetadata();
+            $entityMeta->setClass($meta->getName());
+            $entityMeta->addFixed('type_s', $reflectionClass->getShortName());
 
-            $idAnnotation = $reader->getPropertyAnnotation($identifier, Id::class);
-            $mapping->addId($meta->getName(), $identifier->getName(), [
-                'getter' => $idAnnotation->getter ?? 'get' . ucfirst($identifier->getName()),
-            ]);
-            $mapping->addFixed($meta->getName(), 'type_s', $classAnnotation->facet ?? $reflection->getShortName());
+            /** @var ReflectionProperty $idProperty */
+            /** @var Annotation $idAnnotation */
+            [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
+            $idMeta = new IdMetadata();
+            $idMeta->setName($idProperty->getName());
+            $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));
+            $entityMeta->setId($idMeta);
 
             foreach ($properties as $property) {
-                $propAnnotation = $reader->getPropertyAnnotation($property, Field::class);
-                if ( ! $propAnnotation) {
+                $propertyAnnotation = $reader->getPropertyAnnotation($property, Field::class);
+                if ( ! $propertyAnnotation) {
                     continue;
                 }
-                $fieldName = $propAnnotation->name ?? mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
-                $fieldName .= Field::TYPE_MAP[$propAnnotation->type];
-                $mapping->addField($meta->getName(), $property->getName(), $fieldName, [
-                    'mutator' => $propAnnotation->mutator,
-                    'getter' => $propAnnotation->getter ?? 'get' . ucfirst($property->getName()),
-                ]);
+                $solrName = $propertyAnnotation->name ?? mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName())) . Field::TYPE_MAP[$propertyAnnotation->type];
+                $fieldMeta = new FieldMetadata();
+                $fieldMeta->setSolrName($solrName);
+                $fieldMeta->setFieldName($property->getName());
+                $fieldMeta->setGetter($propertyAnnotation->getter ?? 'get' . ucfirst($property->getName()));
+                $fieldMeta->setMutator($propertyAnnotation->mutator);
+                $fieldMeta->setFilters($propertyAnnotation->filters);
+                $entityMeta->addFieldMetadata($fieldMeta);
             }
+
+            $mapper->addEntity($entityMeta);
         }
 
-        return $mapping;
+        return $mapper;
     }
 
-    public function build() {
-        if ( ! self::$entityMapper) {
-            self::$entityMapper = $this->createMapping();
+    public function build() : EntityMapper {
+        if ( ! self::$mapper) {
+            self::$mapper = $this->createMapper();
         }
 
-        return self::$entityMapper;
+        return self::$mapper;
     }
 
     /**
@@ -131,9 +136,5 @@ class EntityMapperBuilder {
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
-    }
-
-    public function setCopyFields($copyFields) : void {
-        $this->copyFields = $copyFields;
     }
 }

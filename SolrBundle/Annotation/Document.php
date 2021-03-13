@@ -16,6 +16,4 @@ namespace Nines\SolrBundle\Annotation;
  */
 class Document {
 
-    public $facet;
-
 }
