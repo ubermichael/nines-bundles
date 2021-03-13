@@ -45,7 +45,7 @@ class IdMetadata extends Metadata {
     }
 
     public function setGetter(string $getter) : self {
-        [$name, $args] = $this->parseFunctionCall($getter);
+        list($name, $args) = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
@@ -53,12 +53,13 @@ class IdMetadata extends Metadata {
     }
 
     public function fetch(AbstractEntity $entity) {
-        if($this->getterArgs) {
+        if ($this->getterArgs) {
             $ref = new ReflectionMethod($entity, $this->getter);
+
             return $ref->invokeArgs($entity, $this->getterArgs);
-        } else {
-            $method = $this->getter;
-            return $entity->{$method}();
         }
+        $method = $this->getter;
+
+        return $entity->{$method}();
     }
 }

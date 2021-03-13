@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Command;
 
-use c;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Client\Builder;
 use Nines\SolrBundle\Mapper\EntityMapper;
@@ -57,24 +56,26 @@ class IndexCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output) {
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        $batch = (int)$input->getOption('batch');
-        $classes = array_map(function($s) {
-            return (strpos($s, '\\') === false ? 'App\\Entity\\' . $s : $s);
+        $batch = (int) $input->getOption('batch');
+        $classes = array_map(function ($s) {
+            return false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s;
         }, $input->getArgument('classes'));
 
         $n = 0;
         $client = $this->builder->build();
         $update = $client->createUpdate();
+
         foreach ($this->mapper->getClasses() as $class) {
             $output->writeln($class);
-            if($classes && ! in_array($class, $classes)) {
-                $output->writeln("skipped");
+            if ($classes && ! in_array($class, $classes, true)) {
+                $output->writeln('skipped');
                 continue;
             }
             $count = $this->em->createQuery("SELECT count(0) FROM {$class} e")->getOneOrNullResult();
             $iterator = $this->em->createQuery("SELECT e FROM {$class} e")->iterate();
 
-            $progressBar = new ProgressBar($output, (int)$count[1]);
+            $progressBar = new ProgressBar($output, (int) $count[1]);
+
             foreach ($iterator as $row) {
                 $n++;
                 $mapped = $this->mapper->toDocument($row[0]);
@@ -89,7 +90,7 @@ class IndexCommand extends Command {
                 }
             }
             $progressBar->finish();
-            $output->writeln("");
+            $output->writeln('');
         }
         $update->addCommit();
         $result = $client->update($update);
