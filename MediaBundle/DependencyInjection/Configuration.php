@@ -27,14 +27,6 @@ class Configuration implements ConfigurationInterface {
             ->scalarNode('root')->defaultValue('data')->end()
             ->scalarNode('thumb_width')->defaultValue(450)->end()
             ->scalarNode('thumb_height')->defaultValue(350)->end()
-            ->arrayNode('routing')
-            ->prototype('array')
-            ->children()
-            ->scalarNode('class')->end()
-            ->scalarNode('route')->end()
-            ->end()
-            ->end()
-            ->end()
             ->end()
         ;
 

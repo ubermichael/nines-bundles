@@ -22,6 +22,10 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
+    Nines\UtilBundle\Services\EntityLinker:
+        arguments:
+            $routing: '%nines_util.routing%'
+
     Nines\UtilBundle\Services\Text:
         arguments:
             $defaultTrimLength: ~

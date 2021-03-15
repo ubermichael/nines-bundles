@@ -34,12 +34,5 @@ class NinesMediaExtension extends Extension {
         $container->setParameter('nines_media.root', $config['root']);
         $container->setParameter('nines_media.thumb.width', $config['thumb_width']);
         $container->setParameter('nines_media.thumb.height', $config['thumb_height']);
-
-        $map = [];
-
-        foreach ($config['routing'] as $routing) {
-            $map[$routing['class']] = $routing['route'];
-        }
-        $container->setParameter('nines_media.routing', $map);
     }
 }
