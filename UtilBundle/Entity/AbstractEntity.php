@@ -14,6 +14,8 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
+use Nines\SolrBundle\Annotation as Solr;
+
 /**
  * AbstractEntity adds id, created, and updated fields along with the
  * normal getters. And it sets up automatic callbacks to set the created
@@ -31,6 +33,8 @@ abstract class AbstractEntity {
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Solr\Id
      */
     protected $id;
 
