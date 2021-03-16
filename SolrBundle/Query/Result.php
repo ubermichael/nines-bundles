@@ -12,6 +12,7 @@ namespace Nines\SolrBundle\Query;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Solarium\Component\Result\Highlighting\Highlighting;
+use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Select\Result\Result as SolrResult;
 
 class Result {
@@ -32,11 +33,17 @@ class Result {
      */
     private $highlighting;
 
+    /**
+     * @var array
+     */
+    private $filters;
+
     public function __construct(SolrResult $resultSet, EntityManagerInterface $em) {
         $this->resultSet = $resultSet;
         $this->em = $em;
         $this->entities = [];
         $this->highlighting = null;
+        $this->filters = null;
     }
 
     public function count() {
@@ -58,7 +65,7 @@ class Result {
     public function entity($i) {
         if ( ! isset($this->entities[$i])) {
             $document = $this->getDocument($i);
-            list($class, $id) = explode(':', $document->id);
+            [$class, $id] = explode(':', $document->id);
             $this->entities[$i] = $this->em->find($class, $id);
         }
 
@@ -85,5 +92,28 @@ class Result {
 
     public function getFacet($name) {
         return $this->resultSet->getFacetSet()->getFacet($name);
+    }
+
+    public function hasFilters() {
+        if($this->filters) {
+            return true;
+        }
+        return count($this->resultSet->getQuery()->getFilterQueries()) > 0;
+    }
+
+    public function getFilters() {
+        if($this->filters === null) {
+            $this->filters = [];
+            foreach ($this->resultSet->getQuery()->getFilterQueries() as $fq) {
+                [$field, $query] = explode(":", $fq->getQuery());
+                $label = implode(" ", array_slice(explode("_", $field), 0, -1));
+                $this->filters[] = [
+                    'field' => $field,
+                    'label' => $label,
+                    'query' => $query,
+                ];
+            }
+        }
+        return $this->filters;
     }
 }
