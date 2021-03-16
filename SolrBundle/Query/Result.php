@@ -12,7 +12,6 @@ namespace Nines\SolrBundle\Query;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Solarium\Component\Result\Highlighting\Highlighting;
-use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Select\Result\Result as SolrResult;
 
 class Result {
@@ -65,7 +64,7 @@ class Result {
     public function entity($i) {
         if ( ! isset($this->entities[$i])) {
             $document = $this->getDocument($i);
-            [$class, $id] = explode(':', $document->id);
+            list($class, $id) = explode(':', $document->id);
             $this->entities[$i] = $this->em->find($class, $id);
         }
 
@@ -95,18 +94,20 @@ class Result {
     }
 
     public function hasFilters() {
-        if($this->filters) {
+        if ($this->filters) {
             return true;
         }
+
         return count($this->resultSet->getQuery()->getFilterQueries()) > 0;
     }
 
     public function getFilters() {
-        if($this->filters === null) {
+        if (null === $this->filters) {
             $this->filters = [];
+
             foreach ($this->resultSet->getQuery()->getFilterQueries() as $fq) {
-                [$field, $query] = explode(":", $fq->getQuery());
-                $label = implode(" ", array_slice(explode("_", $field), 0, -1));
+                list($field, $query) = explode(':', $fq->getQuery());
+                $label = implode(' ', array_slice(explode('_', $field), 0, -1));
                 $this->filters[] = [
                     'field' => $field,
                     'label' => $label,
@@ -114,6 +115,7 @@ class Result {
                 ];
             }
         }
+
         return $this->filters;
     }
 }
