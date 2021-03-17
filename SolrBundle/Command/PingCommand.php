@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Exception;
-use Nines\SolrBundle\Client\Builder;
+use Nines\SolrBundle\Client\ClientBuilder;
 use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +22,7 @@ class PingCommand extends Command {
 
     protected static $defaultName = 'nines:solr:ping';
 
-    public function __construct(Builder $builder) {
+    public function __construct(ClientBuilder $builder) {
         parent::__construct();
         $this->builder = $builder;
     }

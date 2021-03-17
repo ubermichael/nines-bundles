@@ -10,3 +10,7 @@ services:
   Nines\SolrBundle\:
     resource: '../../'
     exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
+
+  Nines\SolrBundle\DataCollector\RequestCollector:
+    tags:
+      - { name: data_collector, template: '@NinesSolr/collector/toolbar.html.twig', id: 'solr.request_collector' }

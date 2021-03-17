@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Exception;
-use Nines\SolrBundle\Client\Builder;
+use Nines\SolrBundle\Client\ClientBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +21,7 @@ class StatusCommand extends Command {
 
     protected static $defaultName = 'nines:solr:status';
 
-    public function __construct(Builder $builder) {
+    public function __construct(ClientBuilder $builder) {
         parent::__construct();
         $this->builder = $builder;
     }

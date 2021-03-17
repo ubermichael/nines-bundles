@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\SolrBundle\Client\Builder;
+use Nines\SolrBundle\Client\ClientBuilder;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
 use Symfony\Component\Console\Command\Command;
@@ -25,7 +25,7 @@ class IndexCommand extends Command {
     public const BATCH_SIZE = 250;
 
     /**
-     * @var Builder
+     * @var ClientBuilder
      */
     private $builder;
 
@@ -41,7 +41,7 @@ class IndexCommand extends Command {
 
     protected static $defaultName = 'nines:solr:index';
 
-    public function __construct(Builder $builder, EntityMapperBuilder $mapperBuilder) {
+    public function __construct(ClientBuilder $builder, EntityMapperBuilder $mapperBuilder) {
         parent::__construct();
         $this->builder = $builder;
         $this->mapper = $mapperBuilder->build();
