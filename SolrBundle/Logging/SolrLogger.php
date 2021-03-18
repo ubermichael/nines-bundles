@@ -33,13 +33,13 @@ class SolrLogger {
         $this->current = 0;
     }
 
-    public function startQuery($q, $params = []) {
+    public function startQuery($query, $params = []) {
         if( ! $this->enabled) {
             return;
         }
         $this->start = microtime(true);
         $this->queries[$this->current] = [
-            'q' => $q,
+            'query' => $query,
             'params' => $params,
             'time' => 0,
         ];

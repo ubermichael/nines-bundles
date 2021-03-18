@@ -5,7 +5,7 @@
         {# this is the content displayed as a panel in the toolbar #}
         <svg xmlns="http://www.w3.org/2000/svg" width='24' height='24' viewBox='0 0 24 24'>
             <circle r='6' cx='8' cy='8' fill="none" stroke="#aaa" stroke-width="2" />
-            <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2'/>
+            <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2' />
         </svg>
         <span class="sf-toolbar-value">{{ collector.getQueries|length }}</span>
     {% endset %}
@@ -14,8 +14,7 @@
         {# this is the content displayed when hovering the mouse over
            the toolbar panel #}
         <div class="sf-toolbar-info-piece">
-            <b>Search Queries</b>
-            <span>{{ collector.getQueries|length }}</span>
+            <b>Search Queries</b> <span>{{ collector.getQueries|length }}</span>
         </div>
     {% endset %}
 
@@ -33,7 +32,7 @@
         <span class='icon'>
             <svg xmlns="http://www.w3.org/2000/svg" width='24' height='24' viewBox='0 0 24 24'>
                 <circle r='6' cx='8' cy='8' fill="none" stroke="#aaa" stroke-width="2" />
-                <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2'/>
+                <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2' />
             </svg>
         </span>
         <strong>Search Queries</strong>
@@ -43,10 +42,43 @@
 
 {% block panel %}
     <h2>Queries</h2>
-    {% for q in collector.getQueries %}
-        <div>
-            "{{ q.q }}" took {{ q.time * 1000 }}ms.
-        </div>
-    {% endfor %}
+    {# @var Solarium\QueryType\Select\Query\Query #}
+    <table class='alt'>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Time</th>
+                <th>Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i, q in collector.getQueries %}
+            {% set query = q.query %}
+            <tr>
+                <td>{{ i }}</td>
+                <td>{{ (q.time * 1000)|number_format(2)}}</td>
+                <td>
+                    Query string: "<b>{{ query.options.query }}</b>"<br>
+
+                    Filters:
+                    {% for name, filter in query.filterQueries %}
+                        {{ filter.options.query }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}<br/>
+
+                    Facets:
+                    {% for name, facet in query.facetSet.facets %}
+                    {{ facet.options.field }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}<br/>
+
+                    Highlighting:
+                    {% for name, field in query.highlighting.fields %}
+                    {{ field.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {{ dump(collector.getQueries) }}
 {% endblock %}
 
