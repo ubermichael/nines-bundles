@@ -42,7 +42,6 @@
 
 {% block panel %}
     <h2>Queries</h2>
-    {# @var Solarium\QueryType\Select\Query\Query #}
     <table class='alt'>
         <thead>
             <tr>
@@ -53,6 +52,7 @@
         </thead>
         <tbody>
             {% for i, q in collector.getQueries %}
+            {# @var Solarium\QueryType\Select\Query\Query query #}
             {% set query = q.query %}
             <tr>
                 <td>{{ i }}</td>
@@ -73,12 +73,11 @@
                     Highlighting:
                     {% for name, field in query.highlighting.fields %}
                     {{ field.name }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
+                    {% endfor %}<br/>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    {{ dump(collector.getQueries) }}
 {% endblock %}
 
