@@ -1,20 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace Nines\SolrBundle\Logging;
-
 
 use Solarium\Core\Query\AbstractQuery;
 
 class SolrLogger {
-
     /**
      * @var bool
      */
     private $enabled = true;
 
     /**
-     * @var float|null
+     * @var null|float
      */
     private $start;
 
@@ -33,8 +38,8 @@ class SolrLogger {
         $this->current = 0;
     }
 
-    public function startQuery($query, $params = []) {
-        if( ! $this->enabled) {
+    public function startQuery($query, $params = []) : void {
+        if ( ! $this->enabled) {
             return;
         }
         $this->start = microtime(true);
@@ -45,8 +50,8 @@ class SolrLogger {
         ];
     }
 
-    public function stopQuery() {
-        if( ! $this->enabled) {
+    public function stopQuery() : void {
+        if ( ! $this->enabled) {
             return;
         }
         $this->queries[$this->current]['time'] = microtime(true) - $this->start;
@@ -56,5 +61,4 @@ class SolrLogger {
     public function getQueries() {
         return $this->queries;
     }
-
 }
