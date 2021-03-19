@@ -84,15 +84,15 @@ class QueryBuilder {
     }
 
     public function addFilterRange($key, $start, $end) : void {
-        if(array_key_exists($key, $this->filterRanges)) {
+        if (array_key_exists($key, $this->filterRanges)) {
             $this->filterRanges[$key][] = [
                 'start' => $start,
-                'end' => $end
+                'end' => $end,
             ];
         } else {
             $this->filterRanges[$key][0] = [
                 'start' => $start,
-                'end' => $end
+                'end' => $end,
             ];
         }
     }
@@ -105,21 +105,24 @@ class QueryBuilder {
         foreach ($this->filters as $key => $values) {
             $terms = join(' or ', array_map(function ($s) {return '"' . $s . '"'; }, $values));
             $query->createFilterQuery('fq_' . $key)->addTag('exclude')
-                ->setQuery("{$key}:({$terms})");
+                ->setQuery("{$key}:({$terms})")
+            ;
         }
 
         foreach ($this->filterRanges as $key => $ranges) {
-            $range = implode(" OR ", array_map(function($range){
+            $range = implode(' OR ', array_map(function ($range) {
                 return "[{$range['start']} TO {$range['end']}]";
             }, $ranges));
 
             $query->createFilterQuery('fr_' . $key)->addTag('exclude')
-                ->setQuery("{$key}:($range)");
+                ->setQuery("{$key}:({$range})")
+            ;
         }
 
         $facetSet = $query->getFacetSet();
+
         foreach ($this->facetFields as $key => $value) {
-            $facetSet->createFacetField($key)->setField($value)->setMinCount(2)
+            $facetSet->createFacetField($key)->setField($value)->setMinCount(1)
                 ->getLocalParameters()->setExclude('exclude');
         }
 
