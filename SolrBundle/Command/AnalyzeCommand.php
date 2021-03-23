@@ -13,6 +13,7 @@ namespace Nines\SolrBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Client\ClientBuilder;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
+use Solarium\Client;
 use Solarium\QueryType\Update\Query\Document;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,17 +22,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AnalyzeCommand extends Command
 {
-    private $builder;
-
     private $mapper;
 
     private $em;
 
     protected static $defaultName = 'nines:solr:analyze';
 
-    public function __construct(ClientBuilder $builder, EntityMapperBuilder $mapperBuilder) {
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @param Client $client
+     * @required
+     */
+    public function setClient(Client $client) {
+        $this->client = $client;
+    }
+
+    public function __construct(EntityMapperBuilder $mapperBuilder) {
         parent::__construct();
-        $this->builder = $builder;
         $this->mapper = $mapperBuilder->build();
     }
 
@@ -42,8 +53,7 @@ class AnalyzeCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $client = $this->builder->build();
-        $query = $client->createAnalysisDocument();
+        $query = $this->client->createAnalysisDocument();
         $query->setShowMatch(true);
 
         $class = $input->getArgument('class');
@@ -59,7 +69,7 @@ class AnalyzeCommand extends Command
         $data = $this->mapper->mapEntity($entity);
         $doc = new Document($data);
         $query->addDocument($doc);
-        $result = $client->analyze($query);
+        $result = $this->client->analyze($query);
 
         foreach ($result as $document) {
             $output->writeln('Document: ' . $document->getName());

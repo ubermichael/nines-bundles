@@ -12,33 +12,40 @@ namespace Nines\SolrBundle\Command;
 
 use Exception;
 use Nines\SolrBundle\Client\ClientBuilder;
+use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ClearCommand extends Command
 {
-    private $builder;
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @param Client $client
+     * @required
+     */
+    public function setClient(Client $client) {
+        $this->client = $client;
+    }
+
 
     protected static $defaultName = 'nines:solr:clear';
-
-    public function __construct(ClientBuilder $builder) {
-        parent::__construct();
-        $this->builder = $builder;
-    }
 
     protected function configure() : void {
         $this->setDescription('Clear the index.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $client = $this->builder->build();
-        $update = $client->createUpdate();
+        $update = $this->client->createUpdate();
         $update->addDeleteQuery('*:*');
         $update->addCommit();
 
         try {
-            $result = $client->update($update);
+            $result = $this->client->update($update);
         } catch (Exception $e) {
             dump($e);
         }

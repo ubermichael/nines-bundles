@@ -19,13 +19,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PingCommand extends Command
 {
-    private $builder;
 
     protected static $defaultName = 'nines:solr:ping';
 
-    public function __construct(ClientBuilder $builder) {
-        parent::__construct();
-        $this->builder = $builder;
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @param Client $client
+     * @required
+     */
+    public function setClient(Client $client) {
+        $this->client = $client;
     }
 
     protected function configure() : void {
@@ -33,11 +40,10 @@ class PingCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $client = $this->builder->build();
-        $ping = $client->createPing(['omitheader' => false]);
+        $ping = $this->client->createPing(['omitheader' => false]);
 
         try {
-            $result = $client->ping($ping);
+            $result = $this->client->ping($ping);
             $output->writeln('Solarium library version: ' . Client::VERSION);
             $output->writeln($result->getResponse()->getStatusCode() . ' ' . $result->getResponse()->getStatusMessage());
             $json = json_decode($result->getResponse()->getBody());

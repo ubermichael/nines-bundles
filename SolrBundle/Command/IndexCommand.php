@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Client\ClientBuilder;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
+use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,11 +25,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class IndexCommand extends Command
 {
     public const BATCH_SIZE = 250;
-
-    /**
-     * @var ClientBuilder
-     */
-    private $builder;
 
     /**
      * @var null|EntityMapper
@@ -42,11 +38,24 @@ class IndexCommand extends Command
 
     protected static $defaultName = 'nines:solr:index';
 
-    public function __construct(ClientBuilder $builder, EntityMapperBuilder $mapperBuilder) {
+    public function __construct(EntityMapperBuilder $mapperBuilder) {
         parent::__construct();
-        $this->builder = $builder;
         $this->mapper = $mapperBuilder->build();
     }
+
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @param Client $client
+     * @required
+     */
+    public function setClient(Client $client) {
+        $this->client = $client;
+    }
+
 
     protected function configure() : void {
         $this->setDescription('Index the data.');
@@ -64,16 +73,16 @@ class IndexCommand extends Command
         }, $input->getArgument('classes'));
 
         $n = 0;
-        $client = $this->builder->build();
+
 
         if ($input->hasOption('clear')) {
-            $delete = $client->createUpdate();
+            $delete = $this->client->createUpdate();
             $delete->addDeleteQuery('*:*');
             $delete->addCommit();
-            $client->update($delete);
+            $this->client->update($delete);
         }
 
-        $update = $client->createUpdate();
+        $update = $this->client->createUpdate();
 
         foreach ($this->mapper->getClasses() as $class) {
             $output->writeln($class);
@@ -88,7 +97,7 @@ class IndexCommand extends Command
 
             foreach ($iterator as $row) {
                 $n++;
-                list($mapped, $boosts) = $this->mapper->toDocument($row[0]);
+                [$mapped, $boosts] = $this->mapper->toDocument($row[0]);
                 $doc = $update->createDocument($mapped);
 
                 foreach ($boosts as $name => $value) {
@@ -97,8 +106,8 @@ class IndexCommand extends Command
                 $update->addDocument($doc);
                 if (0 === $n % $batch) {
                     $update->addCommit();
-                    $result = $client->update($update);
-                    $update = $client->createUpdate();
+                    $result = $this->client->update($update);
+                    $update = $this->client->createUpdate();
                     $this->em->clear();
                     $progressBar->advance($batch);
                 }
@@ -107,7 +116,7 @@ class IndexCommand extends Command
             $output->writeln('');
         }
         $update->addCommit();
-        $result = $client->update($update);
+        $result = $this->client->update($update);
         $this->em->clear();
 
         return 0;

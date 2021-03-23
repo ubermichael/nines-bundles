@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Client;
 
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Solarium\Client;
-use Solarium\Core\Client\Adapter\AdapterInterface;
-use Solarium\Core\Client\Adapter\Curl;
+use Solarium\Core\Client\Adapter\Psr18Adapter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class ClientBuilder
+class ClientFactory
 {
     private $config;
 
@@ -33,12 +33,15 @@ class ClientBuilder
         ];
     }
 
-    public function build(?AdapterInterface $adapter = null) {
-        if ( ! $adapter) {
-            $adapter = new Curl();
-        }
+    public function build() : Client {
+        $httpClient = new \GuzzleHttp\Client();
+
+        $factory = new Psr17Factory();
+        $adapter = new Psr18Adapter($httpClient, $factory, $factory);
         $eventDispatcher = new EventDispatcher();
 
-        return new Client($adapter, $eventDispatcher, $this->config);
+        // create a client instance
+        $client = new Client($adapter, $eventDispatcher, $this->config);
+        return $client;
     }
 }

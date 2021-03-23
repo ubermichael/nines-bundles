@@ -12,6 +12,7 @@ namespace Nines\SolrBundle\Command;
 
 use Exception;
 use Nines\SolrBundle\Client\ClientBuilder;
+use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,9 +23,17 @@ class StatusCommand extends Command
 
     protected static $defaultName = 'nines:solr:status';
 
-    public function __construct(ClientBuilder $builder) {
-        parent::__construct();
-        $this->builder = $builder;
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @param Client $client
+     * @required
+     */
+    public function setClient(Client $client) {
+        $this->client = $client;
     }
 
     protected function configure() : void {

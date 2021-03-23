@@ -14,3 +14,8 @@ services:
   Nines\SolrBundle\DataCollector\RequestCollector:
     tags:
       - { name: data_collector, template: '@NinesSolr/collector/toolbar.html.twig', id: 'solr.request_collector' }
+
+  Nines\SolrBundle\Client\ClientFactory: ~
+
+  Solarium\Client:
+    factory: [ '@Nines\SolrBundle\Client\ClientFactory', 'build' ]
