@@ -17,7 +17,6 @@ body {
     background-color: #f5f5f5;
 }
 
-
 .footer ul.nav {
     padding: 0;
     margin: 0;
@@ -26,7 +25,8 @@ body {
 
 .footer ul.nav li {
     padding: 0;
-    margin: 0 1em 0 0;
+    margin: 1em 1em 0 0;
+    float: left;
 }
 
 .footer ul.nav a {
