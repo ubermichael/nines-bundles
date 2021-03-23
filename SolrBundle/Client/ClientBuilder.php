@@ -16,7 +16,8 @@ use Solarium\Core\Client\Adapter\Curl;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class ClientBuilder {
+class ClientBuilder
+{
     private $config;
 
     public function __construct(ParameterBagInterface $parameters) {

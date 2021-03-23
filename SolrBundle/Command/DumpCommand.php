@@ -18,7 +18,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DumpCommand extends Command {
+class DumpCommand extends Command
+{
     /**
      * @var EntityManagerInterface
      */

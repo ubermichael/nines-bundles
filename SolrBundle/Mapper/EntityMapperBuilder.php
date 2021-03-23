@@ -24,7 +24,8 @@ use Nines\SolrBundle\Metadata\IdMetadata;
 use ReflectionClass;
 use ReflectionProperty;
 
-class EntityMapperBuilder {
+class EntityMapperBuilder
+{
     /**
      * @var EntityManagerInterface
      */

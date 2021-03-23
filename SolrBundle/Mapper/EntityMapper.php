@@ -17,7 +17,8 @@ use Nines\SolrBundle\Metadata\EntityMetadata;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Solarium\QueryType\Select\Result\Document;
 
-class EntityMapper {
+class EntityMapper
+{
     /**
      * @var EntityManagerInterface;
      */
@@ -52,7 +53,7 @@ class EntityMapper {
 
         foreach ($entityMeta->getFieldMetadata() as $fieldMetadata) {
             $data[$fieldMetadata->getSolrName()] = $fieldMetadata->fetch($entity);
-            if($fieldMetadata->getBoost() && $fieldMetadata->getBoost() !== 1.0) {
+            if ($fieldMetadata->getBoost() && 1.0 !== $fieldMetadata->getBoost()) {
                 $boosts[$fieldMetadata->getSolrName()] = $fieldMetadata->getBoost();
             }
         }

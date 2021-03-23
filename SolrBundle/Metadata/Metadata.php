@@ -12,7 +12,8 @@ namespace Nines\SolrBundle\Metadata;
 
 use Nines\UtilBundle\Entity\AbstractEntity;
 
-abstract class Metadata {
+abstract class Metadata
+{
     abstract public function fetch(AbstractEntity $entity);
 
     /**

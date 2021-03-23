@@ -12,7 +12,8 @@ namespace Nines\SolrBundle\Logging;
 
 use Solarium\Core\Query\AbstractQuery;
 
-class SolrLogger {
+class SolrLogger
+{
     /**
      * @var bool
      */

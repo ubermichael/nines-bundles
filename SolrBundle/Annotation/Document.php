@@ -14,5 +14,6 @@ namespace Nines\SolrBundle\Annotation;
  * @Annotation
  * @Target({"CLASS"})
  */
-class Document {
+class Document
+{
 }

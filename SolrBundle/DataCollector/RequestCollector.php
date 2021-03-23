@@ -15,7 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
-class RequestCollector extends DataCollector {
+class RequestCollector extends DataCollector
+{
     /**
      * @var array
      */

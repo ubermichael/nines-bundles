@@ -12,7 +12,8 @@ namespace Nines\SolrBundle\Metadata;
 
 use Nines\UtilBundle\Entity\AbstractEntity;
 
-class EntityMetadata extends Metadata {
+class EntityMetadata extends Metadata
+{
     /**
      * @var IdMetadata
      */

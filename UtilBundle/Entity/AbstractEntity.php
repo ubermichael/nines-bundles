@@ -13,7 +13,6 @@ namespace Nines\UtilBundle\Entity;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-
 use Nines\SolrBundle\Annotation as Solr;
 
 /**

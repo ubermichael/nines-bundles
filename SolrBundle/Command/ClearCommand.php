@@ -16,7 +16,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ClearCommand extends Command {
+class ClearCommand extends Command
+{
     private $builder;
 
     protected static $defaultName = 'nines:solr:clear';

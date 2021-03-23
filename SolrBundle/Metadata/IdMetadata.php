@@ -13,7 +13,8 @@ namespace Nines\SolrBundle\Metadata;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use ReflectionMethod;
 
-class IdMetadata extends Metadata {
+class IdMetadata extends Metadata
+{
     /**
      * Name of the ID field.
      *

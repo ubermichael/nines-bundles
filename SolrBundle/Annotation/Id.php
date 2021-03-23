@@ -13,7 +13,8 @@ namespace Nines\SolrBundle\Annotation;
 /**
  * @Annotation
  */
-class Id {
+class Id
+{
     /**
      * @var string
      */

@@ -21,7 +21,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class IndexCommand extends Command {
+class IndexCommand extends Command
+{
     public const BATCH_SIZE = 250;
 
     /**
@@ -65,7 +66,7 @@ class IndexCommand extends Command {
         $n = 0;
         $client = $this->builder->build();
 
-        if($input->hasOption('clear')) {
+        if ($input->hasOption('clear')) {
             $delete = $client->createUpdate();
             $delete->addDeleteQuery('*:*');
             $delete->addCommit();
@@ -73,6 +74,7 @@ class IndexCommand extends Command {
         }
 
         $update = $client->createUpdate();
+
         foreach ($this->mapper->getClasses() as $class) {
             $output->writeln($class);
             if ($classes && ! in_array($class, $classes, true)) {
@@ -88,7 +90,8 @@ class IndexCommand extends Command {
                 $n++;
                 list($mapped, $boosts) = $this->mapper->toDocument($row[0]);
                 $doc = $update->createDocument($mapped);
-                foreach($boosts as $name => $value) {
+
+                foreach ($boosts as $name => $value) {
                     $doc->setFieldBoost($name, $value);
                 }
                 $update->addDocument($doc);

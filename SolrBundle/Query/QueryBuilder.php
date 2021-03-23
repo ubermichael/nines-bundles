@@ -15,7 +15,8 @@ use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
 use Solarium\Client;
 
-class QueryBuilder {
+class QueryBuilder
+{
     /**
      * @var EntityMapper
      */

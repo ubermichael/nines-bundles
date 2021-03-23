@@ -14,7 +14,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Solarium\Component\Result\Highlighting\Highlighting;
 use Solarium\QueryType\Select\Result\Result as SolrResult;
 
-class Result {
+class Result
+{
     /**
      * @var SolrResult
      */

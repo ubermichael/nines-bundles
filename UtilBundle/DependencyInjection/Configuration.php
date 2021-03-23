@@ -24,16 +24,17 @@ class Configuration implements ConfigurationInterface {
         $builder
             ->getRootNode()
             ->children()
-                ->scalarNode('trim_length')->defaultValue(50)->end()
-                ->arrayNode('routing')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('class')->end()
-                            ->scalarNode('route')->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
+            ->scalarNode('trim_length')->defaultValue(50)->end()
+            ->arrayNode('routing')
+            ->prototype('array')
+            ->children()
+            ->scalarNode('class')->end()
+            ->scalarNode('route')->end()
+            ->end()
+            ->end()
+            ->end()
+            ->end()
+        ;
 
         return $builder;
     }

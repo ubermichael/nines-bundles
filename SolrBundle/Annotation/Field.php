@@ -14,7 +14,8 @@ namespace Nines\SolrBundle\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-class Field {
+class Field
+{
     public const TYPE_MAP = [
         'boolean' => '_b',
         'date' => '_dt',
