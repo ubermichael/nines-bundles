@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,7 +28,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Link management service for Symfony.
  */
-class LinkManager implements EventSubscriber {
+class LinkManager implements EventSubscriber
+{
     /**
      * @var EntityManagerInterface
      */

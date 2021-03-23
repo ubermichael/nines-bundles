@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -26,7 +26,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * Convient user management functions.
  */
-class UserManager {
+class UserManager
+{
     public const PASSWORD_BYTES = 24;
 
     public const TOKEN_BYTES = 24;

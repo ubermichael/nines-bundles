@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -24,7 +24,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     @ORM\Index(columns={"entity"})
  * })
  */
-class Link extends AbstractEntity {
+class Link extends AbstractEntity
+{
     /**
      * @var string
      * @ORM\Column(type="string", length=128, nullable=false)

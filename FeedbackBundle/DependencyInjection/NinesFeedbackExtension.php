@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,7 +20,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @see https://symfony.com/doc/3.4/bundles/extension.html
  */
-class NinesFeedbackExtension extends Extension {
+class NinesFeedbackExtension extends Extension
+{
     /**
      * {@inheritdoc}
      */

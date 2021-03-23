@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,7 +20,8 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class MakeMenu extends AbstractNinesMaker {
+class MakeMenu extends AbstractNinesMaker
+{
     /**
      * {@inheritdoc}
      */
@@ -46,7 +47,7 @@ class MakeMenu extends AbstractNinesMaker {
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator) : void {
         $names = $input->getArgument('name');
         $data = $this->twig->render('@NinesMaker/menu/builder.php.twig', ['names' => $names]);
-        $generator->dumpFile("src/Menu/Builder.php", $data);
+        $generator->dumpFile('src/Menu/Builder.php', $data);
         $generator->writeChanges();
     }
 
@@ -57,7 +58,7 @@ class MakeMenu extends AbstractNinesMaker {
         // TODO: Implement interact() method.
     }
 
-    public function getCommandDescription() {
+    public function getCommandDescription() : void {
         // TODO: Implement @method string getCommandDescription()
     }
 }

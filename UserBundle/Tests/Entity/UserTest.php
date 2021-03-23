@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -13,7 +13,8 @@ namespace Nines\UserBundle\Tests\Entity;
 use Nines\UserBundle\Entity\User;
 use PHPUnit\Framework\TestCase;
 
-class UserTest extends TestCase {
+class UserTest extends TestCase
+{
     public function testDefaultRoles() : void {
         $user = new User();
         $this->assertSame(['ROLE_USER'], $user->getRoles());

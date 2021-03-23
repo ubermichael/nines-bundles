@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -22,7 +22,8 @@ use Nines\MediaBundle\Entity\AbstractImage;
  * @method AbstractImage[]    findAll()
  * @method AbstractImage[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-abstract class AbstractImageRepository extends ServiceEntityRepository {
+abstract class AbstractImageRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry, $class) {
         parent::__construct($registry, $class);
     }

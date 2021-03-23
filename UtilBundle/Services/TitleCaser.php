@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -16,7 +16,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Apply title casing to a string.
  */
-class TitleCaser {
+class TitleCaser
+{
     /**
      * Monolog logger.
      *

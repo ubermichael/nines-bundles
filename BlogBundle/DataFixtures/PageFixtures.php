@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -17,7 +17,8 @@ use Doctrine\Persistence\ObjectManager;
 use Nines\BlogBundle\Entity\Page;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 
-class PageFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
+class PageFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
+{
     /**
      * {@inheritdoc}
      */

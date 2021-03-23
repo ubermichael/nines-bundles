@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -15,7 +15,8 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nines\DublinCoreBundle\Entity\Element;
 
-class TermFixtures extends Fixture implements FixtureGroupInterface {
+class TermFixtures extends Fixture implements FixtureGroupInterface
+{
     public const URI_PFX = 'http://purl.org/dc/terms/';
 
     public const NAME_PFX = 'dcterms_';

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -26,7 +26,8 @@ use Twig\Error\SyntaxError;
 /**
  * Download and save fonts from Google Fonts and generate the CSS for them.
  */
-class FontDownload extends Command {
+class FontDownload extends Command
+{
     /**
      * @var LoggerInterface
      */

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -27,7 +27,8 @@ use Doctrine\ORM\Query\SqlWalker;
  *               string_functions:
  *                   cast: Nines\UtilBundle\Extensions\Doctrine\MySQL\Convert
  */
-class Convert extends FunctionNode {
+class Convert extends FunctionNode
+{
     /**
      * @var string[]
      */
