@@ -30,6 +30,11 @@ class FieldMetadata extends Metadata {
     private $solrName;
 
     /**
+     * @var float|null
+     */
+    private $boost;
+
+    /**
      * Name of the getter function.
      *
      * @var string
@@ -92,7 +97,7 @@ class FieldMetadata extends Metadata {
             $this->filterArgs = [];
         } else {
             foreach ($filters as $filter) {
-                list($name, $args) = $this->parseFunctionCall($filter);
+                [$name, $args] = $this->parseFunctionCall($filter);
                 $this->filters[] = $name;
                 $this->filterArgs[] = $args;
             }
@@ -114,7 +119,7 @@ class FieldMetadata extends Metadata {
     }
 
     public function addFilter(string $filter) : self {
-        list($name, $args) = $this->parseFunctionCall($filter);
+        [$name, $args] = $this->parseFunctionCall($filter);
         $this->filters[] = $name;
         $this->filterArgs = $args;
 
@@ -146,7 +151,7 @@ class FieldMetadata extends Metadata {
     }
 
     public function setGetter(string $getter) : self {
-        list($name, $args) = $this->parseFunctionCall($getter);
+        [$name, $args] = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
@@ -162,7 +167,7 @@ class FieldMetadata extends Metadata {
             $this->mutator = null;
             $this->mutatorArgs = [];
         } else {
-            list($name, $args) = $this->parseFunctionCall($mutator);
+            [$name, $args] = $this->parseFunctionCall($mutator);
             $this->mutator = $name;
             $this->mutatorArgs = $args;
         }
@@ -206,5 +211,19 @@ class FieldMetadata extends Metadata {
         }
 
         return $data;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getBoost() : ?float {
+        return $this->boost;
+    }
+
+    /**
+     * @param float|null $boost
+     */
+    public function setBoost(?float $boost) : void {
+        $this->boost = $boost;
     }
 }

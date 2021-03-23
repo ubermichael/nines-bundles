@@ -74,7 +74,7 @@ class SchemaCommand extends Command {
 
             foreach ($entityMeta->getFieldMetadata() as $fieldMeta) {
                 $row = [
-                    $fieldMeta->getSolrName(),
+                    $fieldMeta->getSolrName() . ($fieldMeta->getBoost() ? '^' . $fieldMeta->getBoost() : ''),
                     $fieldMeta->getFieldName(),
                     $fieldMeta->getGetter(),
                     $fieldMeta->getMutator(),

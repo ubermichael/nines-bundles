@@ -51,6 +51,7 @@ class IndexCommand extends Command {
         $this->setDescription('Index the data.');
         $this->addOption('batch', 'b', InputOption::VALUE_OPTIONAL, 'Batch size', self::BATCH_SIZE);
         $this->addArgument('classes', InputArgument::IS_ARRAY, 'Classes to index');
+        $this->addOption('clear', null, InputOption::VALUE_NONE, 'Clear all entites from the index first');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -63,8 +64,15 @@ class IndexCommand extends Command {
 
         $n = 0;
         $client = $this->builder->build();
-        $update = $client->createUpdate();
 
+        if($input->hasOption('clear')) {
+            $delete = $client->createUpdate();
+            $delete->addDeleteQuery('*:*');
+            $delete->addCommit();
+            $client->update($delete);
+        }
+
+        $update = $client->createUpdate();
         foreach ($this->mapper->getClasses() as $class) {
             $output->writeln($class);
             if ($classes && ! in_array($class, $classes, true)) {
@@ -78,8 +86,11 @@ class IndexCommand extends Command {
 
             foreach ($iterator as $row) {
                 $n++;
-                $mapped = $this->mapper->toDocument($row[0]);
+                list($mapped, $boosts) = $this->mapper->toDocument($row[0]);
                 $doc = $update->createDocument($mapped);
+                foreach($boosts as $name => $value) {
+                    $doc->setFieldBoost($name, $value);
+                }
                 $update->addDocument($doc);
                 if (0 === $n % $batch) {
                     $update->addCommit();

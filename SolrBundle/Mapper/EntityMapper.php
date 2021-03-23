@@ -44,7 +44,7 @@ class EntityMapper {
         if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
             return null;
         }
-
+        $boosts = [];
         $data = array_merge([
             'class_s' => $entityMeta->getClass(),
             'id' => $entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity),
@@ -52,9 +52,12 @@ class EntityMapper {
 
         foreach ($entityMeta->getFieldMetadata() as $fieldMetadata) {
             $data[$fieldMetadata->getSolrName()] = $fieldMetadata->fetch($entity);
+            if($fieldMetadata->getBoost() && $fieldMetadata->getBoost() !== 1.0) {
+                $boosts[$fieldMetadata->getSolrName()] = $fieldMetadata->getBoost();
+            }
         }
 
-        return $data;
+        return [$data, $boosts];
     }
 
     public function toEntity(Document $document) {

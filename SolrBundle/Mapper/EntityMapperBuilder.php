@@ -110,6 +110,7 @@ class EntityMapperBuilder {
                 $solrName = $propertyAnnotation->name ?? mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName())) . Field::TYPE_MAP[$propertyAnnotation->type];
                 $fieldMeta = new FieldMetadata();
                 $fieldMeta->setSolrName($solrName);
+                $fieldMeta->setBoost($propertyAnnotation->boost);
                 $fieldMeta->setFieldName($property->getName());
                 $fieldMeta->setGetter($propertyAnnotation->getter ?? 'get' . ucfirst($property->getName()));
                 $fieldMeta->setMutator($propertyAnnotation->mutator);

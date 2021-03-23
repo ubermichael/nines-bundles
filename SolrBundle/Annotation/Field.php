@@ -44,6 +44,11 @@ class Field {
     public $type;
 
     /**
+     * @var float
+     */
+    public $boost;
+
+    /**
      * @var string
      */
     public $name;
