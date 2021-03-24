@@ -43,8 +43,11 @@ class EntityMapperFactory
      */
     private static $mapper;
 
-    public function __construct($env) {
+    private $cacheDir;
+
+    public function __construct($env, $cacheDir) {
         $this->env = $env;
+        $this->cacheDir = $cacheDir;
     }
 
     /**
@@ -94,7 +97,7 @@ class EntityMapperFactory
 
         $reader = new CachedReader(
             new AnnotationReader(),
-            new PhpFileCache("var/cache/{$this->env}/solr_annotations"),
+            new PhpFileCache($this->cacheDir . '/solr_annotations'),
             $debug = ('prod' !== $this->env),
         );
 

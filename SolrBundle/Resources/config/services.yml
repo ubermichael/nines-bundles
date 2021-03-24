@@ -21,7 +21,7 @@ services:
     factory: [ '@Nines\SolrBundle\Client\ClientFactory', 'build' ]
 
   Nines\SolrBundle\Mapper\EntityMapperFactory:
-    arguments: [ '%kernel.environment%' ]
+    arguments: [ '%kernel.environment%', "%kernel.cache_dir%" ]
 
   Nines\SolrBundle\Mapper\EntityMapper:
     factory: [ '@Nines\SolrBundle\Mapper\EntityMapperFactory', 'build' ]
