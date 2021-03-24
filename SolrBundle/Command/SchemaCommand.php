@@ -12,7 +12,7 @@ namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperBuilder;
+use Nines\SolrBundle\Mapper\EntityMapperFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,15 +32,18 @@ class SchemaCommand extends Command
     private $copyFields;
 
     /**
-     * @var null|EntityMapper
+     * @var EntityMapper
      */
     private $mapper;
 
     protected static $defaultName = 'nines:solr:schema';
 
-    public function __construct(EntityMapperBuilder $builder) {
-        parent::__construct(self::$defaultName);
-        $this->mapper = $builder->build();
+    /**
+     * @param EntityMapper $mapper
+     * @required
+     */
+    public function setEntityMapper(EntityMapper $mapper) {
+        $this->mapper = $mapper;
     }
 
     protected function configure() : void {

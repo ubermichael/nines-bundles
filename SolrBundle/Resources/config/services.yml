@@ -19,3 +19,9 @@ services:
 
   Solarium\Client:
     factory: [ '@Nines\SolrBundle\Client\ClientFactory', 'build' ]
+
+  Nines\SolrBundle\Mapper\EntityMapperFactory:
+    arguments: [ '%kernel.environment%' ]
+
+  Nines\SolrBundle\Mapper\EntityMapper:
+    factory: [ '@Nines\SolrBundle\Mapper\EntityMapperFactory', 'build' ]

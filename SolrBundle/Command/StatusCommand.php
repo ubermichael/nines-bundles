@@ -19,8 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StatusCommand extends Command
 {
-    private $builder;
-
     protected static $defaultName = 'nines:solr:status';
 
     /**
@@ -41,9 +39,8 @@ class StatusCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $client = $this->builder->build();
         // create a core admin query
-        $coreAdminQuery = $client->createCoreAdmin();
+        $coreAdminQuery = $this->client->createCoreAdmin();
 
         // use the core admin query to build a Status action
         $statusAction = $coreAdminQuery->createStatus();
@@ -51,7 +48,7 @@ class StatusCommand extends Command
         $coreAdminQuery->setAction($statusAction);
 
         try {
-            $response = $client->coreAdmin($coreAdminQuery);
+            $response = $this->client->coreAdmin($coreAdminQuery);
             $statusResult = $response->getStatusResult();
 
             $output->writeln($response->getResponse()->getStatusCode() . ' ' . $response->getResponse()->getStatusMessage());

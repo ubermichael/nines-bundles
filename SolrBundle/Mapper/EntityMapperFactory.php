@@ -12,6 +12,7 @@ namespace Nines\SolrBundle\Mapper;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Annotation;
 use Exception;
@@ -24,7 +25,11 @@ use Nines\SolrBundle\Metadata\IdMetadata;
 use ReflectionClass;
 use ReflectionProperty;
 
-class EntityMapperBuilder
+use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Cache\ApcuCache;
+
+
+class EntityMapperFactory
 {
     /**
      * @var EntityManagerInterface
@@ -35,6 +40,15 @@ class EntityMapperBuilder
      * @var EntityMapper
      */
     private static $mapper;
+
+    /**
+     * @var string
+     */
+    private $env;
+
+    public function __construct($env) {
+        $this->env = $env;
+    }
 
     /**
      * @param AnnotationReader $reader
@@ -80,7 +94,13 @@ class EntityMapperBuilder
         $mapper = new EntityMapper();
 
         AnnotationRegistry::registerLoader('class_exists');
-        $reader = new AnnotationReader();
+
+        $reader = new CachedReader(
+            new AnnotationReader(),
+            new PhpFileCache("var/cache/{$this->env}/solr_annotations"),
+            $debug = ($this->env !== 'prod'),
+        );
+
         $this->em->getMetadataFactory()->getAllMetadata();
 
         foreach ($this->em->getMetadataFactory()->getAllMetadata() as $meta) {
@@ -97,7 +117,7 @@ class EntityMapperBuilder
 
             /** @var ReflectionProperty $idProperty */
             /** @var Annotation $idAnnotation */
-            list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
+            [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
             $idMeta = new IdMetadata();
             $idMeta->setName($idProperty->getName());
             $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));

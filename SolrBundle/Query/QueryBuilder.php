@@ -12,7 +12,7 @@ namespace Nines\SolrBundle\Query;
 
 use Nines\SolrBundle\Client\ClientBuilder;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperBuilder;
+use Nines\SolrBundle\Mapper\EntityMapperFactory;
 use Solarium\Client;
 
 class QueryBuilder
@@ -41,7 +41,7 @@ class QueryBuilder
 
     private $filterRanges;
 
-    public function __construct(EntityMapperBuilder $mapperBuilder, ClientBuilder $clientBuilder) {
+    public function __construct(EntityMapperFactory $mapperBuilder, ClientBuilder $clientBuilder) {
         $this->mapper = $mapperBuilder->build();
         $this->client = $clientBuilder->build();
         $this->filters = [];
