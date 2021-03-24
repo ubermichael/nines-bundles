@@ -11,19 +11,12 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Mapper;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Nines\SolrBundle\Metadata\EntityMetadata;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use Solarium\QueryType\Select\Result\Document;
+use Solarium\QueryType\Update\Query\Document;
 
 class EntityMapper
 {
-    /**
-     * @var EntityManagerInterface;
-     */
-    private $em;
-
     /**
      * @var EntityMetadata[]
      */
@@ -37,6 +30,9 @@ class EntityMapper
         $this->map[$entityMetadata->getClass()] = $entityMetadata;
     }
 
+    /**
+     * @return Document
+     */
     public function toDocument(?AbstractEntity $entity) {
         if ( ! $entity) {
             return null;
@@ -45,33 +41,36 @@ class EntityMapper
         if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
             return null;
         }
-        $boosts = [];
-        $data = array_merge([
-            'class_s' => $entityMeta->getClass(),
-            'id' => $entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity),
-        ], $entityMeta->getFixed());
+        $document = new Document();
+        $document->setKey($entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity));
+        $document->setField('class_s', $entityMeta->getClass());
+
+        foreach ($entityMeta->getFixed() as $key => $value) {
+            $document->setField($key, $value);
+        }
 
         foreach ($entityMeta->getFieldMetadata() as $fieldMetadata) {
-            $data[$fieldMetadata->getSolrName()] = $fieldMetadata->fetch($entity);
-            if ($fieldMetadata->getBoost() && 1.0 !== $fieldMetadata->getBoost()) {
-                $boosts[$fieldMetadata->getSolrName()] = $fieldMetadata->getBoost();
+            $document->setField($fieldMetadata->getSolrName(), $fieldMetadata->fetch($entity));
+            $boost = $fieldMetadata->getBoost();
+            if ($boost && 1.0 !== $boost) {
+                $document->setFieldBoost($fieldMetadata->getSolrName(), $boost);
             }
         }
 
-        return [$data, $boosts];
+        return $document;
     }
 
-    public function toEntity(Document $document) {
-        list($class, $id) = explode(':', $document->id);
-        if ( ! class_exists($class)) {
-            throw new Exception("Unknown class: {$class}");
+    public function getSolrName($class, $name) {
+        if ( ! isset($this->map[$class])) {
+            return;
+        }
+        $entityMeta = $this->map[$class];
+        $fieldMeta = $entityMeta->getFieldMetadata();
+        if ( ! isset($fieldMeta[$name])) {
+            return;
         }
 
-        return $this->em->find($class, $id);
-    }
-
-    public function setEntityManager(EntityManagerInterface $em) : void {
-        $this->em = $em;
+        return $fieldMeta[$name]->getSolrName();
     }
 
     public function getEntityMetadata($class) {

@@ -85,12 +85,7 @@ class IndexCommand extends Command
 
             foreach ($iterator as $row) {
                 $n++;
-                list($mapped, $boosts) = $this->mapper->toDocument($row[0]);
-                $doc = $update->createDocument($mapped);
-
-                foreach ($boosts as $name => $value) {
-                    $doc->setFieldBoost($name, $value);
-                }
+                $doc = $this->mapper->toDocument($row[0]);
                 $update->addDocument($doc);
                 if (0 === $n % $batch) {
                     $update->addCommit();
