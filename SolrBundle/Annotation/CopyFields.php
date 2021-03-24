@@ -10,14 +10,26 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Annotation;
 
+use Doctrine\ORM\Mapping\Annotation;
+
 /**
  * @Annotation
- * @Target({"CLASS"})
+ * @Target("ANNOTATION")
  */
-class Document
+class CopyFields
 {
     /**
      * @var array
      */
-    public $copyFields = [];
+    public $from;
+
+    /**
+     * @var string
+     */
+    public $to;
+
+    /**
+     * @var string
+     */
+    public $type;
 }

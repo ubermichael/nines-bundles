@@ -38,12 +38,12 @@ class EntityMapperFactory
      */
     private $env;
 
+    private $cacheDir;
+
     /**
      * @var EntityMapper
      */
     private static $mapper;
-
-    private $cacheDir;
 
     public function __construct($env, $cacheDir) {
         $this->env = $env;
@@ -123,6 +123,8 @@ class EntityMapperFactory
             $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));
             $entityMeta->setId($idMeta);
 
+            $solrNames = [];
+
             foreach ($properties as $property) {
                 $propertyAnnotation = $reader->getPropertyAnnotation($property, Field::class);
                 if ( ! $propertyAnnotation) {
@@ -137,6 +139,13 @@ class EntityMapperFactory
                 $fieldMeta->setMutator($propertyAnnotation->mutator);
                 $fieldMeta->setFilters($propertyAnnotation->filters);
                 $entityMeta->addFieldMetadata($fieldMeta);
+                $solrNames[$property->getName()] = $solrName;
+            }
+
+            // do the copy fields after the regular fields have been set up.
+            foreach ($classAnnotation->copyFields as $copyField) {
+                $from = array_map(function ($s) use ($solrNames) {return $solrNames[$s]; }, $copyField->from);
+                $entityMeta->addCopyFields($from, $copyField->to, $copyField->type);
             }
 
             $mapper->addEntity($entityMeta);

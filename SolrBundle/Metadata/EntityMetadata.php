@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Metadata;
 
+use Nines\SolrBundle\Annotation\Field;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 class EntityMetadata extends Metadata
@@ -25,6 +26,13 @@ class EntityMetadata extends Metadata
      * @var string
      */
     private $class;
+
+    /**
+     * List of ['from' => [], 'to' => ''].
+     *
+     * @var array
+     */
+    private $copyFields;
 
     /**
      * List of key, value pairs to add to all documents going into Solr.
@@ -43,6 +51,7 @@ class EntityMetadata extends Metadata
     public function __construct() {
         $this->fixed = [];
         $this->fieldMetadata = [];
+        $this->copyFields = [];
     }
 
     public function getId() : IdMetadata {
@@ -92,6 +101,17 @@ class EntityMetadata extends Metadata
         $this->fieldMetadata[$fieldMetadata->getFieldName()] = $fieldMetadata;
 
         return $this;
+    }
+
+    public function addCopyFields($from, $to, $type) : void {
+        $this->copyFields[] = [
+            'to' => $to . Field::TYPE_MAP[$type],
+            'from' => $from,
+        ];
+    }
+
+    public function getCopyFields() {
+        return $this->copyFields;
     }
 
     public function fetch(AbstractEntity $entity) : void {

@@ -22,12 +22,33 @@ class EntityMapper
      */
     private $map;
 
+    /**
+     * Map of entity field name to solr field name.
+     *
+     * @var array
+     */
+    private $fields;
+
     public function __construct() {
         $this->map = [];
+        $this->fields = [
+            'id' => 'id',
+            'class' => 'class_s',
+            'type' => 'type_s',
+        ];
     }
 
     public function addEntity(EntityMetadata $entityMetadata) : void {
         $this->map[$entityMetadata->getClass()] = $entityMetadata;
+
+        foreach ($entityMetadata->getFieldMetadata() as $fieldMetadata) {
+            $fieldName = $fieldMetadata->getFieldName();
+            $solrName = $fieldMetadata->getSolrName();
+            if (array_key_exists($fieldName, $this->fields) && $this->fields[$fieldName] !== $solrName) {
+                // do an error in the logs and in the data collector.
+            }
+            $this->fields[$fieldName] = $solrName;
+        }
     }
 
     /**
@@ -60,20 +81,32 @@ class EntityMapper
             }
         }
 
+        foreach ($entityMeta->getCopyFields() as $copyField) {
+            $from = $copyField['from'];
+            $to = $copyField['to'];
+
+            $v = [];
+
+            foreach ($copyField['from'] as $from) {
+                $data = $document->{$from};
+                if (is_array($data)) {
+                    $v = array_merge($v, $data);
+                } else {
+                    $v[] = $data;
+                }
+            }
+            if (isset($document->{$to})) {
+                $document->{$to} = array_merge($document->{$to}, $v);
+            } else {
+                $document->{$to} = $v;
+            }
+        }
+
         return $document;
     }
 
-    public function getSolrName($class, $name) {
-        if ( ! isset($this->map[$class])) {
-            return;
-        }
-        $entityMeta = $this->map[$class];
-        $fieldMeta = $entityMeta->getFieldMetadata();
-        if ( ! isset($fieldMeta[$name])) {
-            return;
-        }
-
-        return $fieldMeta[$name]->getSolrName();
+    public function getSolrName($name) {
+        return $this->fields[$name] ?? null;
     }
 
     public function getEntityMetadata($class) {

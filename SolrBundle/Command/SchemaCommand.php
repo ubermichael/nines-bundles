@@ -64,6 +64,10 @@ class SchemaCommand extends Command
             foreach ($entityMeta->getFixed() as $k => $v) {
                 $output->writeln("  {$k} => {$v}");
             }
+
+            foreach ($entityMeta->getCopyFields() as $copyField) {
+                $output->writeln('  ' . $copyField['to'] . ' <= [' . implode(',', $copyField['from']) . ']');
+            }
             $table = new Table($output);
             $table->setHeaders(['name', 'field', 'getter', 'mutator', 'filters']);
 
