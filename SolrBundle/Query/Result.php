@@ -10,8 +10,11 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Query;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Nines\SolrBundle\Hydrator\DoctrineHydrator;
 use Solarium\Component\Result\Highlighting\Highlighting;
+use Solarium\Core\Query\DocumentInterface;
 use Solarium\QueryType\Select\Result\Result as SolrResult;
 
 class Result
@@ -22,11 +25,19 @@ class Result
     private $resultSet;
 
     /**
+     * @var DocumentInterface[]
+     */
+    private $documents;
+
+    /**
      * @var array
      */
     private $entities;
 
-    private EntityManagerInterface $em;
+    /**
+     * @var DoctrineHydrator
+     */
+    private $hydrator;
 
     /**
      * @var ?Highlighting
@@ -38,9 +49,17 @@ class Result
      */
     private $filters;
 
-    public function __construct(SolrResult $resultSet, EntityManagerInterface $em) {
-        $this->resultSet = $resultSet;
-        $this->em = $em;
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
+
+    public function __construct(SolrResult $result, DoctrineHydrator $hydrator, ?PaginationInterface $paginator = null) {
+        $this->resultSet = $result;
+        $this->hydrator = $hydrator;
+        $this->paginator = $paginator;
+
+        $this->documents = $result->getDocuments();
         $this->entities = [];
         $this->highlighting = null;
         $this->filters = null;
@@ -55,17 +74,11 @@ class Result
     }
 
     public function getDocument($i) {
-        return $this->resultSet->getDocuments()[$i];
+        return $this->documents[$i];
     }
 
-    public function entity($i) {
-        if ( ! isset($this->entities[$i])) {
-            $document = $this->getDocument($i);
-            list($class, $id) = explode(':', $document->id);
-            $this->entities[$i] = $this->em->find($class, $id);
-        }
-
-        return $this->entities[$i];
+    public function getEntity($i) {
+        return $this->hydrator->hydrate($this->documents[$i]);
     }
 
     public function hasHighlighting() {
@@ -96,6 +109,13 @@ class Result
         }
 
         return count($this->resultSet->getQuery()->getFilterQueries()) > 0;
+    }
+
+    /**
+     * @return ?PaginatorInterface
+     */
+    public function getPaginator() {
+        return $this->paginator;
     }
 
     public function getFilters() {

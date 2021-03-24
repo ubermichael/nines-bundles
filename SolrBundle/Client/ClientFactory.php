@@ -25,6 +25,11 @@ class ClientFactory
      */
     private $loggerPlugin;
 
+    /**
+     * @var null Client
+     */
+    private static $client = null;
+
     public function __construct(ParameterBagInterface $parameters) {
         $this->config = [
             'endpoint' => [
@@ -39,17 +44,19 @@ class ClientFactory
     }
 
     public function build() : Client {
-        $httpClient = new \GuzzleHttp\Client();
+        if ( ! self::$client) {
+            $httpClient = new \GuzzleHttp\Client();
 
-        $factory = new Psr17Factory();
-        $adapter = new Psr18Adapter($httpClient, $factory, $factory);
-        $eventDispatcher = new EventDispatcher();
+            $factory = new Psr17Factory();
+            $adapter = new Psr18Adapter($httpClient, $factory, $factory);
+            $eventDispatcher = new EventDispatcher();
 
-        // create a client instance
-        $client = new Client($adapter, $eventDispatcher, $this->config);
-        $client->registerPlugin(LoggerPlugin::class, $this->loggerPlugin);
+            // create a client instance
+            self::$client = new Client($adapter, $eventDispatcher, $this->config);
+            self::$client->registerPlugin(LoggerPlugin::class, $this->loggerPlugin);
+        }
 
-        return $client;
+        return self::$client;
     }
 
     /**

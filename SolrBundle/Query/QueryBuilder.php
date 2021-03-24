@@ -90,6 +90,9 @@ class QueryBuilder
         }
     }
 
+    /**
+     * @return Query
+     */
     public function getQuery() {
         $query = new Query();
         $query->setQuery($this->q);

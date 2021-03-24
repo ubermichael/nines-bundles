@@ -13,9 +13,6 @@
     {% set text %}
         {# this is the content displayed when hovering the mouse over
            the toolbar panel #}
-        <div class="sf-toolbar-info-piece">
-            <b>Search Queries</b> <span>{{ collector.getRequests|length }}</span>
-        </div>
     {% endset %}
 
     {# the 'link' value set to 'false' means that this panel doesn't
@@ -41,25 +38,4 @@
 {% endblock %}
 
 {% block panel %}
-    <h2>Queries</h2>
-    <table class='alt'>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Info</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i, q in collector.getRequests %}
-            <tr>
-                <td>{{ i }}</td>
-                <td>
-                    Query string: <a href='{{ q['server'] }}/{{ q['query'] }}'>
-                        "<b>{{ q['query'] }}</b>"
-                    </a><br>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 {% endblock %}

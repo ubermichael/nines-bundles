@@ -9,7 +9,7 @@ services:
 
   Nines\SolrBundle\:
     resource: '../../'
-    exclude: '../../{DependencyInjection,Entity,Resources,Tests}'
+    exclude: '../../{Annotation,DependencyInjection,Entity,Metadata,Resources,Tests}'
 
   Nines\SolrBundle\DataCollector\RequestCollector:
     tags:

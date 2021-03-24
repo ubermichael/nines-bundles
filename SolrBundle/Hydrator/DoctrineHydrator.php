@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Hydrator;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Solarium\Core\Query\DocumentInterface;
 use stdClass;
 
 class DoctrineHydrator
@@ -18,7 +19,7 @@ class DoctrineHydrator
     private EntityManagerInterface $em;
 
     /**
-     * @param stdClass $document
+     * @param DocumentInterface|stdClass $document
      *
      * @return null|object
      */

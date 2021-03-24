@@ -45,6 +45,7 @@ class EntityMapper
         }
         $document = new Document();
         $document->setKey($entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity));
+        $document->setField('id', $entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity));
         $document->setField('class_s', $entityMeta->getClass());
 
         foreach ($entityMeta->getFixed() as $key => $value) {
