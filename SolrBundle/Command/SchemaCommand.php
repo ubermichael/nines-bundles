@@ -12,7 +12,6 @@ namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,14 +36,6 @@ class SchemaCommand extends Command
     private $mapper;
 
     protected static $defaultName = 'nines:solr:schema';
-
-    /**
-     * @param EntityMapper $mapper
-     * @required
-     */
-    public function setEntityMapper(EntityMapper $mapper) {
-        $this->mapper = $mapper;
-    }
 
     protected function configure() : void {
         $this->setDescription('Show the solr schema.');
@@ -90,6 +81,13 @@ class SchemaCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setEntityMapper(EntityMapper $mapper) : void {
+        $this->mapper = $mapper;
     }
 
     /**

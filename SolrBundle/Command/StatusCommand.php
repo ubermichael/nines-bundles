@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Exception;
-use Nines\SolrBundle\Client\ClientBuilder;
 use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,20 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StatusCommand extends Command
 {
-    protected static $defaultName = 'nines:solr:status';
-
-    /**
-     * @var Client
-     */
     private Client $client;
 
-    /**
-     * @param Client $client
-     * @required
-     */
-    public function setClient(Client $client) {
-        $this->client = $client;
-    }
+    protected static $defaultName = 'nines:solr:status';
 
     protected function configure() : void {
         $this->setDescription('Check the status of a Solr core.');
@@ -64,5 +52,12 @@ class StatusCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setClient(Client $client) : void {
+        $this->client = $client;
     }
 }

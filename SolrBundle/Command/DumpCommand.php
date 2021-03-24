@@ -12,7 +12,6 @@ namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,14 +30,6 @@ class DumpCommand extends Command
     private $mapper;
 
     protected static $defaultName = 'nines:solr:dump';
-
-    /**
-     * @param EntityMapper $mapper
-     * @required
-     */
-    public function setEntityMapper(EntityMapper $mapper) {
-        $this->mapper = $mapper;
-    }
 
     protected function configure() : void {
         $this->setDescription('Show the solr schema.');
@@ -59,6 +50,13 @@ class DumpCommand extends Command
         dump($this->mapper->toDocument($entity)->getFields());
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setEntityMapper(EntityMapper $mapper) : void {
+        $this->mapper = $mapper;
     }
 
     /**

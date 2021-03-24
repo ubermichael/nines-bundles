@@ -48,6 +48,7 @@ class ClientFactory
         // create a client instance
         $client = new Client($adapter, $eventDispatcher, $this->config);
         $client->registerPlugin(LoggerPlugin::class, $this->loggerPlugin);
+
         return $client;
     }
 

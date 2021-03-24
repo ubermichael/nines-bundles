@@ -31,6 +31,8 @@ class EntityMapper
     }
 
     /**
+     * @param ?AbstractEntity $entity
+     *
      * @return Document
      */
     public function toDocument(?AbstractEntity $entity) {

@@ -13,7 +13,6 @@ namespace Nines\SolrBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Client\LoggerPlugin;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperFactory;
 use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -39,14 +38,6 @@ class IndexCommand extends Command
     private Client $client;
 
     protected static $defaultName = 'nines:solr:index';
-
-    /**
-     * @param EntityMapper $mapper
-     * @required
-     */
-    public function setEntityMapper(EntityMapper $mapper) {
-        $this->mapper = $mapper;
-    }
 
     protected function configure() : void {
         $this->setDescription('Index the data.');
@@ -106,6 +97,13 @@ class IndexCommand extends Command
         $this->em->clear();
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setEntityMapper(EntityMapper $mapper) : void {
+        $this->mapper = $mapper;
     }
 
     /**

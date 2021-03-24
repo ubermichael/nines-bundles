@@ -58,10 +58,6 @@ class Result
         return $this->resultSet->getDocuments()[$i];
     }
 
-    public function getAllDocuments() {
-        return $this->resultSet->getDocuments();
-    }
-
     public function entity($i) {
         if ( ! isset($this->entities[$i])) {
             $document = $this->getDocument($i);

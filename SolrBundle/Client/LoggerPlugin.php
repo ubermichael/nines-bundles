@@ -12,10 +12,7 @@ namespace Nines\SolrBundle\Client;
 
 use Nines\SolrBundle\Logging\SolrLogger;
 use Solarium\Core\Event\Events;
-use Solarium\Core\Event\PostExecute;
 use Solarium\Core\Event\PostExecuteRequest;
-use Solarium\Core\Event\PreExecute;
-use Solarium\Core\Event\PreExecuteRequest;
 use Solarium\Core\Plugin\AbstractPlugin;
 
 class LoggerPlugin extends AbstractPlugin
@@ -26,15 +23,17 @@ class LoggerPlugin extends AbstractPlugin
     private $logger;
 
     public function __construct($options = null) {
-        if($options === null) {
+        if (null === $options) {
             $options = ['enabled' => true];
-        } else if (is_array($options)) {
-            $options['enabled'] = true;
+        } else {
+            if (is_array($options)) {
+                $options['enabled'] = true;
+            }
         }
         parent::__construct($options);
     }
 
-    public function setEnabled($enabled) {
+    public function setEnabled($enabled) : void {
         $this->setOption('enabled', $enabled);
         $this->logger->setEnabled($enabled);
     }
@@ -45,7 +44,7 @@ class LoggerPlugin extends AbstractPlugin
     }
 
     public function postExecuteRequest(PostExecuteRequest $event) : void {
-        if( ! $this->getOption('enabled')) {
+        if ( ! $this->getOption('enabled')) {
             return;
         }
         $this->logger->log($event->getEndpoint()->getServerUri(), $event->getRequest()->getUri());

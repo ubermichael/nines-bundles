@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Exception;
-use Nines\SolrBundle\Client\ClientBuilder;
 use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,19 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ClearCommand extends Command
 {
-    /**
-     * @var Client
-     */
     private Client $client;
-
-    /**
-     * @param Client $client
-     * @required
-     */
-    public function setClient(Client $client) {
-        $this->client = $client;
-    }
-
 
     protected static $defaultName = 'nines:solr:clear';
 
@@ -52,5 +39,12 @@ class ClearCommand extends Command
         $output->writeln($result->getResponse()->getStatusMessage() . ' all documents deleted in ' . $result->getQueryTime() . 'ms');
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setClient(Client $client) : void {
+        $this->client = $client;
     }
 }

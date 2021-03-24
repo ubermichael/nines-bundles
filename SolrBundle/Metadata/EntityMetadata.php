@@ -34,13 +34,6 @@ class EntityMetadata extends Metadata
     private $fixed;
 
     /**
-     * Map of solr field name to entity field name.
-     *
-     * @var array
-     */
-    private $solrFields;
-
-    /**
      * Map of entity field name => FieldMetadata.
      *
      * @var FieldMetadata[];
@@ -49,7 +42,6 @@ class EntityMetadata extends Metadata
 
     public function __construct() {
         $this->fixed = [];
-        $this->solrFields = [];
         $this->fieldMetadata = [];
     }
 
@@ -89,10 +81,6 @@ class EntityMetadata extends Metadata
         return $this;
     }
 
-    public function getSolrFields() : array {
-        return $this->solrFields;
-    }
-
     /**
      * @return FieldMetadata[]
      */
@@ -100,18 +88,8 @@ class EntityMetadata extends Metadata
         return $this->fieldMetadata;
     }
 
-    /**
-     * @param FieldMetadata[] $fieldMetadata
-     */
-    public function setFieldMetadata(array $fieldMetadata) : self {
-        $this->fieldMetadata = $fieldMetadata;
-
-        return $this;
-    }
-
     public function addFieldMetadata(FieldMetadata $fieldMetadata) : self {
         $this->fieldMetadata[$fieldMetadata->getFieldName()] = $fieldMetadata;
-        $this->solrFields[$fieldMetadata->getSolrName()] = $fieldMetadata->getFieldName();
 
         return $this;
     }

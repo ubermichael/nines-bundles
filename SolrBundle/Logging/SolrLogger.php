@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Logging;
 
-use Solarium\Core\Query\AbstractQuery;
-
 class SolrLogger
 {
     /**
@@ -25,7 +23,7 @@ class SolrLogger
         $this->requests = [];
     }
 
-    public function log($serverUri, $queryUri) {
+    public function log($serverUri, $queryUri) : void {
         $this->requests[] = [
             'server' => $serverUri,
             'query' => $queryUri,
@@ -36,8 +34,7 @@ class SolrLogger
         return $this->requests;
     }
 
-    public function setEnabled($enabled) {
+    public function setEnabled($enabled) : void {
         $this->enabled = $enabled;
     }
-
 }

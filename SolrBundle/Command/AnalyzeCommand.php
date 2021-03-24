@@ -11,9 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\SolrBundle\Client\ClientBuilder;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperFactory;
 use Solarium\Client;
 use Solarium\QueryType\Update\Query\Document;
 use Symfony\Component\Console\Command\Command;
@@ -27,28 +25,9 @@ class AnalyzeCommand extends Command
 
     private $em;
 
-    protected static $defaultName = 'nines:solr:analyze';
-
-    /**
-     * @var Client
-     */
     private Client $client;
 
-    /**
-     * @param Client $client
-     * @required
-     */
-    public function setClient(Client $client) {
-        $this->client = $client;
-    }
-
-    /**
-     * @param EntityMapper $mapper
-     * @required
-     */
-    public function setEntityMapper(EntityMapper $mapper) {
-        $this->mapper = $mapper;
-    }
+    protected static $defaultName = 'nines:solr:analyze';
 
     protected function configure() : void {
         $this->setDescription('Clear the index.');
@@ -92,6 +71,20 @@ class AnalyzeCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setClient(Client $client) : void {
+        $this->client = $client;
+    }
+
+    /**
+     * @required
+     */
+    public function setEntityMapper(EntityMapper $mapper) : void {
+        $this->mapper = $mapper;
     }
 
     /**

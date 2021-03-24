@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace Nines\SolrBundle\Tests\Client;
-
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -12,25 +18,8 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Psr18Adapter;
 
-class ClientFactoryTest extends BaseCase {
-
-    public function testSetup() {
-        $client = $this->getContainer()->get(Client::class);
-        $this->assertNotNull($client);
-    }
-
-    public function testInjection() {
-        $client = $this->getContainer()->get(Client::class);
-
-        $adapter = $this->mockAdapter($this->pingResult());
-        $client->setAdapter($adapter);
-
-        $ping = $client->createPing();
-        $result = $client->ping($ping);
-        $json = json_decode($result->getResponse()->getBody());
-        $this->assertEquals(150, $json->responseHeader->QTime);
-    }
-
+class ClientFactoryTest extends BaseCase
+{
     protected function mockAdapter($data) {
         $mock = new MockHandler([
             new Response(200, ['Content-Type: text/json'], $this->pingResult()),
@@ -39,12 +28,12 @@ class ClientFactoryTest extends BaseCase {
 
         $httpClient = new \GuzzleHttp\Client(['handler' => $stack]);
         $factory = new Psr17Factory();
-        $adapter = new Psr18Adapter($httpClient, $factory, $factory);
-        return $adapter;
+
+        return new Psr18Adapter($httpClient, $factory, $factory);
     }
 
     protected function pingResult() {
-        $json = <<<END_JSON
+        return <<<'END_JSON'
         {
             "responseHeader":{
                 "status":0,
@@ -53,8 +42,22 @@ class ClientFactoryTest extends BaseCase {
             }
         }
         END_JSON;
-        return $json;
     }
 
+    public function testSetup() : void {
+        $client = $this->getContainer()->get(Client::class);
+        $this->assertNotNull($client);
+    }
 
+    public function testInjection() : void {
+        $client = $this->getContainer()->get(Client::class);
+
+        $adapter = $this->mockAdapter($this->pingResult());
+        $client->setAdapter($adapter);
+
+        $ping = $client->createPing();
+        $result = $client->ping($ping);
+        $json = json_decode($result->getResponse()->getBody());
+        $this->assertSame(150, $json->responseHeader->QTime);
+    }
 }

@@ -10,10 +10,8 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Query;
 
-use Nines\SolrBundle\Client\ClientBuilder;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Nines\SolrBundle\Mapper\EntityMapperFactory;
-use Solarium\Client;
+use Solarium\QueryType\Select\Query\Query;
 
 class QueryBuilder
 {
@@ -21,11 +19,6 @@ class QueryBuilder
      * @var EntityMapper
      */
     private $mapper;
-
-    /**
-     * @var Client
-     */
-    private $client;
 
     private $q;
 
@@ -41,9 +34,8 @@ class QueryBuilder
 
     private $filterRanges;
 
-    public function __construct(EntityMapperFactory $mapperBuilder, ClientBuilder $clientBuilder) {
-        $this->mapper = $mapperBuilder->build();
-        $this->client = $clientBuilder->build();
+    public function __construct(EntityMapper $mapper) {
+        $this->mapper = $mapper;
         $this->filters = [];
         $this->highlightFields = [];
         $this->highlightFields = [];
@@ -99,7 +91,7 @@ class QueryBuilder
     }
 
     public function getQuery() {
-        $query = $this->client->createSelect();
+        $query = new Query();
         $query->setQuery($this->q);
         $query->setQueryDefaultField($this->defaultField);
 
@@ -141,9 +133,5 @@ class QueryBuilder
         }
 
         return $query;
-    }
-
-    public function getClient() {
-        return $this->client;
     }
 }
