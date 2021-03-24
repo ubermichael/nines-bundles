@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\SolrBundle\Client\ClientBuilder;
+use Nines\SolrBundle\Client\LoggerPlugin;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Mapper\EntityMapperBuilder;
 use Solarium\Client;
@@ -36,26 +36,14 @@ class IndexCommand extends Command
      */
     private $em;
 
+    private Client $client;
+
     protected static $defaultName = 'nines:solr:index';
 
     public function __construct(EntityMapperBuilder $mapperBuilder) {
         parent::__construct();
         $this->mapper = $mapperBuilder->build();
     }
-
-    /**
-     * @var Client
-     */
-    private Client $client;
-
-    /**
-     * @param Client $client
-     * @required
-     */
-    public function setClient(Client $client) {
-        $this->client = $client;
-    }
-
 
     protected function configure() : void {
         $this->setDescription('Index the data.');
@@ -65,6 +53,7 @@ class IndexCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
+        $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $batch = (int) $input->getOption('batch');
@@ -73,7 +62,6 @@ class IndexCommand extends Command
         }, $input->getArgument('classes'));
 
         $n = 0;
-
 
         if ($input->hasOption('clear')) {
             $delete = $this->client->createUpdate();
@@ -97,7 +85,7 @@ class IndexCommand extends Command
 
             foreach ($iterator as $row) {
                 $n++;
-                [$mapped, $boosts] = $this->mapper->toDocument($row[0]);
+                list($mapped, $boosts) = $this->mapper->toDocument($row[0]);
                 $doc = $update->createDocument($mapped);
 
                 foreach ($boosts as $name => $value) {
@@ -120,6 +108,13 @@ class IndexCommand extends Command
         $this->em->clear();
 
         return 0;
+    }
+
+    /**
+     * @required
+     */
+    public function setClient(Client $client) : void {
+        $this->client = $client;
     }
 
     /**

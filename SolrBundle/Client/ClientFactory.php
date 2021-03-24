@@ -20,6 +20,11 @@ class ClientFactory
 {
     private $config;
 
+    /**
+     * @var LoggerPlugin
+     */
+    private $loggerPlugin;
+
     public function __construct(ParameterBagInterface $parameters) {
         $this->config = [
             'endpoint' => [
@@ -42,6 +47,14 @@ class ClientFactory
 
         // create a client instance
         $client = new Client($adapter, $eventDispatcher, $this->config);
+        $client->registerPlugin(LoggerPlugin::class, $this->loggerPlugin);
         return $client;
+    }
+
+    /**
+     * @required
+     */
+    public function setLoggerPlugin(LoggerPlugin $loggerPlugin) : void {
+        $this->loggerPlugin = $loggerPlugin;
     }
 }

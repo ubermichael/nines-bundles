@@ -12,6 +12,7 @@ namespace Nines\SolrBundle\Command;
 
 use Exception;
 use Nines\SolrBundle\Client\ClientBuilder;
+use Nines\SolrBundle\Client\LoggerPlugin;
 use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

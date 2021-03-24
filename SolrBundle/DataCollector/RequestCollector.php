@@ -14,6 +14,7 @@ use Nines\SolrBundle\Logging\SolrLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Throwable;
 
 class RequestCollector extends DataCollector
 {
@@ -31,9 +32,9 @@ class RequestCollector extends DataCollector
         $this->logger = $logger;
     }
 
-    public function collect(Request $request, Response $response) : void {
+    public function collect(Request $request, Response $response, ?Throwable $exception = null) : void {
         $this->data = [
-            'queries' => $this->logger->getQueries(),
+            'queries' => $this->logger->getRequests(),
         ];
     }
 

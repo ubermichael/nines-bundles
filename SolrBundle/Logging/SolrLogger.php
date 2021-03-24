@@ -19,47 +19,25 @@ class SolrLogger
      */
     private $enabled = true;
 
-    /**
-     * @var null|float
-     */
-    private $start;
-
-    /**
-     * @var AbstractQuery[]
-     */
-    private $queries;
-
-    /**
-     * @var int
-     */
-    private $current;
+    private $requests;
 
     public function __construct() {
-        $this->queries = [];
-        $this->current = 0;
+        $this->requests = [];
     }
 
-    public function startQuery($query, $params = []) : void {
-        if ( ! $this->enabled) {
-            return;
-        }
-        $this->start = microtime(true);
-        $this->queries[$this->current] = [
-            'query' => $query,
-            'params' => $params,
-            'time' => 0,
+    public function log($serverUri, $queryUri) {
+        $this->requests[] = [
+            'server' => $serverUri,
+            'query' => $queryUri,
         ];
     }
 
-    public function stopQuery() : void {
-        if ( ! $this->enabled) {
-            return;
-        }
-        $this->queries[$this->current]['time'] = microtime(true) - $this->start;
-        $this->current++;
+    public function getRequests() {
+        return $this->requests;
     }
 
-    public function getQueries() {
-        return $this->queries;
+    public function setEnabled($enabled) {
+        $this->enabled = $enabled;
     }
+
 }

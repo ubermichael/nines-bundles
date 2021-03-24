@@ -14,7 +14,7 @@
         {# this is the content displayed when hovering the mouse over
            the toolbar panel #}
         <div class="sf-toolbar-info-piece">
-            <b>Search Queries</b> <span>{{ collector.getQueries|length }}</span>
+            <b>Search Queries</b> <span>{{ collector.getRequests|length }}</span>
         </div>
     {% endset %}
 
@@ -46,38 +46,20 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Time</th>
                 <th>Info</th>
             </tr>
         </thead>
         <tbody>
-            {% for i, q in collector.getQueries %}
-            {# @var Solarium\QueryType\Select\Query\Query query #}
-            {% set query = q.query %}
+            {% for i, q in collector.getRequests %}
             <tr>
                 <td>{{ i }}</td>
-                <td>{{ (q.time * 1000)|number_format(2)}}</td>
                 <td>
-                    Query string: "<b>{{ query.options.query }}</b>"<br>
-
-                    Filters:
-                    {% for name, filter in query.filterQueries %}
-                        {{ filter.options.query }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}<br/>
-
-                    Facets:
-                    {% for name, facet in query.facetSet.facets %}
-                    {{ facet.options.field }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}<br/>
-
-                    Highlighting:
-                    {% for name, field in query.highlighting.fields %}
-                    {{ field.name }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}<br/>
+                    Query string: <a href='{{ q['server'] }}/{{ q['query'] }}'>
+                        "<b>{{ q['query'] }}</b>"
+                    </a><br>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 {% endblock %}
-
