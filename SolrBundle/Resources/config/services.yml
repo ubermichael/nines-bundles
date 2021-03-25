@@ -20,6 +20,10 @@ services:
   Solarium\Client:
     factory: [ '@Nines\SolrBundle\Client\ClientFactory', 'build' ]
 
+  Nines\SolrBundle\EventListener\IndexSubscriber:
+    tags:
+      - { name: 'doctrine.event_subscriber' }
+
   Nines\SolrBundle\Mapper\EntityMapperFactory:
     arguments: [ '%kernel.environment%', "%kernel.cache_dir%" ]
 

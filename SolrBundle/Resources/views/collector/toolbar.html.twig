@@ -1,23 +1,28 @@
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
 {% block toolbar %}
-    {% set icon %}
-        {# this is the content displayed as a panel in the toolbar #}
-        <svg xmlns="http://www.w3.org/2000/svg" width='24' height='24' viewBox='0 0 24 24'>
-            <circle r='6' cx='8' cy='8' fill="none" stroke="#aaa" stroke-width="2" />
-            <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2' />
-        </svg>
-        <span class="sf-toolbar-value">{{ collector.getQueries|length }}</span>
-    {% endset %}
+    {% if collector.getQueries|length > 0 %}
+        {% set icon %}
+            {# this is the content displayed as a panel in the toolbar #}
+            <svg xmlns="http://www.w3.org/2000/svg" width='24' height='24' viewBox='0 0 24 24'>
+                <circle r='6' cx='8' cy='8' fill="none" stroke="#aaa" stroke-width="2" />
+                <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2' />
+            </svg>
+            <span class="sf-toolbar-value">{{ collector.getQueries|length }}</span>
+        {% endset %}
 
-    {% set text %}
-        {# this is the content displayed when hovering the mouse over
-           the toolbar panel #}
-    {% endset %}
+        {% set text %}
+            {% for query in collector.getQueries %}
+            {{ query }}<br/>
+            {% endfor %}
+            {# this is the content displayed when hovering the mouse over
+               the toolbar panel #}
+        {% endset %}
 
-    {# the 'link' value set to 'false' means that this panel doesn't
-       show a section in the web profiler #}
-    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+        {# the 'link' value set to 'false' means that this panel doesn't
+           show a section in the web profiler #}
+        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+    {% endif %}
 {% endblock %}
 
 {% block head %}
@@ -32,10 +37,13 @@
                 <line x1='14' y1='14' x2='20' y2='20' stroke='#aaa' stroke-width='2' />
             </svg>
         </span>
-        <strong>Search Queries</strong>
+        <strong>Solr Queries</strong>
         <span class='count'><span>{{ collector.getQueries|length }}</span></span>
     </span>
 {% endblock %}
 
 {% block panel %}
+    {% for query in collector.getQueries %}
+        {{ dump(query) }}<br/>
+    {% endfor %}
 {% endblock %}

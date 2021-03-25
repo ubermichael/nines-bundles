@@ -51,6 +51,18 @@ class EntityMapper
         }
     }
 
+    public function identify($entity) {
+        if ( ! $entity) {
+            return;
+        }
+        $class = ClassUtils::getClass($entity);
+        if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
+            return;
+        }
+
+        return $entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity);
+    }
+
     /**
      * @param ?AbstractEntity $entity
      *
@@ -115,6 +127,15 @@ class EntityMapper
         }
 
         return $this->map[$class];
+    }
+
+    public function isMapped($entity) {
+        if ( ! $entity) {
+            return false;
+        }
+        $class = ClassUtils::getClass($entity);
+
+        return array_key_exists($class, $this->map);
     }
 
     public function getClasses() {
