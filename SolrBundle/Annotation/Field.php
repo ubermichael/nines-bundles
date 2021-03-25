@@ -26,6 +26,7 @@ class Field
         'long' => '_l',
         'string' => '_s',
         'text' => '_t',
+        'location' => '_p',
 
         'booleans' => '_bs',
         'dates' => '_dts',

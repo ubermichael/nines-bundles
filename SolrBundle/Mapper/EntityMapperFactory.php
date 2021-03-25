@@ -143,9 +143,19 @@ class EntityMapperFactory
             }
 
             // do the copy fields after the regular fields have been set up.
-            foreach ($classAnnotation->copyFields as $copyField) {
+            foreach ($classAnnotation->copyField as $copyField) {
                 $from = array_map(function ($s) use ($solrNames) {return $solrNames[$s]; }, $copyField->from);
                 $entityMeta->addCopyFields($from, $copyField->to, $copyField->type);
+            }
+
+            foreach ($classAnnotation->computedFields as $computedField) {
+                $fieldMeta = new FieldMetadata();
+                $fieldMeta->setSolrName($computedField->name);
+                $fieldMeta->setBoost($computedField->boost);
+                $fieldMeta->setFieldName($computedField->name);
+                $fieldMeta->setGetter($computedField->getter);
+                $entityMeta->addFieldMetadata($fieldMeta);
+                $solrNames[$computedField->name] = $solrName;
             }
 
             $mapper->addEntity($entityMeta);

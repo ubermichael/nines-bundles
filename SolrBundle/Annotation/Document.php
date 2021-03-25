@@ -17,7 +17,16 @@ namespace Nines\SolrBundle\Annotation;
 class Document
 {
     /**
-     * @var array
+     * @var array<Nines\SolrBundle\Annotation\CopyField>
      */
-    public $copyFields = [];
+    public $copyField = [];
+
+    /**
+     * @var array<Nines\SolrBundle\Annotation\ComputedField>
+     */
+    public $computedFields = [];
+
+//    public function __construct() {
+//        dump(func_get_args());
+//    }
 }

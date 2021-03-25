@@ -10,26 +10,33 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Annotation;
 
-use Doctrine\ORM\Mapping\Annotation;
-
 /**
  * @Annotation
- * @Target("ANNOTATION")
+ * @Target({"ANNOTATION"})
  */
-class CopyFields
+class ComputedField
 {
     /**
-     * @var array
-     */
-    public $from;
-
-    /**
      * @var string
-     */
-    public $to;
-
-    /**
-     * @var string
+     * @Required
      */
     public $type;
+
+    /**
+     * @var float
+     */
+    public $boost;
+
+    /**
+     * @var string
+     * @Required
+     */
+    public $name;
+
+    /**
+     * A method from the indexed entity.
+     *
+     * @var string
+     */
+    public $getter;
 }
