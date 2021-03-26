@@ -18,6 +18,10 @@
                 <span class='sf-toolbar-status'>{{ count }}</span>
             </div>
             {% endfor %}
+            <div class='sf-toolbar-info-piece'>
+                <b>queries</b>
+                <span class='sf-toolbar-status'>{{ collector.getQueries|length }}</span>
+            </div>
         {% endset %}
 
         {# the 'link' value set to 'false' means that this panel doesn't

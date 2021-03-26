@@ -82,7 +82,7 @@ class QueryBuilder
     }
 
     public function addFilter($key, $terms) : void {
-        $this->filters[$key] = $terms;
+        $this->filters[$this->solrName($key)] = $terms;
     }
 
     public function addFilterRange($key, $start, $end) : void {
