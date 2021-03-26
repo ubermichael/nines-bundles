@@ -47,25 +47,34 @@ class QueryBuilder
         $this->q = $q;
     }
 
+    protected function solrName($field) {
+        if(is_array($field)) {
+            return array_map(function($s) {return $this->mapper->getSolrName($s) ?? $s;}, $field);
+        }
+        return $this->mapper->getSolrName($field) ?? $field;
+    }
+
     public function setDefaultField($defaultField) : void {
-        $this->defaultField = $defaultField;
+        $this->defaultField = $this->solrName($defaultField);
     }
 
     public function setHighlightFields($fields) : void {
         if (is_array($fields)) {
-            $this->highlightFields = implode(',', $fields);
+            $this->highlightFields = implode(',', $this->solrName($fields));
+        } elseif ($fields === 'all') {
+            $this->highlightFields = 'all';
         } else {
-            $this->highlightFields = $fields;
+            $this->highlightFields = $this->mapper->getSolrName($fields);
         }
     }
 
-    public function addFacetField($name, $field) : void {
-        $this->facetFields[$name] = $field;
+    public function addFacetField($name) : void {
+        $this->facetFields[$name] = $this->solrName($name);
     }
 
-    public function addFacetRange($name, $field, $start, $end, $gap) : void {
+    public function addFacetRange($name, $start, $end, $gap) : void {
         $this->facetRanges[$name] = [
-            'field' => $field,
+            'field' => $this->solrName($name),
             'start' => $start,
             'end' => $end,
             'gap' => $gap,

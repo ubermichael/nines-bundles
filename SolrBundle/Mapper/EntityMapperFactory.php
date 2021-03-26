@@ -146,6 +146,7 @@ class EntityMapperFactory
             foreach ($classAnnotation->copyField as $copyField) {
                 $from = array_map(function ($s) use ($solrNames) {return $solrNames[$s]; }, $copyField->from);
                 $entityMeta->addCopyFields($from, $copyField->to, $copyField->type);
+                $solrNames[$copyField->to] = $copyField->to;;
             }
 
             foreach ($classAnnotation->computedFields as $computedField) {
@@ -155,7 +156,7 @@ class EntityMapperFactory
                 $fieldMeta->setFieldName($computedField->name);
                 $fieldMeta->setGetter($computedField->getter);
                 $entityMeta->addFieldMetadata($fieldMeta);
-                $solrNames[$computedField->name] = $solrName;
+                $solrNames[$computedField->name] = $computedField->name;
             }
 
             $mapper->addEntity($entityMeta);

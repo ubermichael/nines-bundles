@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Mapper;
 
 use Doctrine\Common\Util\ClassUtils;
+use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Metadata\EntityMetadata;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Solarium\QueryType\Update\Query\Document;
@@ -29,6 +30,8 @@ class EntityMapper
      */
     private $fields;
 
+    private SolrLogger $logger;
+
     public function __construct() {
         $this->map = [];
         $this->fields = [
@@ -45,19 +48,29 @@ class EntityMapper
             $fieldName = $fieldMetadata->getFieldName();
             $solrName = $fieldMetadata->getSolrName();
             if (array_key_exists($fieldName, $this->fields) && $this->fields[$fieldName] !== $solrName) {
-                // do an error in the logs and in the data collector.
+                $this->logger->warning('Duplicate entity property name {property} with different solr field names {f1} and {f2}', [
+                    'property' => $fieldName,
+                    'f1' => $this->fields[$fieldName],
+                    'f2' => $solrName,
+                ]);
             }
             $this->fields[$fieldName] = $solrName;
         }
+        foreach ($entityMetadata->getCopyFields() as $copyField) {
+            $this->fields[$copyField['to']] = $copyField['to'];
+        }
     }
 
-    public function identify($entity) {
+    public function identify($entity) : ?string {
         if ( ! $entity) {
-            return;
+            return null;
         }
         $class = ClassUtils::getClass($entity);
         if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
-            return;
+            $this->logger->warning('Cannot identify unknown class {class}.', [
+                'class' => $class,
+            ]);
+            return null;
         }
 
         return $entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity);
@@ -74,6 +87,9 @@ class EntityMapper
         }
         $class = ClassUtils::getClass($entity);
         if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
+            $this->logger->warning('Cannot index unknown class {class}.', [
+                'class' => $class,
+            ]);
             return null;
         }
         $document = new Document();
@@ -94,9 +110,7 @@ class EntityMapper
         }
 
         foreach ($entityMeta->getCopyFields() as $copyField) {
-            $from = $copyField['from'];
             $to = $copyField['to'];
-
             $v = [];
 
             foreach ($copyField['from'] as $from) {
@@ -117,13 +131,22 @@ class EntityMapper
         return $document;
     }
 
-    public function getSolrName($name) {
-        return $this->fields[$name] ?? null;
+    public function getSolrName($name) : ?string {
+        if( ! isset($this->fields[$name])) {
+            $this->logger->warning('Cannot get solr name for unknown property {name}.', [
+                'name' => $name,
+            ]);
+            return null;
+        }
+        return $this->fields[$name];
     }
 
-    public function getEntityMetadata($class) {
+    public function getEntityMetadata($class) : ?EntityMetadata {
         if ( ! isset($this->map[$class])) {
-            return;
+            $this->logger->warning('Cannot get entity metadata for unknown class {class}.', [
+                'class' => $class,
+            ]);
+            return null;
         }
 
         return $this->map[$class];
@@ -140,5 +163,12 @@ class EntityMapper
 
     public function getClasses() {
         return array_keys($this->map);
+    }
+
+    /**
+     * @required
+     */
+    public function setSolrLogger(SolrLogger $logger) : void {
+        $this->logger = $logger;
     }
 }

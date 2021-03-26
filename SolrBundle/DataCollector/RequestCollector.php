@@ -34,12 +34,22 @@ class RequestCollector extends DataCollector
 
     public function collect(Request $request, Response $response, ?Throwable $exception = null) : void {
         $this->data = [
-            'queries' => $this->logger->getRequests(),
+            'logs' => $this->logger->getLogs(),
+            'counts' => $this->logger->getCounts(),
+            'queries' => $this->logger->getQueries(),
         ];
+    }
+
+    public function getLogs() {
+        return $this->data['logs'];
     }
 
     public function getQueries() {
         return $this->data['queries'];
+    }
+
+    public function getCounts() {
+        return $this->data['counts'];
     }
 
     public function getName() {

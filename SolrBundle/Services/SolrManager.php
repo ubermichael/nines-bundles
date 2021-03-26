@@ -12,6 +12,7 @@ namespace Nines\SolrBundle\Services;
 
 use Knp\Component\Pager\PaginatorInterface;
 use Nines\SolrBundle\Hydrator\DoctrineHydrator;
+use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Query\QueryBuilder;
 use Nines\SolrBundle\Query\Result;
@@ -34,6 +35,10 @@ class SolrManager
      * @var DoctrineHydrator
      */
     private $hydrator;
+    /**
+     * @var SolrLogger
+     */
+    private SolrLogger $logger;
 
     /**
      * @return QueryBuilder
@@ -46,6 +51,7 @@ class SolrManager
      * @param mixed $options
      */
     public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : Result {
+        $this->logger->addQuery($query);
         if ($pager) {
             $paginated = $pager->paginate([$this->client, $query], $options['page'], $options['pageSize']);
 
@@ -101,5 +107,13 @@ class SolrManager
         $this->mapper = $mapper;
 
         return $this;
+    }
+
+    /**
+     * @param SolrLogger $logger
+     * @required
+     */
+    public function setSolrLogger(SolrLogger $logger) {
+        $this->logger = $logger;
     }
 }
