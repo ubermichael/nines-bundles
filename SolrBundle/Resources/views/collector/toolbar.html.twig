@@ -76,6 +76,15 @@
             {{ field.name }}{% if not loop.last %}, {% endif %}
         {% endfor %}<br/>
 
+        Field List:
+        {% for field in query.fields %}
+            {{ field }}{% if not loop.last %}, {% endif %}
+        {% endfor %}<br/>
+
+        Sorting:
+        {% for k,v in query.sorts %}
+            {{ k }} {{ v }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
         </div>
     {% endfor %}
 {% endblock %}

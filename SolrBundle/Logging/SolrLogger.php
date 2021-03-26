@@ -53,22 +53,22 @@ class SolrLogger extends AbstractLogger
 
     public function log($level, $message, array $context = []) : void {
         $bt = debug_backtrace();
-        $caller=$bt[1];
+        $caller = $bt[1];
 
         $this->logs[] = [
             $level,
             $this->interpolate($message, $context),
             $caller['file'],
-            $caller['line']
+            $caller['line'],
         ];
-        if( ! isset($this->counts[$level])) {
+        if ( ! isset($this->counts[$level])) {
             $this->counts[$level] = 1;
         } else {
             $this->counts[$level]++;
         }
     }
 
-    public function addQuery($query) {
+    public function addQuery($query) : void {
         $this->queries[] = $query;
     }
 

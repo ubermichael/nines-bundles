@@ -8,11 +8,11 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Nines\SolrBundle\Repository;
+namespace Nines\SolrBundle\Index;
 
 use Nines\SolrBundle\Services\SolrManager;
 
-abstract class SolrRepository
+abstract class AbstractIndex
 {
     protected SolrManager $manager;
 
@@ -21,7 +21,6 @@ abstract class SolrRepository
     }
 
     /**
-     * @param SolrManager $manager
      * @required
      */
     public function setSolrManager(SolrManager $manager) : void {

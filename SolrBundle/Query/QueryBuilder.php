@@ -34,24 +34,34 @@ class QueryBuilder
 
     private $filterRanges;
 
+    private $fields;
+
+    private $sorting;
+
     public function __construct(EntityMapper $mapper) {
+        $this->q = '*:*';
         $this->mapper = $mapper;
         $this->filters = [];
         $this->highlightFields = [];
-        $this->highlightFields = [];
         $this->facetRanges = [];
+        $this->facetFields = [];
         $this->filterRanges = [];
+        $this->fields = ['*', 'score'];
+        $this->sorting = [
+            ['score', 'desc'],
+        ];
+    }
+
+    protected function solrName($field) {
+        if (is_array($field)) {
+            return array_map(function ($s) {return $this->mapper->getSolrName($s) ?? $s; }, $field);
+        }
+
+        return $this->mapper->getSolrName($field) ?? $field;
     }
 
     public function setQueryString($q) : void {
         $this->q = $q;
-    }
-
-    protected function solrName($field) {
-        if(is_array($field)) {
-            return array_map(function($s) {return $this->mapper->getSolrName($s) ?? $s;}, $field);
-        }
-        return $this->mapper->getSolrName($field) ?? $field;
     }
 
     public function setDefaultField($defaultField) : void {
@@ -61,7 +71,7 @@ class QueryBuilder
     public function setHighlightFields($fields) : void {
         if (is_array($fields)) {
             $this->highlightFields = implode(',', $this->solrName($fields));
-        } elseif ($fields === 'all') {
+        } elseif ('all' === $fields) {
             $this->highlightFields = 'all';
         } else {
             $this->highlightFields = $this->mapper->getSolrName($fields);
@@ -99,16 +109,37 @@ class QueryBuilder
         }
     }
 
+    public function setFields($fields = []) : void {
+        $this->fields = [];
+    }
+
+    public function addField($field) : void {
+        $this->fields[] = $field;
+    }
+
+    public function setSorting($sorting = []) : void {
+        $this->sorting = $sorting;
+    }
+
+    public function addSorting($field, $direction) : void {
+        $this->sorting[] = [$this->solrName($field), $direction];
+    }
+
     /**
      * @return Query
      */
     public function getQuery() {
         $query = new Query();
         $query->setQuery($this->q);
-        $query->setQueryDefaultField($this->defaultField);
+        if ($this->defaultField) {
+            $query->setQueryDefaultField($this->defaultField);
+        }
 
         foreach ($this->filters as $key => $values) {
-            $terms = join(' or ', array_map(function ($s) {return '"' . $s . '"'; }, $values));
+            $terms = $values;
+            if (is_array($values)) {
+                $terms = join(' or ', array_map(function ($s) { return '"' . $s . '"'; }, $values));
+            }
             $query->createFilterQuery('fq_' . $key)->addTag('exclude')
                 ->setQuery("{$key}:({$terms})")
             ;
@@ -135,6 +166,14 @@ class QueryBuilder
             $facetSet->createFacetRange($key)->setField($value['field'])->setMinCount(1)
                 ->setStart($value['start'])->setEnd($value['end'])->setGap(50)
                 ->getLocalParameters()->setExclude('exclude');
+        }
+
+        foreach ($this->fields as $field) {
+            $query->addField($field);
+        }
+
+        foreach ($this->sorting as $sort) {
+            $query->addSort($sort[0], $sort[1]);
         }
 
         if ($this->highlightFields) {

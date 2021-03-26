@@ -56,6 +56,7 @@ class EntityMapper
             }
             $this->fields[$fieldName] = $solrName;
         }
+
         foreach ($entityMetadata->getCopyFields() as $copyField) {
             $this->fields[$copyField['to']] = $copyField['to'];
         }
@@ -70,6 +71,7 @@ class EntityMapper
             $this->logger->warning('Cannot identify unknown class {class}.', [
                 'class' => $class,
             ]);
+
             return null;
         }
 
@@ -90,6 +92,7 @@ class EntityMapper
             $this->logger->warning('Cannot index unknown class {class}.', [
                 'class' => $class,
             ]);
+
             return null;
         }
         $document = new Document();
@@ -132,12 +135,14 @@ class EntityMapper
     }
 
     public function getSolrName($name) : ?string {
-        if( ! isset($this->fields[$name])) {
+        if ( ! isset($this->fields[$name])) {
             $this->logger->warning('Cannot get solr name for unknown property {name}.', [
                 'name' => $name,
             ]);
+
             return null;
         }
+
         return $this->fields[$name];
     }
 
@@ -146,6 +151,7 @@ class EntityMapper
             $this->logger->warning('Cannot get entity metadata for unknown class {class}.', [
                 'class' => $class,
             ]);
+
             return null;
         }
 

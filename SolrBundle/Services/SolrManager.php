@@ -35,9 +35,7 @@ class SolrManager
      * @var DoctrineHydrator
      */
     private $hydrator;
-    /**
-     * @var SolrLogger
-     */
+
     private SolrLogger $logger;
 
     /**
@@ -49,6 +47,7 @@ class SolrManager
 
     /**
      * @param mixed $options
+     * @param ?PaginatorInterface $pager
      */
     public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : Result {
         $this->logger->addQuery($query);
@@ -110,10 +109,9 @@ class SolrManager
     }
 
     /**
-     * @param SolrLogger $logger
      * @required
      */
-    public function setSolrLogger(SolrLogger $logger) {
+    public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;
     }
 }

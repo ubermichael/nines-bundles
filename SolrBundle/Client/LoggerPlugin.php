@@ -47,9 +47,9 @@ class LoggerPlugin extends AbstractPlugin
         if ( ! $this->getOption('enabled')) {
             return;
         }
-        $this->logger->notice("Query to {server} {request}", [
+        $this->logger->notice('Query to {server} {request}', [
             'server' => $event->getEndpoint()->getServerUri(),
-            'request' => urldecode($event->getRequest()->getUri())
+            'request' => urldecode($event->getRequest()->getUri()),
         ]);
     }
 
