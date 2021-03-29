@@ -18,6 +18,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
 use Exception;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
+use SplFileInfo;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 abstract class BaseCase extends WebTestCase
@@ -37,7 +38,7 @@ abstract class BaseCase extends WebTestCase
     /**
      * @var array|SplFileInfo[]|string[]
      */
-    protected $cleanup;
+    protected $cleanup = [];
 
     /**
      * Get a list of fixture classes to load.
