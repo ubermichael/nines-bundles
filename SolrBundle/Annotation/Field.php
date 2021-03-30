@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Annotation;
 
 /**
+ * Use @Field() to configure the indexing for each field to be searched.
+ *
  * @Annotation
  * @Target({"PROPERTY"})
  */
@@ -40,17 +42,25 @@ class Field
     ];
 
     /**
+     * Type of the data to be indexed. See Field::TYPE_MAP for a list of
+     * supported types.
+     *
      * @var string
      * @Required
      */
     public $type;
 
     /**
+     * Field boost, to make some fields more or less important. Defaults to 1.
+     * Higher values are more important.
+     *
      * @var float
      */
     public $boost;
 
     /**
+     * Entity property name.
+     *
      * @var string
      */
     public $name;
@@ -71,6 +81,9 @@ class Field
     public $mutator;
 
     /**
+     * List of functions to call. The data returned by getter or mutator will
+     * be passed as the first argument to each function.
+     *
      * @var array
      */
     public $filters;

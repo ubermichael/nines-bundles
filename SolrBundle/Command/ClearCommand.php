@@ -16,16 +16,33 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Delete all content from the index.
+ */
 class ClearCommand extends Command
 {
+    /**
+     * @var Client
+     */
     private Client $client;
 
     protected static $defaultName = 'nines:solr:clear';
 
+    /**
+     * Configure the command.
+     */
     protected function configure() : void {
         $this->setDescription('Clear the index.');
     }
 
+    /**
+     * Execute the command. Returns 0 for success.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $update = $this->client->createUpdate();
         $update->addDeleteQuery('*:*');
@@ -33,10 +50,11 @@ class ClearCommand extends Command
 
         try {
             $result = $this->client->update($update);
+            $output->writeln($result->getResponse()->getStatusMessage() . ' all documents deleted in ' . $result->getQueryTime() . 'ms');
         } catch (Exception $e) {
-            dump($e);
+            $output->writeln($e->getMessage());
+            return $e->getCode();
         }
-        $output->writeln($result->getResponse()->getStatusMessage() . ' all documents deleted in ' . $result->getQueryTime() . 'ms');
 
         return 0;
     }

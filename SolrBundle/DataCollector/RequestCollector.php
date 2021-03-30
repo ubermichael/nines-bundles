@@ -16,6 +16,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Throwable;
 
+/**
+ * Collect data for display in the Symfony debug toolbar.
+ *
+ * @see https://symfony.com/doc/current/profiler/data_collector.html
+ */
 class RequestCollector extends DataCollector
 {
     /**
@@ -28,10 +33,20 @@ class RequestCollector extends DataCollector
      */
     private $logger;
 
+    /**
+     * @param SolrLogger $logger
+     */
     public function __construct(SolrLogger $logger) {
         $this->logger = $logger;
     }
 
+    /**
+     * Called by the toolbar to gather the data from the loggers.
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param Throwable|null $exception
+     */
     public function collect(Request $request, Response $response, ?Throwable $exception = null) : void {
         $this->data = [
             'logs' => $this->logger->getLogs(),
@@ -40,22 +55,45 @@ class RequestCollector extends DataCollector
         ];
     }
 
+    /**
+     * Get the log data for display.
+     *
+     * @return mixed
+     */
     public function getLogs() {
         return $this->data['logs'];
     }
 
+    /**
+     * Get the queries executed in the server.
+     *
+     * @return mixed
+     */
     public function getQueries() {
         return $this->data['queries'];
     }
 
+    /**
+     * Return an array counting the errors, warnings, etc.
+     *
+     * @return mixed
+     */
     public function getCounts() {
         return $this->data['counts'];
     }
 
+    /**
+     * Name of the request collector.
+     *
+     * @return string
+     */
     public function getName() {
         return 'solr.request_collector';
     }
 
+    /**
+     * Clear the request collector.
+     */
     public function reset() : void {
         $this->data = [];
     }

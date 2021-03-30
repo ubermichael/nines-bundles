@@ -105,7 +105,9 @@ class EntityMapper
         }
 
         foreach ($entityMeta->getFieldMetadata() as $fieldMetadata) {
-            $document->setField($fieldMetadata->getSolrName(), $fieldMetadata->fetch($entity));
+            $data = $fieldMetadata->fetch($entity);
+            $data = preg_replace("/(?:^\s*|\s*$)/u", '', $data);
+            $document->setField($fieldMetadata->getSolrName(), preg_replace("/\\s{2,}/u", " ", $data));
             $boost = $fieldMetadata->getBoost();
             if ($boost && 1.0 !== $boost) {
                 $document->setFieldBoost($fieldMetadata->getSolrName(), $boost);

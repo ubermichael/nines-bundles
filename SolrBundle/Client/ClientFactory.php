@@ -16,8 +16,14 @@ use Solarium\Core\Client\Adapter\Psr18Adapter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+/**
+ * Build and return a client for use in Symfony's dependency injection.
+ */
 class ClientFactory
 {
+    /**
+     * @var \array[][]
+     */
     private $config;
 
     /**
@@ -26,7 +32,9 @@ class ClientFactory
     private $loggerPlugin;
 
     /**
-     * @var null Client
+     * Singleton client instance.
+     *
+     * @var null|Client
      */
     private static $client = null;
 
@@ -43,6 +51,12 @@ class ClientFactory
         ];
     }
 
+    /**
+     * Build and return a client configured with a Guzzle PSR7 adapter
+     * and a logger plugin for debugging.
+     *
+     * @return Client
+     */
     public function build() : Client {
         if ( ! self::$client) {
             $httpClient = new \GuzzleHttp\Client();

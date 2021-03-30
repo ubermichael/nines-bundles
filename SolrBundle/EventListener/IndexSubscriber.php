@@ -17,10 +17,25 @@ use Doctrine\ORM\Events;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Solarium\Client;
 
+/**
+ * The index subscriber listens for changes to indexed entities. When the
+ * changes are flused in the entity manager, they are also flushed to the solr
+ * index.
+ */
 class IndexSubscriber implements EventSubscriber
 {
+    /**
+     * List of Solr document IDs to remove.
+     *
+     * @var array<string>
+     */
     private $removed;
 
+    /**
+     * List of Solr documents to update.
+     *
+     * @var array
+     */
     private $updated;
 
     /**
@@ -28,13 +43,25 @@ class IndexSubscriber implements EventSubscriber
      */
     private $mapper;
 
+    /**
+     * @var Client
+     */
     private Client $client;
 
+    /**
+     * Build the subscriber.
+     */
     public function __construct() {
         $this->removed = [];
         $this->updated = [];
     }
 
+
+    /**
+     * Returns an array of events this subscriber wants to listen to.
+     *
+     * @return string[]
+     */
     public function getSubscribedEvents() {
         return [
             Events::postPersist,
@@ -44,6 +71,11 @@ class IndexSubscriber implements EventSubscriber
         ];
     }
 
+    /**
+     * Queue up items to remove.
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function preRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($this->mapper->isMapped($entity)) {
@@ -51,6 +83,11 @@ class IndexSubscriber implements EventSubscriber
         }
     }
 
+    /**
+     * Queue up items to index.
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function postPersist(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($this->mapper->isMapped($entity)) {
@@ -58,6 +95,11 @@ class IndexSubscriber implements EventSubscriber
         }
     }
 
+    /**
+     * Queue up items to index.
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function postUpdate(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($this->mapper->isMapped($entity)) {
@@ -65,6 +107,12 @@ class IndexSubscriber implements EventSubscriber
         }
     }
 
+    /**
+     * After the changes have been flushed to the ORM, they are also
+     * flushed to the solr index.
+     *
+     * @param PostFlushEventArgs $args
+     */
     public function postFlush(PostFlushEventArgs $args) : void {
         if (0 === count($this->removed) + count($this->updated)) {
             return;

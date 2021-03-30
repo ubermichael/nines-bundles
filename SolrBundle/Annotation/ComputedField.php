@@ -11,25 +11,34 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Annotation;
 
 /**
+ * Define virtual fields as needed.
+ *
  * @Annotation
  * @Target({"ANNOTATION"})
  */
 class ComputedField
 {
     /**
+     * Type of the data to be indexed. See Field::TYPE_MAP for a list of
+     * supported types.
+     *
      * @var string
      * @Required
      */
     public $type;
 
     /**
+     * Field boost, to make some fields more or less important. Defaults to 1.
+     * Higher values are more important.
+     *
      * @var float
      */
     public $boost;
 
     /**
+     * Virtual property name.
+     *
      * @var string
-     * @Required
      */
     public $name;
 
@@ -39,4 +48,5 @@ class ComputedField
      * @var string
      */
     public $getter;
+
 }

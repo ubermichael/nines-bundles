@@ -16,16 +16,33 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Ping the server.
+ */
 class PingCommand extends Command
 {
+    /**
+     * @var Client
+     */
     private Client $client;
 
     protected static $defaultName = 'nines:solr:ping';
 
+    /**
+     * Configure the command.
+     */
     protected function configure() : void {
         $this->setDescription('Ping the solr server.');
     }
 
+    /**
+     * Execute the command. Returns 0 for success.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $ping = $this->client->createPing(['omitheader' => false]);
 
@@ -37,6 +54,7 @@ class PingCommand extends Command
             $output->writeln('Ping: ' . $json->responseHeader->QTime . 'ms');
         } catch (Exception $e) {
             $output->writeln('Ping failed: ' . $e->getMessage());
+            return 1;
         }
 
         return 0;

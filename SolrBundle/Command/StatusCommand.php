@@ -15,24 +15,60 @@ use Solarium\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+/**
+ * Check the status of the Solr server.
+ */
 class StatusCommand extends Command
 {
+    /**
+     * @var Client
+     */
     private Client $client;
+
+    /**
+     * Name of the core for this application.
+     *
+     * @var string
+     */
+    private $core;
 
     protected static $defaultName = 'nines:solr:status';
 
+    /**
+     * Construct the command.
+     *
+     * @param ParameterBagInterface $parameters
+     * @param string|null $name
+     */
+    public function __construct(ParameterBagInterface $parameters, string $name = null) {
+        parent::__construct($name);
+        $this->core = $parameters->get('nines.solr.core');
+    }
+
+    /**
+     * Configure the command.
+     */
     protected function configure() : void {
         $this->setDescription('Check the status of a Solr core.');
     }
 
+    /**
+     * Execute the command. Returns 0 for success.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         // create a core admin query
         $coreAdminQuery = $this->client->createCoreAdmin();
 
         // use the core admin query to build a Status action
         $statusAction = $coreAdminQuery->createStatus();
-        $statusAction->setCore('doceww');
+        $statusAction->setCore($this->core);
         $coreAdminQuery->setAction($statusAction);
 
         try {

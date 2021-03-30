@@ -15,6 +15,9 @@ use Solarium\Core\Event\Events;
 use Solarium\Core\Event\PostExecuteRequest;
 use Solarium\Core\Plugin\AbstractPlugin;
 
+/**
+ * Logger plugin collects queries and query metadata for debugging purposes.
+ */
 class LoggerPlugin extends AbstractPlugin
 {
     /**
@@ -22,6 +25,11 @@ class LoggerPlugin extends AbstractPlugin
      */
     private $logger;
 
+    /**
+     * Pass ['enabled' => false] to disable the plugin.
+     *
+     * @param null|array $options
+     */
     public function __construct($options = null) {
         if (null === $options) {
             $options = ['enabled' => true];
@@ -33,16 +41,30 @@ class LoggerPlugin extends AbstractPlugin
         parent::__construct($options);
     }
 
+    /**
+     * Enable or disable the plugin.
+     *
+     * @param $enabled
+     */
     public function setEnabled($enabled) : void {
         $this->setOption('enabled', $enabled);
         $this->logger->setEnabled($enabled);
     }
 
+    /**
+     * Sets up an event listener for the Solr client.
+     */
     public function initPluginType() : void {
         $dispatcher = $this->client->getEventDispatcher();
         $dispatcher->addListener(Events::POST_EXECUTE_REQUEST, [$this, 'postExecuteRequest']);
     }
 
+    /**
+     * Callback function called after a query is executed. Collects metadata
+     * about the query.
+     *
+     * @param PostExecuteRequest $event
+     */
     public function postExecuteRequest(PostExecuteRequest $event) : void {
         if ( ! $this->getOption('enabled')) {
             return;

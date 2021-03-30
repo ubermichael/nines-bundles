@@ -18,6 +18,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Show a description of the Solr search schema.
+ */
 class SchemaCommand extends Command
 {
     /**
@@ -26,22 +29,28 @@ class SchemaCommand extends Command
     private $em;
 
     /**
-     * @var array
-     */
-    private $copyFields;
-
-    /**
      * @var EntityMapper
      */
     private $mapper;
 
     protected static $defaultName = 'nines:solr:schema';
 
+    /**
+     * Configure the command.
+     */
     protected function configure() : void {
         $this->setDescription('Show the solr schema.');
         $this->addArgument('classes', InputArgument::IS_ARRAY, 'List of classes to map');
     }
 
+    /**
+     * Execute the command. Returns 0 for success.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $classes = $input->getArgument('classes');
         if ( ! $classes) {
@@ -77,7 +86,7 @@ class SchemaCommand extends Command
                     $fieldMeta->getFieldName(),
                     $fieldMeta->getGetter(),
                     $fieldMeta->getMutator(),
-                    implode(',', $fieldMeta->getFilters()),
+                    implode("\n", $fieldMeta->getFilters()),
                 ];
                 $table->addRow($row);
             }
@@ -99,9 +108,5 @@ class SchemaCommand extends Command
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
-    }
-
-    public function setCopyFields($copyFields) : void {
-        $this->copyFields = $copyFields;
     }
 }

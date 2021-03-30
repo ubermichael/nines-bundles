@@ -19,22 +19,46 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Generate a document from an entity and pass it to Solr for analysis, and then
+ * display the result.
+ */
 class AnalyzeCommand extends Command
 {
+    /**
+     * @var EntityMapper
+     */
     private $mapper;
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
+    /**
+     * @var Client
+     */
     private Client $client;
 
     protected static $defaultName = 'nines:solr:analyze';
 
+    /**
+     * Configure the command.
+     */
     protected function configure() : void {
         $this->setDescription('Clear the index.');
         $this->addArgument('class', InputArgument::REQUIRED, 'Class of the entity to dump');
         $this->addArgument('id', InputArgument::REQUIRED, 'Id of the entity to dump');
     }
 
+    /**
+     * Executes the command. Return 0 for success and non-zero for failure.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $query = $this->client->createAnalysisDocument();
         $query->setShowMatch(true);
@@ -49,8 +73,7 @@ class AnalyzeCommand extends Command
             $output->writeln('Entity not found.');
         }
 
-        $data = $this->mapper->mapEntity($entity);
-        $doc = new Document($data);
+        $doc = $this->mapper->toDocument($entity);
         $query->addDocument($doc);
         $result = $this->client->analyze($query);
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Nines\SolrBundle\Client\LoggerPlugin;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Solarium\Client;
@@ -21,8 +22,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Index data in the Solr index.
+ *
+ * @package Nines\SolrBundle\Command
+ */
 class IndexCommand extends Command
 {
+    /**
+     * Default batch size. Change with the -b parameter.
+     */
     public const BATCH_SIZE = 250;
 
     /**
@@ -39,6 +48,9 @@ class IndexCommand extends Command
 
     protected static $defaultName = 'nines:solr:index';
 
+    /**
+     * Configure the command.
+     */
     protected function configure() : void {
         $this->setDescription('Index the data.');
         $this->addOption('batch', 'b', InputOption::VALUE_OPTIONAL, 'Batch size', self::BATCH_SIZE);
@@ -46,7 +58,17 @@ class IndexCommand extends Command
         $this->addOption('clear', null, InputOption::VALUE_NONE, 'Clear all entites from the index first');
     }
 
+    /**
+     * Execute the command. Returns 0 for success.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     * @throws NonUniqueResultException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
+        // Large indexing operations can cause the loggers to overflow memory.
         $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
@@ -54,8 +76,6 @@ class IndexCommand extends Command
         $classes = array_map(function ($s) {
             return false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s;
         }, $input->getArgument('classes'));
-
-        $n = 0;
 
         if ($input->hasOption('clear')) {
             $delete = $this->client->createUpdate();
@@ -65,6 +85,7 @@ class IndexCommand extends Command
         }
 
         $update = $this->client->createUpdate();
+        $n = 0;
 
         foreach ($this->mapper->getClasses() as $class) {
             $output->writeln($class);
@@ -72,10 +93,10 @@ class IndexCommand extends Command
                 $output->writeln('skipped');
                 continue;
             }
-            $count = $this->em->createQuery("SELECT count(0) FROM {$class} e")->getOneOrNullResult();
-            $iterator = $this->em->createQuery("SELECT e FROM {$class} e")->iterate();
 
+            $count = $this->em->createQuery("SELECT count(0) FROM {$class} e")->getOneOrNullResult();
             $progressBar = new ProgressBar($output, (int) $count[1]);
+            $iterator = $this->em->createQuery("SELECT e FROM {$class} e")->iterate();
 
             foreach ($iterator as $row) {
                 $n++;
@@ -83,7 +104,9 @@ class IndexCommand extends Command
                 $update->addDocument($doc);
                 if (0 === $n % $batch) {
                     $update->addCommit();
-                    $result = $this->client->update($update);
+                    $this->client->update($update);
+                    // $this->client->update($update) does not reset the update solr command,
+                    // so reset it.
                     $update = $this->client->createUpdate();
                     $this->em->clear();
                     $progressBar->advance($batch);
