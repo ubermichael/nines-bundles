@@ -57,8 +57,8 @@ class EntityMapper
             $this->fields[$fieldName] = $solrName;
         }
 
-        foreach ($entityMetadata->getCopyFields() as $copyField) {
-            $this->fields[$copyField['to']] = $copyField['to'];
+        foreach ($entityMetadata->getCopyFields() as $field => $copyField) {
+            $this->fields[$field] = $copyField['to'];
         }
     }
 
@@ -106,8 +106,8 @@ class EntityMapper
 
         foreach ($entityMeta->getFieldMetadata() as $fieldMetadata) {
             $data = $fieldMetadata->fetch($entity);
-            $data = preg_replace("/(?:^\s*|\s*$)/u", '', $data);
-            $document->setField($fieldMetadata->getSolrName(), preg_replace("/\\s{2,}/u", " ", $data));
+            $data = preg_replace('/(?:^\\s*|\\s*$)/u', '', $data);
+            $document->setField($fieldMetadata->getSolrName(), preg_replace('/\\s{2,}/u', ' ', $data));
             $boost = $fieldMetadata->getBoost();
             if ($boost && 1.0 !== $boost) {
                 $document->setFieldBoost($fieldMetadata->getSolrName(), $boost);
@@ -173,9 +173,6 @@ class EntityMapper
         return array_keys($this->map);
     }
 
-    /**
-     * @required
-     */
     public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;
     }

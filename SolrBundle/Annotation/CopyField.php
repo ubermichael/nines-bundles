@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\Annotation;
 
 /**
  * Copy data from one or more fields into a destination field.
- * Eg. @Solr\CopyField(from={"one", "two", "three"}, to="destination", type="texts")
+ * Eg. @Solr\CopyField(from={"one", "two", "three"}, to="destination", type="texts").
  *
  * @Annotation
  * @Target("ANNOTATION")
@@ -22,14 +22,14 @@ use Doctrine\ORM\Mapping\Annotation;
 class CopyField
 {
     /**
-     * Source fields
+     * Source fields.
      *
      * @var array
      */
     public $from;
 
     /**
-     * Destination fields
+     * Destination fields.
      *
      * @var string
      */

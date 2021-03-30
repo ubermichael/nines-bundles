@@ -35,9 +35,6 @@ class AnalyzeCommand extends Command
      */
     private $em;
 
-    /**
-     * @var Client
-     */
     private Client $client;
 
     protected static $defaultName = 'nines:solr:analyze';
@@ -53,9 +50,6 @@ class AnalyzeCommand extends Command
 
     /**
      * Executes the command. Return 0 for success and non-zero for failure.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      *
      * @return int
      */

@@ -22,9 +22,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  */
 class StatusCommand extends Command
 {
-    /**
-     * @var Client
-     */
     private Client $client;
 
     /**
@@ -38,11 +35,8 @@ class StatusCommand extends Command
 
     /**
      * Construct the command.
-     *
-     * @param ParameterBagInterface $parameters
-     * @param string|null $name
      */
-    public function __construct(ParameterBagInterface $parameters, string $name = null) {
+    public function __construct(ParameterBagInterface $parameters, ?string $name = null) {
         parent::__construct($name);
         $this->core = $parameters->get('nines.solr.core');
     }
@@ -56,9 +50,6 @@ class StatusCommand extends Command
 
     /**
      * Execute the command. Returns 0 for success.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      *
      * @return int
      */

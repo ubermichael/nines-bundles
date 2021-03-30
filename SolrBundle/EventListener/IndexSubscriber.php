@@ -43,9 +43,6 @@ class IndexSubscriber implements EventSubscriber
      */
     private $mapper;
 
-    /**
-     * @var Client
-     */
     private Client $client;
 
     /**
@@ -55,7 +52,6 @@ class IndexSubscriber implements EventSubscriber
         $this->removed = [];
         $this->updated = [];
     }
-
 
     /**
      * Returns an array of events this subscriber wants to listen to.
@@ -73,8 +69,6 @@ class IndexSubscriber implements EventSubscriber
 
     /**
      * Queue up items to remove.
-     *
-     * @param LifecycleEventArgs $args
      */
     public function preRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
@@ -85,8 +79,6 @@ class IndexSubscriber implements EventSubscriber
 
     /**
      * Queue up items to index.
-     *
-     * @param LifecycleEventArgs $args
      */
     public function postPersist(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
@@ -97,8 +89,6 @@ class IndexSubscriber implements EventSubscriber
 
     /**
      * Queue up items to index.
-     *
-     * @param LifecycleEventArgs $args
      */
     public function postUpdate(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
@@ -110,8 +100,6 @@ class IndexSubscriber implements EventSubscriber
     /**
      * After the changes have been flushed to the ORM, they are also
      * flushed to the solr index.
-     *
-     * @param PostFlushEventArgs $args
      */
     public function postFlush(PostFlushEventArgs $args) : void {
         if (0 === count($this->removed) + count($this->updated)) {

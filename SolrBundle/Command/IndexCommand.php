@@ -24,8 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Index data in the Solr index.
- *
- * @package Nines\SolrBundle\Command
  */
 class IndexCommand extends Command
 {
@@ -61,11 +59,9 @@ class IndexCommand extends Command
     /**
      * Execute the command. Returns 0 for success.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @throws NonUniqueResultException
      *
      * @return int
-     * @throws NonUniqueResultException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         // Large indexing operations can cause the loggers to overflow memory.

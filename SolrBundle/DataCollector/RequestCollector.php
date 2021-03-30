@@ -33,19 +33,12 @@ class RequestCollector extends DataCollector
      */
     private $logger;
 
-    /**
-     * @param SolrLogger $logger
-     */
     public function __construct(SolrLogger $logger) {
         $this->logger = $logger;
     }
 
     /**
      * Called by the toolbar to gather the data from the loggers.
-     *
-     * @param Request $request
-     * @param Response $response
-     * @param Throwable|null $exception
      */
     public function collect(Request $request, Response $response, ?Throwable $exception = null) : void {
         $this->data = [

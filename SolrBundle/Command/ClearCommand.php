@@ -21,9 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ClearCommand extends Command
 {
-    /**
-     * @var Client
-     */
     private Client $client;
 
     protected static $defaultName = 'nines:solr:clear';
@@ -38,9 +35,6 @@ class ClearCommand extends Command
     /**
      * Execute the command. Returns 0 for success.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -53,6 +47,7 @@ class ClearCommand extends Command
             $output->writeln($result->getResponse()->getStatusMessage() . ' all documents deleted in ' . $result->getQueryTime() . 'ms');
         } catch (Exception $e) {
             $output->writeln($e->getMessage());
+
             return $e->getCode();
         }
 

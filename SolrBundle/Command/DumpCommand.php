@@ -47,9 +47,6 @@ class DumpCommand extends Command
     /**
      * Executes the command. Returns 0 for success.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -61,16 +58,19 @@ class DumpCommand extends Command
         $entity = $this->em->find($class, $id);
         if ( ! $entity) {
             $output->writeln('Entity not found.');
+
             return 1;
         }
         $document = $this->mapper->toDocument($entity);
-        if( ! $document) {
+        if ( ! $document) {
             $output->writeln('Entity is not mapped.');
+
             return 2;
         }
         $table = new Table($output);
-        $table->setHeaders(["Field", "Value"]);
-        foreach($document->getFields() as $f => $v) {
+        $table->setHeaders(['Field', 'Value']);
+
+        foreach ($document->getFields() as $f => $v) {
             $table->addRow([$f, wordwrap(is_array($v) ? implode("\n", $v) : $v, 55)]);
         }
         $table->render();

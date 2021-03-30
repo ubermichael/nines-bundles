@@ -30,7 +30,7 @@ class DoctrineHydrator
      * @return null|object
      */
     public function hydrate($document) {
-        [$class, $id] = explode(':', $document->id);
+        list($class, $id) = explode(':', $document->id);
 
         return $this->em->find($class, $id);
     }

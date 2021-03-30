@@ -48,5 +48,4 @@ class ComputedField
      * @var string
      */
     public $getter;
-
 }

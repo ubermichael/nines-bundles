@@ -62,8 +62,6 @@ class LoggerPlugin extends AbstractPlugin
     /**
      * Callback function called after a query is executed. Collects metadata
      * about the query.
-     *
-     * @param PostExecuteRequest $event
      */
     public function postExecuteRequest(PostExecuteRequest $event) : void {
         if ( ! $this->getOption('enabled')) {

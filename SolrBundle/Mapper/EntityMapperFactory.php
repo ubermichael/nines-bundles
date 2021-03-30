@@ -20,6 +20,7 @@ use Exception;
 use Nines\SolrBundle\Annotation\Document;
 use Nines\SolrBundle\Annotation\Field;
 use Nines\SolrBundle\Annotation\Id;
+use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Metadata\EntityMetadata;
 use Nines\SolrBundle\Metadata\FieldMetadata;
 use Nines\SolrBundle\Metadata\IdMetadata;
@@ -39,6 +40,11 @@ class EntityMapperFactory
     private $env;
 
     private $cacheDir;
+
+    /**
+     * @var SolrLogger
+     */
+    private $logger;
 
     /**
      * @var EntityMapper
@@ -90,11 +96,11 @@ class EntityMapperFactory
         return $properties;
     }
 
-    private function createMapper() : EntityMapper {
+    private function createMapper(SolrLogger $logger) : EntityMapper {
         $mapper = new EntityMapper();
+        $mapper->setSolrLogger($logger);
 
         AnnotationRegistry::registerLoader('class_exists');
-
         $reader = new CachedReader(
             new AnnotationReader(),
             new PhpFileCache($this->cacheDir . '/solr_annotations'),
@@ -142,21 +148,23 @@ class EntityMapperFactory
                 $solrNames[$property->getName()] = $solrName;
             }
 
-            // do the copy fields after the regular fields have been set up.
-            foreach ($classAnnotation->copyField as $copyField) {
-                $from = array_map(function ($s) use ($solrNames) {return $solrNames[$s]; }, $copyField->from);
-                $entityMeta->addCopyFields($from, $copyField->to, $copyField->type);
-                $solrNames[$copyField->to] = $copyField->to;
-            }
-
             foreach ($classAnnotation->computedFields as $computedField) {
+                $solrName = $computedField->name . Field::TYPE_MAP[$computedField->type];
                 $fieldMeta = new FieldMetadata();
-                $fieldMeta->setSolrName($computedField->name);
+                $fieldMeta->setSolrName($solrName);
                 $fieldMeta->setBoost($computedField->boost);
                 $fieldMeta->setFieldName($computedField->name);
                 $fieldMeta->setGetter($computedField->getter);
                 $entityMeta->addFieldMetadata($fieldMeta);
-                $solrNames[$computedField->name] = $computedField->name;
+                $solrNames[$computedField->name] = $solrName;
+            }
+
+            // do the copy fields after the regular fields have been set up.
+            foreach ($classAnnotation->copyField as $copyField) {
+                $solrName = $copyField->to . Field::TYPE_MAP[$copyField->type];
+                $from = array_map(function ($s) use ($solrNames) {return $solrNames[$s]; }, $copyField->from);
+                $entityMeta->addCopyFields($from, $copyField->to, $solrName);
+                $solrNames[$copyField->to] = $solrName;
             }
 
             $mapper->addEntity($entityMeta);
@@ -167,7 +175,7 @@ class EntityMapperFactory
 
     public function build() : EntityMapper {
         if ( ! self::$mapper) {
-            self::$mapper = $this->createMapper();
+            self::$mapper = $this->createMapper($this->logger);
         }
 
         return self::$mapper;
@@ -178,5 +186,12 @@ class EntityMapperFactory
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
+    }
+
+    /**
+     * @required
+     */
+    public function setSolrLogger(SolrLogger $logger) : void {
+        $this->logger = $logger;
     }
 }

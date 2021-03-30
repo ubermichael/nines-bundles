@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Annotation;
 
 /**
- * Use @Field() to configure the indexing for each field to be searched.
+ * Use @Field to configure the indexing for each field to be searched.
  *
  * @Annotation
  * @Target({"PROPERTY"})

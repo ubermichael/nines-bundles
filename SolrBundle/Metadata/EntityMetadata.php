@@ -103,9 +103,9 @@ class EntityMetadata extends Metadata
         return $this;
     }
 
-    public function addCopyFields($from, $to, $type) : void {
-        $this->copyFields[] = [
-            'to' => $to . Field::TYPE_MAP[$type],
+    public function addCopyFields($from, $virtual, $to) : void {
+        $this->copyFields[$virtual] = [
+            'to' => $to,
             'from' => $from,
         ];
     }

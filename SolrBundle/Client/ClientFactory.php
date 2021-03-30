@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class ClientFactory
 {
     /**
-     * @var \array[][]
+     * @var array
      */
     private $config;
 
@@ -54,8 +54,6 @@ class ClientFactory
     /**
      * Build and return a client configured with a Guzzle PSR7 adapter
      * and a logger plugin for debugging.
-     *
-     * @return Client
      */
     public function build() : Client {
         if ( ! self::$client) {

@@ -21,9 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PingCommand extends Command
 {
-    /**
-     * @var Client
-     */
     private Client $client;
 
     protected static $defaultName = 'nines:solr:ping';
@@ -38,9 +35,6 @@ class PingCommand extends Command
     /**
      * Execute the command. Returns 0 for success.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -54,6 +48,7 @@ class PingCommand extends Command
             $output->writeln('Ping: ' . $json->responseHeader->QTime . 'ms');
         } catch (Exception $e) {
             $output->writeln('Ping failed: ' . $e->getMessage());
+
             return 1;
         }
 
