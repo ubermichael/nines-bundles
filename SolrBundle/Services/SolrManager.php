@@ -19,6 +19,9 @@ use Nines\SolrBundle\Query\Result;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
 
+/**
+ * Thin wrapper around the query builder and query execution.
+ */
 class SolrManager
 {
     /**
@@ -36,6 +39,9 @@ class SolrManager
      */
     private $hydrator;
 
+    /**
+     * @var SolrLogger
+     */
     private SolrLogger $logger;
 
     /**
@@ -46,8 +52,12 @@ class SolrManager
     }
 
     /**
+     * Execute a query and returl the result.
+     *
      * @param mixed $options
      * @param ?PaginatorInterface $pager
+     *
+     * @return Result
      */
     public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : Result {
         $this->logger->addQuery($query);
@@ -61,6 +71,8 @@ class SolrManager
     }
 
     /**
+     * Get the hydrator
+     *
      * @return mixed
      */
     public function getHydrator() {
@@ -78,6 +90,9 @@ class SolrManager
         return $this;
     }
 
+    /**
+     * @return Client
+     */
     public function getClient() : Client {
         return $this->client;
     }
@@ -93,6 +108,9 @@ class SolrManager
         return $this;
     }
 
+    /**
+     * @return EntityMapper
+     */
     public function getMapper() : EntityMapper {
         return $this->mapper;
     }

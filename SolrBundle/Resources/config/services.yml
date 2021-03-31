@@ -15,8 +15,11 @@ services:
     tags:
       - { name: data_collector, template: '@NinesSolr/collector/toolbar.html.twig', id: 'solr.request_collector' }
 
+  # Make sure the client factor is picked up as a service so it can be used
+  # later.
   Nines\SolrBundle\Client\ClientFactory: ~
 
+  # Solarium clients are constructed by the factory, not directly.
   Solarium\Client:
     factory: [ '@Nines\SolrBundle\Client\ClientFactory', 'build' ]
 

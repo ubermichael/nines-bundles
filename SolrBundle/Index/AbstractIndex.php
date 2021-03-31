@@ -10,12 +10,22 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Index;
 
+use Nines\SolrBundle\Query\QueryBuilder;
 use Nines\SolrBundle\Services\SolrManager;
 
+/**
+ * Generic parent class for index classes. They're like Doctrine repositories,
+ * but meant for the solr search index.
+ */
 abstract class AbstractIndex
 {
     protected SolrManager $manager;
 
+    /**
+     * Build and return a query builder.
+     *
+     * @return QueryBuilder
+     */
     protected function createQueryBuilder() {
         return $this->manager->createQueryBuilder();
     }

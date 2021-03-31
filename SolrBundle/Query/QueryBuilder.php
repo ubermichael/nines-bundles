@@ -13,6 +13,11 @@ namespace Nines\SolrBundle\Query;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Solarium\QueryType\Select\Query\Query;
 
+/**
+ * Helper class to build a solr query.
+ *
+ * @todo add a near() function or something like it for geofilt and geodist.
+ */
 class QueryBuilder
 {
     /**
@@ -20,22 +25,67 @@ class QueryBuilder
      */
     private $mapper;
 
+    /**
+     * The query string for the query
+     *
+     * @var string
+     */
     private $q;
 
+    /**
+     * Name of the default search field.
+     *
+     * @var string
+     */
     private $defaultField;
 
+    /**
+     * Query filters as key=>value pairs.
+     *
+     * @var array
+     */
     private $filters;
 
+    /**
+     * Names of fields to highlight.
+     *
+     * @var array
+     */
     private $highlightFields;
 
+    /**
+     * Facet fields as name => solr name pairs.
+     *
+     * @var array
+     */
     private $facetFields;
 
+    /**
+     * List of facet ranges for the query
+     *
+     * @var array
+     */
     private $facetRanges;
 
+    /**
+     * List of filter ranges for the query
+     *
+     * @var array
+     */
     private $filterRanges;
 
+    /**
+     * List of fields to return from the query.
+     *
+     * @var string[]
+     */
     private $fields;
 
+    /**
+     * List of field => direction pairs to sort the query results.
+     *
+     * @var \string[][]
+     */
     private $sorting;
 
     public function __construct(EntityMapper $mapper) {
@@ -52,6 +102,13 @@ class QueryBuilder
         ];
     }
 
+    /**
+     * Find the solr field name from the entity field name.
+     *
+     * @param $field
+     *
+     * @return array|string|string[]
+     */
     protected function solrName($field) {
         if (is_array($field)) {
             return array_map(function ($s) {return $this->mapper->getSolrName($s) ?? $s; }, $field);
@@ -60,14 +117,29 @@ class QueryBuilder
         return $this->mapper->getSolrName($field) ?? $field;
     }
 
+    /**
+     * Set the query string.
+     *
+     * @param $q
+     */
     public function setQueryString($q) : void {
         $this->q = $q;
     }
 
+    /**
+     * Set the default search field.
+     *
+     * @param $defaultField
+     */
     public function setDefaultField($defaultField) : void {
         $this->defaultField = $this->solrName($defaultField);
     }
 
+    /**
+     * Field or fields to highlight
+     *
+     * @param mixed $fields
+     */
     public function setHighlightFields($fields) : void {
         if (is_array($fields)) {
             $this->highlightFields = implode(',', $this->solrName($fields));
@@ -78,10 +150,23 @@ class QueryBuilder
         }
     }
 
+    /**
+     * Add a facet field.
+     *
+     * @param $name
+     */
     public function addFacetField($name) : void {
         $this->facetFields[$name] = $this->solrName($name);
     }
 
+    /**
+     * Add a facet range to the query.
+     *
+     * @param string $name
+     * @param numeric $start
+     * @param numeric $end
+     * @param numeric $gap
+     */
     public function addFacetRange($name, $start, $end, $gap) : void {
         $this->facetRanges[$name] = [
             'field' => $this->solrName($name),
@@ -91,41 +176,80 @@ class QueryBuilder
         ];
     }
 
+    /**
+     * Add a filter to the search query
+     *
+     * @param string $key
+     * @param array $terms
+     */
     public function addFilter($key, $terms) : void {
         $this->filters[$this->solrName($key)] = $terms;
     }
 
-    public function addFilterRange($key, $start, $end) : void {
-        if (array_key_exists($key, $this->filterRanges)) {
-            $this->filterRanges[$key][] = [
+    /**
+     * Add a filter range to the query
+     *
+     * @param string $name
+     * @param numeric $start
+     * @param numeric $end
+     */
+    public function addFilterRange($name, $start, $end) : void {
+        if (array_key_exists($name, $this->filterRanges)) {
+            $this->filterRanges[$this->solrName($name)][] = [
                 'start' => $start,
                 'end' => $end,
             ];
         } else {
-            $this->filterRanges[$key][0] = [
+            $this->filterRanges[$this->solrName($name)][0] = [
                 'start' => $start,
                 'end' => $end,
             ];
         }
     }
 
+    /**
+     * Set the fields to return.
+     *
+     * @param array $fields
+     */
     public function setFields($fields = []) : void {
-        $this->fields = [];
+        $this->fields = array_map(function($s){return $this->solrName($s);}, $fields);
     }
 
+    /**
+     * Add a field to the query output.
+     *
+     * @param $field
+     */
     public function addField($field) : void {
-        $this->fields[] = $field;
+        $this->fields[] = $this->solrName($field);
     }
 
+    /**
+     * Set the sorting information for the query.
+     *
+     * @param array $sorting
+     */
     public function setSorting($sorting = []) : void {
-        $this->sorting = $sorting;
+        $this->sorting = [];
+        foreach($sorting as $field => $dir) {
+            $this->sorting[$this->solrName($field)] = $dir;
+        }
     }
 
+    /**
+     * Add a sort to the query.
+     *
+     * @param $field
+     * @param $direction
+     */
     public function addSorting($field, $direction) : void {
         $this->sorting[] = [$this->solrName($field), $direction];
     }
 
     /**
+     * Generate and return a query.
+     *
      * @return Query
      */
     public function getQuery() {

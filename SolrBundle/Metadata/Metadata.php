@@ -10,14 +10,17 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Metadata;
 
-use Nines\UtilBundle\Entity\AbstractEntity;
-
+/**
+ * Parent class for metadata
+ */
 abstract class Metadata
 {
-    abstract public function fetch(AbstractEntity $entity);
-
     /**
+     * Parse a function call to get the function's name and arguments. Returns
+     * an array of [name, arguments[]].
+     *
      * @param $string
+     * @return array
      */
     protected function parseFunctionCall(string $string) : array {
         $name = $string;

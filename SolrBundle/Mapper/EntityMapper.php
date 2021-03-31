@@ -16,6 +16,9 @@ use Nines\SolrBundle\Metadata\EntityMetadata;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Solarium\QueryType\Update\Query\Document;
 
+/**
+ * Maps entities and their fields to Solr documents and field names.
+ */
 class EntityMapper
 {
     /**
@@ -30,8 +33,16 @@ class EntityMapper
      */
     private $fields;
 
+    /**
+     * @var SolrLogger
+     */
     private SolrLogger $logger;
 
+    /**
+     * EntityMapper constructor.
+     *
+     * @see EntityMapperFactory
+     */
     public function __construct() {
         $this->map = [];
         $this->fields = [
@@ -41,6 +52,11 @@ class EntityMapper
         ];
     }
 
+    /**
+     * Add the metadata for one entity to the mapper.
+     *
+     * @param EntityMetadata $entityMetadata
+     */
     public function addEntity(EntityMetadata $entityMetadata) : void {
         $this->map[$entityMetadata->getClass()] = $entityMetadata;
 
@@ -62,6 +78,13 @@ class EntityMapper
         }
     }
 
+    /**
+     * Generate a document ID for an entity.
+     *
+     * @param $entity
+     *
+     * @return string|null
+     */
     public function identify($entity) : ?string {
         if ( ! $entity) {
             return null;
@@ -79,11 +102,13 @@ class EntityMapper
     }
 
     /**
-     * @param ?AbstractEntity $entity
+     * Map an entity to a solr document.
+     *
+     * @param $entity
      *
      * @return Document
      */
-    public function toDocument(?AbstractEntity $entity) {
+    public function toDocument($entity) {
         if ( ! $entity) {
             return null;
         }
@@ -120,6 +145,9 @@ class EntityMapper
 
             foreach ($copyField['from'] as $from) {
                 $data = $document->{$from};
+                if( ! $data) {
+                    continue;
+                }
                 if (is_array($data)) {
                     $v = array_merge($v, $data);
                 } else {
@@ -136,6 +164,14 @@ class EntityMapper
         return $document;
     }
 
+    /**
+     * Get the solr field name based on a field name as defined in the
+     * @field/name attribute.
+     *
+     * @param $name
+     *
+     * @return string|null
+     */
     public function getSolrName($name) : ?string {
         if ( ! isset($this->fields[$name])) {
             $this->logger->warning('Cannot get solr name for unknown property {name}.', [
@@ -148,7 +184,17 @@ class EntityMapper
         return $this->fields[$name];
     }
 
+    /**
+     * Get the metadata for an entity class.
+     *
+     * @param mixed $class class name string or object
+     *
+     * @return EntityMetadata|null
+     */
     public function getEntityMetadata($class) : ?EntityMetadata {
+        if(is_object($class)) {
+            $class = ClassUtils::getRealClass($class);
+        }
         if ( ! isset($this->map[$class])) {
             $this->logger->warning('Cannot get entity metadata for unknown class {class}.', [
                 'class' => $class,
@@ -160,6 +206,13 @@ class EntityMapper
         return $this->map[$class];
     }
 
+    /**
+     * Check if an entity is mapped.
+     *
+     * @param $entity
+     *
+     * @return bool
+     */
     public function isMapped($entity) {
         if ( ! $entity) {
             return false;
@@ -169,10 +222,18 @@ class EntityMapper
         return array_key_exists($class, $this->map);
     }
 
+    /**
+     * List the classes known to the entity mapper.
+     * @return array
+     */
     public function getClasses() {
         return array_keys($this->map);
     }
 
+    /**
+     * @param SolrLogger $logger
+     * @required
+     */
     public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;
     }

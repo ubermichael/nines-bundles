@@ -13,10 +13,16 @@ namespace Nines\SolrBundle\Query;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Nines\SolrBundle\Hydrator\DoctrineHydrator;
+use Solarium\Component\Result\Facet\FacetResultInterface;
 use Solarium\Component\Result\Highlighting\Highlighting;
+use Solarium\Component\Result\Highlighting\Result as HighlightResult;
 use Solarium\Core\Query\DocumentInterface;
 use Solarium\QueryType\Select\Result\Result as SolrResult;
+use stdClass;
 
+/**
+ * Query result set.
+ */
 class Result
 {
     /**
@@ -50,7 +56,7 @@ class Result
     private $filters;
 
     /**
-     * @var PaginatorInterface
+     * @var ?PaginatorInterface
      */
     private $paginator;
 
@@ -65,22 +71,52 @@ class Result
         $this->filters = null;
     }
 
+    /**
+     * Count the results in this result set. Use total() for the number of
+     * results available.
+     *
+     * @return int
+     */
     public function count() {
         return $this->resultSet->count();
     }
 
+    /**
+     * Get the total number of results found. Use count() for the number
+     * of results in the result set.
+     * @return int|null
+     */
     public function total() {
         return $this->resultSet->getNumFound();
     }
 
+    /**
+     * Get the $i'th result document.
+     *
+     * @param int $i
+     *
+     * @return stdClass|DocumentInterface
+     */
     public function getDocument($i) {
         return $this->documents[$i];
     }
 
+    /**
+     * Get the entity corresponding to the $i'th result document.
+     *
+     * @param int $i
+     *
+     * @return object|null
+     */
     public function getEntity($i) {
         return $this->hydrator->hydrate($this->documents[$i]);
     }
 
+    /**
+     * Check if result highlighting is enabled in the results.
+     *
+     * @return bool
+     */
     public function hasHighlighting() {
         if ($this->highlighting) {
             return true;
@@ -90,6 +126,13 @@ class Result
         return null !== $this->highlighting;
     }
 
+    /**
+     * Get the highlighted fields for the $i'th result.
+     *
+     * @param int $i
+     *
+     * @return array|HighlightResult|null
+     */
     public function getHighlighting($i) {
         if ( ! $this->hasHighlighting()) {
             return [];
@@ -99,10 +142,22 @@ class Result
         return $this->highlighting->getResult($id);
     }
 
+    /**
+     * Get the named facet.
+     *
+     * @param $name
+     *
+     * @return FacetResultInterface|null
+     */
     public function getFacet($name) {
         return $this->resultSet->getFacetSet()->getFacet($name);
     }
 
+    /**
+     * Check if there are filters in this query result.
+     *
+     * @return bool
+     */
     public function hasFilters() {
         if ($this->filters) {
             return true;
@@ -112,18 +167,15 @@ class Result
     }
 
     /**
-     * @return ?PaginatorInterface
+     * Get the filters for the query.
+     * @return array
      */
-    public function getPaginator() {
-        return $this->paginator;
-    }
-
     public function getFilters() {
         if (null === $this->filters) {
             $this->filters = [];
 
             foreach ($this->resultSet->getQuery()->getFilterQueries() as $fq) {
-                list($field, $query) = explode(':', $fq->getQuery());
+                [$field, $query] = explode(':', $fq->getQuery());
                 $label = implode(' ', array_slice(explode('_', $field), 0, -1));
                 $this->filters[] = [
                     'field' => $field,
@@ -135,4 +187,14 @@ class Result
 
         return $this->filters;
     }
+
+    /**
+     * If the query was paginated, return the paginator.
+     *
+     * @return ?PaginatorInterface
+     */
+    public function getPaginator() {
+        return $this->paginator;
+    }
+
 }

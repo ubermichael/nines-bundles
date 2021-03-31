@@ -11,8 +11,12 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Metadata;
 
 use Nines\UtilBundle\Entity\AbstractEntity;
+use ReflectionException;
 use ReflectionMethod;
 
+/**
+ * Id Metadata for a mapped entity
+ */
 class IdMetadata extends Metadata
 {
     /**
@@ -29,30 +33,62 @@ class IdMetadata extends Metadata
      */
     private $getter;
 
+    /**
+     * Arguments to pass to the getter.
+     *
+     * @var array
+     */
     private $getterArgs;
 
     public function getName() : string {
         return $this->name;
     }
 
+    /**
+     * Name of the metadata field.
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
     public function setName(string $name) : self {
         $this->name = $name;
 
         return $this;
     }
 
+    /**
+     * Name of the getter function.
+     *
+     * @return string
+     */
     public function getGetter() : string {
         return $this->getter;
     }
 
+    /**
+     * Set the getter function
+     *
+     * @param string $getter
+     *
+     * @return $this
+     */
     public function setGetter(string $getter) : self {
-        list($name, $args) = $this->parseFunctionCall($getter);
+        [$name, $args] = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
         return $this;
     }
 
+    /**
+     * Call the getter method for the ID and return the result.
+     *
+     * @param AbstractEntity $entity
+     *
+     * @return mixed
+     * @throws ReflectionException
+     */
     public function fetch(AbstractEntity $entity) {
         if ($this->getterArgs) {
             $ref = new ReflectionMethod($entity, $this->getter);

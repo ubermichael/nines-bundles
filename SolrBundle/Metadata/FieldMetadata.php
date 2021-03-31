@@ -11,9 +11,13 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Metadata;
 
 use Nines\UtilBundle\Entity\AbstractEntity;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 
+/**
+ * Metadata about a field in an entity.
+ */
 class FieldMetadata extends Metadata
 {
     /**
@@ -81,6 +85,9 @@ class FieldMetadata extends Metadata
      */
     private $filterArgs;
 
+    /**
+     * FieldMetadata constructor.
+     */
     public function __construct() {
         $this->getterArgs = [];
         $this->mutatorArgs = [];
@@ -88,17 +95,29 @@ class FieldMetadata extends Metadata
         $this->filterArgs = [];
     }
 
+    /**
+     * Get a list of filters for data processing.
+     *
+     * @return array
+     */
     public function getFilters() : array {
         return $this->filters;
     }
 
+    /**
+     * Add filters to the metadata.
+     *
+     * @param array|null $filters
+     *
+     * @return $this
+     */
     public function setFilters(?array $filters) : self {
         if ( ! $filters) {
             $this->filters = [];
             $this->filterArgs = [];
         } else {
             foreach ($filters as $filter) {
-                list($name, $args) = $this->parseFunctionCall($filter);
+                [$name, $args] = $this->parseFunctionCall($filter);
                 $this->filters[] = $name;
                 $this->filterArgs[] = $args;
             }
@@ -107,68 +126,124 @@ class FieldMetadata extends Metadata
         return $this;
     }
 
-    public function getGetterArgs() : array {
-        return $this->getterArgs;
-    }
-
-    public function getMutatorArgs() : array {
-        return $this->mutatorArgs;
-    }
-
+    /**
+     * Get a list of filter function arguments. Each array item is a list of
+     * arguments for a filter function.
+     *
+     * @return array
+     */
     public function getFilterArgs() : array {
         return $this->filterArgs;
     }
 
+    /**
+     * Add a filter for the field. The field data will be passed as the first
+     * argument to the filter function.
+     *
+     * @param string $filter
+     *
+     * @return $this
+     */
     public function addFilter(string $filter) : self {
-        list($name, $args) = $this->parseFunctionCall($filter);
+        [$name, $args] = $this->parseFunctionCall($filter);
         $this->filters[] = $name;
         $this->filterArgs = $args;
 
         return $this;
     }
 
+    /**
+     * Get a list of arguments to pass to the getter function for this field.
+     *
+     * @return array
+     */
+    public function getGetterArgs() : array {
+        return $this->getterArgs;
+    }
+
+    /**
+     * Get a list of arguments to pass to the mutator function for this field.
+     *
+     * @return array
+     */
+    public function getMutatorArgs() : array {
+        return $this->mutatorArgs;
+    }
+
+    /**
+     * @return string
+     */
     public function getFieldName() : string {
         return $this->fieldName;
     }
 
+    /**
+     * @param string $fieldName
+     *
+     * @return $this
+     */
     public function setFieldName(string $fieldName) : self {
         $this->fieldName = $fieldName;
 
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getSolrName() : string {
         return $this->solrName;
     }
 
+    /**
+     * @param string $solrName
+     *
+     * @return $this
+     */
     public function setSolrName(string $solrName) : self {
         $this->solrName = $solrName;
 
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getGetter() : string {
         return $this->getter;
     }
 
+    /**
+     * @param string $getter
+     *
+     * @return $this
+     */
     public function setGetter(string $getter) : self {
-        list($name, $args) = $this->parseFunctionCall($getter);
+        [$name, $args] = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getMutator() : ?string {
         return $this->mutator;
     }
 
+    /**
+     * @param string|null $mutator
+     *
+     * @return $this
+     */
     public function setMutator(?string $mutator) : self {
         if ( ! $mutator) {
             $this->mutator = null;
             $this->mutatorArgs = [];
         } else {
-            list($name, $args) = $this->parseFunctionCall($mutator);
+            [$name, $args] = $this->parseFunctionCall($mutator);
             $this->mutator = $name;
             $this->mutatorArgs = $args;
         }
@@ -176,6 +251,21 @@ class FieldMetadata extends Metadata
         return $this;
     }
 
+    /**
+     * Fetch a representation of the field value which is suitable for indexing.
+     *
+     * The process is
+     *   1. data is first fetched via the getter.
+     *   2. If $mutator is defined it is called as a method on the data.
+     *   3. If $filters are defined, they are called as functions with the data
+     *      as the first argument.
+     *   4. The data is returned.
+     *
+     * @param AbstractEntity $entity
+     *
+     * @return mixed|null
+     * @throws ReflectionException
+     */
     public function fetch(AbstractEntity $entity) {
         $data = null;
         if ($this->getterArgs) {
@@ -187,7 +277,7 @@ class FieldMetadata extends Metadata
         }
 
         if ( ! $data) {
-            return $data;
+            return null;
         }
 
         if ($this->mutator) {
@@ -214,10 +304,16 @@ class FieldMetadata extends Metadata
         return $data;
     }
 
+    /**
+     * @return float|null
+     */
     public function getBoost() : ?float {
         return $this->boost;
     }
 
+    /**
+     * @param float|null $boost
+     */
     public function setBoost(?float $boost) : void {
         $this->boost = $boost;
     }

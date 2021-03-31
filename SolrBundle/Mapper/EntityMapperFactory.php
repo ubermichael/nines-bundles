@@ -27,6 +27,9 @@ use Nines\SolrBundle\Metadata\IdMetadata;
 use ReflectionClass;
 use ReflectionProperty;
 
+/**
+ * Construct the EntityMapper by parsing annotations on entities.
+ */
 class EntityMapperFactory
 {
     /**
@@ -39,6 +42,9 @@ class EntityMapperFactory
      */
     private $env;
 
+    /**
+     * @var string
+     */
     private $cacheDir;
 
     /**
@@ -51,16 +57,24 @@ class EntityMapperFactory
      */
     private static $mapper;
 
+    /**
+     * @param string $env
+     * @param string $cacheDir
+     */
     public function __construct($env, $cacheDir) {
         $this->env = $env;
         $this->cacheDir = $cacheDir;
     }
 
     /**
+     * Get the ID property defined in an entity. Returns the annotation
+     * that defined the ID and the ReflectionProperty that the annotation is
+     * defined on.
+     *
      * @param AnnotationReader $reader
      * @param ReflectionProperty[] $reflectionProperties
      *
-     * @throws Exception
+     * @throws Exception if two or more IDs are defined on an entity
      *
      * @return array of Annotation, ReflectionProperty
      */
@@ -83,6 +97,8 @@ class EntityMapperFactory
     }
 
     /**
+     * Get the reflection properties for a class and all its ancestors.
+     *
      * @return ReflectionProperty[]
      */
     private function getProperties(ReflectionClass $rc) {
@@ -96,6 +112,16 @@ class EntityMapperFactory
         return $properties;
     }
 
+    /**
+     * Create the mapper by parsing the entity properties and annotations.
+     *
+     * @todo refactor this method
+     *
+     * @param SolrLogger $logger
+     *
+     * @return EntityMapper
+     * @throws Exception
+     */
     private function createMapper(SolrLogger $logger) : EntityMapper {
         $mapper = new EntityMapper();
         $mapper->setSolrLogger($logger);
@@ -123,7 +149,7 @@ class EntityMapperFactory
 
             /** @var ReflectionProperty $idProperty */
             /** @var Annotation $idAnnotation */
-            list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
+            [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
             $idMeta = new IdMetadata();
             $idMeta->setName($idProperty->getName());
             $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));
@@ -173,6 +199,12 @@ class EntityMapperFactory
         return $mapper;
     }
 
+    /**
+     * Generate the entity mapper and return it.
+     *
+     * @return EntityMapper
+     * @throws Exception
+     */
     public function build() : EntityMapper {
         if ( ! self::$mapper) {
             self::$mapper = $this->createMapper($this->logger);
