@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Query;
 
 use Nines\SolrBundle\Mapper\EntityMapper;
+use Solarium\Core\Query\Helper;
 use Solarium\QueryType\Select\Query\Query;
 
 /**
@@ -88,14 +89,22 @@ class QueryBuilder
      */
     private $sorting;
 
+    /**
+     * Geographic filters to apply to the query.
+     *
+     * @var array
+     */
+    private array $geoFilters;
+
     public function __construct(EntityMapper $mapper) {
         $this->q = '*:*';
         $this->mapper = $mapper;
         $this->filters = [];
+        $this->filterRanges = [];
+        $this->geoFilters = [];
         $this->highlightFields = [];
         $this->facetRanges = [];
         $this->facetFields = [];
-        $this->filterRanges = [];
         $this->fields = ['*', 'score'];
         $this->sorting = [
             ['score', 'desc'],
@@ -207,6 +216,16 @@ class QueryBuilder
         }
     }
 
+    public function addGeographicFilter($name, $latitude, $longitude, $distance) {
+        $helper = new Helper();
+        $this->filters[$this->solrName($name)] = $helper->geofilt($this->solrName($name), $latitude, $longitude, $distance);
+    }
+
+    public function addDistanceField($name, $latitude, $longitude) {
+        $helper = new Helper();
+        $this->fields[] = 'distance:'.$helper->geodist($this->solrName($name), $latitude, $longitude);
+    }
+
     /**
      * Set the fields to return.
      *
@@ -248,6 +267,12 @@ class QueryBuilder
         $this->sorting[] = [$this->solrName($field), $direction];
     }
 
+    public function addDistanceSorting($field, $latitude, $longitude, $direction) {
+        $helper = new Helper();
+        $geodist = $helper->geodist($this->solrName($field), $latitude, $longitude);
+        $this->sorting[] = [$geodist, $direction];
+    }
+
     /**
      * Generate and return a query.
      *
@@ -278,6 +303,11 @@ class QueryBuilder
             $query->createFilterQuery('fr_' . $key)->addTag('exclude')
                 ->setQuery("{$key}:({$range})")
             ;
+        }
+
+        foreach($this->geoFilters as $key => $filter) {
+            $query->createFilterQuery('fq_' . $key)->addTag('exclude')
+                ->setQuery();
         }
 
         $facetSet = $query->getFacetSet();
