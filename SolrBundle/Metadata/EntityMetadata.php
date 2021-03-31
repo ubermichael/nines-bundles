@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Metadata;
 
 use Nines\SolrBundle\Annotation\Field;
-use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
  * Collection of Solr metadata for an entity, as defined by the annotations.
@@ -62,8 +61,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Find the ID metadata for the entity.
-     *
-     * @return IdMetadata
      */
     public function getId() : IdMetadata {
         return $this->id;
@@ -71,8 +68,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Set the ID metadata for the entity.
-     *
-     * @param IdMetadata $id
      *
      * @return $this
      */
@@ -84,8 +79,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Get the FQCN for the entity managed by this metadata.
-     *
-     * @return string
      */
     public function getClass() : string {
         return $this->class;
@@ -93,8 +86,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Set the FQCN for the entity managed by this metadata.
-     *
-     * @param string $class
      *
      * @return $this
      */
@@ -106,8 +97,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Get the fixed fields for this entity.
-     *
-     * @return array
      */
     public function getFixed() : array {
         return $this->fixed;
@@ -115,8 +104,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Set the fixed fields for this entity.
-     *
-     * @param array $fixed
      *
      * @return $this
      */
@@ -152,8 +139,6 @@ class EntityMetadata extends Metadata
 
     /**
      * Add a field metadata for the entity.
-     *
-     * @param FieldMetadata $fieldMetadata
      *
      * @return $this
      */

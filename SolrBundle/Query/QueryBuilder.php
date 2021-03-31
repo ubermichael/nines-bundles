@@ -26,7 +26,7 @@ class QueryBuilder
     private $mapper;
 
     /**
-     * The query string for the query
+     * The query string for the query.
      *
      * @var string
      */
@@ -61,14 +61,14 @@ class QueryBuilder
     private $facetFields;
 
     /**
-     * List of facet ranges for the query
+     * List of facet ranges for the query.
      *
      * @var array
      */
     private $facetRanges;
 
     /**
-     * List of filter ranges for the query
+     * List of filter ranges for the query.
      *
      * @var array
      */
@@ -136,7 +136,7 @@ class QueryBuilder
     }
 
     /**
-     * Field or fields to highlight
+     * Field or fields to highlight.
      *
      * @param mixed $fields
      */
@@ -177,7 +177,7 @@ class QueryBuilder
     }
 
     /**
-     * Add a filter to the search query
+     * Add a filter to the search query.
      *
      * @param string $key
      * @param array $terms
@@ -187,7 +187,7 @@ class QueryBuilder
     }
 
     /**
-     * Add a filter range to the query
+     * Add a filter range to the query.
      *
      * @param string $name
      * @param numeric $start
@@ -213,7 +213,7 @@ class QueryBuilder
      * @param array $fields
      */
     public function setFields($fields = []) : void {
-        $this->fields = array_map(function($s){return $this->solrName($s);}, $fields);
+        $this->fields = array_map(function ($s) {return $this->solrName($s); }, $fields);
     }
 
     /**
@@ -232,7 +232,8 @@ class QueryBuilder
      */
     public function setSorting($sorting = []) : void {
         $this->sorting = [];
-        foreach($sorting as $field => $dir) {
+
+        foreach ($sorting as $field => $dir) {
             $this->sorting[$this->solrName($field)] = $dir;
         }
     }

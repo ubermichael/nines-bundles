@@ -84,7 +84,8 @@ class Result
     /**
      * Get the total number of results found. Use count() for the number
      * of results in the result set.
-     * @return int|null
+     *
+     * @return null|int
      */
     public function total() {
         return $this->resultSet->getNumFound();
@@ -95,7 +96,7 @@ class Result
      *
      * @param int $i
      *
-     * @return stdClass|DocumentInterface
+     * @return DocumentInterface|stdClass
      */
     public function getDocument($i) {
         return $this->documents[$i];
@@ -106,7 +107,7 @@ class Result
      *
      * @param int $i
      *
-     * @return object|null
+     * @return null|object
      */
     public function getEntity($i) {
         return $this->hydrator->hydrate($this->documents[$i]);
@@ -131,7 +132,7 @@ class Result
      *
      * @param int $i
      *
-     * @return array|HighlightResult|null
+     * @return null|array|HighlightResult
      */
     public function getHighlighting($i) {
         if ( ! $this->hasHighlighting()) {
@@ -147,7 +148,7 @@ class Result
      *
      * @param $name
      *
-     * @return FacetResultInterface|null
+     * @return null|FacetResultInterface
      */
     public function getFacet($name) {
         return $this->resultSet->getFacetSet()->getFacet($name);
@@ -168,6 +169,7 @@ class Result
 
     /**
      * Get the filters for the query.
+     *
      * @return array
      */
     public function getFilters() {
@@ -175,7 +177,7 @@ class Result
             $this->filters = [];
 
             foreach ($this->resultSet->getQuery()->getFilterQueries() as $fq) {
-                [$field, $query] = explode(':', $fq->getQuery());
+                list($field, $query) = explode(':', $fq->getQuery());
                 $label = implode(' ', array_slice(explode('_', $field), 0, -1));
                 $this->filters[] = [
                     'field' => $field,
@@ -196,5 +198,4 @@ class Result
     public function getPaginator() {
         return $this->paginator;
     }
-
 }

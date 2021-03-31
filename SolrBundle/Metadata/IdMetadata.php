@@ -15,7 +15,7 @@ use ReflectionException;
 use ReflectionMethod;
 
 /**
- * Id Metadata for a mapped entity
+ * Id Metadata for a mapped entity.
  */
 class IdMetadata extends Metadata
 {
@@ -47,8 +47,6 @@ class IdMetadata extends Metadata
     /**
      * Name of the metadata field.
      *
-     * @param string $name
-     *
      * @return $this
      */
     public function setName(string $name) : self {
@@ -59,22 +57,18 @@ class IdMetadata extends Metadata
 
     /**
      * Name of the getter function.
-     *
-     * @return string
      */
     public function getGetter() : string {
         return $this->getter;
     }
 
     /**
-     * Set the getter function
-     *
-     * @param string $getter
+     * Set the getter function.
      *
      * @return $this
      */
     public function setGetter(string $getter) : self {
-        [$name, $args] = $this->parseFunctionCall($getter);
+        list($name, $args) = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
@@ -84,10 +78,9 @@ class IdMetadata extends Metadata
     /**
      * Call the getter method for the ID and return the result.
      *
-     * @param AbstractEntity $entity
+     * @throws ReflectionException
      *
      * @return mixed
-     * @throws ReflectionException
      */
     public function fetch(AbstractEntity $entity) {
         if ($this->getterArgs) {

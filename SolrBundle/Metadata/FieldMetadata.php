@@ -97,8 +97,6 @@ class FieldMetadata extends Metadata
 
     /**
      * Get a list of filters for data processing.
-     *
-     * @return array
      */
     public function getFilters() : array {
         return $this->filters;
@@ -106,8 +104,6 @@ class FieldMetadata extends Metadata
 
     /**
      * Add filters to the metadata.
-     *
-     * @param array|null $filters
      *
      * @return $this
      */
@@ -117,7 +113,7 @@ class FieldMetadata extends Metadata
             $this->filterArgs = [];
         } else {
             foreach ($filters as $filter) {
-                [$name, $args] = $this->parseFunctionCall($filter);
+                list($name, $args) = $this->parseFunctionCall($filter);
                 $this->filters[] = $name;
                 $this->filterArgs[] = $args;
             }
@@ -129,8 +125,6 @@ class FieldMetadata extends Metadata
     /**
      * Get a list of filter function arguments. Each array item is a list of
      * arguments for a filter function.
-     *
-     * @return array
      */
     public function getFilterArgs() : array {
         return $this->filterArgs;
@@ -140,12 +134,10 @@ class FieldMetadata extends Metadata
      * Add a filter for the field. The field data will be passed as the first
      * argument to the filter function.
      *
-     * @param string $filter
-     *
      * @return $this
      */
     public function addFilter(string $filter) : self {
-        [$name, $args] = $this->parseFunctionCall($filter);
+        list($name, $args) = $this->parseFunctionCall($filter);
         $this->filters[] = $name;
         $this->filterArgs = $args;
 
@@ -154,8 +146,6 @@ class FieldMetadata extends Metadata
 
     /**
      * Get a list of arguments to pass to the getter function for this field.
-     *
-     * @return array
      */
     public function getGetterArgs() : array {
         return $this->getterArgs;
@@ -163,23 +153,16 @@ class FieldMetadata extends Metadata
 
     /**
      * Get a list of arguments to pass to the mutator function for this field.
-     *
-     * @return array
      */
     public function getMutatorArgs() : array {
         return $this->mutatorArgs;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldName() : string {
         return $this->fieldName;
     }
 
     /**
-     * @param string $fieldName
-     *
      * @return $this
      */
     public function setFieldName(string $fieldName) : self {
@@ -188,16 +171,11 @@ class FieldMetadata extends Metadata
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSolrName() : string {
         return $this->solrName;
     }
 
     /**
-     * @param string $solrName
-     *
      * @return $this
      */
     public function setSolrName(string $solrName) : self {
@@ -206,36 +184,26 @@ class FieldMetadata extends Metadata
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getGetter() : string {
         return $this->getter;
     }
 
     /**
-     * @param string $getter
-     *
      * @return $this
      */
     public function setGetter(string $getter) : self {
-        [$name, $args] = $this->parseFunctionCall($getter);
+        list($name, $args) = $this->parseFunctionCall($getter);
         $this->getter = $name;
         $this->getterArgs = $args;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMutator() : ?string {
         return $this->mutator;
     }
 
     /**
-     * @param string|null $mutator
-     *
      * @return $this
      */
     public function setMutator(?string $mutator) : self {
@@ -243,7 +211,7 @@ class FieldMetadata extends Metadata
             $this->mutator = null;
             $this->mutatorArgs = [];
         } else {
-            [$name, $args] = $this->parseFunctionCall($mutator);
+            list($name, $args) = $this->parseFunctionCall($mutator);
             $this->mutator = $name;
             $this->mutatorArgs = $args;
         }
@@ -261,10 +229,9 @@ class FieldMetadata extends Metadata
      *      as the first argument.
      *   4. The data is returned.
      *
-     * @param AbstractEntity $entity
-     *
-     * @return mixed|null
      * @throws ReflectionException
+     *
+     * @return null|mixed
      */
     public function fetch(AbstractEntity $entity) {
         $data = null;
@@ -277,7 +244,7 @@ class FieldMetadata extends Metadata
         }
 
         if ( ! $data) {
-            return null;
+            return;
         }
 
         if ($this->mutator) {
@@ -304,16 +271,10 @@ class FieldMetadata extends Metadata
         return $data;
     }
 
-    /**
-     * @return float|null
-     */
     public function getBoost() : ?float {
         return $this->boost;
     }
 
-    /**
-     * @param float|null $boost
-     */
     public function setBoost(?float $boost) : void {
         $this->boost = $boost;
     }

@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Metadata;
 
 /**
- * Parent class for metadata
+ * Parent class for metadata.
  */
 abstract class Metadata
 {
@@ -20,7 +20,6 @@ abstract class Metadata
      * an array of [name, arguments[]].
      *
      * @param $string
-     * @return array
      */
     protected function parseFunctionCall(string $string) : array {
         $name = $string;

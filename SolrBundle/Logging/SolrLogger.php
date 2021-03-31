@@ -77,7 +77,6 @@ class SolrLogger extends AbstractLogger
      *
      * @param mixed $level
      * @param string $message
-     * @param array $context
      */
     public function log($level, $message, array $context = []) : void {
         $bt = debug_backtrace();
@@ -97,7 +96,7 @@ class SolrLogger extends AbstractLogger
     }
 
     /**
-     * Add a query to the logs
+     * Add a query to the logs.
      *
      * @param $query
      */
@@ -106,7 +105,7 @@ class SolrLogger extends AbstractLogger
     }
 
     /**
-     * Get the log messages
+     * Get the log messages.
      *
      * @return array
      */
@@ -115,7 +114,7 @@ class SolrLogger extends AbstractLogger
     }
 
     /**
-     * Get a count of the logs by level
+     * Get a count of the logs by level.
      *
      * @return array
      */
@@ -124,7 +123,7 @@ class SolrLogger extends AbstractLogger
     }
 
     /**
-     * Get the queries executed during the request
+     * Get the queries executed during the request.
      *
      * @return Query[]
      */

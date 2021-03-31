@@ -117,9 +117,6 @@ class EntityMapperFactory
      *
      * @todo refactor this method
      *
-     * @param SolrLogger $logger
-     *
-     * @return EntityMapper
      * @throws Exception
      */
     private function createMapper(SolrLogger $logger) : EntityMapper {
@@ -149,7 +146,7 @@ class EntityMapperFactory
 
             /** @var ReflectionProperty $idProperty */
             /** @var Annotation $idAnnotation */
-            [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
+            list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
             $idMeta = new IdMetadata();
             $idMeta->setName($idProperty->getName());
             $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));
@@ -202,7 +199,6 @@ class EntityMapperFactory
     /**
      * Generate the entity mapper and return it.
      *
-     * @return EntityMapper
      * @throws Exception
      */
     public function build() : EntityMapper {
