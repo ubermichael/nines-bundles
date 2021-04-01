@@ -159,7 +159,20 @@ class EntityMapperFactory
                 if ( ! $propertyAnnotation) {
                     continue;
                 }
-                $solrName = $propertyAnnotation->name ?? mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName())) . Field::TYPE_MAP[$propertyAnnotation->type];
+
+                $suffix = Field::TYPE_MAP[$propertyAnnotation->type];
+                if( ! $suffix) {
+                    throw new Exception("Unknown solr type " . $propertyAnnotation->type);
+                }
+                if($propertyAnnotation->name) {
+                    $solrName = $propertyAnnotation->name;
+                } else {
+                    $solrName = mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
+                }
+                if( substr($solrName, -1*strlen($suffix)) !== $suffix) {
+                    $solrName .= $suffix;
+                }
+
                 $fieldMeta = new FieldMetadata();
                 $fieldMeta->setSolrName($solrName);
                 $fieldMeta->setBoost($propertyAnnotation->boost);

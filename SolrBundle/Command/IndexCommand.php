@@ -10,11 +10,13 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Command;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Nines\SolrBundle\Client\LoggerPlugin;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Solarium\Client;
+use Solarium\Exception\HttpException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -73,7 +75,7 @@ class IndexCommand extends Command
             return false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s;
         }, $input->getArgument('classes'));
 
-        if ($input->hasOption('clear')) {
+        if ($input->getOption('clear')) {
             $delete = $this->client->createUpdate();
             $delete->addDeleteQuery('*:*');
             $delete->addCommit();
@@ -92,7 +94,7 @@ class IndexCommand extends Command
 
             $count = $this->em->createQuery("SELECT count(0) FROM {$class} e")->getOneOrNullResult();
             $progressBar = new ProgressBar($output, (int) $count[1]);
-            $iterator = $this->em->createQuery("SELECT e FROM {$class} e")->iterate();
+            $iterator = $this->em->createQuery("SELECT e FROM {$class} e ORDER BY e.id")->iterate();
 
             foreach ($iterator as $row) {
                 $n++;
@@ -101,8 +103,7 @@ class IndexCommand extends Command
                 if (0 === $n % $batch) {
                     $update->addCommit();
                     $this->client->update($update);
-                    // $this->client->update($update) does not reset the update solr command,
-                    // so reset it.
+                    // $this->client->update($update) does not reset the update solr command so make a new one.
                     $update = $this->client->createUpdate();
                     $this->em->clear();
                     $progressBar->advance($batch);

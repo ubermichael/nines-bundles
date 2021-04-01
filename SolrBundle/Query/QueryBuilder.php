@@ -96,6 +96,11 @@ class QueryBuilder
      */
     private array $geoFilters;
 
+    /**
+     * @var Helper
+     */
+    private Helper $helper;
+
     public function __construct(EntityMapper $mapper) {
         $this->q = '*:*';
         $this->mapper = $mapper;
@@ -109,6 +114,7 @@ class QueryBuilder
         $this->sorting = [
             ['score', 'desc'],
         ];
+        $this->helper = new Helper();
     }
 
     /**
@@ -203,27 +209,34 @@ class QueryBuilder
      * @param numeric $end
      */
     public function addFilterRange($name, $start, $end) : void {
-        if (array_key_exists($name, $this->filterRanges)) {
+        $solrName = $this->solrName($name);
+        if (array_key_exists($solrName, $this->filterRanges)) {
             $this->filterRanges[$this->solrName($name)][] = [
                 'start' => $start,
                 'end' => $end,
             ];
         } else {
-            $this->filterRanges[$this->solrName($name)][0] = [
+            $this->filterRanges[$this->solrName($solrName)][0] = [
                 'start' => $start,
                 'end' => $end,
             ];
         }
     }
 
+    /**
+     * Filter search results by geographic distance from field $name
+     *
+     * @param string $name
+     * @param string $latitude
+     * @param string $longitude
+     * @param string $distance
+     */
     public function addGeographicFilter($name, $latitude, $longitude, $distance) {
-        $helper = new Helper();
-        $this->filters[$this->solrName($name)] = $helper->geofilt($this->solrName($name), $latitude, $longitude, $distance);
+        $this->filters[$this->solrName($name)] = $this->helper->geofilt($this->solrName($name), $latitude, $longitude, $distance);
     }
 
     public function addDistanceField($name, $latitude, $longitude) {
-        $helper = new Helper();
-        $this->fields[] = 'distance:'.$helper->geodist($this->solrName($name), $latitude, $longitude);
+        $this->fields[] = 'distance:'.$this->helper->geodist($this->solrName($name), $latitude, $longitude);
     }
 
     /**
@@ -268,8 +281,7 @@ class QueryBuilder
     }
 
     public function addDistanceSorting($field, $latitude, $longitude, $direction) {
-        $helper = new Helper();
-        $geodist = $helper->geodist($this->solrName($field), $latitude, $longitude);
+        $geodist = $this->helper->geodist($this->solrName($field), $latitude, $longitude);
         $this->sorting[] = [$geodist, $direction];
     }
 
