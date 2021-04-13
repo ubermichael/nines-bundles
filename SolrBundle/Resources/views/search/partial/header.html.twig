@@ -1,0 +1,11 @@
+{# @var pagination #}
+{% if pagination %}
+    {% set pageData = pagination.getPaginationData %}
+    <h3>Results</h3>
+    <p class="count">
+        Found {{ pagination.getTotalItemCount }} results. Showing
+        page {{ pagination.getCurrentPageNumber }}
+        of {{ pagination.getPageCount }}
+        with results from {{ pageData.firstItemNumber }} to {{ pageData.lastItemNumber }}.
+    </p>
+{% endif %}
