@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace Nines\SolrBundle\Tests\Mapper;
-
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -12,8 +18,7 @@ use Nines\SolrBundle\Tests\Fixtures\Entity;
 use ReflectionClass;
 
 class EntityMapperFactoryTest extends ClientBaseCase {
-
-    public function testGetProperties() {
+    public function testGetProperties() : void {
         $emf = $this->getContainer()->get(EntityMapperFactory::class);
         AnnotationRegistry::registerLoader('class_exists');
         $refClass = new ReflectionClass(Entity::class);
@@ -22,14 +27,14 @@ class EntityMapperFactoryTest extends ClientBaseCase {
 
         // test that the parent entity id is found.
         $this->assertArrayHasKey('id', $properties);
-        $this->assertEquals('id', $properties['id']->getName());
+        $this->assertSame('id', $properties['id']->getName());
 
         // check for a property in the entity.
         $this->assertArrayHasKey('date', $properties);
-        $this->assertEquals('date', $properties['date']->getName());
+        $this->assertSame('date', $properties['date']->getName());
     }
 
-    public function testGetId() {
+    public function testGetId() : void {
         $emf = $this->getContainer()->get(EntityMapperFactory::class);
         AnnotationRegistry::registerLoader('class_exists');
         $refClass = new ReflectionClass(Entity::class);
@@ -43,5 +48,4 @@ class EntityMapperFactoryTest extends ClientBaseCase {
 
         $this->assertNotNull($idProp);
     }
-
 }

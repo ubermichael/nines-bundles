@@ -17,8 +17,7 @@ use stdClass;
 /**
  * Map a search result document to an ORM entity.
  */
-class DoctrineHydrator
-{
+class DoctrineHydrator {
     private EntityManagerInterface $em;
 
     /**

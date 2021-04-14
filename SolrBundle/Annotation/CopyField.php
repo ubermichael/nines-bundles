@@ -19,8 +19,7 @@ use Doctrine\ORM\Mapping\Annotation;
  * @Annotation
  * @Target("ANNOTATION")
  */
-class CopyField
-{
+class CopyField {
     /**
      * Source fields.
      *

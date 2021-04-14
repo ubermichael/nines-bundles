@@ -17,8 +17,7 @@ use ReflectionMethod;
 /**
  * Id Metadata for a mapped entity.
  */
-class IdMetadata extends Metadata
-{
+class IdMetadata extends Metadata {
     /**
      * Name of the ID field.
      *

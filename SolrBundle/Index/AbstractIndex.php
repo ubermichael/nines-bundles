@@ -17,8 +17,7 @@ use Nines\SolrBundle\Services\SolrManager;
  * Generic parent class for index classes. They're like Doctrine repositories,
  * but meant for the solr search index.
  */
-abstract class AbstractIndex
-{
+abstract class AbstractIndex {
     protected SolrManager $manager;
 
     /**

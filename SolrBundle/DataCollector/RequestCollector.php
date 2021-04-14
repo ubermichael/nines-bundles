@@ -21,8 +21,7 @@ use Throwable;
  *
  * @see https://symfony.com/doc/current/profiler/data_collector.html
  */
-class RequestCollector extends DataCollector
-{
+class RequestCollector extends DataCollector {
     /**
      * @var array
      */
@@ -39,6 +38,8 @@ class RequestCollector extends DataCollector
 
     /**
      * Called by the toolbar to gather the data from the loggers.
+     *
+     * @param ?Throwable $exception
      */
     public function collect(Request $request, Response $response, ?Throwable $exception = null) : void {
         $this->data = [

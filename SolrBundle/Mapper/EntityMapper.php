@@ -18,8 +18,7 @@ use Solarium\QueryType\Update\Query\Document;
 /**
  * Maps entities and their fields to Solr documents and field names.
  */
-class EntityMapper
-{
+class EntityMapper {
     /**
      * @var EntityMetadata[]
      */

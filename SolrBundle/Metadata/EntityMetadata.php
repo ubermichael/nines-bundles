@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Metadata;
 
-use Nines\SolrBundle\Annotation\CopyField;
 use Nines\SolrBundle\Annotation\Field;
 
 /**
  * Collection of Solr metadata for an entity, as defined by the annotations.
  */
-class EntityMetadata extends Metadata
-{
+class EntityMetadata extends Metadata {
     /**
      * @var IdMetadata
      */

@@ -21,8 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Map an entity to a Solr document and display the result.
  */
-class DumpCommand extends Command
-{
+class DumpCommand extends Command {
     /**
      * @var EntityManagerInterface
      */

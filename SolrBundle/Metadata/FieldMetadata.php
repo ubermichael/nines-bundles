@@ -18,8 +18,7 @@ use ReflectionMethod;
 /**
  * Metadata about a field in an entity.
  */
-class FieldMetadata extends Metadata
-{
+class FieldMetadata extends Metadata {
     /**
      * Name of the field as declared in the entity.
      *
@@ -104,6 +103,8 @@ class FieldMetadata extends Metadata
 
     /**
      * Add filters to the metadata.
+     *
+     * @param ?array $filters
      *
      * @return $this
      */
@@ -204,6 +205,8 @@ class FieldMetadata extends Metadata
     }
 
     /**
+     * @param ?string $mutator
+     *
      * @return $this
      */
     public function setMutator(?string $mutator) : self {
@@ -244,7 +247,7 @@ class FieldMetadata extends Metadata
         }
 
         if ( ! $data) {
-            return null;
+            return;
         }
 
         if ($this->mutator) {

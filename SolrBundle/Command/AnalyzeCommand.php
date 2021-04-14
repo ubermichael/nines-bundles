@@ -23,8 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Generate a document from an entity and pass it to Solr for analysis, and then
  * display the result.
  */
-class AnalyzeCommand extends Command
-{
+class AnalyzeCommand extends Command {
     /**
      * @var EntityMapper
      */

@@ -18,8 +18,7 @@ use Solarium\Core\Plugin\AbstractPlugin;
 /**
  * Logger plugin collects queries and query metadata for debugging purposes.
  */
-class LoggerPlugin extends AbstractPlugin
-{
+class LoggerPlugin extends AbstractPlugin {
     /**
      * @var SolrLogger
      */

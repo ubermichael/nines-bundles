@@ -23,8 +23,7 @@ use stdClass;
 /**
  * Query result set.
  */
-class Result
-{
+class Result {
     /**
      * @var SolrResult
      */

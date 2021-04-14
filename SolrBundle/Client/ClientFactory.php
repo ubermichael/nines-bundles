@@ -19,8 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * Build and return a client for use in Symfony's dependency injection.
  */
-class ClientFactory
-{
+class ClientFactory {
     /**
      * @var array
      */

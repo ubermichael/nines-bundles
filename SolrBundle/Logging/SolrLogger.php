@@ -18,8 +18,7 @@ use Solarium\QueryType\Select\Query\Query;
  * Solr Logger collects queries and log data for use in the Symfony toolbar and
  * profiler.
  */
-class SolrLogger extends AbstractLogger
-{
+class SolrLogger extends AbstractLogger {
     /**
      * @var bool
      */
@@ -79,7 +78,7 @@ class SolrLogger extends AbstractLogger
      * @param string $message
      */
     public function log($level, $message, array $context = []) : void {
-        if( ! $this->enabled) {
+        if ( ! $this->enabled) {
             return;
         }
         $bt = debug_backtrace();
@@ -104,7 +103,7 @@ class SolrLogger extends AbstractLogger
      * @param $query
      */
     public function addQuery($query) : void {
-        if( ! $this->enabled) {
+        if ( ! $this->enabled) {
             return;
         }
         $this->queries[] = $query;

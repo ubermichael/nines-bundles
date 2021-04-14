@@ -13,8 +13,7 @@ namespace Nines\SolrBundle\Metadata;
 /**
  * Parent class for metadata.
  */
-abstract class Metadata
-{
+abstract class Metadata {
     /**
      * Parse a function call to get the function's name and arguments. Returns
      * an array of [name, arguments[]].

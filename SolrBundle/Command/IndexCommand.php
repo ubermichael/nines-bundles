@@ -10,13 +10,11 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Command;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Nines\SolrBundle\Client\LoggerPlugin;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Solarium\Client;
-use Solarium\Exception\HttpException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,8 +25,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Index data in the Solr index.
  */
-class IndexCommand extends Command
-{
+class IndexCommand extends Command {
     /**
      * Default batch size. Change with the -b parameter.
      */

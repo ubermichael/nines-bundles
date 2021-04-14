@@ -16,8 +16,7 @@ namespace Nines\SolrBundle\Annotation;
  * @Annotation
  * @Target({"ANNOTATION"})
  */
-class ComputedField
-{
+class ComputedField {
     /**
      * Type of the data to be indexed. See Field::TYPE_MAP for a list of
      * supported types.

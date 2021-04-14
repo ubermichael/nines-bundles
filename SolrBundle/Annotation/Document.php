@@ -16,8 +16,7 @@ namespace Nines\SolrBundle\Annotation;
  * @Annotation
  * @Target({"CLASS"})
  */
-class Document
-{
+class Document {
     /**
      * Copy data between fields.
      *

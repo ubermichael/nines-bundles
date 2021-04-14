@@ -16,8 +16,7 @@ namespace Nines\SolrBundle\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-class Id
-{
+class Id {
     /**
      * Name of the ID property.
      *

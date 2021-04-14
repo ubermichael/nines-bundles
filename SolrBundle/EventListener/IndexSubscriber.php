@@ -22,8 +22,7 @@ use Solarium\Client;
  * changes are flused in the entity manager, they are also flushed to the solr
  * index.
  */
-class IndexSubscriber implements EventSubscriber
-{
+class IndexSubscriber implements EventSubscriber {
     /**
      * List of Solr document IDs to remove.
      *

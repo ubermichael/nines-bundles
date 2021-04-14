@@ -22,8 +22,7 @@ use Solarium\QueryType\Select\Query\Query;
 /**
  * Thin wrapper around the query builder and query execution.
  */
-class SolrManager
-{
+class SolrManager {
     /**
      * @var Client
      */

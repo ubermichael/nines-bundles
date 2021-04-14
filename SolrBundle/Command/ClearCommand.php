@@ -19,8 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Delete all content from the index.
  */
-class ClearCommand extends Command
-{
+class ClearCommand extends Command {
     private Client $client;
 
     protected static $defaultName = 'nines:solr:clear';

@@ -19,8 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Ping the server.
  */
-class PingCommand extends Command
-{
+class PingCommand extends Command {
     private Client $client;
 
     protected static $defaultName = 'nines:solr:ping';

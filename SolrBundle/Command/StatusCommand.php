@@ -20,8 +20,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 /**
  * Check the status of the Solr server.
  */
-class StatusCommand extends Command
-{
+class StatusCommand extends Command {
     private Client $client;
 
     /**
@@ -35,6 +34,8 @@ class StatusCommand extends Command
 
     /**
      * Construct the command.
+     *
+     * @param ?string $name
      */
     public function __construct(ParameterBagInterface $parameters, ?string $name = null) {
         parent::__construct($name);
