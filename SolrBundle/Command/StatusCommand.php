@@ -69,10 +69,10 @@ class StatusCommand extends Command
             $output->writeln($response->getResponse()->getStatusCode() . ' ' . $response->getResponse()->getStatusMessage());
             $output->writeln('Core: ' . $statusResult->getCoreName());
             $output->writeln('Version: ' . $statusResult->getVersion());
+            $output->writeln('Documents: ' . $statusResult->getNumberOfDocuments());
             $seconds = round($statusResult->getUptime() / 1000);
             $output->writeln('Uptime: ' . sprintf('%d days, %02d:%02d:%02d', $seconds / 86400, $seconds / 3600, ($seconds / 60) % 60, $seconds % 60));
-            $output->writeln('Documents: ' . $statusResult->getNumberOfDocuments());
-            $output->writeln('Created: ' . $statusResult->getStartTime()->format('Y-m-d H:i:s'));
+            $output->writeln('Started: ' . $statusResult->getStartTime()->format('Y-m-d H:i:s'));
             $output->writeln('Updated: ' . $statusResult->getLastModified()->format('Y-m-d H:i:s'));
         } catch (Exception $e) {
             $output->writeln('Ping failed: ' . $e->getMessage());

@@ -17,10 +17,13 @@ use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Annotation;
 use Exception;
+use Nines\SolrBundle\Annotation\ComputedField;
+use Nines\SolrBundle\Annotation\CopyField;
 use Nines\SolrBundle\Annotation\Document;
 use Nines\SolrBundle\Annotation\Field;
 use Nines\SolrBundle\Annotation\Id;
 use Nines\SolrBundle\Logging\SolrLogger;
+use Nines\SolrBundle\Metadata\CopyFieldMetadata;
 use Nines\SolrBundle\Metadata\EntityMetadata;
 use Nines\SolrBundle\Metadata\FieldMetadata;
 use Nines\SolrBundle\Metadata\IdMetadata;
@@ -76,11 +79,11 @@ class EntityMapperFactory
      *
      * @throws Exception if two or more IDs are defined on an entity
      *
-     * @return array of Annotation, ReflectionProperty
+     * @return array of Id, ReflectionProperty
      */
-    private function getIdProperty($reader, $reflectionProperties) {
+    public function getIdProperty($reader, $reflectionProperties) {
         $idProperty = null;
-        $annotation = null;
+        $idAnnotation = null;
 
         foreach ($reflectionProperties as $reflectionProperty) {
             $annotation = $reader->getPropertyAnnotation($reflectionProperty, Id::class);
@@ -91,9 +94,11 @@ class EntityMapperFactory
                 throw new Exception('Cannot have two identifiers in ' . $reflectionProperty->getDeclaringClass()->getName());
             }
             $idProperty = $reflectionProperty;
+            if( ! $idAnnotation) {
+                $idAnnotation = $annotation;
+            }
         }
-
-        return [$annotation, $idProperty];
+        return [$idAnnotation, $idProperty];
     }
 
     /**
@@ -101,7 +106,7 @@ class EntityMapperFactory
      *
      * @return ReflectionProperty[]
      */
-    private function getProperties(ReflectionClass $rc) {
+    public function getProperties(ReflectionClass $rc) {
         $properties = [];
         do {
             foreach ($rc->getProperties() as $property) {
@@ -110,6 +115,59 @@ class EntityMapperFactory
         } while ($rc = $rc->getParentClass());
 
         return $properties;
+    }
+
+    public function analyzeIdField(ReflectionProperty $property, Id $id) {
+        $idMeta = new IdMetadata();
+        $idMeta->setName($property->getName());
+        $idMeta->setGetter($id->getter ?? 'get' . ucfirst($property->getName()));
+        return $idMeta;
+    }
+
+    public function analyzeField(ReflectionProperty $property, Field $field) {
+        $suffix = Field::TYPE_MAP[$field->type];
+        if( ! $suffix) {
+            throw new Exception("Unknown solr type " . $field->type);
+        }
+        if($field->name) {
+            $solrName = $field->name;
+        } else {
+            $solrName = mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
+        }
+        if( substr($solrName, -1*strlen($suffix)) !== $suffix) {
+            $solrName .= $suffix;
+        }
+
+        $fieldMeta = new FieldMetadata();
+        $fieldMeta->setSolrName($solrName);
+        $fieldMeta->setBoost($field->boost);
+        $fieldMeta->setFieldName($property->getName());
+        $fieldMeta->setGetter($field->getter ?? 'get' . ucfirst($property->getName()));
+        $fieldMeta->setMutator($field->mutator);
+        $fieldMeta->setFilters($field->filters);
+        return $fieldMeta;
+    }
+
+    public function analyzeComputedField(ComputedField $computedField) {
+        $solrName = $computedField->name . Field::TYPE_MAP[$computedField->type];
+        $fieldMeta = new FieldMetadata();
+        $fieldMeta->setSolrName($solrName);
+        $fieldMeta->setBoost($computedField->boost);
+        $fieldMeta->setFieldName($computedField->name);
+        $fieldMeta->setGetter($computedField->getter);
+        return $fieldMeta;
+    }
+
+    public function analyzeCopyField(CopyField $copyField, $solrNames) {
+        $fieldMeta = new CopyFieldMetadata();
+        $fieldMeta->setName($copyField->to);
+        $solrName = $copyField->to . Field::TYPE_MAP[$copyField->type];
+        $from = array_map(function ($s) use ($solrNames) {
+            return $solrNames[$s];
+        }, $copyField->from);
+        $fieldMeta->setFrom($from);
+        $fieldMeta->setSolrName($solrName);
+        return $fieldMeta;
     }
 
     /**
@@ -126,8 +184,7 @@ class EntityMapperFactory
         AnnotationRegistry::registerLoader('class_exists');
         $reader = new CachedReader(
             new AnnotationReader(),
-            new PhpFileCache($this->cacheDir . '/solr_annotations'),
-            $debug = ('prod' !== $this->env),
+            new PhpFileCache($this->cacheDir . '/solr_annotations'), ('prod' !== $this->env)
         );
 
         $this->em->getMetadataFactory()->getAllMetadata();
@@ -146,10 +203,8 @@ class EntityMapperFactory
 
             /** @var ReflectionProperty $idProperty */
             /** @var Annotation $idAnnotation */
-            list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
-            $idMeta = new IdMetadata();
-            $idMeta->setName($idProperty->getName());
-            $idMeta->setGetter($idAnnotation->getter ?? 'get' . ucfirst($idProperty->getName()));
+            [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
+            $idMeta = $this->analyzeIdField($idProperty, $idAnnotation);
             $entityMeta->setId($idMeta);
 
             $solrNames = [];
@@ -159,48 +214,23 @@ class EntityMapperFactory
                 if ( ! $propertyAnnotation) {
                     continue;
                 }
-
-                $suffix = Field::TYPE_MAP[$propertyAnnotation->type];
-                if( ! $suffix) {
-                    throw new Exception("Unknown solr type " . $propertyAnnotation->type);
-                }
-                if($propertyAnnotation->name) {
-                    $solrName = $propertyAnnotation->name;
-                } else {
-                    $solrName = mb_strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $property->getName()));
-                }
-                if( substr($solrName, -1*strlen($suffix)) !== $suffix) {
-                    $solrName .= $suffix;
-                }
-
-                $fieldMeta = new FieldMetadata();
-                $fieldMeta->setSolrName($solrName);
-                $fieldMeta->setBoost($propertyAnnotation->boost);
-                $fieldMeta->setFieldName($property->getName());
-                $fieldMeta->setGetter($propertyAnnotation->getter ?? 'get' . ucfirst($property->getName()));
-                $fieldMeta->setMutator($propertyAnnotation->mutator);
-                $fieldMeta->setFilters($propertyAnnotation->filters);
+                $fieldMeta = $this->analyzeField($property, $propertyAnnotation);
                 $entityMeta->addFieldMetadata($fieldMeta);
-                $solrNames[$property->getName()] = $solrName;
+                $solrNames[$property->getName()] = $fieldMeta->getSolrName();
             }
 
             foreach ($classAnnotation->computedFields as $computedField) {
-                $solrName = $computedField->name . Field::TYPE_MAP[$computedField->type];
-                $fieldMeta = new FieldMetadata();
-                $fieldMeta->setSolrName($solrName);
-                $fieldMeta->setBoost($computedField->boost);
-                $fieldMeta->setFieldName($computedField->name);
-                $fieldMeta->setGetter($computedField->getter);
+                $fieldMeta = $this->analyzeComputedField($computedField);
                 $entityMeta->addFieldMetadata($fieldMeta);
-                $solrNames[$computedField->name] = $solrName;
+                $solrNames[$computedField->name] = $fieldMeta->getSolrName();
             }
 
             // do the copy fields after the regular fields have been set up.
             foreach ($classAnnotation->copyField as $copyField) {
-                $solrName = $copyField->to . Field::TYPE_MAP[$copyField->type];
-                $from = array_map(function ($s) use ($solrNames) {return $solrNames[$s]; }, $copyField->from);
-                $entityMeta->addCopyFields($from, $copyField->to, $solrName);
-                $solrNames[$copyField->to] = $solrName;
+                $fieldMeta = $this->analyzeCopyField($copyField, $solrNames);
+
+                $entityMeta->addCopyField($fieldMeta);
+                $solrNames[$copyField->to] = $fieldMeta->getSolrName();
             }
 
             $mapper->addEntity($entityMeta);

@@ -72,7 +72,7 @@ class SchemaCommand extends Command
             }
 
             foreach ($entityMeta->getCopyFields() as $copyField) {
-                $output->writeln('  ' . $copyField['to'] . ' <= [' . implode(',', $copyField['from']) . ']');
+                $output->writeln('  ' . $copyField->getSolrName() . ' <= [' . implode(',', $copyField->getFrom()) . ']');
             }
             $table = new Table($output);
             $table->setHeaders(['name', 'field', 'getter', 'mutator', 'filters']);

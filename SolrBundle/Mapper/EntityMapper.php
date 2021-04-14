@@ -67,8 +67,8 @@ class EntityMapper
             $this->fields[$fieldName] = $solrName;
         }
 
-        foreach ($entityMetadata->getCopyFields() as $field => $copyField) {
-            $this->fields[$field] = $copyField['to'];
+        foreach ($entityMetadata->getCopyFields() as $copyField) {
+            $this->fields[$copyField->getName()] = $copyField->getSolrName();
         }
     }
 
@@ -132,10 +132,10 @@ class EntityMapper
         }
 
         foreach ($entityMeta->getCopyFields() as $copyField) {
-            $to = $copyField['to'];
+            $to = $copyField->getSolrName();
             $v = [];
 
-            foreach ($copyField['from'] as $from) {
+            foreach ($copyField->getFrom() as $from) {
                 $data = $document->{$from};
                 if ( ! $data) {
                     continue;

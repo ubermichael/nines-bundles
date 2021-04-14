@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Metadata;
 
+use Nines\SolrBundle\Annotation\CopyField;
 use Nines\SolrBundle\Annotation\Field;
 
 /**
@@ -30,9 +31,7 @@ class EntityMetadata extends Metadata
     private $class;
 
     /**
-     * List of ['from' => [], 'to' => ''].
-     *
-     * @var array
+     * @var CopyFieldMetadata[]
      */
     private $copyFields;
 
@@ -152,16 +151,9 @@ class EntityMetadata extends Metadata
      * Add a copy field. During indexing data from the fields named in $from
      * will be copied to an array in $to. The field will be named $name, which
      * is what the index methods should use to query it.
-     *
-     * @param array $from
-     * @param string $name
-     * @param string $to
      */
-    public function addCopyFields($from, $name, $to) : void {
-        $this->copyFields[$name] = [
-            'to' => $to,
-            'from' => $from,
-        ];
+    public function addCopyField(CopyFieldMetadata $fieldMetadata) : void {
+        $this->copyFields[] = $fieldMetadata;
     }
 
     /**

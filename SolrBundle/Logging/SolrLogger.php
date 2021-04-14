@@ -79,6 +79,9 @@ class SolrLogger extends AbstractLogger
      * @param string $message
      */
     public function log($level, $message, array $context = []) : void {
+        if( ! $this->enabled) {
+            return;
+        }
         $bt = debug_backtrace();
         $caller = $bt[1];
 
@@ -101,6 +104,9 @@ class SolrLogger extends AbstractLogger
      * @param $query
      */
     public function addQuery($query) : void {
+        if( ! $this->enabled) {
+            return;
+        }
         $this->queries[] = $query;
     }
 

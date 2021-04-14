@@ -18,30 +18,15 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Psr18Adapter;
 
-class ClientFactoryTest extends BaseCase
+class ClientFactoryTest extends ClientBaseCase
 {
-    protected function mockAdapter($data) {
-        $mock = new MockHandler([
-            new Response(200, ['Content-Type: text/json'], $this->pingResult()),
-        ]);
-        $stack = HandlerStack::create($mock);
-
-        $httpClient = new \GuzzleHttp\Client(['handler' => $stack]);
-        $factory = new Psr17Factory();
-
-        return new Psr18Adapter($httpClient, $factory, $factory);
-    }
-
     protected function pingResult() {
-        return <<<'END_JSON'
-        {
-            "responseHeader":{
-                "status":0,
-                "QTime":150,
-                "status":"OK"
-            }
-        }
-        END_JSON;
+        return [
+            'responseHeader' => [
+                'QTime' => 150,
+                'status' => 'OK',
+            ]
+        ];
     }
 
     public function testSetup() : void {
@@ -50,14 +35,12 @@ class ClientFactoryTest extends BaseCase
     }
 
     public function testInjection() : void {
-        $client = $this->getContainer()->get(Client::class);
-
-        $adapter = $this->mockAdapter($this->pingResult());
-        $client->setAdapter($adapter);
+        $client = $this->mockClient($this->pingResult());
 
         $ping = $client->createPing();
         $result = $client->ping($ping);
         $json = json_decode($result->getResponse()->getBody());
         $this->assertSame(150, $json->responseHeader->QTime);
+        $this->assertSame('OK', $json->responseHeader->status);
     }
 }

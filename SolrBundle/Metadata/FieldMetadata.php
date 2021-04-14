@@ -244,7 +244,7 @@ class FieldMetadata extends Metadata
         }
 
         if ( ! $data) {
-            return;
+            return null;
         }
 
         if ($this->mutator) {
