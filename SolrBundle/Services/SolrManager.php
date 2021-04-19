@@ -53,7 +53,12 @@ class SolrManager {
      * @param mixed $options
      * @param ?PaginatorInterface $pager
      */
-    public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : Result {
+    public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : ?Result {
+        if( ! $this->client) {
+            $this->logger->error("No client configured for this envirnoment.");
+            return null;
+        }
+
         $this->logger->addQuery($query);
         if ($pager) {
             $paginated = $pager->paginate([$this->client, $query], $options['page'], $options['pageSize']);
@@ -93,7 +98,7 @@ class SolrManager {
      *
      * @return SolrManager
      */
-    public function setClient(Client $client) {
+    public function setClient(?Client $client) {
         $this->client = $client;
 
         return $this;

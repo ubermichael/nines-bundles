@@ -31,9 +31,7 @@ class NinesSolrExtension extends Extension {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('nines.solr.host', $config['host']);
-        $container->setParameter('nines.solr.port', $config['port']);
-        $container->setParameter('nines.solr.path', $config['path']);
-        $container->setParameter('nines.solr.core', $config['core']);
+        $container->setParameter('nines.solr.url', $config['url']);
+        $container->setParameter('nines.solr.enabled', $config['enabled']);
     }
 }

@@ -53,6 +53,10 @@ class AnalyzeCommand extends Command {
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
+        if( ! $this->client) {
+            $output->writeln("No configured Solr client.");
+            return 1;
+        }
         $query = $this->client->createAnalysisDocument();
         $query->setShowMatch(true);
 
@@ -92,7 +96,7 @@ class AnalyzeCommand extends Command {
     /**
      * @required
      */
-    public function setClient(Client $client) : void {
+    public function setClient(?Client $client) : void {
         $this->client = $client;
     }
 

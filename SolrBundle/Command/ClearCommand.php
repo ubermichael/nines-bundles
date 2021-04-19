@@ -37,6 +37,10 @@ class ClearCommand extends Command {
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
+        if( ! $this->client) {
+            $output->writeln("No configured Solr client.");
+            return 1;
+        }
         $update = $this->client->createUpdate();
         $update->addDeleteQuery('*:*');
         $update->addCommit();
@@ -56,7 +60,7 @@ class ClearCommand extends Command {
     /**
      * @required
      */
-    public function setClient(Client $client) : void {
+    public function setClient(?Client $client) : void {
         $this->client = $client;
     }
 }

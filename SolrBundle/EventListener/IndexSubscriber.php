@@ -42,7 +42,7 @@ class IndexSubscriber implements EventSubscriber {
      */
     private $mapper;
 
-    private Client $client;
+    private ?Client $client;
 
     /**
      * Build the subscriber.
@@ -101,6 +101,10 @@ class IndexSubscriber implements EventSubscriber {
      * flushed to the solr index.
      */
     public function postFlush(PostFlushEventArgs $args) : void {
+        if( ! $this->client) {
+            // do nothing if there is no client configured for the environment.
+            return;
+        }
         if (0 === count($this->removed) + count($this->updated)) {
             return;
         }
@@ -120,7 +124,7 @@ class IndexSubscriber implements EventSubscriber {
     /**
      * @required
      */
-    public function setClient(Client $client) : void {
+    public function setClient(?Client $client) : void {
         $this->client = $client;
     }
 

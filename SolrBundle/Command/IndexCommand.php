@@ -63,6 +63,11 @@ class IndexCommand extends Command {
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
+        if( ! $this->client) {
+            $output->writeln("No configured Solr client.");
+            return 1;
+        }
+
         // Large indexing operations can cause the loggers to overflow memory.
         $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
@@ -126,7 +131,7 @@ class IndexCommand extends Command {
     /**
      * @required
      */
-    public function setClient(Client $client) : void {
+    public function setClient(?Client $client) : void {
         $this->client = $client;
     }
 

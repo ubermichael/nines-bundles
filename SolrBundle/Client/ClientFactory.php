@@ -21,6 +21,11 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class ClientFactory {
     /**
+     * @var bool
+     */
+    private $disabled;
+
+    /**
      * @var array
      */
     private $config;
@@ -38,13 +43,23 @@ class ClientFactory {
     private static $client = null;
 
     public function __construct(ParameterBagInterface $parameters) {
+        $this->enabled = $parameters->get('nines.solr.enabled');
+        if( ! $this->enabled) {
+            return;
+        }
+
+        $url = $parameters->get('nines.solr.url');
+        $parts = parse_url($url);
+        $matches = [];
+        preg_match("|^(.*?/)(\w+)$|", $parts['path'], $matches);
+
         $this->config = [
             'endpoint' => [
                 'host' => [
-                    'host' => $parameters->get('nines.solr.host'),
-                    'port' => $parameters->get('nines.solr.port'),
-                    'path' => $parameters->get('nines.solr.path'),
-                    'core' => $parameters->get('nines.solr.core'),
+                    'host' => $parts['host'],
+                    'port' => $parts['port'],
+                    'path' => $matches[1],
+                    'core' => $matches[2],
                 ],
             ],
         ];
@@ -54,7 +69,10 @@ class ClientFactory {
      * Build and return a client configured with a Guzzle PSR7 adapter
      * and a logger plugin for debugging.
      */
-    public function build() : Client {
+    public function build() : ?Client {
+        if( ! $this->enabled) {
+            return null;
+        }
         if ( ! self::$client) {
             $httpClient = new \GuzzleHttp\Client();
 
