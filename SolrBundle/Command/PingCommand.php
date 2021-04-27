@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Command;
 
-use Exception;
-use Solarium\Client;
+use Nines\SolrBundle\Exception\SolrException;
+use Nines\SolrBundle\Services\SolrManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Ping the server.
  */
 class PingCommand extends Command {
-    private Client $client;
+    private SolrManager $manager;
 
     protected static $defaultName = 'nines:solr:ping';
 
@@ -37,22 +37,15 @@ class PingCommand extends Command {
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        if( ! $this->client) {
-            $output->writeln("No configured Solr client.");
-            return 1;
-        }
-        $ping = $this->client->createPing(['omitheader' => false]);
-
         try {
-            $result = $this->client->ping($ping);
-            $output->writeln('Solarium library version: ' . Client::VERSION);
-            $output->writeln($result->getResponse()->getStatusCode() . ' ' . $result->getResponse()->getStatusMessage());
-            $json = json_decode($result->getResponse()->getBody());
-            $output->writeln('Ping: ' . $json->responseHeader->QTime . 'ms');
-        } catch (Exception $e) {
+            $ping = $this->manager->ping();
+            $output->writeln('Solarium library version: ' . $ping['solarium_version']);
+            $output->writeln($ping['status_code'] . ' ' . $ping['response_message']);
+            $output->writeln('Ping: ' . $ping['request_time'] . 'ms');
+        } catch (SolrException $e) {
             $output->writeln('Ping failed: ' . $e->getMessage());
 
-            return 1;
+            return $e->getCode();
         }
 
         return 0;
@@ -61,7 +54,7 @@ class PingCommand extends Command {
     /**
      * @required
      */
-    public function setClient(?Client $client) : void {
-        $this->client = $client;
+    public function setSolrManager(SolrManager $manager) : void {
+        $this->manager = $manager;
     }
 }

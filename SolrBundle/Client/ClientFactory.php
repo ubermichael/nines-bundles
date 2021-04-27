@@ -44,14 +44,14 @@ class ClientFactory {
 
     public function __construct(ParameterBagInterface $parameters) {
         $this->enabled = $parameters->get('nines.solr.enabled');
-        if( ! $this->enabled) {
+        if ( ! $this->enabled) {
             return;
         }
 
         $url = $parameters->get('nines.solr.url');
         $parts = parse_url($url);
         $matches = [];
-        preg_match("|^(.*?/)(\w+)$|", $parts['path'], $matches);
+        preg_match('|^(.*?/)(\\w+)$|', $parts['path'], $matches);
 
         $this->config = [
             'endpoint' => [
@@ -70,7 +70,7 @@ class ClientFactory {
      * and a logger plugin for debugging.
      */
     public function build() : ?Client {
-        if( ! $this->enabled) {
+        if ( ! $this->enabled) {
             return null;
         }
         if ( ! self::$client) {

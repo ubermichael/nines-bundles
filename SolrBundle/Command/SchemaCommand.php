@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Command;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -22,11 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Show a description of the Solr search schema.
  */
 class SchemaCommand extends Command {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
     /**
      * @var EntityMapper
      */
@@ -97,12 +91,5 @@ class SchemaCommand extends Command {
      */
     public function setEntityMapper(EntityMapper $mapper) : void {
         $this->mapper = $mapper;
-    }
-
-    /**
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $em) : void {
-        $this->em = $em;
     }
 }

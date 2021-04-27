@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Command;
 
-use Exception;
-use Solarium\Client;
+use Nines\SolrBundle\Exception\SolrException;
+use Nines\SolrBundle\Services\SolrManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Delete all content from the index.
  */
 class ClearCommand extends Command {
-    private Client $client;
+    private SolrManager $manager;
 
     protected static $defaultName = 'nines:solr:clear';
 
@@ -37,19 +37,10 @@ class ClearCommand extends Command {
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        if( ! $this->client) {
-            $output->writeln("No configured Solr client.");
-            return 1;
-        }
-        $update = $this->client->createUpdate();
-        $update->addDeleteQuery('*:*');
-        $update->addCommit();
-
         try {
-            $result = $this->client->update($update);
-            $output->writeln($result->getResponse()->getStatusMessage() . ' all documents deleted in ' . $result->getQueryTime() . 'ms');
-        } catch (Exception $e) {
-            $output->writeln($e->getMessage());
+            $this->manager->clear();
+        } catch (SolrException $e) {
+            $output->writeln('Clear failed: ' . $e->getMessage());
 
             return $e->getCode();
         }
@@ -60,7 +51,7 @@ class ClearCommand extends Command {
     /**
      * @required
      */
-    public function setClient(?Client $client) : void {
-        $this->client = $client;
+    public function setSolrManager(SolrManager $manager) : void {
+        $this->manager = $manager;
     }
 }

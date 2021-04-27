@@ -14,8 +14,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Nines\SolrBundle\Mapper\EntityMapper;
-use Solarium\Client;
+use Nines\SolrBundle\Services\SolrManager;
 
 /**
  * The index subscriber listens for changes to indexed entities. When the
@@ -23,34 +22,7 @@ use Solarium\Client;
  * index.
  */
 class IndexSubscriber implements EventSubscriber {
-    /**
-     * List of Solr document IDs to remove.
-     *
-     * @var array<string>
-     */
-    private $removed;
-
-    /**
-     * List of Solr documents to update.
-     *
-     * @var array
-     */
-    private $updated;
-
-    /**
-     * @var EntityMapper
-     */
-    private $mapper;
-
-    private ?Client $client;
-
-    /**
-     * Build the subscriber.
-     */
-    public function __construct() {
-        $this->removed = [];
-        $this->updated = [];
-    }
+    private SolrManager $manager;
 
     /**
      * Returns an array of events this subscriber wants to listen to.
@@ -71,9 +43,7 @@ class IndexSubscriber implements EventSubscriber {
      */
     public function preRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($this->mapper->isMapped($entity)) {
-            $this->removed[] = $this->mapper->identify($entity);
-        }
+        $this->manager->remove($entity);
     }
 
     /**
@@ -81,9 +51,7 @@ class IndexSubscriber implements EventSubscriber {
      */
     public function postPersist(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($this->mapper->isMapped($entity)) {
-            $this->updated[] = $this->mapper->toDocument($entity);
-        }
+        $this->manager->index($entity);
     }
 
     /**
@@ -91,9 +59,7 @@ class IndexSubscriber implements EventSubscriber {
      */
     public function postUpdate(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($this->mapper->isMapped($entity)) {
-            $this->updated[] = $this->mapper->toDocument($entity);
-        }
+        $this->manager->index($entity);
     }
 
     /**
@@ -101,37 +67,13 @@ class IndexSubscriber implements EventSubscriber {
      * flushed to the solr index.
      */
     public function postFlush(PostFlushEventArgs $args) : void {
-        if( ! $this->client) {
-            // do nothing if there is no client configured for the environment.
-            return;
-        }
-        if (0 === count($this->removed) + count($this->updated)) {
-            return;
-        }
-        $update = $this->client->createUpdate();
-
-        foreach ($this->removed as $removed) {
-            $update->addDeleteById($removed);
-        }
-
-        foreach ($this->updated as $updated) {
-            $update->addDocument($updated);
-        }
-        $update->addCommit();
-        $this->client->update($update);
+        $this->manager->flush();
     }
 
     /**
      * @required
      */
-    public function setClient(?Client $client) : void {
-        $this->client = $client;
-    }
-
-    /**
-     * @required
-     */
-    public function setEntityMapper(EntityMapper $mapper) : void {
-        $this->mapper = $mapper;
+    public function setSolrManager(SolrManager $manager) : void {
+        $this->manager = $manager;
     }
 }

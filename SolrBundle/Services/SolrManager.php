@@ -11,6 +11,9 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Services;
 
 use Knp\Component\Pager\PaginatorInterface;
+use Nines\SolrBundle\Client\LoggerPlugin;
+use Nines\SolrBundle\Exception\NotConfiguredException;
+use Nines\SolrBundle\Exception\SolrException;
 use Nines\SolrBundle\Hydrator\DoctrineHydrator;
 use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Mapper\EntityMapper;
@@ -18,6 +21,7 @@ use Nines\SolrBundle\Query\QueryBuilder;
 use Nines\SolrBundle\Query\Result;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
+use Solarium\QueryType\Update\Query\Query as UpdateQuery;
 
 /**
  * Thin wrapper around the query builder and query execution.
@@ -41,9 +45,18 @@ class SolrManager {
     private SolrLogger $logger;
 
     /**
+     * @var UpdateQuery
+     */
+    private $update;
+
+    /**
      * @return QueryBuilder
      */
     public function createQueryBuilder() {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+
         return new QueryBuilder($this->mapper);
     }
 
@@ -54,8 +67,12 @@ class SolrManager {
      * @param ?PaginatorInterface $pager
      */
     public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : ?Result {
-        if( ! $this->client) {
-            $this->logger->error("No client configured for this envirnoment.");
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        if ( ! $this->client) {
+            $this->logger->error('No client configured for this envirnoment.');
+
             return null;
         }
 
@@ -67,6 +84,79 @@ class SolrManager {
         }
 
         return new Result($this->client->select($query), $this->hydrator);
+    }
+
+    public function index($entity) : void {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        if ( ! $this->mapper->isMapped($entity)) {
+            return;
+        }
+        if ( ! $this->update) {
+            $this->update = $this->client->createUpdate();
+        }
+        $this->update->addDocument($this->mapper->toDocument($entity));
+    }
+
+    public function flush() : void {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        if ( ! $this->update) {
+            return;
+        }
+        $this->logger->addQuery($this->update);
+        $this->update->addCommit();
+        $this->client->update($this->update);
+        $this->update = null;
+    }
+
+    public function remove($entity) : void {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        if ( ! $this->mapper->isMapped($entity)) {
+            return;
+        }
+        if ( ! $this->update) {
+            $this->update = $this->client->createUpdate();
+        }
+        $this->update->addDeleteById($this->mapper->identify($entity));
+    }
+
+    /**
+     * @throws SolrException
+     */
+    public function clear() : void {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        $query = $this->client->createUpdate();
+        $query->addDeleteQuery('*:*');
+        $query->addCommit();
+        $this->logger->addQuery($query);
+        $this->client->update($query);
+    }
+
+    /**
+     * @throws SolrException
+     */
+    public function ping() : array {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        $ping = $this->client->createPing(['omitheader' => false]);
+
+        $result = $this->client->ping($ping);
+        $json = json_decode($result->getResponse()->getBody());
+
+        return [
+            'solarium_version' => Client::VERSION,
+            'status_code' => $result->getResponse()->getStatusCode(),
+            'response_message' => $result->getResponse()->getStatusMessage(),
+            'request_time' => $json->responseHeader->QTime,
+        ];
     }
 
     /**
@@ -96,6 +186,8 @@ class SolrManager {
     /**
      * @required
      *
+     * @param ?Client $client
+     *
      * @return SolrManager
      */
     public function setClient(?Client $client) {
@@ -124,5 +216,18 @@ class SolrManager {
      */
     public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;
+    }
+
+    /**
+     * Large indexing operations may cause the logger to accumulate large
+     * buffers which aren't used for anything.
+     *
+     * @throws SolrException
+     */
+    public function disableLogger() : void {
+        if ( ! $this->client) {
+            throw new NotConfiguredException();
+        }
+        $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
     }
 }

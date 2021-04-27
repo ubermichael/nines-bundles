@@ -22,6 +22,7 @@ use Nines\SolrBundle\Annotation\CopyField;
 use Nines\SolrBundle\Annotation\Document;
 use Nines\SolrBundle\Annotation\Field;
 use Nines\SolrBundle\Annotation\Id;
+use Nines\SolrBundle\Exception\MappingException;
 use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Metadata\CopyFieldMetadata;
 use Nines\SolrBundle\Metadata\EntityMetadata;
@@ -160,7 +161,7 @@ class EntityMapperFactory {
                 continue;
             }
             if ($idProperty) {
-                throw new Exception('Cannot have two identifiers in ' . $reflectionProperty->getDeclaringClass()->getName());
+                throw new MappingException('Cannot have two identifiers in ' . $reflectionProperty->getDeclaringClass()->getName());
             }
             $idProperty = $reflectionProperty;
             if ( ! $idAnnotation) {
@@ -198,7 +199,7 @@ class EntityMapperFactory {
     public function analyzeField(ReflectionProperty $property, Field $field) {
         $suffix = Field::TYPE_MAP[$field->type];
         if ( ! $suffix) {
-            throw new Exception('Unknown solr type ' . $field->type);
+            throw new MappingException('Unknown solr type ' . $field->type);
         }
         if ($field->name) {
             $solrName = $field->name;

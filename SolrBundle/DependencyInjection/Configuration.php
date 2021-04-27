@@ -25,7 +25,8 @@ class Configuration implements ConfigurationInterface {
             ->children()
             ->scalarNode('enabled')->defaultTrue()->end()
             ->scalarNode('url')->defaultNull()->end()
-            ->end();
+            ->end()
+        ;
 
         return $builder;
     }

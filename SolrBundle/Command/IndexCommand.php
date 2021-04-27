@@ -12,9 +12,9 @@ namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
-use Nines\SolrBundle\Client\LoggerPlugin;
+use Nines\SolrBundle\Exception\SolrException;
 use Nines\SolrBundle\Mapper\EntityMapper;
-use Solarium\Client;
+use Nines\SolrBundle\Services\SolrManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,7 +41,7 @@ class IndexCommand extends Command {
      */
     private $em;
 
-    private Client $client;
+    private SolrManager $manager;
 
     protected static $defaultName = 'nines:solr:index';
 
@@ -63,13 +63,14 @@ class IndexCommand extends Command {
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        if( ! $this->client) {
-            $output->writeln("No configured Solr client.");
-            return 1;
+        try {
+            $this->manager->disableLogger();
+        } catch (SolrException $e) {
+            $output->writeln('Index failed: ' . $e->getMessage());
+
+            return $e->getCode();
         }
 
-        // Large indexing operations can cause the loggers to overflow memory.
-        $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $batch = (int) $input->getOption('batch');
@@ -78,13 +79,8 @@ class IndexCommand extends Command {
         }, $input->getArgument('classes'));
 
         if ($input->getOption('clear')) {
-            $delete = $this->client->createUpdate();
-            $delete->addDeleteQuery('*:*');
-            $delete->addCommit();
-            $this->client->update($delete);
+            $this->manager->clear();
         }
-
-        $update = $this->client->createUpdate();
         $n = 0;
 
         foreach ($this->mapper->getClasses() as $class) {
@@ -100,22 +96,19 @@ class IndexCommand extends Command {
 
             foreach ($iterator as $row) {
                 $n++;
-                $doc = $this->mapper->toDocument($row[0]);
-                $update->addDocument($doc);
+                $this->manager->index($row[0]);
                 if (0 === $n % $batch) {
-                    $update->addCommit();
-                    $this->client->update($update);
-                    // $this->client->update($update) does not reset the update solr command so make a new one.
-                    $update = $this->client->createUpdate();
+                    $this->manager->flush();
                     $this->em->clear();
                     $progressBar->advance($batch);
                 }
             }
+            $this->manager->flush();
+            $this->em->clear();
             $progressBar->finish();
             $output->writeln('');
         }
-        $update->addCommit();
-        $result = $this->client->update($update);
+        $this->manager->flush();
         $this->em->clear();
 
         return 0;
@@ -131,8 +124,8 @@ class IndexCommand extends Command {
     /**
      * @required
      */
-    public function setClient(?Client $client) : void {
-        $this->client = $client;
+    public function setSolrManager(SolrManager $manager) : void {
+        $this->manager = $manager;
     }
 
     /**
