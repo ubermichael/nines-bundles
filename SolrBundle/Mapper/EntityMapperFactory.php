@@ -13,6 +13,7 @@ namespace Nines\SolrBundle\Mapper;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Annotation;
@@ -69,6 +70,49 @@ class EntityMapperFactory {
         $this->cacheDir = $cacheDir;
     }
 
+    public function getEntityMetadata(ReflectionClass $reflectionClass, Reader $reader) : ?EntityMetadata {
+        $document = $reader->getClassAnnotation($reflectionClass, Document::class);
+        if ( ! $document) {
+            return null;
+        }
+        $properties = $this->getProperties($reflectionClass);
+
+        $entityMeta = new EntityMetadata();
+        $entityMeta->setClass($reflectionClass->getName());
+        $entityMeta->addFixed('type_s', $reflectionClass->getShortName());
+
+        /** @var ReflectionProperty $idProperty */
+        /** @var Annotation $idAnnotation */
+        [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
+        $idMeta = $this->analyzeIdField($idProperty, $idAnnotation);
+        $entityMeta->setId($idMeta);
+
+        foreach ($properties as $property) {
+            $propertyAnnotation = $reader->getPropertyAnnotation($property, Field::class);
+            if ( ! $propertyAnnotation) {
+                continue;
+            }
+            $fieldMeta = $this->analyzeField($property, $propertyAnnotation);
+            $entityMeta->addFieldMetadata($fieldMeta);
+            $solrNames[$property->getName()] = $fieldMeta->getSolrName();
+        }
+
+        foreach ($document->computedFields as $computedField) {
+            $fieldMeta = $this->analyzeComputedField($computedField);
+            $entityMeta->addFieldMetadata($fieldMeta);
+            $solrNames[$computedField->name] = $fieldMeta->getSolrName();
+        }
+
+        // do the copy fields after the regular fields have been set up.
+        foreach ($document->copyField as $copyField) {
+            $fieldMeta = $this->analyzeCopyField($copyField, $solrNames);
+
+            $entityMeta->addCopyField($fieldMeta);
+            $solrNames[$copyField->to] = $fieldMeta->getSolrName();
+        }
+        return $entityMeta;
+    }
+
     /**
      * Create the mapper by parsing the entity properties and annotations.
      *
@@ -89,51 +133,14 @@ class EntityMapperFactory {
 
         $this->em->getMetadataFactory()->getAllMetadata();
 
+        $solrNames = [];
+
         foreach ($this->em->getMetadataFactory()->getAllMetadata() as $meta) {
             $reflectionClass = $meta->getReflectionClass();
-            $classAnnotation = $reader->getClassAnnotation($reflectionClass, Document::class);
-            if ( ! $classAnnotation) {
-                continue;
+            $entityMeta = $this->getEntityMetadata($reflectionClass, $reader);
+            if($entityMeta) {
+                $mapper->addEntity($entityMeta);
             }
-            $properties = $this->getProperties($reflectionClass);
-
-            $entityMeta = new EntityMetadata();
-            $entityMeta->setClass($meta->getName());
-            $entityMeta->addFixed('type_s', $reflectionClass->getShortName());
-
-            /** @var ReflectionProperty $idProperty */
-            /** @var Annotation $idAnnotation */
-            list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
-            $idMeta = $this->analyzeIdField($idProperty, $idAnnotation);
-            $entityMeta->setId($idMeta);
-
-            $solrNames = [];
-
-            foreach ($properties as $property) {
-                $propertyAnnotation = $reader->getPropertyAnnotation($property, Field::class);
-                if ( ! $propertyAnnotation) {
-                    continue;
-                }
-                $fieldMeta = $this->analyzeField($property, $propertyAnnotation);
-                $entityMeta->addFieldMetadata($fieldMeta);
-                $solrNames[$property->getName()] = $fieldMeta->getSolrName();
-            }
-
-            foreach ($classAnnotation->computedFields as $computedField) {
-                $fieldMeta = $this->analyzeComputedField($computedField);
-                $entityMeta->addFieldMetadata($fieldMeta);
-                $solrNames[$computedField->name] = $fieldMeta->getSolrName();
-            }
-
-            // do the copy fields after the regular fields have been set up.
-            foreach ($classAnnotation->copyField as $copyField) {
-                $fieldMeta = $this->analyzeCopyField($copyField, $solrNames);
-
-                $entityMeta->addCopyField($fieldMeta);
-                $solrNames[$copyField->to] = $fieldMeta->getSolrName();
-            }
-
-            $mapper->addEntity($entityMeta);
         }
 
         return $mapper;
