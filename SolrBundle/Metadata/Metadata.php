@@ -20,14 +20,16 @@ abstract class Metadata {
      *
      * @param $string
      */
-    protected function parseFunctionCall(string $string) : array {
+    public function parseFunctionCall(string $string) : array {
         $name = $string;
         $args = [];
 
         if (false !== ($n = mb_strpos($string, '('))) {
             $name = mb_substr($string, 0, $n);
             $args = explode(',', mb_substr($string, $n + 1, -1));
-            $args = array_map(function ($s) {return preg_replace("/^(?:[[:space:]'\"]*)|(?:[[:space:]'\"]*)$/u", '', $s); }, $args);
+            $args = array_map(function ($s) {
+                return preg_replace("/^(?:[[:space:]'\"]*)|(?:[[:space:]'\"]*)$/u", '', $s);
+            }, $args);
         }
 
         return [$name, $args];

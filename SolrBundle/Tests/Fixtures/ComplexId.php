@@ -17,35 +17,25 @@ use Nines\SolrBundle\Annotation as Solr;
 
 /**
  * @ORM\Entity
+ * @Solr\Document
  */
-class ParentEntity {
+class ComplexId {
     /**
+     * @var int
      * @ORM\Id
-     * @Solr\Id
+     * @Solr\Id(name="idname", getter="idGetter('abc', 1, true)")
      */
     private $id;
 
-    /**
-     * @var string
-     * @Solr\Field(type="string")
-     */
-    private $something;
+    public function __construct() {
+        $this->id = 7;
+    }
 
-    public function getId() {
+    public function getId() : int {
         return $this->id;
     }
 
-    public function setId($id) {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getSomething() : string {
-        return $this->something;
-    }
-
-    public function setSomething(string $something) : void {
-        $this->something = $something;
+    public function idGetter() : int {
+        return $this->id;
     }
 }

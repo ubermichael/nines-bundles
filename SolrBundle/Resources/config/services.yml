@@ -32,3 +32,7 @@ services:
 
   Nines\SolrBundle\Mapper\EntityMapper:
     factory: [ '@Nines\SolrBundle\Mapper\EntityMapperFactory', 'build' ]
+
+  Nines\SolrBundle\Services\SolrManager:
+    arguments:
+      $enabled: '%nines.solr.enabled%'

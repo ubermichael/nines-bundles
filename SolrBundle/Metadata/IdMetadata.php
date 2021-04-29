@@ -61,6 +61,10 @@ class IdMetadata extends Metadata {
         return $this->getter;
     }
 
+    public function getGetterArgs() : array {
+        return $this->getterArgs;
+    }
+
     /**
      * Set the getter function.
      *

@@ -50,6 +50,15 @@ class SolrManager {
     private $update;
 
     /**
+     * @var bool
+     */
+    private $enabled;
+
+    public function __construct($enabled) {
+        $this->enabled = $enabled;
+    }
+
+    /**
      * @return QueryBuilder
      */
     public function createQueryBuilder() {
@@ -229,5 +238,9 @@ class SolrManager {
             throw new NotConfiguredException();
         }
         $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
+    }
+
+    public function enabled() : bool {
+        return $this->enabled;
     }
 }
