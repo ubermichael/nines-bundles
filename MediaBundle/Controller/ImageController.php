@@ -15,8 +15,10 @@ use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Repository\ImageRepository;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +29,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/image")
- * @IsGranted("ROLE_CONTENT_ADMIN")
  */
 class ImageController extends AbstractController implements PaginatorAwareInterface
 {
@@ -36,6 +37,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/", name="nines_media_image_index", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function index(Request $request, ImageRepository $imageRepository) : array {
@@ -51,6 +53,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/search", name="nines_media_image_search", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      *
      * @return array
@@ -73,6 +76,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/typeahead", name="nines_media_image_typeahead", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @return JsonResponse
      */
     public function typeahead(Request $request, ImageRepository $imageRepository) {
@@ -134,6 +138,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/{id}", name="nines_media_image_delete", methods={"DELETE"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @return RedirectResponse
      */
     public function delete(Request $request, Image $image) {

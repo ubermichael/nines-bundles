@@ -15,6 +15,7 @@ use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\MediaBundle\Service\LinkManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     /**
      * @Route("/", name="nines_media_link_index", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function index(Request $request, LinkRepository $linkRepository, LinkManager $linkManager) : array {
@@ -46,6 +48,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     /**
      * @Route("/search", name="nines_media_link_search", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function search(Request $request, LinkRepository $linkRepository, LinkManager $linkManager) : array {
@@ -66,6 +69,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
 
     /**
      * @Route("/{id}", name="nines_media_link_show", methods={"GET"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function show(Link $link, LinkManager $linkManager) : array {

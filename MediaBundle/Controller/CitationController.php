@@ -15,6 +15,7 @@ use Nines\MediaBundle\Entity\Citation;
 use Nines\MediaBundle\Repository\CitationRepository;
 use Nines\MediaBundle\Service\CitationManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
     /**
      * @Route("/", name="nines_media_citation_index", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function index(Request $request, CitationRepository $citationRepository, CitationManager $citationManager) : array {
@@ -46,6 +48,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
     /**
      * @Route("/search", name="nines_media_citation_search", methods={"GET"})
      *
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function search(Request $request, CitationRepository $citationRepository, CitationManager $citationManager) : array {
@@ -66,6 +69,7 @@ class CitationController extends AbstractController implements PaginatorAwareInt
 
     /**
      * @Route("/{id}", name="nines_media_citation_show", methods={"GET"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Template
      */
     public function show(Citation $citation, CitationManager $citationManager) : array {
