@@ -27,14 +27,21 @@ services:
             - { name: 'doctrine.event_subscriber' }
 
     Nines\MediaBundle\Service\LinkManager:
+        arguments:
+            $routing: '%nines_util.routing%'
         tags:
             - { name: 'doctrine.event_subscriber' }
 
     Nines\MediaBundle\Service\CitationManager:
+        arguments:
+            $routing: '%nines_util.routing%'
         tags:
             - { name: 'doctrine.event_subscriber' }
 
     Nines\MediaBundle\Service\ImageManager:
+        arguments:
+            $routing: '%nines_util.routing%'
+            $root: '%kernel.project_dir%'
         calls:
             - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/images' ] ]
         tags:
