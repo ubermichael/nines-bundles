@@ -17,6 +17,7 @@
             "Nines\\FeedbackBundle\\": "FeedbackBundle",
             "Nines\\MakerBundle\\": "MakerBundle",
             "Nines\\MediaBundle\\": "MediaBundle",
+            "Nines\\SolrBundle\\": "SolrBundle",
             "Nines\\UserBundle\\": "UserBundle",
             "Nines\\UtilBundle\\": "UtilBundle"
         }
