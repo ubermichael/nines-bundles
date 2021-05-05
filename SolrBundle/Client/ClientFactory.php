@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\Client;
 
+use Nines\SolrBundle\Exception\NotConfiguredException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Solarium\Client;
 use Solarium\Core\Client\Adapter\Psr18Adapter;
@@ -49,6 +50,9 @@ class ClientFactory {
         }
 
         $url = $parameters->get('nines.solr.url');
+        if( ! $url) {
+            throw new NotConfiguredException("No solr URL configured.");
+        }
         $parts = parse_url($url);
         $matches = [];
         preg_match('|^(.*?/)(\\w+)$|', $parts['path'], $matches);
