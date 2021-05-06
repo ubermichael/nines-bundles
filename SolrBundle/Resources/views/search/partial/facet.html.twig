@@ -14,19 +14,21 @@
 
     {% set queryParams = app.request.query.all %}
     <h3>{{ header }}</h3>
-    {% for k,v in facets %}
-        {% set checked %}
-            {% apply spaceless %}
-                {% if ('filter' in queryParams|keys) and (filter in queryParams['filter']|keys) and (k in queryParams['filter'][filter]) %}
-                    checked='checked'
-                {% endif %}
-            {% endapply %}
-        {% endset %}
-        <div class='checkbox'>
-            <label> <input type='checkbox' name='filter[{{ filter }}][]' value='{{ k }}' {{ checked }}>
-                {{ k }}: {{ v }}
-            </label>
-        </div>
-    {% endfor %}
-    {% if remaining %}<p class='pull-right'>And {{ remaining }} more.</p>{% endif %}
+    <div class='facet'>
+        {% for k,v in facets %}
+            {% set checked %}
+                {% apply spaceless %}
+                    {% if ('filter' in queryParams|keys) and (filter in queryParams['filter']|keys) and (k in queryParams['filter'][filter]) %}
+                        checked='checked'
+                    {% endif %}
+                {% endapply %}
+            {% endset %}
+            <div class='checkbox'>
+                <label> <input type='checkbox' name='filter[{{ filter }}][]' value='{{ k }}' {{ checked }}>
+                    {{ k }}: {{ v }}
+                </label>
+            </div>
+        {% endfor %}
+        {% if remaining %}<p class='pull-right'>And {{ remaining }} more.</p>{% endif %}
+    </div>
 {% endif %}
