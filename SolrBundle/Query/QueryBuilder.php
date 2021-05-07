@@ -84,7 +84,7 @@ class QueryBuilder {
     /**
      * List of field => direction pairs to sort the query results.
      *
-     * @var \string[][]
+     * @var string[]
      */
     private $sorting;
 
@@ -334,8 +334,8 @@ class QueryBuilder {
             $query->addField($field);
         }
 
-        foreach ($this->sorting as $sort) {
-            $query->addSort($sort[0], $sort[1]);
+        foreach ($this->sorting as $k => $v) {
+            $query->addSort($k, $v);
         }
 
         if ($this->highlightFields) {
