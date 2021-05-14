@@ -25,9 +25,11 @@ class Field {
         'float' => '_f',
         'integer' => '_i',
         'long' => '_l',
+        'location' => '_p',
         'string' => '_s',
         'text' => '_t',
-        'location' => '_p',
+        'text_en' => '_t_en',
+        'text_sortable' => '_t_sort',
 
         'booleans' => '_bs',
         'dates' => '_dts',
@@ -38,6 +40,8 @@ class Field {
         'longs' => '_ls',
         'strings' => '_ss',
         'texts' => '_txt',
+        'texts_en' => '_txt_en',
+        'texts_sortable' => '_txt_sort',
     ];
 
     /**
