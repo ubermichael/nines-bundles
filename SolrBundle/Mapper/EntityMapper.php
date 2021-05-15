@@ -31,6 +31,13 @@ class EntityMapper {
      */
     private $fields;
 
+    /**
+     * Map of entity field names to boost values.
+     *
+     * @var array
+     */
+    private $boosts;
+
     private SolrLogger $logger;
 
     /**
@@ -40,6 +47,7 @@ class EntityMapper {
      */
     public function __construct() {
         $this->map = [];
+        $this->boosts = [];
         $this->fields = [
             'id' => 'id',
             'class' => 'class_s',
@@ -64,6 +72,7 @@ class EntityMapper {
                 ]);
             }
             $this->fields[$fieldName] = $solrName;
+            $this->boosts[$fieldName] = $fieldMetadata->getBoost();
         }
 
         foreach ($entityMetadata->getCopyFields() as $copyField) {
@@ -172,6 +181,16 @@ class EntityMapper {
         }
 
         return $this->fields[$name];
+    }
+
+    public function getBoost($name) {
+        if( ! isset($this->boosts[$name])) {
+            $this->logger->warning('Cannot get boost for unknown property {name}.', [
+                'name' => $name,
+            ]);
+            return null;
+        }
+        return $this->boosts[$name];
     }
 
     /**

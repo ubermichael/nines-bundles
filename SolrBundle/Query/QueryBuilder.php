@@ -20,6 +20,12 @@ use Solarium\QueryType\Select\Query\Query;
  * @todo add a near() function or something like it for geofilt and geodist.
  */
 class QueryBuilder {
+
+    public const ESCAPE_PHRASE = 1;
+    public const ESCAPE_TERM = 2;
+    public const ESCAPE_GENERAL = 3;
+    public const ESCAPE_NONE = 4;
+
     /**
      * @var EntityMapper
      */
@@ -31,6 +37,13 @@ class QueryBuilder {
      * @var string
      */
     private $q;
+
+    /**
+     * List of fields to query.
+     *
+     * @var array
+     */
+    private $queryFields;
 
     /**
      * Name of the default search field.
@@ -98,6 +111,7 @@ class QueryBuilder {
     public function __construct(EntityMapper $mapper) {
         $this->q = '*:*';
         $this->mapper = $mapper;
+        $this->queryFields = [];
         $this->filters = [];
         $this->filterRanges = [];
         $this->geoFilters = [];
@@ -106,7 +120,7 @@ class QueryBuilder {
         $this->facetFields = [];
         $this->fields = ['*', 'score'];
         $this->sorting = [
-            ['score', 'desc'],
+            'score' => 'desc',
         ];
         $this->helper = new Helper();
     }
@@ -120,7 +134,7 @@ class QueryBuilder {
      */
     protected function solrName($field) {
         if (is_array($field)) {
-            return array_map(function ($s) {return $this->mapper->getSolrName($s) ?? $s; }, $field);
+            return array_map(fn ($s) => $this->mapper->getSolrName($s) ?? $s, $field);
         }
 
         return $this->mapper->getSolrName($field) ?? $field;
@@ -130,9 +144,25 @@ class QueryBuilder {
      * Set the query string.
      *
      * @param $q
+     * @param null|mixed $escape
      */
-    public function setQueryString($q) : void {
-        $this->q = $q;
+    public function setQueryString($q, $escape = self::ESCAPE_NONE) : void {
+        switch ($escape) {
+            case self::ESCAPE_GENERAL:
+                // see https://solr.apache.org/guide/8_8/the-standard-query-parser.html#escaping-special-characters
+                $chars = quotemeta('+&|!(){}[]^"~*?:-');
+                $this->q = preg_replace("/([$chars])/", "\\\\$1", $q);
+                break;
+            case self::ESCAPE_PHRASE:
+                $this->q = $this->helper->escapePhrase($q);
+                break;
+            case self::ESCAPE_TERM:
+                $this->q = $this->helper->escapeTerm($q);
+                break;
+            case self::ESCAPE_NONE:
+                $this->q = $q;
+                break;
+        }
     }
 
     /**
@@ -144,6 +174,17 @@ class QueryBuilder {
         $this->defaultField = $this->solrName($defaultField);
     }
 
+    public function setQueryFields($queryFields) : void {
+        $this->queryFields = [];
+        foreach ($queryFields as $f) {
+            $this->queryFields[$this->solrName($f)] = $this->mapper->getBoost($f);
+        }
+    }
+
+    public function addQueryField($queryField) : void {
+        $this->queryFields[$this->solrName($queryField)] = $this->mapper->getBoost($queryField);
+    }
+
     /**
      * Field or fields to highlight.
      *
@@ -153,7 +194,7 @@ class QueryBuilder {
         if (is_array($fields)) {
             $this->highlightFields = implode(',', $this->solrName($fields));
         } elseif ('all' === $fields) {
-            $this->highlightFields = 'all';
+            $this->highlightFields = '*';
         } else {
             $this->highlightFields = $this->mapper->getSolrName($fields);
         }
@@ -239,7 +280,7 @@ class QueryBuilder {
      * @param array $fields
      */
     public function setFields($fields = []) : void {
-        $this->fields = array_map(function ($s) {return $this->solrName($s); }, $fields);
+        $this->fields = array_map(fn ($s) => $this->solrName($s), $fields);
     }
 
     /**
@@ -271,12 +312,12 @@ class QueryBuilder {
      * @param $direction
      */
     public function addSorting($field, $direction) : void {
-        $this->sorting[] = [$this->solrName($field), $direction];
+        $this->sorting[$this->solrName($field)] = $direction;
     }
 
     public function addDistanceSorting($field, $latitude, $longitude, $direction) : void {
         $geodist = $this->helper->geodist($this->solrName($field), $latitude, $longitude);
-        $this->sorting[] = [$geodist, $direction];
+        $this->sorting[$geodist] = $direction;
     }
 
     /**
@@ -290,11 +331,16 @@ class QueryBuilder {
         if ($this->defaultField) {
             $query->setQueryDefaultField($this->defaultField);
         }
+        if (count($this->queryFields) > 0) {
+            $dismax = $query->getDisMax();
+            $qf = array_map(fn($k, $v) => $k . ($v ? "^{$v}": ''), array_keys($this->queryFields), $this->queryFields);
+            $dismax->setQueryFields(implode(" ", $qf));
+        }
 
         foreach ($this->filters as $key => $values) {
             $terms = $values;
             if (is_array($values)) {
-                $terms = join(' or ', array_map(function ($s) { return '"' . $s . '"'; }, $values));
+                $terms = implode(' or ', array_map(fn ($s) => '"' . $s . '"', $values));
             }
             $query->createFilterQuery('fq_' . $key)->addTag('exclude')
                 ->setQuery("{$key}:({$terms})")
@@ -302,9 +348,7 @@ class QueryBuilder {
         }
 
         foreach ($this->filterRanges as $key => $ranges) {
-            $range = implode(' OR ', array_map(function ($range) {
-                return "[{$range['start']} TO {$range['end']}]";
-            }, $ranges));
+            $range = implode(' OR ', array_map(fn ($range) => "[{$range['start']} TO {$range['end']}]", $ranges));
 
             $query->createFilterQuery('fr_' . $key)->addTag('exclude')
                 ->setQuery("{$key}:({$range})")
