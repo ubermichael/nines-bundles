@@ -1,4 +1,4 @@
-(function ($, window) {
+(function ($, window, document) {
 
     var hostname = window.location.hostname.replace('www.', '');
 
@@ -89,6 +89,19 @@
         });
     }
 
+    function configureSelect2() {
+        // when one select2 element is opening, all others must close
+        // or the focus thing fails.
+        $(document).on('select2:opening', function(e) {
+            $('.select2entity').select2('close');
+        });
+
+        // set focus to the input
+        $(document).on('select2:open', function (e) {
+            document.querySelector('.select2-search__field').focus();
+        });
+    }
+
     $(document).ready(function () {
         $(window).bind('beforeunload', windowBeforeUnload);
         $('form').each(formDirty);
@@ -101,6 +114,7 @@
             complexCollection();
         }
         imageModals();
+        configureSelect2();
     });
 
-})(jQuery, window);
+})(jQuery, window, document);
