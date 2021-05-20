@@ -15,8 +15,7 @@ use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminControllerTest extends ControllerBaseCase
-{
+class AdminControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

@@ -17,8 +17,7 @@ use Nines\FeedbackBundle\Services\CommentService;
 use Nines\UtilBundle\Tests\ServiceBaseCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class CommentServiceTest extends ServiceBaseCase
-{
+class CommentServiceTest extends ServiceBaseCase {
     /**
      * @var CommentService
      */

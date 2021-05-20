@@ -24,8 +24,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
  * @IsGranted("ROLE_USER")
  */
-class ProfileController extends AbstractController
-{
+class ProfileController extends AbstractController {
     /**
      * @Route("/", name="nines_user_profile_index", methods={"GET"})
      * @Template

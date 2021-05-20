@@ -18,8 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class NinesUtilExtension extends Extension
-{
+class NinesUtilExtension extends Extension {
     /**
      * Loads a specific configuration.
      *

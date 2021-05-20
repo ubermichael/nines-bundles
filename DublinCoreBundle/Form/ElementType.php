@@ -20,8 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * ElementType form.
  */
-class ElementType extends TermType
-{
+class ElementType extends TermType {
     /**
      * Add form fields to $builder.
      */

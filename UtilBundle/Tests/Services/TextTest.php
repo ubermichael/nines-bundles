@@ -13,8 +13,7 @@ namespace Nines\UtilBundle\Tests\Services;
 use Nines\UtilBundle\Services\Text;
 use Nines\UtilBundle\Tests\ServiceBaseCase;
 
-class TextTest extends ServiceBaseCase
-{
+class TextTest extends ServiceBaseCase {
     /**
      * @var Text
      */

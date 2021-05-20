@@ -26,8 +26,7 @@ use Twig\Error\SyntaxError;
 /**
  * Download and save fonts from Google Fonts and generate the CSS for them.
  */
-class FontDownload extends Command
-{
+class FontDownload extends Command {
     /**
      * @var LoggerInterface
      */
@@ -101,9 +100,7 @@ class FontDownload extends Command
                 'ext' => $format,
             ];
 
-            $filename = preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($callback) {
-                return $callback[$matches[1]];
-            }, $filenameTemplate);
+            $filename = preg_replace_callback('/\{(\w+)\}/', fn ($matches) => $callback[$matches[1]], $filenameTemplate);
             $file = $config['path'] . '/' . $filename;
 
             if (file_exists($file)) {

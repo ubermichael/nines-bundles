@@ -16,8 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ActivateUserCommand extends AbstractUserCommand
-{
+class ActivateUserCommand extends AbstractUserCommand {
     protected static $defaultName = 'nines:user:activate';
 
     protected function getArgs() : array {

@@ -17,8 +17,7 @@ use Nines\BlogBundle\Entity\PostStatus;
 /**
  * PostStatusRepository.
  */
-class PostStatusRepository extends ServiceEntityRepository
-{
+class PostStatusRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, PostStatus::class);
     }

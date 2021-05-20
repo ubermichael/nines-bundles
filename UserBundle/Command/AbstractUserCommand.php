@@ -20,8 +20,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-abstract class AbstractUserCommand extends Command
-{
+abstract class AbstractUserCommand extends Command {
     /**
      * @var ValidatorInterface
      */

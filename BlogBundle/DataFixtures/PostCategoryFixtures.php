@@ -18,8 +18,7 @@ use Nines\BlogBundle\Entity\PostCategory;
 /**
  * Load some users for unit tests.
  */
-class PostCategoryFixtures extends Fixture implements FixtureGroupInterface
-{
+class PostCategoryFixtures extends Fixture implements FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

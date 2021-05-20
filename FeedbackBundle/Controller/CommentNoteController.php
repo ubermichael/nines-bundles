@@ -28,8 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/comment_note")
  * @IsGranted("ROLE_USER")
  */
-class CommentNoteController extends AbstractController implements PaginatorAwareInterface
-{
+class CommentNoteController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

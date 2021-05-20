@@ -19,8 +19,7 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ResetPasswordCommand extends AbstractUserCommand
-{
+class ResetPasswordCommand extends AbstractUserCommand {
     /**
      * @var UserManager
      */

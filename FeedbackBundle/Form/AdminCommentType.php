@@ -18,8 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Comment form.
  */
-class AdminCommentType extends AbstractType
-{
+class AdminCommentType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('fullname');  // string
         $builder->add('email');  // string

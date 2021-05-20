@@ -20,8 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Link form.
  */
-class LinkType extends AbstractType
-{
+class LinkType extends AbstractType {
     /**
      * Add form fields to $builder.
      */

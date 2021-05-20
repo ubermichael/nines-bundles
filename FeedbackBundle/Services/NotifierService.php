@@ -17,8 +17,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Twig\Environment;
 
-class NotifierService
-{
+class NotifierService {
     /**
      * Sender email address.
      *

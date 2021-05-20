@@ -13,8 +13,7 @@ namespace Nines\MediaBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-trait LinkableTrait
-{
+trait LinkableTrait {
     /**
      * @var Collection|Link[]
      */

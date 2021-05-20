@@ -12,6 +12,5 @@ namespace Nines\UserBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class NinesUserBundle extends Bundle
-{
+class NinesUserBundle extends Bundle {
 }

@@ -15,8 +15,7 @@ use Nines\DublinCoreBundle\Entity\Element;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class ElementControllerTest extends ControllerBaseCase
-{
+class ElementControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

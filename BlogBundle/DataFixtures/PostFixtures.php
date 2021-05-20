@@ -17,8 +17,7 @@ use Doctrine\Persistence\ObjectManager;
 use Nines\BlogBundle\Entity\Post;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 
-class PostFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
-{
+class PostFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

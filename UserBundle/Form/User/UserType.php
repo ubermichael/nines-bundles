@@ -17,8 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
-{
+class UserType extends AbstractType {
     private $manager;
 
     public function __construct(UserManager $manager) {
@@ -43,9 +42,7 @@ class UserType extends AbstractType
             ->add('affiliation')
             ->add('roles', ChoiceType::class, [
                 'choices' => $this->manager->getRoles(),
-                'choice_label' => function ($value, $key, $index) {
-                    return $value;
-                },
+                'choice_label' => fn ($value, $key, $index) => $value,
                 'expanded' => true,
                 'multiple' => true,
             ])

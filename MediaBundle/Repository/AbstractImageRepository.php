@@ -19,11 +19,10 @@ use Nines\MediaBundle\Entity\AbstractImage;
 /**
  * @method null|AbstractImage find($id, $lockMode = null, $lockVersion = null)
  * @method null|AbstractImage findOneBy(array $criteria, array $orderBy = null)
- * @method AbstractImage[]    findAll()
- * @method AbstractImage[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AbstractImage[] findAll()
+ * @method AbstractImage[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-abstract class AbstractImageRepository extends ServiceEntityRepository
-{
+abstract class AbstractImageRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry, $class) {
         parent::__construct($registry, $class);
     }

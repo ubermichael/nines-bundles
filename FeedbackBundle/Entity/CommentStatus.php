@@ -20,8 +20,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * @ORM\Table(name="comment_status")
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentStatusRepository")
  */
-class CommentStatus extends AbstractTerm
-{
+class CommentStatus extends AbstractTerm {
     /**
      * List of the comments with this status.
      *

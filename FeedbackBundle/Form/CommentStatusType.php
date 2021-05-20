@@ -17,8 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * CommentStatusType form.
  */
-class CommentStatusType extends TermType
-{
+class CommentStatusType extends TermType {
     /**
      * Define options for the form.
      *

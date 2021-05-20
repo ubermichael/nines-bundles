@@ -28,8 +28,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Commenting service for Symfony.
  */
-class CitationManager implements EventSubscriber
-{
+class CitationManager implements EventSubscriber {
     /**
      * @var EntityManagerInterface
      */

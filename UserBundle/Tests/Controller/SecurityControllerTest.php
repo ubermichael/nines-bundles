@@ -16,8 +16,7 @@ use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class SecurityControllerTest extends ControllerBaseCase
-{
+class SecurityControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

@@ -19,8 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * Link form.
  */
-class LinkableType
-{
+class LinkableType {
     public static function add(FormBuilderInterface $builder, $options) : void {
         $entity = $options['data'];
         if ( ! $entity instanceof LinkableInterface) {

@@ -27,8 +27,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Twig\Environment;
 
-abstract class AbstractNinesMaker implements MakerInterface
-{
+abstract class AbstractNinesMaker implements MakerInterface {
     protected const GENERATED = ['id', 'created', 'updated'];
 
     /**
@@ -177,9 +176,7 @@ abstract class AbstractNinesMaker implements MakerInterface
         }
 
         $mappings = $classMetadata ? $classMetadata->fieldMappings : [];
-        $mappedFieldNames = array_filter(array_keys($mappings), function ($item) {
-            return ! in_array($item, self::GENERATED, true);
-        });
+        $mappedFieldNames = array_filter(array_keys($mappings), fn ($item) => ! in_array($item, self::GENERATED, true));
 
         return [
             'generated' => self::GENERATED,

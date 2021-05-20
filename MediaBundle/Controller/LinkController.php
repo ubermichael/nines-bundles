@@ -24,8 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/link")
  */
-class LinkController extends AbstractController implements PaginatorAwareInterface
-{
+class LinkController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

@@ -16,8 +16,7 @@ use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserChecker implements UserCheckerInterface
-{
+class UserChecker implements UserCheckerInterface {
     /**
      * Checks the user account before authentication.
      *

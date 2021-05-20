@@ -18,8 +18,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 /**
  * TermRepository.
  */
-abstract class TermRepository extends ServiceEntityRepository
-{
+abstract class TermRepository extends ServiceEntityRepository {
     /**
      * @return Query
      */

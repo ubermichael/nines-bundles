@@ -20,8 +20,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class NinesBlogExtension extends Extension
-{
+class NinesBlogExtension extends Extension {
     /**
      * {@inheritdoc}
      */

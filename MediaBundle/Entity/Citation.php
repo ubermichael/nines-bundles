@@ -23,8 +23,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  *     @ORM\Index(columns={"entity"})
  * })
  */
-class Citation extends AbstractEntity
-{
+class Citation extends AbstractEntity {
     /**
      * @var string
      * @ORM\Column(type="string", length=128, nullable=false)

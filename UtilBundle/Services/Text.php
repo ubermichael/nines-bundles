@@ -16,8 +16,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Various text mangling functions for twig and for other symfony stuff.
  */
-class Text
-{
+class Text {
     /**
      * Monolog logger.
      *

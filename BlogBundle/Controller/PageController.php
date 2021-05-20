@@ -29,8 +29,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  *
  * @Route("/page")
  */
-class PageController extends AbstractController implements PaginatorAwareInterface
-{
+class PageController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

@@ -24,8 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/citation")
  */
-class CitationController extends AbstractController implements PaginatorAwareInterface
-{
+class CitationController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

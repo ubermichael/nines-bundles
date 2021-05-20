@@ -17,8 +17,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 
-class MakeCrud extends AbstractNinesMaker
-{
+class MakeCrud extends AbstractNinesMaker {
     private function mapping($params) {
         return [
             '@NinesMaker/controller/controller.php.twig' => 'src/Controller/' . $params['controller_class_name'] . '.php',

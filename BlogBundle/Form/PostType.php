@@ -19,8 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * PostType form.
  */
-class PostType extends AbstractType
-{
+class PostType extends AbstractType {
     /**
      * Add form fields to $builder.
      */

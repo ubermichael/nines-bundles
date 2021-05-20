@@ -21,8 +21,7 @@ use Symfony\Component\Security\Core\Security;
 /**
  * Commenting service for Symfony.
  */
-class ContributionManager implements EventSubscriber
-{
+class ContributionManager implements EventSubscriber {
     /**
      * @var Security
      */

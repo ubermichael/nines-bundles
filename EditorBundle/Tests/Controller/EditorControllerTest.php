@@ -14,8 +14,7 @@ use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class EditorControllerTest extends ControllerBaseCase
-{
+class EditorControllerTest extends ControllerBaseCase {
     /**
      * @var string
      */

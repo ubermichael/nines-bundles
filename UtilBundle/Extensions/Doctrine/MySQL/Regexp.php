@@ -16,8 +16,7 @@ use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
-class Regexp extends FunctionNode
-{
+class Regexp extends FunctionNode {
     /**
      * @var PathExpression
      */

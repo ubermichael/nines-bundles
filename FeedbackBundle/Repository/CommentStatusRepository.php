@@ -17,8 +17,7 @@ use Nines\FeedbackBundle\Entity\CommentStatus;
 /**
  * Comment Status Repository.
  */
-class CommentStatusRepository extends ServiceEntityRepository
-{
+class CommentStatusRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, CommentStatus::class);
     }

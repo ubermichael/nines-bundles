@@ -18,8 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * PostStatusType form.
  */
-class PostStatusType extends TermType
-{
+class PostStatusType extends TermType {
     /**
      * Add form fields to $builder.
      */

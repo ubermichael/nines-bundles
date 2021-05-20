@@ -27,8 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends AbstractController
-{
+class SecurityController extends AbstractController {
     /**
      * @Route("/login", name="nines_user_security_login")
      * @Template

@@ -21,8 +21,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * @ORM\Table(name="blog_post_category")
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostCategoryRepository")
  */
-class PostCategory extends AbstractTerm
-{
+class PostCategory extends AbstractTerm {
     /**
      * Posts in the category.
      *

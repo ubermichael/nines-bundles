@@ -18,8 +18,7 @@ use Nines\FeedbackBundle\Services\NotifierService;
 use Nines\UtilBundle\Tests\ServiceBaseCase;
 use Symfony\Component\Mailer\MailerInterface;
 
-class NotifierServiceTest extends ServiceBaseCase
-{
+class NotifierServiceTest extends ServiceBaseCase {
     /**
      * @var NotifierService
      */

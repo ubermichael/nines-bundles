@@ -28,8 +28,7 @@ use Doctrine\ORM\Query\SqlWalker;
  *               string_functions:
  *                   strtodate: Nines\UtilBundle\Extensions\Doctrine\MySQL\StrToDate
  */
-class StrToDate extends FunctionNode
-{
+class StrToDate extends FunctionNode {
     private $dateString;
 
     private $dateFormat;

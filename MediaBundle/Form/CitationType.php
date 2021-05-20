@@ -19,8 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Citation form.
  */
-class CitationType extends AbstractType
-{
+class CitationType extends AbstractType {
     /**
      * Add form fields to $builder.
      */

@@ -28,8 +28,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  *
  * @Route("/post")
  */
-class PostController extends AbstractController implements PaginatorAwareInterface
-{
+class PostController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

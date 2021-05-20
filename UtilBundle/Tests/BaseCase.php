@@ -21,8 +21,7 @@ use Liip\TestFixturesBundle\Test\FixturesTrait;
 use SplFileInfo;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-abstract class BaseCase extends WebTestCase
-{
+abstract class BaseCase extends WebTestCase {
     use FixturesTrait;
 
     /**
@@ -77,7 +76,7 @@ abstract class BaseCase extends WebTestCase
         }
 
         foreach ($files as $file) {
-            if ($file instanceof \SplFileInfo) {
+            if ($file instanceof SplFileInfo) {
                 $this->cleanup[] = $file->getRealPath();
             } else {
                 if (is_string($file)) {

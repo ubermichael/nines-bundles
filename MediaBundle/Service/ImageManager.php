@@ -32,8 +32,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class ImageManager extends AbstractFileManager implements EventSubscriber
-{
+class ImageManager extends AbstractFileManager implements EventSubscriber {
     /**
      * @var Thumbnailer
      */

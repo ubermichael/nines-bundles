@@ -22,8 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
  */
-abstract class AbstractEntity
-{
+abstract class AbstractEntity {
     /**
      * The entity's ID.
      *

@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Entity;
 
-trait ContentExcerptTrait
-{
+trait ContentExcerptTrait {
     /**
      * @var string
      * @ORM\Column(type="text")

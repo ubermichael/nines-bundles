@@ -20,8 +20,7 @@ use Nines\UserBundle\DataFixtures\UserFixtures;
 /**
  * Load some users for unit tests.
  */
-class CommentNoteFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
-{
+class CommentNoteFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

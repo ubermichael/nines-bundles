@@ -20,8 +20,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class MakeRepository extends AbstractNinesMaker
-{
+class MakeRepository extends AbstractNinesMaker {
     /**
      * {@inheritdoc}
      */

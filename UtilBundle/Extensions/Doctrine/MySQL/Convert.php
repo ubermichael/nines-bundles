@@ -27,8 +27,7 @@ use Doctrine\ORM\Query\SqlWalker;
  *               string_functions:
  *                   cast: Nines\UtilBundle\Extensions\Doctrine\MySQL\Convert
  */
-class Convert extends FunctionNode
-{
+class Convert extends FunctionNode {
     /**
      * @var string[]
      */

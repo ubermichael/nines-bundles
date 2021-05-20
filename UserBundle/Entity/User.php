@@ -20,8 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Table(name="nines_user")
  * @ORM\HasLifecycleCallbacks
  */
-class User implements UserInterface
-{
+class User implements UserInterface {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

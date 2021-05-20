@@ -23,8 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentRepository")
  */
-class Comment extends AbstractEntity
-{
+class Comment extends AbstractEntity {
     /**
      * Full name of the commenter.
      *

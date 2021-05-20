@@ -12,8 +12,7 @@ namespace Nines\MediaBundle\Entity;
 
 use DateTimeImmutable;
 
-interface ContributorInterface
-{
+interface ContributorInterface {
     public function getContributions() : ?array;
 
     public function setContributions(array $contributions);

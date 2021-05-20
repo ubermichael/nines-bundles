@@ -15,8 +15,7 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nines\DublinCoreBundle\Entity\Element;
 
-class TermFixtures extends Fixture implements FixtureGroupInterface
-{
+class TermFixtures extends Fixture implements FixtureGroupInterface {
     public const URI_PFX = 'http://purl.org/dc/terms/';
 
     public const NAME_PFX = 'dcterms_';

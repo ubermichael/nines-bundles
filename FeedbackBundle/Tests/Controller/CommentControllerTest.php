@@ -16,8 +16,7 @@ use Nines\FeedbackBundle\Entity\Comment;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class CommentControllerTest extends ControllerBaseCase
-{
+class CommentControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

@@ -10,6 +10,5 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Tests;
 
-abstract class ServiceBaseCase extends BaseCase
-{
+abstract class ServiceBaseCase extends BaseCase {
 }

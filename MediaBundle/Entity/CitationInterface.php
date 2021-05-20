@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Entity;
 
-interface CitationInterface
-{
+interface CitationInterface {
     public function getCitations();
 
     public function setCitations($Citations);

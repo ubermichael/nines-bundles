@@ -28,8 +28,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Link management service for Symfony.
  */
-class LinkManager implements EventSubscriber
-{
+class LinkManager implements EventSubscriber {
     /**
      * @var EntityManagerInterface
      */

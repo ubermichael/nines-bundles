@@ -20,8 +20,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @see https://symfony.com/doc/3.4/bundles/extension.html
  */
-class NinesFeedbackExtension extends Extension
-{
+class NinesFeedbackExtension extends Extension {
     /**
      * {@inheritdoc}
      */

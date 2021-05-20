@@ -12,8 +12,7 @@ namespace Nines\UtilBundle\Twig;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class TextExtensionTest extends KernelTestCase
-{
+class TextExtensionTest extends KernelTestCase {
     /**
      * @var TextExtension
      */

@@ -15,6 +15,5 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * Define the bundle.
  */
-class NinesUtilBundle extends Bundle
-{
+class NinesUtilBundle extends Bundle {
 }

@@ -18,8 +18,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  *
  * @ORM\MappedSuperclass
  */
-abstract class AbstractField extends AbstractEntity
-{
+abstract class AbstractField extends AbstractEntity {
     /**
      * @var string
      * @ORM\Column(type="text")

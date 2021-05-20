@@ -16,8 +16,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 use Nines\UtilBundle\Services\Text;
 use Psr\Log\LoggerInterface;
 
-class TermNameListener
-{
+class TermNameListener {
     /**
      * @var Text
      */

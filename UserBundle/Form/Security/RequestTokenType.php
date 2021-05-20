@@ -15,8 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RequestTokenType extends AbstractType
-{
+class RequestTokenType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder
             ->add('email', EmailType::class, [

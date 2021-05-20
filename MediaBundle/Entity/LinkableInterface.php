@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Entity;
 
-interface LinkableInterface
-{
+interface LinkableInterface {
     public function getLinks();
 
     public function setLinks($links);

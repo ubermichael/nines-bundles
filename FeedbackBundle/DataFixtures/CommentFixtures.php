@@ -22,8 +22,7 @@ use Nines\FeedbackBundle\Entity\Comment;
 /**
  * Load some users for unit tests.
  */
-class CommentFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
-{
+class CommentFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

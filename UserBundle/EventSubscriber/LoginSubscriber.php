@@ -16,8 +16,7 @@ use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-class LoginSubscriber implements EventSubscriberInterface
-{
+class LoginSubscriber implements EventSubscriberInterface {
     /**
      * @var EntityManagerInterface
      */

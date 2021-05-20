@@ -17,8 +17,7 @@ use Doctrine\Persistence\ObjectManager;
 use Nines\BlogBundle\Entity\Page;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 
-class PageFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
-{
+class PageFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

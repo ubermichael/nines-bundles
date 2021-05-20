@@ -18,8 +18,7 @@ use Nines\FeedbackBundle\Entity\CommentNote;
 /**
  * Comment Note Repository.
  */
-class CommentNoteRepository extends ServiceEntityRepository
-{
+class CommentNoteRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, CommentNote::class);
     }

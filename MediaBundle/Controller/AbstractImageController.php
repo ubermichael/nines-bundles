@@ -19,8 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class AbstractImageController extends AbstractController
-{
+abstract class AbstractImageController extends AbstractController {
     protected function newImageAction(Request $request, ImageContainerInterface $container, $route) {
         $image = new Image();
         $form = $this->createForm(ImageType::class, $image);

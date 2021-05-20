@@ -16,8 +16,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Apply title casing to a string.
  */
-class TitleCaser
-{
+class TitleCaser {
     /**
      * Monolog logger.
      *
@@ -87,9 +86,7 @@ class TitleCaser
     public function shortWords($string) {
         $match = implode('|', $this->lower);
 
-        return preg_replace_callback("/\\s(?:{$match})\\b/ui", function (array $m) {
-            return mb_convert_case($m[0], MB_CASE_LOWER, 'utf-8');
-        }, $string);
+        return preg_replace_callback("/\\s(?:{$match})\\b/ui", fn (array $m) => mb_convert_case($m[0], MB_CASE_LOWER, 'utf-8'), $string);
     }
 
     /**
@@ -106,9 +103,7 @@ class TitleCaser
         $s = preg_replace('/\s*([[:punct:]])/u', '$1', $string);
 
         // punctuation stopword
-        return preg_replace_callback("/([[:punct:]])(\\s+)({$match})/iu", function (array $m) {
-            return $m[1] . ' ' . mb_convert_case($m[3], MB_CASE_TITLE, 'utf-8');
-        }, $s);
+        return preg_replace_callback("/([[:punct:]])(\\s+)({$match})/iu", fn (array $m) => $m[1] . ' ' . mb_convert_case($m[3], MB_CASE_TITLE, 'utf-8'), $s);
     }
 
     /**
@@ -121,9 +116,7 @@ class TitleCaser
     public function states($string) {
         $match = implode('|', $this->states);
 
-        return preg_replace_callback("/\\b({$match})\\b/iu", function (array $m) {
-            return mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8');
-        }, $string);
+        return preg_replace_callback("/\\b({$match})\\b/iu", fn (array $m) => mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8'), $string);
     }
 
     /**
@@ -134,9 +127,7 @@ class TitleCaser
      * @return string
      */
     public function names($string) {
-        return preg_replace_callback("/\\b(Mc|Mac|O'|D')([a-z])/iu", function (array $m) {
-            return $m[1] . mb_convert_case($m[2], MB_CASE_UPPER, 'utf-8');
-        }, $string);
+        return preg_replace_callback("/\\b(Mc|Mac|O'|D')([a-z])/iu", fn (array $m) => $m[1] . mb_convert_case($m[2], MB_CASE_UPPER, 'utf-8'), $string);
     }
 
     /**
@@ -147,9 +138,7 @@ class TitleCaser
      * @return string
      */
     public function roman($string) {
-        return preg_replace_callback('/\b([ivxlcdm]+)\b/iu', function (array $m) {
-            return mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8');
-        }, $string);
+        return preg_replace_callback('/\b([ivxlcdm]+)\b/iu', fn (array $m) => mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8'), $string);
     }
 
     /**
@@ -162,9 +151,7 @@ class TitleCaser
     public function ordinals($string) {
         $match = implode('|', $this->ordinals);
 
-        return preg_replace_callback("/\\b([0-9]+)({$match})\\b/iu", function (array $m) {
-            return $m[1] . mb_convert_case($m[2], MB_CASE_LOWER, 'utf-8');
-        }, $string);
+        return preg_replace_callback("/\\b([0-9]+)({$match})\\b/iu", fn (array $m) => $m[1] . mb_convert_case($m[2], MB_CASE_LOWER, 'utf-8'), $string);
     }
 
     /**
@@ -177,9 +164,7 @@ class TitleCaser
     public function exceptions($string) {
         $match = implode('|', array_keys($this->exceptions));
 
-        return preg_replace_callback("/\\b({$match})\\b/iu", function (array $m) {
-            return $this->exceptions[mb_convert_case($m[1], MB_CASE_LOWER, 'utf-8')];
-        }, $string);
+        return preg_replace_callback("/\\b({$match})\\b/iu", fn (array $m) => $this->exceptions[mb_convert_case($m[1], MB_CASE_LOWER, 'utf-8')], $string);
     }
 
     public function trim($string) {

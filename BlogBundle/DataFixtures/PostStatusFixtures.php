@@ -18,8 +18,7 @@ use Nines\BlogBundle\Entity\PostStatus;
 /**
  * Load some users for unit tests.
  */
-class PostStatusFixtures extends Fixture implements FixtureGroupInterface
-{
+class PostStatusFixtures extends Fixture implements FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

@@ -16,8 +16,7 @@ use Doctrine\Persistence\ObjectManager;
 use Nines\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserFixtures extends Fixture implements FixtureGroupInterface
-{
+class UserFixtures extends Fixture implements FixtureGroupInterface {
     public const ADMIN = [
         'username' => 'admin@example.com',
         'password' => 'supersecret',

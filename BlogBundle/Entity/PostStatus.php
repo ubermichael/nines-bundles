@@ -21,8 +21,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  * @ORM\Table(name="blog_post_status")
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostStatusRepository")
  */
-class PostStatus extends AbstractTerm
-{
+class PostStatus extends AbstractTerm {
     /**
      * True if the status is meant to be public.
      *

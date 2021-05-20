@@ -18,8 +18,7 @@ use Nines\BlogBundle\Entity\PostCategory;
 /**
  * PostCategoryRepository.
  */
-class PostCategoryRepository extends ServiceEntityRepository
-{
+class PostCategoryRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, PostCategory::class);
     }

@@ -28,8 +28,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * Commenting service for Symfony.
  */
-class CommentService
-{
+class CommentService {
     /**
      * @var EntityManager
      */

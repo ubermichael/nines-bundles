@@ -29,8 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/post_category")
  */
-class PostCategoryController extends AbstractController implements PaginatorAwareInterface
-{
+class PostCategoryController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

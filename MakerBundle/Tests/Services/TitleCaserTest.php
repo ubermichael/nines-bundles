@@ -13,8 +13,7 @@ namespace Nines\UtilBundle\Tests\Services;
 use Nines\UtilBundle\Services\TitleCaser;
 use Nines\UtilBundle\Tests\ServiceBaseCase;
 
-class TitleCaserTest extends ServiceBaseCase
-{
+class TitleCaserTest extends ServiceBaseCase {
     /**
      * @var TitleCaser
      */

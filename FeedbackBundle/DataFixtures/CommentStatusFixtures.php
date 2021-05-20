@@ -18,8 +18,7 @@ use Nines\FeedbackBundle\Entity\CommentStatus;
 /**
  * Load some users for unit tests.
  */
-class CommentStatusFixtures extends Fixture implements FixtureGroupInterface
-{
+class CommentStatusFixtures extends Fixture implements FixtureGroupInterface {
     /**
      * {@inheritdoc}
      */

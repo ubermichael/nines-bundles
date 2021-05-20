@@ -15,8 +15,7 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nines\DublinCoreBundle\Entity\Element;
 
-class ElementFixtures extends Fixture implements FixtureGroupInterface
-{
+class ElementFixtures extends Fixture implements FixtureGroupInterface {
     private function getData() {
         return [
             [

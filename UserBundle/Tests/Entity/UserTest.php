@@ -13,8 +13,7 @@ namespace Nines\UserBundle\Tests\Entity;
 use Nines\UserBundle\Entity\User;
 use PHPUnit\Framework\TestCase;
 
-class UserTest extends TestCase
-{
+class UserTest extends TestCase {
     public function testDefaultRoles() : void {
         $user = new User();
         $this->assertSame(['ROLE_USER'], $user->getRoles());

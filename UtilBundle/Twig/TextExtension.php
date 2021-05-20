@@ -16,8 +16,7 @@ use ReflectionException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
-class TextExtension extends AbstractExtension
-{
+class TextExtension extends AbstractExtension {
     /**
      * Define the filters for the extension.
      *

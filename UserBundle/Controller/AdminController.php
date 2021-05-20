@@ -27,8 +27,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
  * @IsGranted("ROLE_USER_ADMIN")
  */
-class AdminController extends AbstractController
-{
+class AdminController extends AbstractController {
     protected function generatePassword() : string {
         $bytes = random_bytes(24);
 

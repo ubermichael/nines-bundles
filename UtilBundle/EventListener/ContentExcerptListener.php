@@ -16,8 +16,7 @@ use Nines\UtilBundle\Entity\ContentEntityInterface;
 use Nines\UtilBundle\Services\Text;
 use Psr\Log\LoggerInterface;
 
-class ContentExcerptListener
-{
+class ContentExcerptListener {
     /**
      * @var Text
      */

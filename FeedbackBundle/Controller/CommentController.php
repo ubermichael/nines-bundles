@@ -35,8 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/comment")
  */
-class CommentController extends AbstractController implements PaginatorAwareInterface
-{
+class CommentController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

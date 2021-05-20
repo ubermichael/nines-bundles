@@ -15,8 +15,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
-abstract class ControllerBaseCase extends BaseCase
-{
+abstract class ControllerBaseCase extends BaseCase {
     /**
      * @var null|KernelBrowser
      */

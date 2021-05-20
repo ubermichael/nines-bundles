@@ -22,8 +22,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentNoteRepository")
  */
-class CommentNote extends AbstractEntity
-{
+class CommentNote extends AbstractEntity {
     /**
      * User who created the note.
      *

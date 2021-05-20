@@ -17,8 +17,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 
-class MakeFixture extends AbstractNinesMaker
-{
+class MakeFixture extends AbstractNinesMaker {
     public static function getCommandName() : string {
         return 'nines:make:fixture';
     }

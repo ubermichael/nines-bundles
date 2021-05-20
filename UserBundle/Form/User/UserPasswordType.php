@@ -16,8 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserPasswordType extends AbstractType
-{
+class UserPasswordType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('new_password', RepeatedType::class, [
             'invalid_message' => 'The password fields must match.',

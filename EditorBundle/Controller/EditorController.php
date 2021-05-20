@@ -22,8 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class EditorController extends AbstractController
-{
+class EditorController extends AbstractController {
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
     private function getUploadDir() {

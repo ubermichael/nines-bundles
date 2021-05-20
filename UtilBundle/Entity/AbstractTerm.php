@@ -29,8 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     }
  * )
  */
-abstract class AbstractTerm extends AbstractEntity
-{
+abstract class AbstractTerm extends AbstractEntity {
     /**
      * Name of the term.
      *

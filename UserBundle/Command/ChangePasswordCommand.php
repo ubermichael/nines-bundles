@@ -20,8 +20,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ChangePasswordCommand extends AbstractUserCommand
-{
+class ChangePasswordCommand extends AbstractUserCommand {
     /**
      * @var UserManager
      */

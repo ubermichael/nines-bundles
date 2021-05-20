@@ -25,8 +25,7 @@ use Nines\UtilBundle\Entity\ContentExcerptTrait;
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PageRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Page extends AbstractEntity implements ContentEntityInterface
-{
+class Page extends AbstractEntity implements ContentEntityInterface {
     use ContentExcerptTrait;
 
     /**

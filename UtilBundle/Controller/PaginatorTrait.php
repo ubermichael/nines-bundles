@@ -16,8 +16,7 @@ use Knp\Component\Pager\PaginatorInterface;
 /**
  * Convienence trait for the use of paginators.
  */
-trait PaginatorTrait
-{
+trait PaginatorTrait {
     /**
      * @var Paginator
      */

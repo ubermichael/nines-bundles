@@ -15,8 +15,7 @@ use Nines\BlogBundle\Entity\PostCategory;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 
-class PostCategoryControllerTest extends ControllerBaseCase
-{
+class PostCategoryControllerTest extends ControllerBaseCase {
     protected function fixtures() : array {
         return [
             UserFixtures::class,

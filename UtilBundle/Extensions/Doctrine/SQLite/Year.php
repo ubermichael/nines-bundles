@@ -15,8 +15,7 @@ use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
-class Year extends FunctionNode
-{
+class Year extends FunctionNode {
     private $year;
 
     public function __construct($name = 'year') {

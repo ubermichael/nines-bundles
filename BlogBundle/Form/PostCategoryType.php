@@ -17,8 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * PostCategoryType form.
  */
-class PostCategoryType extends TermType
-{
+class PostCategoryType extends TermType {
     /**
      * Define options for the form.
      */

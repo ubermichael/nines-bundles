@@ -12,8 +12,7 @@ namespace Nines\UserBundle\Exception;
 
 use Symfony\Component\Security\Core\Exception\AccountStatusException;
 
-class AccountInactiveException extends AccountStatusException
-{
+class AccountInactiveException extends AccountStatusException {
     public function getMessageKey() {
         return "Account {$this->getUser()} is not active.";
     }

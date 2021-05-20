@@ -27,8 +27,7 @@ use Doctrine\ORM\Query\SqlWalker;
  *               string_functions:
  *                   cast: Nines\UtilBundle\Extensions\Doctrine\MySQL\Cast
  */
-class Cast extends FunctionNode
-{
+class Cast extends FunctionNode {
     /**
      * @var string[]
      */

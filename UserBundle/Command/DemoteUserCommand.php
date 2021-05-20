@@ -18,8 +18,7 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class DemoteUserCommand extends AbstractUserCommand
-{
+class DemoteUserCommand extends AbstractUserCommand {
     /**
      * @var UserManager
      */

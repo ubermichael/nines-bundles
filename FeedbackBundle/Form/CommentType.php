@@ -20,8 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * CommentType form.
  */
-class CommentType extends AbstractType
-{
+class CommentType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('fullname', null, [
             'label' => 'Your Name',

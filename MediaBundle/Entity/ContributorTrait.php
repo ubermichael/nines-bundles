@@ -13,8 +13,7 @@ namespace Nines\MediaBundle\Entity;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
-trait ContributorTrait
-{
+trait ContributorTrait {
     /**
      * @var array
      * @ORM\Column(type="array", nullable=false)

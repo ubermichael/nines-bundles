@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Entity;
 
-interface ContentEntityInterface
-{
+interface ContentEntityInterface {
     /**
      * Set the excerpt for an entity.
      *

@@ -18,8 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * CommentNoteType form.
  */
-class CommentNoteType extends AbstractType
-{
+class CommentNoteType extends AbstractType {
     /**
      * Add form fields to $builder.
      */

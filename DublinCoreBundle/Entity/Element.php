@@ -25,8 +25,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  *     }),
  *     @ORM\Entity(repositoryClass="Nines\DublinCoreBundle\Repository\ElementRepository")
  */
-class Element extends AbstractTerm
-{
+class Element extends AbstractTerm {
     /**
      * @var string
      * @ORM\Column(type="string", length=190, nullable=false)

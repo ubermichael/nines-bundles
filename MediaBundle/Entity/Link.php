@@ -24,8 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     @ORM\Index(columns={"entity"})
  * })
  */
-class Link extends AbstractEntity
-{
+class Link extends AbstractEntity {
     /**
      * @var string
      * @ORM\Column(type="string", length=128, nullable=false)

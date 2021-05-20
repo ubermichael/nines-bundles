@@ -17,8 +17,7 @@ use Nines\UserBundle\Services\UserManager;
 use Nines\UtilBundle\Tests\ServiceBaseCase;
 use Psr\Log\LoggerInterface;
 
-class UserManagerTest extends ServiceBaseCase
-{
+class UserManagerTest extends ServiceBaseCase {
     /**
      * @var UserManager
      */

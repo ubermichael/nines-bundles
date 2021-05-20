@@ -26,8 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * Convient user management functions.
  */
-class UserManager
-{
+class UserManager {
     public const PASSWORD_BYTES = 24;
 
     public const TOKEN_BYTES = 24;

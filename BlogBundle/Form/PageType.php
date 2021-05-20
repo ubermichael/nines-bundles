@@ -19,8 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * PageType form.
  */
-class PageType extends AbstractType
-{
+class PageType extends AbstractType {
     /**
      * Add form fields to $builder.
      */
