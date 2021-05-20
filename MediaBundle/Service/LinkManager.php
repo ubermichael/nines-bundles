@@ -148,14 +148,11 @@ class LinkManager implements EventSubscriber
         ]);
     }
 
-    public function setLinks(LinkableInterface $entity, $links) : void {
-        foreach ($entity->getLinks() as $link) {
-            if ($this->em->contains($link)) {
-                $this->em->remove($link);
-            }
+    public function setLinks(LinkableInterface $entity, Collection $links) : void {
+        foreach ($this->findLinks($entity) as $link) {
+            $this->em->remove($link);
         }
         $entity->setLinks($links);
-
         foreach ($links as $link) {
             $this->em->persist($link);
         }
