@@ -37,7 +37,6 @@ trait LinkableTrait
         foreach ($links as $link) {
             $this->addLink($link);
         }
-        $this->links = $links;
 
         return $this;
     }
