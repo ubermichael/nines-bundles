@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %}
+    <h1>Internal Error</h1>
+{% endblock %}
+
+{% block body %}
+
+    <p>The page you have requested has caused an internal error. Please
+        <a href="mailto:dhil@sfu.ca">contact the DHIL</a> and include
+        the details below.
+    </p>
+
+    {% include '@NinesUtil/error/details.html.twig' %}
+
+{% endblock %}

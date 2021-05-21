@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %}
+    <h1>Page Not Found</h1>
+{% endblock %}
+
+{% block body %}
+
+    <p>The page you have requested could not be found. If you believe this to
+        be an error on our side, please <a href="mailto:dhil@sfu.ca">contact the
+            DHIL</a> and include the details below.
+    </p>
+
+    {% include '@NinesUtil/error/details.html.twig' %}
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %}
+    <h1>Unauthorized Access</h1>
+{% endblock %}
+
+{% block body %}
+
+    <p>You do not have permission to access this URL. You may need to
+        <a href="{{ path('nines_user_security_login') }}">login</a>. If you are
+        already logged in and seeing this error, try logging out and back in.
+        If the problem persists and you believe you should have access, please
+        <a href="mailto:dhil@sfu.ca">contact the DHIL</a> and include the
+        details below:
+    </p>
+
+    {% include '@NinesUtil/error/details.html.twig' %}
+
+{% endblock %}
