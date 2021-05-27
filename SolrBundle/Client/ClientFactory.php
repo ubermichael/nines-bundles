@@ -49,7 +49,7 @@ class ClientFactory {
             return;
         }
 
-        $url = $parameters->get('nines.solr.url');
+        $url = $parameters->get('nines_solr.url');
         if( ! $url) {
             throw new NotConfiguredException("No solr URL configured.");
         }
