@@ -35,4 +35,4 @@ services:
 
   Nines\SolrBundle\Services\SolrManager:
     arguments:
-      $enabled: '%nines.solr.enabled%'
+      $enabled: '%nines_solr.enabled%'

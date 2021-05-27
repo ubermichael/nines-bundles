@@ -24,7 +24,7 @@ class ClientFactory {
     /**
      * @var bool
      */
-    private $disabled;
+    private $enabled;
 
     /**
      * @var array
@@ -44,7 +44,7 @@ class ClientFactory {
     private static $client = null;
 
     public function __construct(ParameterBagInterface $parameters) {
-        $this->enabled = $parameters->get('nines.solr.enabled');
+        $this->enabled = $parameters->get('nines_solr.enabled');
         if ( ! $this->enabled) {
             return;
         }

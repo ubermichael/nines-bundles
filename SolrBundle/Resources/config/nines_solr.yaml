@@ -1,3 +1,5 @@
 nines_solr:
-    enabled: true
-    url: http://example.com:8983/solr
+    # enabled: '%env(bool:SOLR_ENABLED)%'
+    # url: '%env(resolve:SOLR_URL)%'
+    enabled: false
+    url: http://example.com:8983/solr/core

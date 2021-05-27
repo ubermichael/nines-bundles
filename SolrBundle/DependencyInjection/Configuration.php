@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface {
         $builder = new TreeBuilder('nines_solr');
         $builder->getRootNode()
             ->children()
-            ->scalarNode('enabled')->defaultTrue()->end()
+            ->booleanNode('enabled')->defaultFalse()->end()
             ->scalarNode('url')->defaultNull()->end()
             ->end()
         ;
