@@ -58,7 +58,7 @@ class {{ repository_class_name }} extends ServiceEntityRepository
     /**
      * @param string $q
      *
-     * @return Query
+     * @return Query|Collection|{{ entity_class_name }}[]
      */
     public function search{{ name }}Query($q) {
         $qb = $this->createQueryBuilder('{{ entity_var_singular }}');

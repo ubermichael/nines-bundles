@@ -34,6 +34,8 @@ class ErrorController extends AbstractController implements PaginatorAwareInterf
             'ip' => implode(';', $request->getClientIps()),
             'class' => $exception->getClass(),
             'message' => $exception->getMessage(),
+            'backtrace' => $exception->getTrace(),
+            'trim' => strlen($this->getParameter('kernel.project_dir'))+1,
         ];
 
         $content = '';
@@ -57,7 +59,7 @@ class ErrorController extends AbstractController implements PaginatorAwareInterf
                 if ($twig->getLoader()->exists("@NinesUtil/error/error{$status}.html.twig")) {
                     $template = "@NinesUtil/error/error{$status}.html.twig";
                 }
-                $content = $this->render($template, $data);
+                $content = $twig->render($template, $data);
         }
 
         return new Response($content, $status, ['Content-Type' => $mime]);

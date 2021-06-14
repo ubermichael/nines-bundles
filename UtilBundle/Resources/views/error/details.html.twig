@@ -15,9 +15,22 @@
     <dd id='browser-info'></dd>
 </dl>
 
-<p>
+<p class='clearfix'>
     <button class="btn btn-default pull-right" id='copy-btn'>Copy Details</button>
 </p>
+
+{% if is_granted('ROLE_ADMIN') %}
+    <div>
+        <h3>Details</h3>
+        <ol>
+            {% for trace in backtrace %}
+                <li>
+                    {{ trace['file']|slice(trim) }}:{{ trace['line'] }} {% if trace['function'] %} in {{ trace['function'] }}(){% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endif %}
 
 <script type='application/javascript'>
     function copyDetails(e) {
