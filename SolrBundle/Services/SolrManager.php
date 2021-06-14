@@ -240,7 +240,12 @@ class SolrManager {
         $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
     }
 
+    public function log($level, $message, $context = []) {
+        $this->logger->log($level, $message, $context);
+    }
+
     public function enabled() : bool {
         return $this->enabled;
     }
+
 }
