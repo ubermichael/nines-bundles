@@ -25,7 +25,7 @@ interface ImageContainerInterface {
      */
     public function removeImage(Image $image);
 
-    public function hasImage(Image $image) : bool;
+    public function containsImage(Image $image) : bool;
 
     /**
      * @param Collection|Image[] $images

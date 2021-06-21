@@ -30,6 +30,7 @@ trait ImageContainerTrait {
         if ( ! $this->images->contains($image)) {
             $this->images[] = $image;
         }
+        return $this;
     }
 
     /**
@@ -39,9 +40,10 @@ trait ImageContainerTrait {
         if ($this->images->contains($image)) {
             $this->images->removeElement($image);
         }
+        return $this;
     }
 
-    public function hasImage(Image $image) : bool {
+    public function containsImage(Image $image) : bool {
         return $this->images->contains($image);
     }
 
@@ -56,10 +58,11 @@ trait ImageContainerTrait {
         } else {
             $this->images = $images;
         }
+        return $this;
     }
 
     /**
-     * @return Collection|Image[]
+     * @return Image[]
      */
     public function getImages() {
         return $this->images->toArray();
