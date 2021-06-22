@@ -10,17 +10,15 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Service;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Exception;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use ReflectionClass;
-use ReflectionException;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
@@ -28,9 +26,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Description of FileUploader.
- *
- * @author Michael Joyce <ubermichael@gmail.com>
+ * Image Manager service that handles file uploads, thumbnailing, and database
+ * stuff.
  */
 class ImageManager extends AbstractFileManager implements EventSubscriber {
     /**
@@ -53,6 +50,11 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         $this->routing = $routing;
     }
 
+    /**
+     * Store the image file, extracta  little metadata, and generate a thumbnail.
+     *
+     * @throws Exception
+     */
     protected function uploadFile(Image $image) : void {
         $file = $image->getImageFile();
         if ( ! $file instanceof UploadedFile) {
@@ -76,12 +78,22 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     }
 
     /**
-     * @required
+     * {@inheritdoc}
      */
-    public function setThumbnailer(Thumbnailer $thumbnailer) : void {
-        $this->thumbnailer = $thumbnailer;
+    public function getSubscribedEvents() : array {
+        return [
+            Events::prePersist,
+            Events::preUpdate,
+            Events::postLoad,
+            Events::postRemove,
+        ];
     }
 
+    /**
+     * Event subscriber action, called before saving an image to the database.
+     *
+     * @throws Exception
+     */
     public function prePersist(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
@@ -89,29 +101,41 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         }
     }
 
+    /**
+     * Event subscriber action, called before updating an image in the database.
+     *
+     * @throws Exception
+     */
     public function preUpdate(PreUpdateEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
             $this->uploadFile($entity);
         }
-        if ($entity instanceof ImageContainerInterface) {
-        }
     }
 
+    /**
+     * Event subscriber action. After loading an image entity from the database,
+     * add the file object to the entity.
+     */
     public function postLoad(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
             $filePath = $this->uploadDir . '/' . $entity->getImagePath();
             if (file_exists($filePath)) {
                 $entity->setImageFile(new File($filePath));
+            } else {
+                $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getImagePath());
             }
             $thumbPath = $this->uploadDir . '/' . $entity->getThumbPath();
             if (file_exists($thumbPath)) {
                 $entity->setThumbFile(new File($thumbPath));
+            } else {
+                $this->logger->error('Cannot find thumbnail file ' . $this->uploadDir . '/' . $entity->getImagePath());
             }
         }
         if ($entity instanceof ImageContainerInterface) {
             $repo = $this->em->getRepository(Image::class);
+            /** @var Image[] $images */
             $images = $repo->findBy([
                 'entity' => get_class($entity) . ':' . $entity->getId(),
             ]);
@@ -119,6 +143,10 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         }
     }
 
+    /**
+     * Event subscriber action. After removing an image entity from the database
+     * remove the image and thumbnail files.'.
+     */
     public function postRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
@@ -126,6 +154,7 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
 
             try {
                 $fs->remove($entity->getImageFile());
+                $fs->remove($entity->getThumbFile());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
             }
@@ -138,24 +167,13 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         }
     }
 
-    public function getSubscribedEvents() {
-        return [
-            Events::prePersist,
-            Events::preUpdate,
-            Events::postLoad,
-            Events::postRemove,
-        ];
-    }
-
     /**
      * Find the entity corresponding to a comment.
-     *
-     * @return mixed
      */
-    public function findEntity(Image $image) {
+    public function findEntity(Image $image) : ?object {
         list($class, $id) = explode(':', $image->getEntity());
         if ($this->em->getMetadataFactory()->isTransient($class)) {
-            return;
+            return null;
         }
 
         return $this->em->getRepository($class)->find($id);
@@ -170,13 +188,7 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
             return null;
         }
 
-        try {
-            $reflection = new ReflectionClass($entity);
-        } catch (ReflectionException $e) {
-            $this->logger->error('Cannot find entity for image ' . $image->getEntity());
-
-            return null;
-        }
+        $reflection = new ReflectionClass($entity);
 
         return $reflection->getShortName();
     }
@@ -186,43 +198,25 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     }
 
     /**
-     * Find the links for an entity.
-     *
-     * @param mixed $entity
-     *
-     * @return Collection|Link[]
+     * Find the entity that the image belongs to and generate a link to it.
      */
-    public function findLinks(ImageContainerInterface $entity) {
-        $class = ClassUtils::getClass($entity);
-
-        return $this->linkRepository->findBy([
-            'entity' => $class . ':' . $entity->getId(),
-        ]);
-    }
-
-    public function setLinks(ImageContainerInterface $entity, $images) : void {
-        foreach ($entity->getImages() as $image) {
-            if ($this->em->contains($image)) {
-                $this->em->remove($image);
-            }
-        }
-        $entity->setLinks($images);
-
-        foreach ($images as $image) {
-            $this->em->persist($image);
-        }
-    }
-
-    public function linkToEntity(Image $image) {
+    public function linkToEntity(Image $image) : ?string {
         list($class, $id) = explode(':', $image->getEntity());
 
         if ( ! isset($this->routing[$class])) {
             $this->logger->error('No routing information for ' . $class);
 
-            return '';
+            return null;
         }
 
         return $this->router->generate($this->routing[$class], ['id' => $id]);
+    }
+
+    /**
+     * @required
+     */
+    public function setThumbnailer(Thumbnailer $thumbnailer) : void {
+        $this->thumbnailer = $thumbnailer;
     }
 
     /**

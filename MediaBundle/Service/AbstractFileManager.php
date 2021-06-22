@@ -20,6 +20,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 abstract class AbstractFileManager {
+    /**
+     * Regular expression that matches all forbidden characters. The only
+     * allowed characters in a file name are alphanumerics, underscore, dot,
+     * space, and dash. All other characters are removed form file names.
+     */
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
     /**
@@ -46,7 +51,13 @@ abstract class AbstractFileManager {
         $this->root = $root;
     }
 
-    public static function getMaxUploadSize($asBytes = true) {
+    /**
+     * Get the maximum file upload size from PHP's configuration. This may
+     * be inaccurate, depending on the webserver configuration.
+     *
+     * @return float|int|string
+     */
+    public static function getMaxUploadSize(bool $asBytes = true) {
         static $maxBytes = -1;
 
         if ($maxBytes < 0) {
@@ -63,14 +74,14 @@ abstract class AbstractFileManager {
         if ($asBytes) {
             return $maxBytes;
         }
-        $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
-        $exp = floor(log($maxBytes, 1024));
-        $est = round($maxBytes / 1024 ** $exp, 1);
-
-        return $est . $units[$exp];
+        return self::bytesToSize($maxBytes);
     }
 
-    public static function bytesToSize($bytes) {
+    /**
+     * Convert a raw byte count into a readable number.
+     * @param int|float $bytes
+     */
+    public static function bytesToSize($bytes) : string {
         $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
         $exp = floor(log($bytes, 1024));
         $est = round($bytes / 1024 ** $exp, 1);
@@ -78,9 +89,12 @@ abstract class AbstractFileManager {
         return $est . $units[$exp];
     }
 
-    public static function parseSize($size) {
+    /**
+     * Parse a string (eg. 9.2kb) into a number of bytes (9420)
+     */
+    public static function parseSize(string $size) : float {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-        $bytes = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+        $bytes = (float)preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
             return round($bytes * 1024 ** mb_stripos('bkmgtpezy', $unit[0]));
@@ -97,10 +111,7 @@ abstract class AbstractFileManager {
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getUploadDir() {
+    public function getUploadDir() : string {
         return $this->uploadDir;
     }
 
@@ -115,7 +126,6 @@ abstract class AbstractFileManager {
             mkdir($this->uploadDir, 0777, true);
         }
         $file->move($this->uploadDir, $filename);
-
         return $filename;
     }
 
