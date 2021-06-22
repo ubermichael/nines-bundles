@@ -43,7 +43,7 @@ services:
             $routing: '%nines_util.routing%'
             $root: '%kernel.project_dir%'
         calls:
-            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/images' ] ]
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/image' ] ]
         tags:
             - { name: 'doctrine.event_subscriber' }
 

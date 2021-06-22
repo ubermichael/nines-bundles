@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class AbstractImageController extends AbstractController {
+trait ImageControllerTrait {
     protected function newImageAction(Request $request, ImageContainerInterface $container, $route) {
         $image = new Image();
         $form = $this->createForm(ImageType::class, $image);
@@ -44,7 +44,7 @@ abstract class AbstractImageController extends AbstractController {
     }
 
     protected function editImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
-        if ( ! $container->hasImage($image)) {
+        if ( ! $container->containsImage($image)) {
             throw new NotFoundHttpException('That image is not associated.');
         }
 
@@ -88,7 +88,7 @@ abstract class AbstractImageController extends AbstractController {
 
             return $this->redirectToRoute($route, ['id' => $container->getId()]);
         }
-        if ( ! $container->hasImage($image)) {
+        if ( ! $container->containsImage($image)) {
             throw new NotFoundHttpException('That image is not associated.');
         }
         $entityManager = $this->getDoctrine()->getManager();
