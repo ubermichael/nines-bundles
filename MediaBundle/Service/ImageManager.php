@@ -40,6 +40,18 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
      *
      * @throws Exception
      */
+    private $router;
+
+    public function __construct($root, $routing) {
+        parent::__construct($root);
+        $this->routing = $routing;
+    }
+
+    /**
+     * Store the image file, extracta  little metadata, and generate a thumbnail.
+     *
+     * @throws Exception
+     */
     protected function uploadFile(Image $image) : void {
         $file = $image->getFile();
         if ( ! $file instanceof UploadedFile) {
@@ -107,15 +119,15 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         if ($entity instanceof Image) {
             $filePath = $this->uploadDir . '/' . $entity->getPath();
             if (file_exists($filePath)) {
-                $entity->setFile(new File($filePath));
+                $entity->setImageFile(new File($filePath));
             } else {
-                $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getPath());
+                $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getImagePath());
             }
             $thumbPath = $this->uploadDir . '/' . $entity->getThumbPath();
             if (file_exists($thumbPath)) {
                 $entity->setThumbFile(new File($thumbPath));
             } else {
-                $this->logger->error('Cannot find thumbnail file ' . $this->uploadDir . '/' . $entity->getPath());
+                $this->logger->error('Cannot find thumbnail file ' . $this->uploadDir . '/' . $entity->getImagePath());
             }
         }
         if ($entity instanceof ImageContainerInterface) {
@@ -138,7 +150,7 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
             $fs = new Filesystem();
 
             try {
-                $fs->remove($entity->getFile());
+                $fs->remove($entity->getImageFile());
                 $fs->remove($entity->getThumbFile());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
@@ -152,8 +164,49 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         }
     }
 
+    /**
+     * Find the entity corresponding to a comment.
+     */
+    public function findEntity(Image $image) : ?object {
+        list($class, $id) = explode(':', $image->getEntity());
+        if ($this->em->getMetadataFactory()->isTransient($class)) {
+            return null;
+        }
+
+        return $this->em->getRepository($class)->find($id);
+    }
+
+    /**
+     * Return the short class name for the entity a image refers to.
+     */
+    public function entityType(Image $image) : ?string {
+        $entity = $this->findEntity($image);
+        if ( ! $entity) {
+            return null;
+        }
+
+        $reflection = new ReflectionClass($entity);
+
+        return $reflection->getShortName();
+    }
+
     public function acceptsImages(AbstractEntity $entity) : bool {
         return $entity instanceof ImageContainerInterface;
+    }
+
+    /**
+     * Find the entity that the image belongs to and generate a link to it.
+     */
+    public function linkToEntity(Image $image) : ?string {
+        list($class, $id) = explode(':', $image->getEntity());
+
+        if ( ! isset($this->routing[$class])) {
+            $this->logger->error('No routing information for ' . $class);
+
+            return null;
+        }
+
+        return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 
     /**
@@ -161,6 +214,13 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
      */
     public function setThumbnailer(Thumbnailer $thumbnailer) : void {
         $this->thumbnailer = $thumbnailer;
+    }
+
+    /**
+     * @required
+     */
+    public function setRouter(UrlGeneratorInterface $router) : void {
+        $this->router = $router;
     }
 
 }
