@@ -30,6 +30,7 @@ trait ImageContainerTrait {
         if ( ! $this->images->contains($image)) {
             $this->images[] = $image;
         }
+
         return $this;
     }
 
@@ -40,6 +41,7 @@ trait ImageContainerTrait {
         if ($this->images->contains($image)) {
             $this->images->removeElement($image);
         }
+
         return $this;
     }
 
@@ -58,6 +60,7 @@ trait ImageContainerTrait {
         } else {
             $this->images = $images;
         }
+
         return $this;
     }
 

@@ -10,6 +10,9 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Nines\MediaBundle\Entity\Image;
 
@@ -19,9 +22,33 @@ use Nines\MediaBundle\Entity\Image;
  * @method Image[] findAll()
  * @method Image[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ImageRepository extends AbstractImageRepository {
+class ImageRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Image::class);
+    }
+
+    /**
+     * @return Query
+     */
+    public function indexQuery() {
+        return $this->createQueryBuilder('image')
+            ->orderBy('image.originalName')
+            ->getQuery()
+            ;
+    }
+
+    /**
+     * @param string $q
+     *
+     * @return Collection|Image[]
+     */
+    public function typeaheadQuery($q) {
+        $qb = $this->createQueryBuilder('image');
+        $qb->andWhere('image.originalName LIKE :q');
+        $qb->orderBy('image.originalName', 'ASC');
+        $qb->setParameter('q', "{$q}%");
+
+        return $qb->getQuery()->execute();
     }
 
     public function searchQuery($q) {
