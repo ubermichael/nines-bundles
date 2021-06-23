@@ -74,12 +74,14 @@ abstract class AbstractFileManager {
         if ($asBytes) {
             return $maxBytes;
         }
+
         return self::bytesToSize($maxBytes);
     }
 
     /**
      * Convert a raw byte count into a readable number.
-     * @param int|float $bytes
+     *
+     * @param float|int $bytes
      */
     public static function bytesToSize($bytes) : string {
         $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
@@ -90,11 +92,11 @@ abstract class AbstractFileManager {
     }
 
     /**
-     * Parse a string (eg. 9.2kb) into a number of bytes (9420)
+     * Parse a string (eg. 9.2kb) into a number of bytes (9420).
      */
     public static function parseSize(string $size) : float {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-        $bytes = (float)preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+        $bytes = (float) preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
             return round($bytes * 1024 ** mb_stripos('bkmgtpezy', $unit[0]));
@@ -126,6 +128,7 @@ abstract class AbstractFileManager {
             mkdir($this->uploadDir, 0777, true);
         }
         $file->move($this->uploadDir, $filename);
+
         return $filename;
     }
 

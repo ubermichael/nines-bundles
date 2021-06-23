@@ -22,6 +22,15 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: navMenu, alias: nines_media}
 
+    Nines\MediaBundle\Service\AudioManager:
+        arguments:
+            $routing: '%nines_util.routing%'
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/audio' ] ]
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
     Nines\MediaBundle\Service\ContributionManager:
         tags:
             - { name: 'doctrine.event_subscriber' }

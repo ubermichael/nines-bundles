@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Audio List{% endblock %}
+
+{% block pageheader %}
+    <h1>Audio List</h1>
+    <p class="count">
+        Displaying {{ audios|length }} audio files of {{ audios.getTotalItemCount }} total.
+    </p>
+{% endblock %}
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            <a href="{{ path('nines_media_audio_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search </a>
+        </div>
+    </div>
+
+    {% embed '@NinesMedia/audio/partial/table.html.twig' %}
+    {% endembed %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(audios) }}
+    </div>
+
+{% endblock %}

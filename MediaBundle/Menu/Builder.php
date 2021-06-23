@@ -73,6 +73,9 @@ class Builder implements ContainerAwareInterface {
         $media->setLinkAttribute('data-toggle', 'dropdown');
         $media->setChildrenAttribute('class', 'dropdown-menu');
 
+        $media->addChild('Audio Files', [
+            'route' => 'nines_media_audio_index',
+        ]);
         $media->addChild('Citations', [
             'route' => 'nines_media_citation_index',
         ]);
