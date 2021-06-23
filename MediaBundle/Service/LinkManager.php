@@ -51,6 +51,40 @@ class LinkManager extends AbstractFileManager implements EventSubscriber {
     }
 
     /**
+     * Find the entity corresponding to a comment.
+     *
+     * @return mixed
+     */
+    public function findEntity(Link $link) {
+        list($class, $id) = explode(':', $link->getEntity());
+        if ($this->em->getMetadataFactory()->isTransient($class)) {
+            return;
+        }
+
+        return $this->em->getRepository($class)->find($id);
+    }
+
+    /**
+     * Return the short class name for the entity a link refers to.
+     */
+    public function entityType(Link $link) : ?string {
+        $entity = $this->findEntity($link);
+        if ( ! $entity) {
+            return null;
+        }
+
+        try {
+            $reflection = new ReflectionClass($entity);
+        } catch (ReflectionException $e) {
+            $this->logger->error('Cannot find entity for link ' . $link->getEntity());
+
+            return null;
+        }
+
+        return $reflection->getShortName();
+    }
+
+    /**
      * Find the links for an entity.
      *
      * @param mixed $entity

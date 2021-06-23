@@ -49,8 +49,8 @@ trait AudioControllerTrait {
 
         $size = AbstractFileManager::getMaxUploadSize(false);
         $form = $this->createForm(AudioType::class, $audio);
-        $form->remove('file');
-        $form->add('newFile', FileType::class, [
+        $form->remove('audioFile');
+        $form->add('newAudioFile', FileType::class, [
             'label' => 'Replacement Audio',
             'required' => false,
             'attr' => [
@@ -62,8 +62,8 @@ trait AudioControllerTrait {
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (($upload = $form->get('newFile')->getData())) {
-                $audio->setFile($upload);
+            if (($upload = $form->get('newAudioFile')->getData())) {
+                $audio->setAudioFile($upload);
                 $audio->preUpdate(); // force doctrine to update.
             }
             $entityManager = $this->getDoctrine()->getManager();
@@ -96,6 +96,6 @@ trait AudioControllerTrait {
         $entityManager->flush();
         $this->addFlash('success', 'The audio has been removed.');
 
-        return $this->redirectToRoute($route);
+        return $this->redirectToRoute($route, ['id' => $container->getId()]);
     }
 }
