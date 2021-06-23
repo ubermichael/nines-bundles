@@ -131,6 +131,14 @@ class Image extends AbstractEntity {
         return $this->imageFile;
     }
 
+    public function getExtension() : ?string {
+        if ( ! $this->imageFile) {
+            return null;
+        }
+
+        return $this->imageFile->getExtension();
+    }
+
     public function getPublic() : ?bool {
         return $this->public;
     }
