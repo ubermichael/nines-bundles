@@ -11,8 +11,12 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Nines\MediaBundle\Entity\Audio;
+use Nines\MediaBundle\Entity\EntityReferenceInterface;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * File management base class.
@@ -47,8 +51,21 @@ abstract class AbstractFileManager {
      */
     protected $em;
 
-    public function __construct($root) {
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private $router;
+
+    /**
+     * Mapping of class name to route name.
+     *
+     * @var array
+     */
+    private $routing;
+
+    public function __construct($root, $routing) {
         $this->root = $root;
+        $this->routing = $routing;
     }
 
     /**
@@ -133,6 +150,47 @@ abstract class AbstractFileManager {
     }
 
     /**
+     * Find the entity corresponding to a reference.
+     */
+    public function findEntity(EntityReferenceInterface $reference) : ?object {
+        list($class, $id) = explode(':', $reference->getEntity());
+        if ($this->em->getMetadataFactory()->isTransient($class)) {
+            return null;
+        }
+
+        return $this->em->getRepository($class)->find($id);
+    }
+
+    /**
+     * Return the short class name for the entity a audio refers to.
+     */
+    public function entityType(EntityReferenceInterface $reference) : ?string {
+        $entity = $this->findEntity($reference);
+        if ( ! $entity) {
+            return null;
+        }
+
+        $reflection = new ReflectionClass($entity);
+
+        return $reflection->getShortName();
+    }
+
+    /**
+     * Find the entity that the audio belongs to and generate a link to it.
+     */
+    public function linkToEntity(EntityReferenceInterface $reference) : ?string {
+        list($class, $id) = explode(':', $reference->getEntity());
+
+        if ( ! isset($this->routing[$class])) {
+            $this->logger->error('No routing information for ' . $class);
+
+            return null;
+        }
+
+        return $this->router->generate($this->routing[$class], ['id' => $id]);
+    }
+
+    /**
      * @required
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
@@ -144,5 +202,12 @@ abstract class AbstractFileManager {
      */
     public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
+    }
+
+    /**
+     * @required
+     */
+    public function setRouter(UrlGeneratorInterface $router) : void {
+        $this->router = $router;
     }
 }

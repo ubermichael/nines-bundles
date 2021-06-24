@@ -12,6 +12,7 @@ namespace Nines\UtilBundle\Entity;
 
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\SolrBundle\Annotation as Solr;
 
@@ -40,7 +41,7 @@ abstract class AbstractEntity {
     /**
      * The DateTime the entity was created (persisted really).
      *
-     * @var DateTimeImmutable
+     * @var DateTimeInterface
      * @ORM\Column(type="datetime_immutable")
      *
      * @Solr\Field(type="datetime", mutator="format('Y-m-d\TH:i:s\Z')")
@@ -50,7 +51,7 @@ abstract class AbstractEntity {
     /**
      * The DateTime the entity was last updated.
      *
-     * @var DateTimeImmutable
+     * @var DateTimeInterface
      * @ORM\Column(type="datetime_immutable")
      *
      * @Solr\Field(type="datetime", mutator="format('Y-m-d\TH:i:s\Z')")
@@ -80,13 +81,13 @@ abstract class AbstractEntity {
      * Does nothing. Setting the created timestamp happens automatically. Exists
      * to prevent a subclass accidentally setting a timestamp.
      */
-    public function setCreated(DateTimeImmutable $created) : void {
+    public function setCreated(DateTimeInterface $created) : void {
     }
 
     /**
      * Get the created timestamp.
      */
-    public function getCreated() : DateTimeImmutable {
+    public function getCreated() : DateTimeInterface {
         if ( ! $this->created) {
             return new DateTimeImmutable();
         }
@@ -97,13 +98,13 @@ abstract class AbstractEntity {
     /**
      * Does nothing. Setting the updated timestamp happens automatically.
      */
-    public function setUpdated(DateTimeImmutable $updated) : void {
+    public function setUpdated(DateTimeInterface $updated) : void {
     }
 
     /**
      * Get the updated timestamp.
      */
-    public function getUpdated() : DateTimeImmutable {
+    public function getUpdated() : DateTimeInterface {
         return $this->updated;
     }
 

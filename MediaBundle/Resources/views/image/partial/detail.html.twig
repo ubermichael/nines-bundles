@@ -15,7 +15,7 @@
         <tr>
             <th>Image Path</th>
             <td>
-                {{ image.imagePath }}
+                {{ image.path }}
             </td>
         </tr>
         <tr>
@@ -27,7 +27,7 @@
         <tr>
             <th>Image Size</th>
             <td>
-                {{ image.imageWidth }}x{{ image.imageHeight }} {{ image.imageSize|byte_size }}
+                {{ image.imageWidth }}x{{ image.imageHeight }} {{ image.fileSize|byte_size }}
             </td>
         </tr>
         <tr>

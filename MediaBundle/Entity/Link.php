@@ -10,9 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Entity;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
 use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -24,12 +22,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     @ORM\Index(columns={"entity"})
  * })
  */
-class Link extends AbstractEntity {
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=128, nullable=false)
-     */
-    private $entity;
+class Link extends AbstractEntity implements EntityReferenceInterface {
+    use EntityReferenceTrait;
 
     /**
      * @var string
@@ -55,13 +49,6 @@ class Link extends AbstractEntity {
         $host = parse_url($this->url, PHP_URL_HOST);
 
         return "<a href='{$this->url}'>{$host}</a>";
-    }
-
-    public function setEntity(AbstractEntity $entity) : void {
-        if ( ! $entity->getId()) {
-            throw new Exception('Link entities must be persisted.');
-        }
-        $this->entity = ClassUtils::getClass($entity) . ':' . $entity->getId();
     }
 
     public function getUrl() : ?string {
@@ -114,9 +101,5 @@ class Link extends AbstractEntity {
 
     public function getFragment() {
         return parse_url($this->url, PHP_URL_FRAGMENT);
-    }
-
-    public function getEntity() : ?string {
-        return $this->entity;
     }
 }
