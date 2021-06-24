@@ -62,55 +62,7 @@ class Image extends AbstractEntity implements EntityReferenceInterface, StoredFi
         return $this->thumbFile;
     }
 
-    public function setImageFile(File $file) : self {
-        $this->imageFile = $file;
-
-        return $this;
-    }
-
-    public function getImageFile() : ?File {
-        return $this->imageFile;
-    }
-
-    public function getExtension() : ?string {
-        if ( ! $this->imageFile) {
-            return null;
-        }
-
-        return $this->imageFile->getExtension();
-    }
-
-    public function getPublic() : ?bool {
-        return $this->public;
-    }
-
-    public function setPublic(bool $public) : self {
-        $this->public = $public;
-
-        return $this;
-    }
-
-    public function getOriginalName() : ?string {
-        return $this->originalName;
-    }
-
-    public function setOriginalName(string $originalName) : self {
-        $this->originalName = $originalName;
-
-        return $this;
-    }
-
-    public function getImagePath() : ?string {
-        return $this->imagePath;
-    }
-
-    public function setImagePath(string $imagePath) : self {
-        $this->imagePath = $imagePath;
-
-        return $this;
-    }
-
-    public function getThumbPath() : ?string {
+    public function getThumbPath() : string {
         return $this->thumbPath;
     }
 
