@@ -49,8 +49,8 @@ trait ImageControllerTrait {
 
         $size = AbstractFileManager::getMaxUploadSize(false);
         $form = $this->createForm(ImageType::class, $image);
-        $form->remove('imageFile');
-        $form->add('newImageFile', FileType::class, [
+        $form->remove('file');
+        $form->add('newFile', FileType::class, [
             'label' => 'Replacement Image',
             'required' => false,
             'attr' => [
@@ -62,8 +62,8 @@ trait ImageControllerTrait {
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (($upload = $form->get('newImageFile')->getData())) {
-                $image->setImageFile($upload);
+            if (($upload = $form->get('newFile')->getData())) {
+                $image->setFile($upload);
                 $image->preUpdate(); // force doctrine to update.
             }
             $entityManager = $this->getDoctrine()->getManager();

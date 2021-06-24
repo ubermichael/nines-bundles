@@ -44,7 +44,7 @@ class Thumbnailer {
     }
 
     public function thumbnail(Image $image) {
-        $file = $image->getImageFile();
+        $file = $image->getFile();
         $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
 
         $magick = new Imagick($file->getPathname());

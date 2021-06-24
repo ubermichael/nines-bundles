@@ -28,61 +28,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Link management service for Symfony.
  */
-class LinkManager implements EventSubscriber {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $router;
-
-    /**
-     * Mapping of class name to route name.
-     *
-     * @var array
-     */
-    private $routing;
+class LinkManager extends AbstractFileManager implements EventSubscriber {
 
     /**
      * @var LinkRepository
      */
     private $linkRepository;
 
-    /**
-     * Build the commenting service.
-     */
-    public function __construct(array $routing) {
-        $this->routing = $routing;
-    }
-
-    /**
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $em) : void {
-        $this->em = $em;
-    }
-
-    /**
-     * @required
-     */
-    public function setLogger(LoggerInterface $logger) : void {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @required
-     */
-    public function setRouter(UrlGeneratorInterface $router) : void {
-        $this->router = $router;
-    }
 
     /**
      * @required
@@ -96,40 +48,6 @@ class LinkManager implements EventSubscriber {
      */
     public function acceptsLinks(AbstractEntity $entity) : bool {
         return $entity instanceof LinkableInterface;
-    }
-
-    /**
-     * Find the entity corresponding to a comment.
-     *
-     * @return mixed
-     */
-    public function findEntity(Link $link) {
-        list($class, $id) = explode(':', $link->getEntity());
-        if ($this->em->getMetadataFactory()->isTransient($class)) {
-            return;
-        }
-
-        return $this->em->getRepository($class)->find($id);
-    }
-
-    /**
-     * Return the short class name for the entity a link refers to.
-     */
-    public function entityType(Link $link) : ?string {
-        $entity = $this->findEntity($link);
-        if ( ! $entity) {
-            return null;
-        }
-
-        try {
-            $reflection = new ReflectionClass($entity);
-        } catch (ReflectionException $e) {
-            $this->logger->error('Cannot find entity for link ' . $link->getEntity());
-
-            return null;
-        }
-
-        return $reflection->getShortName();
     }
 
     /**
@@ -155,16 +73,6 @@ class LinkManager implements EventSubscriber {
         foreach ($links as $link) {
             $this->em->persist($link);
         }
-    }
-
-    public function linkToEntity($link) {
-        list($class, $id) = explode(':', $link->getEntity());
-
-        if ( ! isset($this->routing[$class])) {
-            $this->logger->error('No routing information for ' . $class);
-        }
-
-        return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 
     public function getSubscribedEvents() {

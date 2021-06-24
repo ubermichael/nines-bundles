@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <th>Audio Path</th>
-            <td>{{ audio.audioPath }}</td>
+            <td>{{ audio.path }}</td>
         </tr>
         <tr>
             <th>Mime Type</th>
@@ -19,7 +19,7 @@
         </tr>
         <tr>
             <th>File Size</th>
-            <td>{{ audio.fileSize }}</td>
+            <td>{{ audio.fileSize|byte_size }}</td>
         </tr>
         <tr>
             <th>Entity</th>

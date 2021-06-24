@@ -36,27 +36,12 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     private $thumbnailer;
 
     /**
-     * @var array
-     */
-    private $routing;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $router;
-
-    public function __construct($root, $routing) {
-        parent::__construct($root);
-        $this->routing = $routing;
-    }
-
-    /**
      * Store the image file, extracta  little metadata, and generate a thumbnail.
      *
      * @throws Exception
      */
     protected function uploadFile(Image $image) : void {
-        $file = $image->getImageFile();
+        $file = $image->getFile();
         if ( ! $file instanceof UploadedFile) {
             return;
         }
@@ -66,9 +51,9 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         $path = $this->uploadDir . '/' . $filename;
 
         $imageFile = new File($path);
-        $image->setImagePath($filename);
-        $image->setImageFile($imageFile);
-        $image->setImageSize($imageFile->getSize());
+        $image->setPath($filename);
+        $image->setFile($imageFile);
+        $image->setFileSize($imageFile->getSize());
         $image->setMimeType($imageFile->getMimeType());
         $dimensions = getimagesize($path);
         $image->setImageWidth($dimensions[0]);
@@ -120,9 +105,9 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     public function postLoad(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
         if ($entity instanceof Image) {
-            $filePath = $this->uploadDir . '/' . $entity->getImagePath();
+            $filePath = $this->uploadDir . '/' . $entity->getPath();
             if (file_exists($filePath)) {
-                $entity->setImageFile(new File($filePath));
+                $entity->setFile(new File($filePath));
             } else {
                 $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getImagePath());
             }
@@ -153,7 +138,7 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
             $fs = new Filesystem();
 
             try {
-                $fs->remove($entity->getImageFile());
+                $fs->remove($entity->getFile());
                 $fs->remove($entity->getThumbFile());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
@@ -167,49 +152,8 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         }
     }
 
-    /**
-     * Find the entity corresponding to a comment.
-     */
-    public function findEntity(Image $image) : ?object {
-        list($class, $id) = explode(':', $image->getEntity());
-        if ($this->em->getMetadataFactory()->isTransient($class)) {
-            return null;
-        }
-
-        return $this->em->getRepository($class)->find($id);
-    }
-
-    /**
-     * Return the short class name for the entity a image refers to.
-     */
-    public function entityType(Image $image) : ?string {
-        $entity = $this->findEntity($image);
-        if ( ! $entity) {
-            return null;
-        }
-
-        $reflection = new ReflectionClass($entity);
-
-        return $reflection->getShortName();
-    }
-
     public function acceptsImages(AbstractEntity $entity) : bool {
         return $entity instanceof ImageContainerInterface;
-    }
-
-    /**
-     * Find the entity that the image belongs to and generate a link to it.
-     */
-    public function linkToEntity(Image $image) : ?string {
-        list($class, $id) = explode(':', $image->getEntity());
-
-        if ( ! isset($this->routing[$class])) {
-            $this->logger->error('No routing information for ' . $class);
-
-            return null;
-        }
-
-        return $this->router->generate($this->routing[$class], ['id' => $id]);
     }
 
     /**
@@ -219,10 +163,4 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
         $this->thumbnailer = $thumbnailer;
     }
 
-    /**
-     * @required
-     */
-    public function setRouter(UrlGeneratorInterface $router) : void {
-        $this->router = $router;
-    }
 }

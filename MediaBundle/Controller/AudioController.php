@@ -92,7 +92,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
             throw new AccessDeniedHttpException();
         }
 
-        return new BinaryFileResponse($audio->getAudioFile());
+        return new BinaryFileResponse($audio->getFile());
     }
 
     /**
