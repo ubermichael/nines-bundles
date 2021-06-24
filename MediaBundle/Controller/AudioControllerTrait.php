@@ -96,6 +96,6 @@ trait AudioControllerTrait {
         $entityManager->flush();
         $this->addFlash('success', 'The audio has been removed.');
 
-        return $this->redirectToRoute($route, ['id' => $container->getId()]);
+        return $this->redirectToRoute($route);
     }
 }

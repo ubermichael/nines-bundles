@@ -73,6 +73,12 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
         if ( ! $entity instanceof Audio) {
             return;
         }
+        $fs = new Filesystem();
+        try {
+            $fs->remove($this->uploadDir . '/' . $entity->getAudioPath());
+        } catch (IOExceptionInterface $e) {
+            $this->logger->error("Cannot remote old file " . $this->uploadDir . '/' . $entity->getAudioPath());
+        }
         $this->uploadFile($entity);
     }
 
