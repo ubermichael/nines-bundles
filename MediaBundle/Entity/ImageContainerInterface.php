@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Nines\UtilBundle\Entity\AbstractEntityInterface;
 
-interface ImageContainerInterface {
-    public function getId() : ?int;
+interface ImageContainerInterface extends AbstractEntityInterface {
 
     /**
      * @return mixed

@@ -57,6 +57,15 @@ services:
         tags:
             - { name: 'doctrine.event_subscriber' }
 
+    Nines\MediaBundle\Service\PdfManager:
+        arguments:
+            $routing: '%nines_util.routing%'
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/pdf' ] ]
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
     Nines\MediaBundle\Service\Thumbnailer:
         calls:
             - [ setHeight, [ '%nines_media.thumb.height%' ] ]

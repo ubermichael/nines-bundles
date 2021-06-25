@@ -24,7 +24,7 @@ use Nines\SolrBundle\Annotation as Solr;
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
  */
-abstract class AbstractEntity {
+abstract class AbstractEntity implements AbstractEntityInterface {
     /**
      * The entity's ID.
      *
