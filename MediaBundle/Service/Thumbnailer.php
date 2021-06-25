@@ -46,11 +46,11 @@ class Thumbnailer {
         $this->height = $height;
     }
 
-    public function thumbnail(Image $image) {
-        $file = $image->getFile();
-        $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
-
-        $magick = new Imagick($file->getPathname());
+    /**
+     * @throws ImagickException
+     */
+    protected function thumb(string $from, string $to) {
+        $magick = new Imagick($from);
         $magick->setBackgroundColor(new ImagickPixel('white'));
         $magick->thumbnailImage($this->width, $this->height, true, false);
         $magick->setImageFormat('png32');

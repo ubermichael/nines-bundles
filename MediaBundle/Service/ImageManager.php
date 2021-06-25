@@ -109,13 +109,13 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
             if (file_exists($filePath)) {
                 $entity->setFile(new File($filePath));
             } else {
-                $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getImagePath());
+                $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getPath());
             }
             $thumbPath = $this->uploadDir . '/' . $entity->getThumbPath();
             if (file_exists($thumbPath)) {
                 $entity->setThumbFile(new File($thumbPath));
             } else {
-                $this->logger->error('Cannot find thumbnail file ' . $this->uploadDir . '/' . $entity->getImagePath());
+                $this->logger->error('Cannot find thumbnail file ' . $this->uploadDir . '/' . $entity->getPath());
             }
         }
         if ($entity instanceof ImageContainerInterface) {
