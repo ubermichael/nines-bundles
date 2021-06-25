@@ -15,8 +15,8 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Exception;
-use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Entity\ImageContainerInterface;
+use Nines\MediaBundle\Entity\Pdf;
+use Nines\MediaBundle\Entity\PdfContainerInterface;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use ReflectionClass;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -26,40 +26,37 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Image Manager service that handles file uploads, thumbnailing, and database
+ * Pdf Manager service that handles file uploads, thumbnailing, and database
  * stuff.
  */
-class ImageManager extends AbstractFileManager implements EventSubscriber {
+class PdfManager extends AbstractFileManager implements EventSubscriber {
     /**
      * @var Thumbnailer
      */
     private $thumbnailer;
 
     /**
-     * Store the image file, extracta  little metadata, and generate a thumbnail.
+     * Store the pdf file, extracta  little metadata, and generate a thumbnail.
      *
      * @throws Exception
      */
-    protected function uploadFile(Image $image) : void {
-        $file = $image->getFile();
+    protected function uploadFile(Pdf $pdf) : void {
+        $file = $pdf->getFile();
         if ( ! $file instanceof UploadedFile) {
             return;
         }
-        $image->setOriginalName($file->getClientOriginalName());
+        $pdf->setOriginalName($file->getClientOriginalName());
 
         $filename = $this->upload($file);
         $path = $this->uploadDir . '/' . $filename;
 
-        $imageFile = new File($path);
-        $image->setPath($filename);
-        $image->setFile($imageFile);
-        $image->setFileSize($imageFile->getSize());
-        $image->setMimeType($imageFile->getMimeType());
-        $dimensions = getimagesize($path);
-        $image->setImageWidth($dimensions[0]);
-        $image->setImageHeight($dimensions[1]);
-        $thumbPath = $this->thumbnailer->thumbnail($image);
-        $image->setThumbPath($thumbPath);
+        $pdfFile = new File($path);
+        $pdf->setPath($filename);
+        $pdf->setFile($pdfFile);
+        $pdf->setFileSize($pdfFile->getSize());
+        $pdf->setMimeType($pdfFile->getMimeType());
+        $thumbPath = $this->thumbnailer->thumbnail($pdf);
+        $pdf->setThumbPath($thumbPath);
     }
 
     /**
@@ -75,41 +72,41 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     }
 
     /**
-     * Event subscriber action, called before saving an image to the database.
+     * Event subscriber action, called before saving an pdf to the database.
      *
      * @throws Exception
      */
     public function prePersist(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Image) {
+        if ($entity instanceof Pdf) {
             $this->uploadFile($entity);
         }
     }
 
     /**
-     * Event subscriber action, called before updating an image in the database.
+     * Event subscriber action, called before updating an pdf in the database.
      *
      * @throws Exception
      */
     public function preUpdate(PreUpdateEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Image) {
+        if ($entity instanceof Pdf) {
             $this->uploadFile($entity);
         }
     }
 
     /**
-     * Event subscriber action. After loading an image entity from the database,
+     * Event subscriber action. After loading an pdf entity from the database,
      * add the file object to the entity.
      */
     public function postLoad(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Image) {
+        if ($entity instanceof Pdf) {
             $filePath = $this->uploadDir . '/' . $entity->getPath();
             if (file_exists($filePath)) {
                 $entity->setFile(new File($filePath));
             } else {
-                $this->logger->error('Cannot find image file ' . $this->uploadDir . '/' . $entity->getPath());
+                $this->logger->error('Cannot find pdf file ' . $this->uploadDir . '/' . $entity->getPath());
             }
             $thumbPath = $this->uploadDir . '/' . $entity->getThumbPath();
             if (file_exists($thumbPath)) {
@@ -118,23 +115,23 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
                 $this->logger->error('Cannot find thumbnail file ' . $this->uploadDir . '/' . $entity->getPath());
             }
         }
-        if ($entity instanceof ImageContainerInterface) {
-            $repo = $this->em->getRepository(Image::class);
-            /** @var Image[] $images */
-            $images = $repo->findBy([
+        if ($entity instanceof PdfContainerInterface) {
+            $repo = $this->em->getRepository(Pdf::class);
+            /** @var Pdf[] $pdfs */
+            $pdfs = $repo->findBy([
                 'entity' => get_class($entity) . ':' . $entity->getId(),
             ]);
-            $entity->setImages($images);
+            $entity->setPdfs($pdfs);
         }
     }
 
     /**
-     * Event subscriber action. After removing an image entity from the database
-     * remove the image and thumbnail files.'.
+     * Event subscriber action. After removing an pdf entity from the database
+     * remove the pdf and thumbnail files.'.
      */
     public function postRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Image) {
+        if ($entity instanceof Pdf) {
             $fs = new Filesystem();
 
             try {
@@ -144,16 +141,16 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
                 $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
             }
         }
-        if ($entity instanceof ImageContainerInterface) {
-            foreach ($entity->getImages() as $image) {
-                $this->em->remove($image);
+        if ($entity instanceof PdfContainerInterface) {
+            foreach ($entity->getPdfs() as $pdf) {
+                $this->em->remove($pdf);
             }
             $this->em->flush();
         }
     }
 
-    public function acceptsImages(AbstractEntity $entity) : bool {
-        return $entity instanceof ImageContainerInterface;
+    public function acceptsPdfs(AbstractEntity $entity) : bool {
+        return $entity instanceof PdfContainerInterface;
     }
 
     /**

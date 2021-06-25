@@ -12,8 +12,11 @@ namespace Nines\MediaBundle\Service;
 
 use Exception;
 use Imagick;
+use ImagickException;
 use ImagickPixel;
 use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\Pdf;
+use Nines\MediaBundle\Entity\StoredFileInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -43,24 +46,51 @@ class Thumbnailer {
         $this->height = $height;
     }
 
-    public function thumbnail(Image $image) {
-        $file = $image->getFile();
-        $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
-
-        $magick = new Imagick($file->getPathname());
+    /**
+     * @throws ImagickException
+     */
+    protected function thumb(string $from, string $to) {
+        $magick = new Imagick($from);
         $magick->setBackgroundColor(new ImagickPixel('white'));
         $magick->thumbnailImage($this->width, $this->height, true, false);
         $magick->setImageFormat('png32');
-        $path = $file->getPath() . '/' . $thumbname;
+        $magick->writeImage($to);
+    }
 
-        $handle = fopen($path, 'wb');
-        if ( ! $handle) {
-            $error = error_get_last();
-
-            throw new Exception("Cannot open {$path} for write. " . $error['message']);
-        }
-        fwrite($handle, $magick->getimageblob());
-
+    /**
+     * @throws ImagickException
+     */
+    protected function thumbnailImage(Image $image) : string {
+        $file = $image->getFile();
+        $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
+        $this->thumb($file->getRealPath(), dirname($file->getRealPath()) . '/' . $thumbname);
         return $thumbname;
+    }
+
+    /**
+     * @throws ImagickException
+     */
+    protected function thumbnailPdf(Pdf $pdf) : string {
+        $file = $pdf->getFile();
+        $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
+        $this->thumb($file->getRealPath() . '[0]', dirname($file->getRealPath()) . '/' . $thumbname);
+        return $thumbname;
+    }
+
+    /**
+     * @param Image|Pdf $item
+     *
+     * @return string
+     * @throws ImagickException
+     * @throws Exception
+     */
+    public function thumbnail($item) : string {
+        if($item instanceof Image) {
+            return $this->thumbnailImage($item);
+        } elseif ($item instanceof Pdf) {
+            return $this->thumbnailPdf($item);
+        } else {
+            throw new Exception("Cannot generate thumbnail for " . get_class($item));
+        }
     }
 }

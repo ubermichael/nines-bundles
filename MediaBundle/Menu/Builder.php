@@ -85,6 +85,9 @@ class Builder implements ContainerAwareInterface {
         $media->addChild('Links', [
             'route' => 'nines_media_link_index',
         ]);
+        $media->addChild('Pdfs', [
+            'route' => 'nines_media_pdf_index',
+        ]);
 
         return $menu;
     }
