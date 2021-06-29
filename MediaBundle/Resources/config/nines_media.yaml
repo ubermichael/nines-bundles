@@ -2,6 +2,3 @@ nines_media:
     root: 'data'
     thumb_width: 450
     thumb_height: 350
-    routing: ~
-#    routing:
-#        - { class: App\Entity\Foo, route: foo_show }
