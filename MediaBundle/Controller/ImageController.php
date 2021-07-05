@@ -117,7 +117,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
             throw new AccessDeniedHttpException();
         }
 
-        return new BinaryFileResponse($image->getImageFile());
+        return new BinaryFileResponse($image->getFile());
     }
 
     /**
