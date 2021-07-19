@@ -23,11 +23,19 @@ trait EntityReferenceTrait {
     private $entity;
 
     /**
+     * @param string|AbstractEntity $entity
      * @throws Exception
      */
-    public function setEntity(AbstractEntity $entity) : self {
+    public function setEntity($entity) : self {
+        if(is_string($entity)) {
+            $this->entity = $entity;
+            return $this;
+        }
+        if( ! $entity instanceof AbstractEntity) {
+            throw new Exception("setEntity expects a string or AbstractEntity.");
+        }
         if ( ! $entity->getId()) {
-            throw new Exception('Link entities must be persisted.');
+            throw new Exception('setEntity requires entities to be persisted.');
         }
         $this->entity = ClassUtils::getClass($entity) . ':' . $entity->getId();
         return $this;
