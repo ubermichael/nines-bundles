@@ -6,7 +6,7 @@
      <h1>PDFSearch</h1>
      {% if pdfs|length %}
          <p class="count">
-             Displaying {{ pdfs|length }}PDFsof {{ pdfs.getTotalItemCount }} total.
+             Displaying {{ pdfs|length }} PDFs of {{ pdfs.getTotalItemCount }} total.
          </p>
      {% endif %}
  {% endblock %}
@@ -44,7 +44,7 @@
 
     {% if pdfs|length %}
 
-        {% embed '@NinesMedia/Pdf/partial/table.html.twig' %}
+        {% embed '@NinesMedia/pdf/partial/table.html.twig' %}
         {% endembed %}
 
         <div class="navigation">

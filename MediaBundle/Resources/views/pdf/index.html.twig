@@ -5,7 +5,7 @@
 {% block pageheader %}
     <h1>PDFList</h1>
     <p class="count">
-        Displaying {{ pdfs|length }}PDFsof {{ pdfs.getTotalItemCount }} total.
+        Displaying {{ pdfs|length }} PDFs of {{ pdfs.getTotalItemCount }} total.
     </p>
 {% endblock %}
 
@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    {% embed '@NinesMedia/Pdf/partial/table.html.twig' %}
+    {% embed '@NinesMedia/pdf/partial/table.html.twig' %}
     {% endembed %}
 
     <div class="navigation">
