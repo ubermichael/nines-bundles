@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Value Details {% endblock %}
+
+ {% block pageheader %}
+     <h1>Value Details</h1>
+ {% endblock %}
+
+{% block body %}
+
+    {% embed '@NinesDublinCore/value/partial/detail.html.twig' %}
+    {% endembed %}
+
+{% endblock %}
