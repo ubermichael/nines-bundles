@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Nines\DublinCoreBundle\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Nines\DublinCoreBundle\Entity\Value;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Nines\DublinCoreBundle\Entity\Value;
 use stdClass;
 
 class ValueFixtures extends Fixture implements DependentFixtureInterface {
@@ -23,7 +23,7 @@ class ValueFixtures extends Fixture implements DependentFixtureInterface {
     public function load(ObjectManager $em) : void {
         for ($i = 1; $i <= 4; $i++) {
             $fixture = new Value();
-            $fixture->setData("Data " . $i);
+            $fixture->setData('Data ' . $i);
             $fixture->setEntity(stdClass::class . ':' . $i);
             $fixture->setElement($this->getReference('dc_title'));
             $em->persist($fixture);

@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\DublinCoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -11,15 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Nines\DublinCoreBundle\Entity\Value;
 
 /**
- * @method Value|null find($id, $lockMode = null, $lockVersion = null)
- * @method Value|null findOneBy(array $criteria, array $orderBy = null)
- * @method Value[]    findAll()
- * @method Value[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method null|Value find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Value findOneBy(array $criteria, array $orderBy = null)
+ * @method Value[] findAll()
+ * @method Value[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ValueRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
+class ValueRepository extends ServiceEntityRepository {
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Value::class);
     }
 
@@ -29,7 +33,8 @@ class ValueRepository extends ServiceEntityRepository
     public function indexQuery() {
         return $this->createQueryBuilder('value')
             ->orderBy('value.id')
-            ->getQuery();
+            ->getQuery()
+        ;
     }
 
     /**
@@ -46,6 +51,4 @@ class ValueRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->execute();
     }
-
-
 }

@@ -24,9 +24,10 @@ trait ValueTrait {
     }
 
     public function getValues(?string $name = null) {
-        if($name) {
-            return $this->values->filter(function(Value $v) use($name) {return $v->getElement()->getName() === $name;});
+        if ($name) {
+            return $this->values->filter(fn (Value $v) => $v->getElement()->getName() === $name);
         }
+
         return $this->values;
     }
 

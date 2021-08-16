@@ -13,9 +13,6 @@ namespace Nines\MediaBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use FPDF;
-use Imagick;
-use ImagickPixel;
-use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\Pdf;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -25,11 +22,10 @@ class PdfFixtures extends Fixture {
      */
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 4; $i++) {
-
             $pdf = new FPDF();
             $pdf->AddPage();
             $pdf->SetFont('Arial', 'B', 16);
-            $pdf->cell(40,10, "Hello World {$i}.");
+            $pdf->cell(40, 10, "Hello World {$i}.");
             $tmp = tempnam(sys_get_temp_dir(), 'hns_');
             $pdf->Output('F', $tmp, true);
             $upload = new UploadedFile($tmp, "doc_{$i}.pdf", 'application/pdf', null, true);

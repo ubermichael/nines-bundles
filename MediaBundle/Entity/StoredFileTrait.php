@@ -18,13 +18,13 @@ trait StoredFileTrait {
      * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $description = null;
+    protected $description;
 
     /**
      * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $license = null;
+    protected $license;
 
     /**
      * @var File

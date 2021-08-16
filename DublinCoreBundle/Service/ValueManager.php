@@ -13,27 +13,19 @@ namespace Nines\DublinCoreBundle\Service;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Nines\DublinCoreBundle\Entity\Value;
 use Nines\DublinCoreBundle\Entity\ValueInterface;
 use Nines\DublinCoreBundle\Repository\ValueRepository;
 use Nines\MediaBundle\Entity\Link;
-use Nines\MediaBundle\Entity\LinkableInterface;
-use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\MediaBundle\Service\AbstractFileManager;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use Psr\Log\LoggerInterface;
-use ReflectionClass;
-use ReflectionException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Link management service for Symfony.
  */
 class ValueManager extends AbstractFileManager implements EventSubscriber {
-
     /**
      * @var ValueRepository
      */

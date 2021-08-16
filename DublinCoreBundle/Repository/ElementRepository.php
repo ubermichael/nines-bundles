@@ -27,11 +27,12 @@ class ElementRepository extends ServiceEntityRepository {
     }
 
     /**
-     * @return Query|Element[]
+     * @return Element[]|Query
      */
     public function indexQuery() {
         $qb = $this->createQueryBuilder('element');
         $qb->addOrderBy('element.label', 'ASC');
+
         return $qb->getQuery();
     }
 }

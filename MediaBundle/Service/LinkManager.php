@@ -13,28 +13,21 @@ namespace Nines\MediaBundle\Service;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
 use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use Psr\Log\LoggerInterface;
-use ReflectionClass;
-use ReflectionException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Link management service for Symfony.
  */
 class LinkManager extends AbstractFileManager implements EventSubscriber {
-
     /**
      * @var LinkRepository
      */
     private $linkRepository;
-
 
     /**
      * @required

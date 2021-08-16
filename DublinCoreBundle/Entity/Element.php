@@ -103,14 +103,12 @@ class Element extends AbstractTerm {
     /**
      * @return Collection|Value[]
      */
-    public function getValues(): Collection
-    {
+    public function getValues() : Collection {
         return $this->values;
     }
 
-    public function addValue(Value $value): self
-    {
-        if (!$this->values->contains($value)) {
+    public function addValue(Value $value) : self {
+        if ( ! $this->values->contains($value)) {
             $this->values[] = $value;
             $value->setElement($this);
         }
@@ -118,8 +116,7 @@ class Element extends AbstractTerm {
         return $this;
     }
 
-    public function removeValue(Value $value): self
-    {
+    public function removeValue(Value $value) : self {
         if ($this->values->removeElement($value)) {
             // set the owning side to null (unless already changed)
             if ($value->getElement() === $this) {

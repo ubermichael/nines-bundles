@@ -17,12 +17,10 @@ use Doctrine\ORM\Events;
 use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\AudioContainerInterface;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use ReflectionClass;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of FileUploader.
@@ -30,7 +28,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class AudioManager extends AbstractFileManager implements EventSubscriber {
-
     private function uploadFile(Audio $audio) : void {
         $file = $audio->getFile();
         if ( ! $file instanceof UploadedFile) {
@@ -60,10 +57,11 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
             return;
         }
         $fs = new Filesystem();
+
         try {
             $fs->remove($this->uploadDir . '/' . $entity->getPath());
         } catch (IOExceptionInterface $e) {
-            $this->logger->error("Cannot remote old file " . $this->uploadDir . '/' . $entity->getAudioPath());
+            $this->logger->error('Cannot remote old file ' . $this->uploadDir . '/' . $entity->getAudioPath());
         }
         $this->uploadFile($entity);
     }
@@ -116,5 +114,4 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
             Events::postRemove,
         ];
     }
-
 }

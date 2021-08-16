@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\Collection;
 use Nines\UtilBundle\Entity\AbstractEntityInterface;
 
 interface ImageContainerInterface extends AbstractEntityInterface {
-
     /**
      * @return mixed
      */

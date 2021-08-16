@@ -2,10 +2,16 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\DublinCoreBundle\Entity;
 
-use Nines\DublinCoreBundle\Repository\ValueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\DublinCoreBundle\Repository\ValueRepository;
 use Nines\MediaBundle\Entity\EntityReferenceInterface;
 use Nines\MediaBundle\Entity\EntityReferenceTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
@@ -31,39 +37,34 @@ class Value extends AbstractEntity implements EntityReferenceInterface {
      */
     private $element;
 
+    public function __construct() {
+        parent::__construct();
+    }
+
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function __toString() : string {
         return $this->data;
     }
 
-    public function __construct() {
-        parent::__construct();
-    }
-
-    public function getData(): ?string
-    {
+    public function getData() : ?string {
         return $this->data;
     }
 
-    public function setData(string $data): self
-    {
+    public function setData(string $data) : self {
         $this->data = $data;
 
         return $this;
     }
 
-    public function getElement(): ?Element
-    {
+    public function getElement() : ?Element {
         return $this->element;
     }
 
-    public function setElement(?Element $element): self
-    {
+    public function setElement(?Element $element) : self {
         $this->element = $element;
 
         return $this;
     }
-
 }

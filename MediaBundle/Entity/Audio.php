@@ -19,10 +19,10 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  */
 class Audio extends AbstractEntity implements EntityReferenceInterface, StoredFileInterface {
     use EntityReferenceTrait;
+
     use StoredFileTrait;
 
     public function __construct() {
         parent::__construct();
     }
-
 }
