@@ -74,9 +74,7 @@ class IndexCommand extends Command {
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $batch = (int) $input->getOption('batch');
-        $classes = array_map(function ($s) {
-            return false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s;
-        }, $input->getArgument('classes'));
+        $classes = array_map(fn ($s) => false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s, $input->getArgument('classes'));
 
         if ($input->getOption('clear')) {
             $this->manager->clear();
@@ -87,6 +85,7 @@ class IndexCommand extends Command {
             $output->writeln($class);
             if ($classes && ! in_array($class, $classes, true)) {
                 $output->writeln('skipped');
+
                 continue;
             }
 

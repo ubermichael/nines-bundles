@@ -20,10 +20,12 @@ use Solarium\QueryType\Select\Query\Query;
  * @todo add a near() function or something like it for geofilt and geodist.
  */
 class QueryBuilder {
-
     public const ESCAPE_PHRASE = 1;
+
     public const ESCAPE_TERM = 2;
+
     public const ESCAPE_GENERAL = 3;
+
     public const ESCAPE_NONE = 4;
 
     /**
@@ -151,16 +153,23 @@ class QueryBuilder {
             case self::ESCAPE_GENERAL:
                 // see https://solr.apache.org/guide/8_8/the-standard-query-parser.html#escaping-special-characters
                 $chars = quotemeta('+&|!(){}[]^"~*?:-');
-                $this->q = preg_replace("/([$chars])/", "\\\\$1", $q);
+                $this->q = preg_replace("/([{$chars}])/", '\\\$1', $q);
+
                 break;
+
             case self::ESCAPE_PHRASE:
                 $this->q = $this->helper->escapePhrase($q);
+
                 break;
+
             case self::ESCAPE_TERM:
                 $this->q = $this->helper->escapeTerm($q);
+
                 break;
+
             case self::ESCAPE_NONE:
                 $this->q = $q;
+
                 break;
         }
     }
@@ -333,8 +342,8 @@ class QueryBuilder {
         }
         if (count($this->queryFields) > 0) {
             $dismax = $query->getDisMax();
-            $qf = array_map(fn($k, $v) => $k . ($v ? "^{$v}": ''), array_keys($this->queryFields), $this->queryFields);
-            $dismax->setQueryFields(implode(" ", $qf));
+            $qf = array_map(fn ($k, $v) => $k . ($v ? "^{$v}" : ''), array_keys($this->queryFields), $this->queryFields);
+            $dismax->setQueryFields(implode(' ', $qf));
         }
 
         foreach ($this->filters as $key => $values) {

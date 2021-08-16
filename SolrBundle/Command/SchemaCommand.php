@@ -55,6 +55,7 @@ class SchemaCommand extends Command {
             $entityMeta = $this->mapper->getEntityMetadata($class);
             if ( ! $entityMeta) {
                 $output->writeln('Not mapped');
+
                 continue;
             }
             $idMeta = $entityMeta->getId();

@@ -106,7 +106,7 @@ class LinkManager implements EventSubscriber {
     public function findEntity(Link $link) {
         list($class, $id) = explode(':', $link->getEntity());
         if ($this->em->getMetadataFactory()->isTransient($class)) {
-            return null;
+            return;
         }
 
         return $this->em->getRepository($class)->find($id);

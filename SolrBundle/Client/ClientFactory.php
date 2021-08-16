@@ -41,7 +41,7 @@ class ClientFactory {
      *
      * @var null|Client
      */
-    private static $client = null;
+    private static $client;
 
     public function __construct(ParameterBagInterface $parameters) {
         $this->enabled = $parameters->get('nines_solr.enabled');
@@ -50,8 +50,8 @@ class ClientFactory {
         }
 
         $url = $parameters->get('nines_solr.url');
-        if( ! $url) {
-            throw new NotConfiguredException("No solr URL configured.");
+        if ( ! $url) {
+            throw new NotConfiguredException('No solr URL configured.');
         }
         $parts = parse_url($url);
         $matches = [];
