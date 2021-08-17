@@ -21,10 +21,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class LinkableType {
     public static function add(FormBuilderInterface $builder, $options) : void {
-        $entity = $options['data'];
-        if ( ! $entity instanceof LinkableInterface) {
-            throw new UnexpectedTypeException($entity, LinkableInterface::class);
-        }
         $builder->add('links', CollectionType::class, [
             'label' => 'Links',
             'required' => false,
@@ -39,7 +35,7 @@ class LinkableType {
                 'class' => 'collection collection-complex',
                 'help_block' => '',
             ],
-            'data' => $options['data']->getLinks(),
+            'mapped' => false,
         ]);
     }
 }

@@ -27,7 +27,7 @@ trait LinkableTrait {
         return $this->links;
     }
 
-    public function setLinks($links) {
+    public function setLinks($links = null) {
         $this->links = new ArrayCollection();
         if ( ! $links) {
             return $this;
@@ -49,7 +49,7 @@ trait LinkableTrait {
 
     public function removeLink(Link $link) : self {
         if ($this->links->contains($link)) {
-            $this->links->remove($link);
+            $this->links->removeElement($link);
         }
 
         return $this;
