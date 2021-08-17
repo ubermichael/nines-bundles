@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Audio;
+use Nines\MediaBundle\Service\AbstractFileManager;
 use Nines\MediaBundle\Service\AudioManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,42 +22,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Audio form.
  */
-class AudioType extends AbstractType {
-    /**
-     * @var AudioManager
-     */
-    private $fileUploader;
-
-    public function __construct(AudioManager $fileUploader) {
-        $this->fileUploader = $fileUploader;
-    }
+class AudioType extends AbstractFileType {
 
     /**
      * Add form fields to $builder.
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) : void {
-        $builder->add('file', FileType::class, [
-            'label' => 'Audio File',
-            'required' => true,
-            'attr' => [
-                'help_block' => "Select a file to upload which is less than {$this->fileUploader->getMaxUploadSize(false)} in size.",
-                'data-maxsize' => $this->fileUploader->getMaxUploadSize(),
-            ],
-        ]);
-
-        $builder->add('public', ChoiceType::class, [
-            'label' => 'Public',
-            'expanded' => true,
-            'multiple' => false,
-            'required' => true,
-            'choices' => [
-                'No' => 0,
-                'Yes' => 1,
-            ],
-            'attr' => [
-                'help_block' => '',
-            ],
-        ]);
+    public function buildForm(FormBuilderInterface $builder, array $options, $label = null) : void {
+        parent::buildForm($builder, $options, 'Audio File');
     }
 
     /**
