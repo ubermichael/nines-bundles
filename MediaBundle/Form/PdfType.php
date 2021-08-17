@@ -11,12 +11,6 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Pdf;
-use Nines\MediaBundle\Service\AbstractFileManager;
-use Nines\MediaBundle\Service\PdfManager;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,6 +20,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PdfType extends AbstractFileType {
     /**
      * Add form fields to $builder.
+     *
+     * @param null|mixed $label
      */
     public function buildForm(FormBuilderInterface $builder, array $options, $label = null) : void {
         parent::buildForm($builder, $options, 'PDF File');

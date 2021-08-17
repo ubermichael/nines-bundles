@@ -11,12 +11,6 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Service\AbstractFileManager;
-use Nines\MediaBundle\Service\ImageManager;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,9 +18,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Image form.
  */
 class ImageType extends AbstractFileType {
-
     /**
      * Add form fields to $builder.
+     *
+     * @param null|mixed $label
      */
     public function buildForm(FormBuilderInterface $builder, array $options, $label = null) : void {
         parent::buildForm($builder, $options, 'Image File');

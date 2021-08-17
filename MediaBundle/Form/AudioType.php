@@ -11,11 +11,6 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Audio;
-use Nines\MediaBundle\Service\AbstractFileManager;
-use Nines\MediaBundle\Service\AudioManager;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,9 +18,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Audio form.
  */
 class AudioType extends AbstractFileType {
-
     /**
      * Add form fields to $builder.
+     *
+     * @param null|mixed $label
      */
     public function buildForm(FormBuilderInterface $builder, array $options, $label = null) : void {
         parent::buildForm($builder, $options, 'Audio File');

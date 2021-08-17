@@ -12,21 +12,20 @@ namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Service\AbstractFileManager;
-use Nines\MediaBundle\Service\AudioManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Audio form.
  */
 class AbstractFileType extends AbstractType {
-
     /**
      * Add form fields to $builder.
+     *
+     * @param mixed $label
      */
     public function buildForm(FormBuilderInterface $builder, array $options, $label = 'File') : void {
         $maxSize = AbstractFileManager::getMaxUploadSize(false);

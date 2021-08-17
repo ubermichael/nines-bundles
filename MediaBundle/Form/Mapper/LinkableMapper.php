@@ -10,10 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Form\Mapper;
 
-use App\Entity\Document;
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\DublinCoreBundle\Entity\Element;
-use Nines\DublinCoreBundle\Entity\Value;
 use Nines\DublinCoreBundle\Repository\ElementRepository;
 use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
@@ -32,7 +29,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
         /** @var Form[] $forms */
         $forms = iterator_to_array($forms);
         $data = [];
-        foreach($viewData->getLinks() as $link) {
+        foreach ($viewData->getLinks() as $link) {
             $data[] = [
                 'url' => $link->getUrl(),
                 'text' => $link->getText(),
@@ -47,16 +44,16 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
         }
         $forms = iterator_to_array($forms);
         parent::mapFormsToData($forms, $viewData);
-        if( ! $this->em->contains($viewData)) {
+        if ( ! $this->em->contains($viewData)) {
             $this->em->persist($viewData);
             $this->em->flush();
         }
 
-        foreach($viewData->getLinks() as $link) {
+        foreach ($viewData->getLinks() as $link) {
             $this->em->remove($link);
             $viewData->removeLink($link);
         }
-        foreach($forms['links'] as $data) {
+        foreach ($forms['links'] as $data) {
             $link = new Link();
             $link->setEntity($viewData);
             $link->setText($data['text']->getData());
