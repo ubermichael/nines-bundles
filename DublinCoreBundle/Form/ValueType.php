@@ -26,16 +26,11 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
  */
 abstract class ValueType extends AbstractType {
     /**
-     * @var ElementRepository
-     */
-    private ElementRepository $repo;
-
-    /**
      * Add form fields to $builder.
      */
-    public function buildForm(FormBuilderInterface $builder, array $options) : void {
+    public static function add(FormBuilderInterface $builder, array $options, ElementRepository $repo) : void {
 
-        foreach($this->repo->indexQuery()->execute() as $element) {
+        foreach($repo->indexQuery()->execute() as $element) {
             /** @var Element $element */
             $builder->add($element->getName(), CollectionType::class, [
                 'label' => $element->getLabel(),
@@ -55,13 +50,4 @@ abstract class ValueType extends AbstractType {
             ]);
         }
     }
-
-    /**
-     * @param ElementRepository $repo
-     * @required
-     */
-    public function setElementRepository(ElementRepository $repo) {
-        $this->repo = $repo;
-    }
-
 }

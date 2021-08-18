@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\DublinCoreBundle\Entity;
 
 interface ValueInterface {
-    public function getValues();
+    public function getValues(?string $name = null);
 
     public function setValues($values);
 

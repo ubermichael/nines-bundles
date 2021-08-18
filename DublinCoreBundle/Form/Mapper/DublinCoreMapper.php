@@ -14,6 +14,7 @@ use App\Entity\Document;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\DublinCoreBundle\Entity\Element;
 use Nines\DublinCoreBundle\Entity\Value;
+use Nines\DublinCoreBundle\Entity\ValueInterface;
 use Nines\DublinCoreBundle\Repository\ElementRepository;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
@@ -23,13 +24,21 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
 
     private EntityManagerInterface $em;
 
+    private $parentCall = true;
+
+    public function setParentCall(bool $call) {
+        $this->parentCall = $call;
+    }
+
     public function mapDataToForms($viewData, $forms) : void {
-        if ( ! $viewData instanceof Document) {
+        dump(['dcm:mdtf', $viewData, $forms]);
+        if ( ! $viewData instanceof ValueInterface) {
             return;
         }
-        parent::mapDataToForms($viewData, $forms);
+        if($this->parentCall) {
+            parent::mapDataToForms($viewData, $forms);
+        }
         $forms = iterator_to_array($forms);
-
         foreach ($this->elementRepo->findAll() as $element) {
             // @var Element $element
             $forms[$element->getName()]->setData($viewData->getValues($element->getName()));
@@ -37,10 +46,12 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
     }
 
     public function mapFormsToData($forms, &$viewData) : void {
-        if ( ! $viewData instanceof Document) {
+        if ( ! $viewData instanceof ValueInterface) {
             return;
         }
-        parent::mapFormsToData($forms, $viewData);
+        if($this->parentCall) {
+            parent::mapFormsToData($forms, $viewData);
+        }
         if( ! $this->em->contains($viewData)) {
             $this->em->persist($viewData);
             $this->em->flush();

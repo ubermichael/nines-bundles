@@ -21,11 +21,19 @@ use Symfony\Component\Form\Form;
 class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
     private EntityManagerInterface $em;
 
+    private $parentCall = true;
+
+    public function setParentCall(bool $call) {
+        $this->parentCall = $call;
+    }
+
     public function mapDataToForms($viewData, $forms) : void {
         if ( ! $viewData instanceof LinkableInterface) {
             return;
         }
-        parent::mapDataToForms($viewData, $forms);
+        if($this->parentCall) {
+//            parent::mapDataToForms($viewData, $forms);
+        }
         /** @var Form[] $forms */
         $forms = iterator_to_array($forms);
         $data = [];
@@ -35,7 +43,9 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
                 'text' => $link->getText(),
             ];
         }
+        dump(['before', $forms]);
         $forms['links']->setData($data);
+        dump(['after', $forms]);
     }
 
     public function mapFormsToData($forms, &$viewData) : void {
@@ -43,7 +53,9 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
             return;
         }
         $forms = iterator_to_array($forms);
-        parent::mapFormsToData($forms, $viewData);
+        if($this->parentCall) {
+            parent::mapFormsToData($viewData, $forms);
+        }
         if ( ! $this->em->contains($viewData)) {
             $this->em->persist($viewData);
             $this->em->flush();
