@@ -80,11 +80,4 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
     }
-
-    /**
-     * @required
-     */
-    public function setElementRepository(ElementRepository $repo) : void {
-        $this->elementRepo = $repo;
-    }
 }
