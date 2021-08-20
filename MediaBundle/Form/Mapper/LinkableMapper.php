@@ -32,7 +32,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
             return;
         }
         if($this->parentCall) {
-//            parent::mapDataToForms($viewData, $forms);
+            parent::mapDataToForms($viewData, $forms);
         }
         /** @var Form[] $forms */
         $forms = iterator_to_array($forms);
