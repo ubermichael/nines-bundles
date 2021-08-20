@@ -31,7 +31,6 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
     }
 
     public function mapDataToForms($viewData, $forms) : void {
-        dump(['dcm:mdtf', $viewData, $forms]);
         if ( ! $viewData instanceof ValueInterface) {
             return;
         }

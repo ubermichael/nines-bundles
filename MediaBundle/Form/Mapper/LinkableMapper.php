@@ -43,9 +43,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
                 'text' => $link->getText(),
             ];
         }
-        dump(['before', $forms]);
         $forms['links']->setData($data);
-        dump(['after', $forms]);
     }
 
     public function mapFormsToData($forms, &$viewData) : void {
