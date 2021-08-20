@@ -50,10 +50,10 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
         if ( ! $viewData instanceof LinkableInterface) {
             return;
         }
-        $forms = iterator_to_array($forms);
         if($this->parentCall) {
-            parent::mapFormsToData($viewData, $forms);
+            parent::mapFormsToData($forms, $viewData);
         }
+        $forms = iterator_to_array($forms);
         if ( ! $this->em->contains($viewData)) {
             $this->em->persist($viewData);
             $this->em->flush();
