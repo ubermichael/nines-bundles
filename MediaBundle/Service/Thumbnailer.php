@@ -94,21 +94,4 @@ class Thumbnailer {
 
         throw new Exception('Cannot generate thumbnail for ' . get_class($item));
     }
-
-    /**
-     * @param Image|Pdf $item
-     *
-     * @return string
-     * @throws ImagickException
-     * @throws Exception
-     */
-    public function thumbnail($item) : string {
-        if($item instanceof Image) {
-            return $this->thumbnailImage($item);
-        } elseif ($item instanceof Pdf) {
-            return $this->thumbnailPdf($item);
-        } else {
-            throw new Exception("Cannot generate thumbnail for " . get_class($item));
-        }
-    }
 }
