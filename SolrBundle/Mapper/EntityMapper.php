@@ -184,12 +184,14 @@ class EntityMapper {
     }
 
     public function getBoost($name) {
-        if( ! isset($this->boosts[$name])) {
+        if ( ! isset($this->boosts[$name])) {
             $this->logger->warning('Cannot get boost for unknown property {name}.', [
                 'name' => $name,
             ]);
-            return null;
+
+            return;
         }
+
         return $this->boosts[$name];
     }
 

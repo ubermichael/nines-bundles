@@ -75,6 +75,9 @@ class Builder implements ContainerAwareInterface {
         $feedback->addChild('Elements', [
             'route' => 'element_index',
         ]);
+        $feedback->addChild('Values', [
+            'route' => 'nines_dc_value_index',
+        ]);
 
         return $menu;
     }

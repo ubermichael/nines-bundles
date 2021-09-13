@@ -10,13 +10,10 @@ declare(strict_types=1);
 
 namespace Nines\MediaBundle\Entity;
 
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 interface EntityReferenceInterface {
-
     /**
      * @throws Exception
      */

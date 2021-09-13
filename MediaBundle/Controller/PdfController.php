@@ -20,7 +20,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -131,23 +130,5 @@ class PdfController extends AbstractController implements PaginatorAwareInterfac
         }
 
         return new BinaryFileResponse($pdf->getThumbFile());
-    }
-
-    /**
-     * @Route("/{id}", name="nines_media_pdf_delete", methods={"DELETE"})
-     *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Pdf $pdf) {
-        if ($this->isCsrfTokenValid('delete' . $pdf->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($pdf);
-            $entityManager->flush();
-            $this->addFlash('success', 'The pdf has been deleted.');
-        }
-
-        return $this->redirectToRoute('nines_media_pdf_index');
     }
 }

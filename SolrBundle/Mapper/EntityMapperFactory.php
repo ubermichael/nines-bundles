@@ -70,6 +70,39 @@ class EntityMapperFactory {
         $this->cacheDir = $cacheDir;
     }
 
+    /**
+     * Create the mapper by parsing the entity properties and annotations.
+     *
+     * @todo refactor this method
+     *
+     * @throws Exception
+     */
+    private function createMapper(SolrLogger $logger) : EntityMapper {
+        $mapper = new EntityMapper();
+        $mapper->setSolrLogger($logger);
+
+        AnnotationRegistry::registerLoader('class_exists');
+        $reader = new CachedReader(
+            new AnnotationReader(),
+            new PhpFileCache($this->cacheDir . '/solr_annotations'),
+            ('prod' !== $this->env)
+        );
+
+        $this->em->getMetadataFactory()->getAllMetadata();
+
+        $solrNames = [];
+
+        foreach ($this->em->getMetadataFactory()->getAllMetadata() as $meta) {
+            $reflectionClass = $meta->getReflectionClass();
+            $entityMeta = $this->getEntityMetadata($reflectionClass, $reader);
+            if ($entityMeta) {
+                $mapper->addEntity($entityMeta);
+            }
+        }
+
+        return $mapper;
+    }
+
     public function getEntityMetadata(ReflectionClass $reflectionClass, Reader $reader) : ?EntityMetadata {
         $document = $reader->getClassAnnotation($reflectionClass, Document::class);
         if ( ! $document) {
@@ -83,7 +116,7 @@ class EntityMapperFactory {
 
         /** @var ReflectionProperty $idProperty */
         /** @var Annotation $idAnnotation */
-        [$idAnnotation, $idProperty] = $this->getIdProperty($reader, $properties);
+        list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
         $idMeta = $this->analyzeIdField($idProperty, $idAnnotation);
         $entityMeta->setId($idMeta);
 
@@ -110,40 +143,8 @@ class EntityMapperFactory {
             $entityMeta->addCopyField($fieldMeta);
             $solrNames[$copyField->to] = $fieldMeta->getSolrName();
         }
+
         return $entityMeta;
-    }
-
-    /**
-     * Create the mapper by parsing the entity properties and annotations.
-     *
-     * @todo refactor this method
-     *
-     * @throws Exception
-     */
-    private function createMapper(SolrLogger $logger) : EntityMapper {
-        $mapper = new EntityMapper();
-        $mapper->setSolrLogger($logger);
-
-        AnnotationRegistry::registerLoader('class_exists');
-        $reader = new CachedReader(
-            new AnnotationReader(),
-            new PhpFileCache($this->cacheDir . '/solr_annotations'),
-            ('prod' !== $this->env)
-        );
-
-        $this->em->getMetadataFactory()->getAllMetadata();
-
-        $solrNames = [];
-
-        foreach ($this->em->getMetadataFactory()->getAllMetadata() as $meta) {
-            $reflectionClass = $meta->getReflectionClass();
-            $entityMeta = $this->getEntityMetadata($reflectionClass, $reader);
-            if($entityMeta) {
-                $mapper->addEntity($entityMeta);
-            }
-        }
-
-        return $mapper;
     }
 
     /**
@@ -243,9 +244,7 @@ class EntityMapperFactory {
         $fieldMeta = new CopyFieldMetadata();
         $fieldMeta->setName($copyField->to);
         $solrName = $copyField->to . Field::TYPE_MAP[$copyField->type];
-        $from = array_map(function ($s) use ($solrNames) {
-            return $solrNames[$s];
-        }, $copyField->from);
+        $from = array_map(fn ($s) => $solrNames[$s], $copyField->from);
         $fieldMeta->setFrom($from);
         $fieldMeta->setSolrName($solrName);
 

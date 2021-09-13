@@ -20,7 +20,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -131,23 +130,5 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
         }
 
         return new BinaryFileResponse($image->getThumbFile());
-    }
-
-    /**
-     * @Route("/{id}", name="nines_media_image_delete", methods={"DELETE"})
-     *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Image $image) {
-        if ($this->isCsrfTokenValid('delete' . $image->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($image);
-            $entityManager->flush();
-            $this->addFlash('success', 'The image has been deleted.');
-        }
-
-        return $this->redirectToRoute('nines_media_image_index');
     }
 }

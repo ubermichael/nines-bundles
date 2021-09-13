@@ -14,8 +14,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class EntityLinker
-{
+class EntityLinker {
     /**
      * Map of FQCN to the show route name.
      *

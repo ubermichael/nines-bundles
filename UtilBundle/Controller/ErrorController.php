@@ -35,7 +35,7 @@ class ErrorController extends AbstractController implements PaginatorAwareInterf
             'class' => $exception->getClass(),
             'message' => $exception->getMessage(),
             'backtrace' => $exception->getTrace(),
-            'trim' => strlen($this->getParameter('kernel.project_dir'))+1,
+            'trim' => mb_strlen($this->getParameter('kernel.project_dir')) + 1,
         ];
 
         $content = '';

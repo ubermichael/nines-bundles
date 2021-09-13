@@ -16,7 +16,6 @@ use ImagickException;
 use ImagickPixel;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\Pdf;
-use Nines\MediaBundle\Entity\StoredFileInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,18 +37,10 @@ class Thumbnailer {
         $this->logger = $logger;
     }
 
-    public function setWidth($width) : void {
-        $this->width = $width;
-    }
-
-    public function setHeight($height) : void {
-        $this->height = $height;
-    }
-
     /**
      * @throws ImagickException
      */
-    protected function thumb(string $from, string $to) {
+    protected function thumb(string $from, string $to) : void {
         $magick = new Imagick($from);
         $magick->setBackgroundColor(new ImagickPixel('white'));
         $magick->thumbnailImage($this->width, $this->height, true, false);
@@ -64,6 +55,7 @@ class Thumbnailer {
         $file = $image->getFile();
         $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
         $this->thumb($file->getRealPath(), dirname($file->getRealPath()) . '/' . $thumbname);
+
         return $thumbname;
     }
 
@@ -74,7 +66,33 @@ class Thumbnailer {
         $file = $pdf->getFile();
         $thumbname = $file->getBasename('.' . $file->getExtension()) . '_tn.png';
         $this->thumb($file->getRealPath() . '[0]', dirname($file->getRealPath()) . '/' . $thumbname);
+
         return $thumbname;
+    }
+
+    public function setWidth($width) : void {
+        $this->width = $width;
+    }
+
+    public function setHeight($height) : void {
+        $this->height = $height;
+    }
+
+    /**
+     * @param Image|Pdf $item
+     *
+     * @throws ImagickException
+     * @throws Exception
+     */
+    public function thumbnail($item) : string {
+        if ($item instanceof Image) {
+            return $this->thumbnailImage($item);
+        }
+        if ($item instanceof Pdf) {
+            return $this->thumbnailPdf($item);
+        }
+
+        throw new Exception('Cannot generate thumbnail for ' . get_class($item));
     }
 
     /**

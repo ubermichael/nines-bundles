@@ -39,17 +39,17 @@ class Element extends AbstractTerm {
     private $comment;
 
     /**
-     * @var AbstractField[]|Collection
-     * @ORM\OneToMany(targetEntity="AbstractField", mappedBy="element")
+     * @var Collection|Value[]
+     * @ORM\OneToMany(targetEntity="Value", mappedBy="element")
      */
-    private $fields;
+    private $values;
 
     /**
      * Constructor.
      */
     public function __construct() {
         parent::__construct();
-        $this->fields = new ArrayCollection();
+        $this->values = new ArrayCollection();
     }
 
     public function __toString() : string {
@@ -79,33 +79,6 @@ class Element extends AbstractTerm {
     }
 
     /**
-     * Add field.
-     *
-     * @return Element
-     */
-    public function addField(AbstractField $field) {
-        $this->fields[] = $field;
-
-        return $this;
-    }
-
-    /**
-     * Remove field.
-     */
-    public function removeField(AbstractField $field) : void {
-        $this->fields->removeElement($field);
-    }
-
-    /**
-     * Get fields.
-     *
-     * @return Collection
-     */
-    public function getFields() {
-        return $this->fields;
-    }
-
-    /**
      * Set comment.
      *
      * @param string $comment
@@ -125,5 +98,32 @@ class Element extends AbstractTerm {
      */
     public function getComment() {
         return $this->comment;
+    }
+
+    /**
+     * @return Collection|Value[]
+     */
+    public function getValues() : Collection {
+        return $this->values;
+    }
+
+    public function addValue(Value $value) : self {
+        if ( ! $this->values->contains($value)) {
+            $this->values[] = $value;
+            $value->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValue(Value $value) : self {
+        if ($this->values->removeElement($value)) {
+            // set the owning side to null (unless already changed)
+            if ($value->getElement() === $this) {
+                $value->setElement(null);
+            }
+        }
+
+        return $this;
     }
 }

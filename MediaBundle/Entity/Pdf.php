@@ -23,12 +23,13 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Pdf extends AbstractEntity implements EntityReferenceInterface, StoredFileInterface {
     use EntityReferenceTrait;
+
     use StoredFileTrait;
 
     /**
      * @var File
      */
-    protected $thumbFile = null;
+    protected $thumbFile;
 
     /**
      * @var string

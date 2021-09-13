@@ -76,9 +76,6 @@ class Builder implements ContainerAwareInterface {
         $media->addChild('Audio Files', [
             'route' => 'nines_media_audio_index',
         ]);
-        $media->addChild('Citations', [
-            'route' => 'nines_media_citation_index',
-        ]);
         $media->addChild('Images', [
             'route' => 'nines_media_image_index',
         ]);

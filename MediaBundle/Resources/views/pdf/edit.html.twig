@@ -3,18 +3,18 @@
 {% block title %}Edit PDF{% endblock %}
 
 {% block body %}
-    <h1>Edit pdf/h1>
+    <h1>Edit pdf</h1>
     <p>Use the form below to update this PDFin <a href='{{ path(route, {'id': entity.id}) }}'>{{ entity }}</a>.</p>
 
     <div class='panel panel-default'>
-        <div class='panel-heading'>Current pdf/div>
+        <div class='panel-heading'>Current pdf</div>
         <div class='panel-body'>
-            <img src="{{ path('nines_media_pdfthumb', {'id': pdfid}) }}" class="img-thumbnail img-responsive center-block" />
+            <img src="{{ path('nines_media_pdf_thumb', {'id': pdf.id}) }}" class="img-thumbnail img-responsive center-block" />
         </div>
     </div>
 
     {{ form_start(form) }}
-    {{ form_row(form.newpdfile) }}
+    {{ form_row(form.newFile) }}
     {{ form_rest(form) }}
     <div class="form-group">
         <div class="col-sm-2"></div>

@@ -19,7 +19,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -93,23 +92,5 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
         }
 
         return new BinaryFileResponse($audio->getFile());
-    }
-
-    /**
-     * @Route("/{id}", name="nines_media_audio_delete", methods={"DELETE"})
-     *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Audio $audio) {
-        if ($this->isCsrfTokenValid('delete' . $audio->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($audio);
-            $entityManager->flush();
-            $this->addFlash('success', 'The audio has been deleted.');
-        }
-
-        return $this->redirectToRoute('nines_media_audio_index');
     }
 }

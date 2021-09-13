@@ -1,0 +1,46 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Entity</th>
+            <td>
+                {{ value_manager.entityType(value) }}
+                <a href='{{ value_manager.linkToEntity(value) }}'>
+                    {{ value_manager.findEntity(value) }}
+                </a><br />
+                {{ value.entity }}
+            </td>
+        </tr>
+        <tr>
+            <th>Element</th>
+            <td>
+                <a href='{{ path('element_show', {'id': value.element.id}) }}'>
+                    {{ value.element }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Data</th>
+            <td>
+                {{ value.data }}
+            </td>
+        </tr>
+        <tr>
+            <th>HTML</th>
+            <td>{{ value }}</td>
+        </tr>
+        <tr>
+            <th>Rendered</th>
+            <td>{{ value|raw }}</td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ value.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ value.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+

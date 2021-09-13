@@ -19,3 +19,10 @@ services:
     Nines\DublinCoreBundle\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: dcNavMenu, alias: nines_dc_elements }
+
+    Nines\DublinCoreBundle\Service\ValueManager:
+        arguments:
+            $routing: '%nines_util.routing%'
+            $root: '%kernel.project_dir%'
+        tags:
+            - { name: 'doctrine.event_subscriber' }

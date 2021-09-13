@@ -42,12 +42,6 @@ services:
         tags:
             - { name: 'doctrine.event_subscriber' }
 
-    Nines\MediaBundle\Service\CitationManager:
-        arguments:
-            $routing: '%nines_util.routing%'
-        tags:
-            - { name: 'doctrine.event_subscriber' }
-
     Nines\MediaBundle\Service\ImageManager:
         arguments:
             $routing: '%nines_util.routing%'

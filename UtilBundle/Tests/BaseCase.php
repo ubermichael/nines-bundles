@@ -77,7 +77,7 @@ abstract class BaseCase extends WebTestCase {
 
         foreach ($files as $file) {
             if ($file instanceof SplFileInfo) {
-                if( ! $file->getRealPath()) {
+                if ( ! $file->getRealPath()) {
                     continue;
                 }
                 $this->cleanup[] = $file->getRealPath();

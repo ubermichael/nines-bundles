@@ -13,7 +13,7 @@ namespace Nines\MediaBundle\Entity;
 interface LinkableInterface {
     public function getLinks();
 
-    public function setLinks($links);
+    public function setLinks($links = null);
 
     public function addLink(Link $link);
 

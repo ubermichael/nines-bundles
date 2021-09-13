@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Image extends AbstractEntity implements EntityReferenceInterface, StoredFileInterface {
     use EntityReferenceTrait;
+
     use StoredFileTrait;
 
     /**

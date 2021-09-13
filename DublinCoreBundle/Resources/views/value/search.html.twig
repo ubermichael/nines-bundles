@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Citation Search{% endblock %}
+{% block title %}Value Search{% endblock %}
 
  {% block pageheader %}
-     <h1>Citation Search</h1>
-     {% if citations|length %}
+     <h1>Value Search</h1>
+     {% if values|length %}
          <p class="count">
-             Displaying {{ citations|length }} citations of {{ citations.getTotalItemCount }} total.
+             Displaying {{ values|length }} values of {{ values.getTotalItemCount }} total.
          </p>
      {% endif %}
  {% endblock %}
 
 {% block body %}
 
-    <form method="get" action="{{ path('nines_media_citation_search') }}" class="form-horizontal">
+    <form method="get" action="{{ path('nines_dc_value_search') }}" class="form-horizontal">
         <fieldset>
             <legend>Search</legend>
             <div class='form-group'>
@@ -42,13 +42,13 @@
         </fieldset>
     </form>
 
-    {% if citations|length %}
+    {% if values|length %}
 
-        {% embed '@NinesMedia/citation/partial/table.html.twig' %}
+        {% embed '@NinesDublinCore/value/partial/table.html.twig' %}
         {% endembed %}
 
         <div class="navigation">
-            {{ knp_pagination_render(citations) }}
+            {{ knp_pagination_render(values) }}
         </div>
     {% endif %}
 

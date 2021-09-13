@@ -10,11 +10,8 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Nines\SolrBundle\Annotation as Solr;
 
 /**
  * AbstractEntity adds id, created, and updated fields along with the
@@ -25,7 +22,6 @@ use Nines\SolrBundle\Annotation as Solr;
  * @ORM\HasLifecycleCallbacks
  */
 interface AbstractEntityInterface {
-
     /**
      * Force all entities to provide a stringify function.
      */

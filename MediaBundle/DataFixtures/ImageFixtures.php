@@ -32,12 +32,12 @@ class ImageFixtures extends Fixture {
             $upload = new UploadedFile(stream_get_meta_data($tmp)['uri'], "image_{$i}.png", 'image/png', null, true);
 
             $fixture = new Image();
-            $fixture->setImageFile($upload);
+            $fixture->setFile($upload);
             $fixture->setPublic(0 === $i % 2);
             $fixture->setOriginalName('OriginalName ' . $i);
-            $fixture->setImagePath('ImagePath ' . $i);
+            $fixture->setPath('ImagePath ' . $i);
             $fixture->setThumbPath('ThumbPath ' . $i);
-            $fixture->setImageSize($i);
+            $fixture->setFileSize($i);
             $fixture->setImageWidth($i);
             $fixture->setImageHeight($i);
             $fixture->setMimeType('image/png');

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\DublinCoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Nines\DublinCoreBundle\Entity\Element;
 
@@ -23,5 +24,15 @@ use Nines\DublinCoreBundle\Entity\Element;
 class ElementRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Element::class);
+    }
+
+    /**
+     * @return Element[]|Query
+     */
+    public function indexQuery() {
+        $qb = $this->createQueryBuilder('element');
+        $qb->addOrderBy('element.label', 'ASC');
+
+        return $qb->getQuery();
     }
 }

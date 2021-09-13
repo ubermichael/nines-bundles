@@ -11,8 +11,6 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form;
 
 use Nines\MediaBundle\Entity\Link;
-use Nines\MediaBundle\Entity\LinkableInterface;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -21,10 +19,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class LinkableType {
     public static function add(FormBuilderInterface $builder, $options) : void {
-        $entity = $options['data'];
-        if ( ! $entity instanceof LinkableInterface) {
-            throw new UnexpectedTypeException($entity, LinkableInterface::class);
-        }
         $builder->add('links', CollectionType::class, [
             'label' => 'Links',
             'required' => false,
@@ -39,7 +33,7 @@ class LinkableType {
                 'class' => 'collection collection-complex',
                 'help_block' => '',
             ],
-            'data' => $options['data']->getLinks(),
+            'mapped' => false,
         ]);
     }
 }

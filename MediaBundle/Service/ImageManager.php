@@ -18,12 +18,10 @@ use Exception;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use ReflectionClass;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Image Manager service that handles file uploads, thumbnailing, and database
