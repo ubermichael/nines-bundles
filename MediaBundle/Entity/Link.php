@@ -28,13 +28,13 @@ class Link extends AbstractEntity implements EntityReferenceInterface {
     /**
      * @var string
      * @Assert\Url
-     * @ORM\Column(type="string", length=128, nullable=false)
+     * @ORM\Column(type="string", length=500, nullable=false)
      */
     private $url;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=128, nullable=true)
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $text;
 
