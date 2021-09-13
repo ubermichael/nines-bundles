@@ -40,7 +40,7 @@ class UserType extends AbstractType {
             ])
             ->add('email')
             ->add('fullname', TextType::class, [
-                'label' => 'Full name'
+                'label' => 'Full name',
             ])
             ->add('affiliation')
             ->add('roles', ChoiceType::class, [

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Nines\DublinCoreBundle\Form\Mapper;
 
-use App\Entity\Document;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\DublinCoreBundle\Entity\Element;
 use Nines\DublinCoreBundle\Entity\Value;
@@ -26,7 +25,7 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
 
     private $parentCall = true;
 
-    public function setParentCall(bool $call) {
+    public function setParentCall(bool $call) : void {
         $this->parentCall = $call;
     }
 
@@ -34,7 +33,7 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
         if ( ! $viewData instanceof ValueInterface) {
             return;
         }
-        if($this->parentCall) {
+        if ($this->parentCall) {
             parent::mapDataToForms($viewData, $forms);
         }
         $forms = iterator_to_array($forms);
@@ -48,10 +47,10 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
         if ( ! $viewData instanceof ValueInterface) {
             return;
         }
-        if($this->parentCall) {
+        if ($this->parentCall) {
             parent::mapFormsToData($forms, $viewData);
         }
-        if( ! $this->em->contains($viewData)) {
+        if ( ! $this->em->contains($viewData)) {
             $this->em->persist($viewData);
             $this->em->flush();
         }

@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Nines\UtilBundle\Form\Mapper;
 
 use Symfony\Component\Form\DataMapperInterface;
-use Symfony\Component\Form\Exception;
-use Symfony\Component\Form\FormInterface;
 
 class SequentialMapper implements DataMapperInterface {
-
     /**
      * @var DataMapperInterface[]
      */
@@ -17,14 +22,14 @@ class SequentialMapper implements DataMapperInterface {
         $this->mappers = $mappers;
     }
 
-    public function mapDataToForms($viewData, $forms) {
-        foreach($this->mappers as $mapper) {
+    public function mapDataToForms($viewData, $forms) : void {
+        foreach ($this->mappers as $mapper) {
             $mapper->mapDataToForms($viewData, $forms);
         }
     }
 
-    public function mapFormsToData($forms, &$viewData) {
-        foreach($this->mappers as $mapper) {
+    public function mapFormsToData($forms, &$viewData) : void {
+        foreach ($this->mappers as $mapper) {
             $mapper->mapFormsToData($forms, $viewData);
         }
     }

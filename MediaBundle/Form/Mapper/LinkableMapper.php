@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form\Mapper;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\DublinCoreBundle\Repository\ElementRepository;
 use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
 use Symfony\Component\Form\DataMapperInterface;
@@ -23,7 +22,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
 
     private $parentCall = true;
 
-    public function setParentCall(bool $call) {
+    public function setParentCall(bool $call) : void {
         $this->parentCall = $call;
     }
 
@@ -31,7 +30,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
         if ( ! $viewData instanceof LinkableInterface) {
             return;
         }
-        if($this->parentCall) {
+        if ($this->parentCall) {
             parent::mapDataToForms($viewData, $forms);
         }
         /** @var Form[] $forms */
@@ -50,7 +49,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
         if ( ! $viewData instanceof LinkableInterface) {
             return;
         }
-        if($this->parentCall) {
+        if ($this->parentCall) {
             parent::mapFormsToData($forms, $viewData);
         }
         $forms = iterator_to_array($forms);
@@ -64,7 +63,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
             $viewData->removeLink($link);
         }
         foreach ($forms['links'] as $data) {
-            if( ! $data['url']) {
+            if ( ! $data['url']) {
                 continue;
             }
             $link = new Link();

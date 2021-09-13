@@ -160,5 +160,4 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
     public function setThumbnailer(Thumbnailer $thumbnailer) : void {
         $this->thumbnailer = $thumbnailer;
     }
-
 }

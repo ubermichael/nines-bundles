@@ -10,16 +10,12 @@ declare(strict_types=1);
 
 namespace Nines\DublinCoreBundle\Form;
 
-use Nines\DublinCoreBundle\Form\Mapper\DublinCoreMapper;
 use Nines\DublinCoreBundle\Entity\Element;
 use Nines\DublinCoreBundle\Repository\ElementRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tetranz\Select2EntityBundle\Form\DataTransformer\EntityToPropertyTransformer;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Document form.
@@ -29,9 +25,8 @@ abstract class ValueType extends AbstractType {
      * Add form fields to $builder.
      */
     public static function add(FormBuilderInterface $builder, array $options, ElementRepository $repo) : void {
-
-        foreach($repo->indexQuery()->execute() as $element) {
-            /** @var Element $element */
+        foreach ($repo->indexQuery()->execute() as $element) {
+            // @var Element $element
             $builder->add($element->getName(), CollectionType::class, [
                 'label' => $element->getLabel(),
                 'entry_type' => TextType::class,
