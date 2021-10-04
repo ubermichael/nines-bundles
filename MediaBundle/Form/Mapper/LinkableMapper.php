@@ -63,7 +63,7 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
             $viewData->removeLink($link);
         }
         foreach ($forms['links'] as $data) {
-            if ( ! $data['url']) {
+            if ( ! $data['url'] || ! $data['url']->getData()) {
                 continue;
             }
             $link = new Link();
