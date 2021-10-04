@@ -75,7 +75,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
             $em->flush();
             $this->addFlash('success', 'The pages have been ordered.');
 
-            return $this->redirect($this->generateUrl('page_sort'));
+            return $this->redirect($this->generateUrl('nines_blog_page_sort'));
         }
 
         $pages = $repo->findBy(
