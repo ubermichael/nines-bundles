@@ -57,7 +57,4 @@ class MakeMenu extends AbstractNinesMaker {
         // TODO: Implement interact() method.
     }
 
-    public function getCommandDescription() : void {
-        // TODO: Implement @method string getCommandDescription()
-    }
 }
