@@ -379,7 +379,7 @@ class QueryBuilder {
 
         foreach ($this->facetRanges as $key => $value) {
             $facetSet->createFacetRange($key)->setField($value['field'])->setMinCount(1)
-                ->setStart($value['start'])->setEnd($value['end'])->setGap(50)
+                ->setStart($value['start'])->setEnd($value['end'])->setGap($value['gap'])
                 ->getLocalParameters()->setExclude('exclude');
         }
 
