@@ -1,4 +1,7 @@
 {# @var string path #}
+{% if q is not defined %}
+    {% set q = '' %}
+{% endif %}
 <div class='col-sm-12'>
     <fieldset>
         <div class='form-group'>
