@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,9 +12,11 @@ namespace Nines\SolrBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Nines\SolrBundle\Exception\NotConfiguredException;
 use Nines\SolrBundle\Exception\SolrException;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Services\SolrManager;
+use ReflectionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,15 +33,9 @@ class IndexCommand extends Command {
      */
     public const BATCH_SIZE = 250;
 
-    /**
-     * @var EntityMapper
-     */
-    private $mapper;
+    private EntityMapper $mapper;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    private EntityManagerInterface $em;
 
     private SolrManager $manager;
 
@@ -59,10 +55,11 @@ class IndexCommand extends Command {
      * Execute the command. Returns 0 for success.
      *
      * @throws NonUniqueResultException
-     *
-     * @return int
+     * @throws NotConfiguredException
+     * @throws ReflectionException
+     * @throws SolrException
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         try {
             $this->manager->disableLogger();
         } catch (SolrException $e) {
@@ -74,7 +71,7 @@ class IndexCommand extends Command {
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         $batch = (int) $input->getOption('batch');
-        $classes = array_map(fn ($s) => false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s, $input->getArgument('classes'));
+        $classes = array_map(fn($s) => false === mb_strpos($s, '\\') ? 'App\\Entity\\' . $s : $s, $input->getArgument('classes'));
 
         if ($input->getOption('clear')) {
             $this->manager->clear();
@@ -115,6 +112,8 @@ class IndexCommand extends Command {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityMapper(EntityMapper $mapper) : void {
         $this->mapper = $mapper;
@@ -122,6 +121,8 @@ class IndexCommand extends Command {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setSolrManager(SolrManager $manager) : void {
         $this->manager = $manager;
@@ -129,6 +130,8 @@ class IndexCommand extends Command {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;

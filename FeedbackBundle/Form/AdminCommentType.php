@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\FeedbackBundle\Form;
 
+use Nines\FeedbackBundle\Entity\Comment;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,21 +20,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AdminCommentType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
-        $builder->add('fullname');  // string
-        $builder->add('email');  // string
-        $builder->add('followUp');  // boolean
-        $builder->add('content', TextareaType::class, [
-            'attr' => [
-                'class' => 'tinymce',
-            ],
-        ]);  // string
         $builder->add('status');
         $builder->setMethod('POST');
     }
 
     public function configureOptions(OptionsResolver $resolver) : void {
         $resolver->setDefaults([
-            'data_class' => 'Nines\FeedbackBundle\Entity\Comment',
+            'data_class' => Comment::class,
         ]);
     }
 }

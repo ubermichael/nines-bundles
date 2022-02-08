@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -38,6 +38,13 @@ class UserTest extends TestCase {
 
         $user->setRoles([]);
         $this->assertSame(['ROLE_USER'], $user->getRoles());
+    }
+
+    public function testHasRole() : void {
+        $user = new User();
+        $user->setRoles(['A', 'B', 'C']);
+        $this->assertTrue($user->hasRole('A'));
+        $this->assertFalse($user->hasRole('cheeseburger'));
     }
 
     public function testRemoveRoles() : void {

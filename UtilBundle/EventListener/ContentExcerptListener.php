@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -14,25 +14,15 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Nines\UtilBundle\Entity\ContentEntityInterface;
 use Nines\UtilBundle\Services\Text;
-use Psr\Log\LoggerInterface;
 
 class ContentExcerptListener {
-    /**
-     * @var Text
-     */
-    private $text;
+    private Text $text;
 
-    private $logger;
-
-    public function __construct(Text $text, LoggerInterface $logger) {
+    public function __construct(Text $text) {
         $this->text = $text;
-        $this->logger = $logger;
     }
 
-    private function generateExcerpt($entity) : void {
-        if ( ! $entity instanceof ContentEntityInterface) {
-            return;
-        }
+    private function generateExcerpt(ContentEntityInterface $entity) : void {
         if ($entity->getExcerpt()) {
             return;
         }
@@ -42,10 +32,18 @@ class ContentExcerptListener {
     }
 
     public function prePersist(LifecycleEventArgs $args) : void {
-        $this->generateExcerpt($args->getEntity());
+        $entity = $args->getEntity();
+        if ( ! $entity instanceof ContentEntityInterface) {
+            return;
+        }
+        $this->generateExcerpt($entity);
     }
 
     public function preUpdate(PreUpdateEventArgs $args) : void {
-        $this->generateExcerpt($args->getEntity());
+        $entity = $args->getEntity();
+        if ( ! $entity instanceof ContentEntityInterface) {
+            return;
+        }
+        $this->generateExcerpt($entity);
     }
 }

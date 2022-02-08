@@ -3,18 +3,19 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\MakerBundle\Maker;
 
-use Doctrine\Common\Inflector\Inflector as LegacyInflector;
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
-use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use ReflectionClass;
+use ReflectionException;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -30,55 +31,41 @@ use Twig\Environment;
 abstract class AbstractNinesMaker implements MakerInterface {
     protected const GENERATED = ['id', 'created', 'updated'];
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    protected DoctrineHelper $doctrineHelper;
 
-    /**
-     * @var FormTypeRenderer
-     */
-    protected $formTypeRenderer;
+    protected FormTypeRenderer $formTypeRenderer;
 
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Environment $twig;
 
-    /**
-     * @var Inflector
-     */
-    private $inflector;
+    protected int $fixtureCount;
+
+    private Inflector $inflector;
 
     public function __construct() {
-        if (class_exists(InflectorFactory::class)) {
-            $this->inflector = InflectorFactory::create()->build();
-        }
+        $this->inflector = InflectorFactory::create()->build();
     }
 
     protected function pluralize(string $word) : string {
-        if (null !== $this->inflector) {
-            return $this->inflector->pluralize($word);
-        }
-
-        return LegacyInflector::pluralize($word);
+        return $this->inflector->pluralize($word);
     }
 
     protected function singularize(string $word) : string {
-        if (null !== $this->inflector) {
-            return $this->inflector->singularize($word);
-        }
-
-        return LegacyInflector::singularize($word);
+        return $this->inflector->singularize($word);
     }
 
-    protected function getMappedFieldsInEntity(ClassMetadata $classMetadata) {
-        // @var $classReflection ReflectionClass
+    /**
+     * @throws ReflectionException
+     *
+     * @return int[]|string[]
+     *
+     * @phpstan-param ClassMetadataInfo<AbstractEntity> $classMetadata
+     */
+    protected function getMappedFieldsInEntity(ClassMetadataInfo $classMetadata) : array {
         $classReflection = $classMetadata->reflClass;
 
         $targetFields = array_merge(
             array_keys($classMetadata->fieldMappings),
-            array_keys($classMetadata->associationMappings)
+            array_keys($classMetadata->associationMappings),
         );
 
         if ($classReflection) {
@@ -94,7 +81,7 @@ abstract class AbstractNinesMaker implements MakerInterface {
             $targetFields = array_diff($targetFields, $traitProperties);
 
             // exclude inherited properties
-            $targetFields = array_filter($targetFields, function ($field) use ($classReflection) {
+            $targetFields = array_filter($targetFields, function($field) use ($classReflection) {
                 return $classReflection->hasProperty($field)
                     && $classReflection->getProperty($field)->getDeclaringClass()->getName() === $classReflection->getName();
             });
@@ -103,23 +90,34 @@ abstract class AbstractNinesMaker implements MakerInterface {
         return $targetFields;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function getPathOfClass(string $class) : string {
         return (new ReflectionClass($class))->getFileName();
     }
 
-    protected function createClassManipulator(string $classPath, $overwrite = true, $annotations = false) : ClassSourceManipulator {
+    protected function createClassManipulator(string $classPath, ?bool $overwrite = true, ?bool $annotations = false) : ClassSourceManipulator {
         $source = file_get_contents($classPath);
 
         return new ClassSourceManipulator($source, $overwrite, $annotations);
     }
 
-    protected function shortName(string $fqcn) {
+    /**
+     * @throws ReflectionException
+     */
+    protected function shortName(string $fqcn) : string {
         $reflect = new ReflectionClass($fqcn);
 
         return $reflect->getShortName();
     }
 
-    protected function collect(Generator $generator, $name, $shallow = false) {
+    /**
+     * @throws ReflectionException
+     *
+     * @return array<string,mixed>
+     */
+    protected function collect(Generator $generator, string $name, ?bool $shallow = false) : array {
         // todo: figure out what to do with FQCNs here.
         $entityClassDetails = $generator->createClassNameDetails($name, 'Entity\\');
         $repositoryClassDetails = $generator->createClassNameDetails($entityClassDetails->getShortName() . 'Repository', 'Repository\\', 'Repository');
@@ -132,25 +130,31 @@ abstract class AbstractNinesMaker implements MakerInterface {
         $controllerClassDetails = $generator->createClassNameDetails(
             $entityClassDetails->getRelativeNameWithoutSuffix() . 'Controller',
             'Controller\\',
-            'Controller'
+            'Controller',
+        );
+
+        $indexClassDetails = $generator->createClassNameDetails(
+            $entityClassDetails->getRelativeNameWithoutSuffix() . 'Index',
+            'Index\\',
+            'Index',
         );
 
         $formClassDetails = $generator->createClassNameDetails(
             $entityClassDetails->getRelativeNameWithoutSuffix() . 'Type',
             'Form\\',
-            'Type'
+            'Type',
         );
 
         $fixtureClassDetails = $generator->createClassNameDetails(
             $entityClassDetails->getRelativeNameWithoutSuffix() . 'Fixtures',
             'DataFixtures\\',
-            'Fixtures'
+            'Fixtures',
         );
 
         $testClassDetails = $generator->createClassNameDetails(
             $entityClassDetails->getRelativeNameWithoutSuffix() . 'Test',
             'Tests\\',
-            'Test'
+            'Test',
         );
 
         $routeName = Str::asRouteName($controllerClassDetails->getRelativeNameWithoutSuffix());
@@ -176,7 +180,7 @@ abstract class AbstractNinesMaker implements MakerInterface {
         }
 
         $mappings = $classMetadata ? $classMetadata->fieldMappings : [];
-        $mappedFieldNames = array_filter(array_keys($mappings), fn ($item) => ! in_array($item, self::GENERATED, true));
+        $mappedFieldNames = array_filter(array_keys($mappings), fn($item) => ! in_array($item, self::GENERATED, true));
 
         return [
             'generated' => self::GENERATED,
@@ -191,10 +195,14 @@ abstract class AbstractNinesMaker implements MakerInterface {
             'entity_var_singular' => $entityVarSingular,
 
             'mapped_field_names' => $mappedFieldNames,
-            'field_mappings' => $classMetadata ? $classMetadata->fieldMappings : [],
+            'field_mappings' => $mappings,
             'associations' => $classMetadata ? $classMetadata->associationMappings : [],
             'relations' => $relations,
             'indexes' => $indexes,
+
+            'index_class_name' => $indexClassDetails->getShortName(),
+            'index_full_class_name' => $indexClassDetails->getFullName(),
+            'index_var' => lcfirst($this->singularize($indexClassDetails->getShortName())),
 
             'form_class_name' => $formClassDetails->getShortName(),
             'form_full_class_name' => $formClassDetails->getFullName(),
@@ -220,21 +228,17 @@ abstract class AbstractNinesMaker implements MakerInterface {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setTwig(Environment $environment) : void {
         $this->twig = $environment;
     }
 
-    /**
-     * @required
-     */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper) : void {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @required
-     */
     public function setFormTypeRenderer(FormTypeRenderer $formTypeRenderer) : void {
         $this->formTypeRenderer = $formTypeRenderer;
     }
@@ -243,6 +247,10 @@ abstract class AbstractNinesMaker implements MakerInterface {
      * {@inheritdoc}
      */
     public function configureDependencies(DependencyBuilder $dependencies) : void {
+    }
+
+    public function setFixtureCount(int $fixtureCount) : void {
+        $this->fixtureCount = $fixtureCount;
     }
 
     /**

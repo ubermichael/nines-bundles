@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -18,45 +18,39 @@ use Nines\BlogBundle\Entity\Post;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 
 class PostFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
-    /**
-     * {@inheritdoc}
-     */
     public static function getGroups() : array {
-        return [
-            'nines_blog',
-        ];
+        return ['test'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function load(ObjectManager $manager) : void {
-        $draft = new Post();
-        $draft->setTitle('Hello draft.');
-        $draft->setCategory($this->getReference('post-category-1'));
-        $draft->setStatus($this->getReference('post-status-1'));
-        $draft->setExcerpt('I am draft excerpt.');
-        $draft->setContent('I am an excerpt and I like drafts.');
-        $draft->setSearchable('I am an excerpt and I like drafts.');
-        $draft->setUser($this->getReference('user.user'));
-        $this->setReference('post.draft', $draft);
-        $manager->persist($draft);
-
-        $published = new Post();
-        $published->setTitle('Hello world.');
-        $published->setCategory($this->getReference('post-category-1'));
-        $published->setStatus($this->getReference('post-status-1'));
-        $published->setExcerpt('I am published excerpt.');
-        $published->setContent('I am an excerpt and I like publishing.');
-        $published->setSearchable('I am an excerpt and I like publishing.');
-        $published->setUser($this->getReference('user.user'));
-        $this->setReference('post.published', $published);
-        $manager->persist($published);
+        for ($i = 1; $i <= 5; $i++) {
+            $fixture = new Post();
+            $fixture->setIncludeComments(0 === $i % 2);
+            $fixture->setTitle('Title ' . $i);
+            $fixture->setExcerpt("<p>This is paragraph {$i}</p>");
+            $fixture->setContent("<p>This is paragraph {$i}</p>");
+            $fixture->setCategory($this->getReference('postcategory.' . $i));
+            $fixture->setStatus($this->getReference('poststatus.' . $i));
+            $fixture->setUser($this->getReference('user.inactive'));
+            $manager->persist($fixture);
+            $this->setReference('post.' . $i, $fixture);
+        }
         $manager->flush();
     }
 
-    public function getDependencies() {
+    /**
+     * {@inheritdoc}
+     *
+     * @return array<string>
+     */
+    public function getDependencies() : array {
         return [
-            UserFixtures::class,
-            PostStatusFixtures::class,
             PostCategoryFixtures::class,
+            PostStatusFixtures::class,
+            UserFixtures::class,
         ];
     }
 }

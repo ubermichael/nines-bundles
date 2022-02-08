@@ -1,0 +1,52 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Full name</th>
+            <td>
+                {{ comment.fullname }}
+            </td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>
+                {{ comment.email }}
+            </td>
+        </tr>
+        <tr>
+            <th>Follow Up</th>
+            <td>
+                {% if comment.followUp %}Yes{% else %}No{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Comment Status</th>
+            <td>
+                {% if comment.status %}
+                    <a href='{{ path("nines_feedback_comment_status_show", {"id": comment.status.id}) }}'>{{ comment.status }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Content</th>
+            <td>
+                {{ comment.content|raw }}
+            </td>
+        </tr>
+        <tr>
+            <th>Entity</th>
+            <td>
+                {% include '@NinesUtil/linked_entity/link.html.twig' with {
+                    'entity': comment
+                } %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ comment.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ comment.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>

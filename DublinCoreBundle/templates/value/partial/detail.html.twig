@@ -1,0 +1,35 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Data</th>
+            <td>
+                {{ value.data }}
+            </td>
+        </tr>
+        <tr>
+            <th>Entity</th>
+            <td>
+                {% include '@NinesUtil/linked_entity/link.html.twig' with {
+                    'entity': value
+                } %}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Element</th>
+            <td>
+                {% if value.element %}
+                    <a href='{{ path("nines_dc_element_show", {"id": value.element.id}) }}'>{{ value.element }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ value.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ value.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\Collection;
 
 trait PdfContainerTrait {
     /**
-     * @var Collection|Pdf[]
+     * @var Collection<int,Pdf>|Pdf[]
      */
     protected $pdfs;
 
@@ -23,9 +23,6 @@ trait PdfContainerTrait {
         $this->pdfs = new ArrayCollection();
     }
 
-    /**
-     * @return mixed
-     */
     public function addPdf(Pdf $pdf) : self {
         if ( ! $this->pdfs->contains($pdf)) {
             $this->pdfs[] = $pdf;
@@ -34,9 +31,6 @@ trait PdfContainerTrait {
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function removePdf(Pdf $pdf) : self {
         if ($this->pdfs->contains($pdf)) {
             $this->pdfs->removeElement($pdf);
@@ -50,9 +44,7 @@ trait PdfContainerTrait {
     }
 
     /**
-     * @param Collection|Pdf[] $pdfs
-     *
-     * @return mixed
+     * @param array<Pdf>|Collection<int,Pdf> $pdfs
      */
     public function setPdfs($pdfs) : self {
         if (is_array($pdfs)) {
@@ -65,9 +57,9 @@ trait PdfContainerTrait {
     }
 
     /**
-     * @return Pdf[]
+     * @return array<Pdf>
      */
-    public function getPdfs() {
+    public function getPdfs() : array {
         return $this->pdfs->toArray();
     }
 }

@@ -1,0 +1,16 @@
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<div class="form-group">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-10">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        {% if comment_status.id is null %}
+            <a href="{{ path('nines_feedback_comment_status_index') }}" class="btn btn-warning"> Cancel </a>
+        {% else %}
+            <a href="{{ path('nines_feedback_comment_status_show', { 'id': comment_status.id }) }}" class="btn btn-warning">
+                Cancel </a>
+        {% endif %}
+    </div>
+</div>
+{{ form_end(form) }}
+

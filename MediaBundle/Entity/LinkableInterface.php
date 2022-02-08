@@ -3,19 +3,28 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\MediaBundle\Entity;
 
-interface LinkableInterface {
-    public function getLinks();
+use Doctrine\Common\Collections\Collection;
+use Nines\UtilBundle\Entity\AbstractEntityInterface;
 
-    public function setLinks($links = null);
+interface LinkableInterface extends AbstractEntityInterface {
+    /**
+     * @return array<Link>
+     */
+    public function getLinks() : array;
 
-    public function addLink(Link $link);
+    /**
+     * @param array<Link>|Collection<int,Link> $links
+     */
+    public function setLinks($links) : self;
 
-    public function removeLink(Link $link);
+    public function addLink(Link $link) : self;
+
+    public function removeLink(Link $link) : self;
 }

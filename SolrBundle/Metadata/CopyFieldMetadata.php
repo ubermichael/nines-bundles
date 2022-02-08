@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,24 +12,15 @@ namespace Nines\SolrBundle\Metadata;
 
 class CopyFieldMetadata {
     /**
-     * @var array
+     * @var array<int,string>
      */
-    private $from;
+    private array $from;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $solrName;
+    private string $solrName;
 
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
     public function getName() : string {
         return $this->name;
@@ -41,10 +32,16 @@ class CopyFieldMetadata {
         return $this;
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function getFrom() : array {
         return $this->from;
     }
 
+    /**
+     * @param array<int,string> $from
+     */
     public function setFrom(array $from) : self {
         $this->from = $from;
 

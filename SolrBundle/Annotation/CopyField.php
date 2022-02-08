@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -23,21 +23,17 @@ class CopyField {
     /**
      * Source fields.
      *
-     * @var array
+     * @var array<string>
      */
-    public $from;
+    public array $from = [];
 
     /**
      * Destination fields.
-     *
-     * @var string
      */
-    public $to;
+    public ?string $to = null;
 
     /**
      * The tpe of the destination field.
-     *
-     * @var string
      */
-    public $type;
+    public ?string $type = null;
 }

@@ -3,32 +3,47 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\MediaBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Form\ImageType;
 use Nines\MediaBundle\Service\AbstractFileManager;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait ImageControllerTrait {
-    protected function newImageAction(Request $request, ImageContainerInterface $container, $route) {
+    abstract public function createForm(string $type, $data = null, array $options = []);
+
+    abstract public function redirectToRoute(string $route, array $parameters = [], int $status = 302) : RedirectResponse;
+
+    abstract public function addFlash(string $type, $message);
+
+    abstract public function isCsrfTokenValid(string $id, ?string $token);
+
+    /**
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
+     */
+    protected function newImageAction(Request $request, EntityManagerInterface $em, ImageContainerInterface $container, string $route) {
         $image = new Image();
         $form = $this->createForm(ImageType::class, $image);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $image->setEntity($container);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($image);
-            $entityManager->flush();
+            $em->persist($image);
+            $em->flush();
             $this->addFlash('success', 'The new image has been saved.');
 
             return $this->redirectToRoute($route, ['id' => $container->getId()]);
@@ -42,7 +57,14 @@ trait ImageControllerTrait {
         ];
     }
 
-    protected function editImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
+    /**
+     * @param mixed $route
+     *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
+     */
+    protected function editImageAction(Request $request, EntityManagerInterface $em, ImageContainerInterface $container, Image $image, $route) {
         if ( ! $container->containsImage($image)) {
             throw new NotFoundHttpException('That image is not associated.');
         }
@@ -66,8 +88,7 @@ trait ImageControllerTrait {
                 $image->setFile($upload);
                 $image->preUpdate(); // force doctrine to update.
             }
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush();
+            $em->flush();
             $this->addFlash('success', 'The image has been updated.');
 
             return $this->redirectToRoute($route, ['id' => $container->getId()]);
@@ -81,8 +102,8 @@ trait ImageControllerTrait {
         ];
     }
 
-    protected function deleteImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {
-        if ( ! $this->isCsrfTokenValid('delete' . $image->getId(), $request->request->get('_token'))) {
+    protected function deleteImageAction(Request $request, EntityManagerInterface $em, ImageContainerInterface $container, Image $image, string $route) : RedirectResponse {
+        if ( ! $this->isCsrfTokenValid('delete_image' . $image->getId(), $request->request->get('_token'))) {
             $this->addFlash('warning', 'Invalid security token.');
 
             return $this->redirectToRoute($route, ['id' => $container->getId()]);
@@ -90,10 +111,9 @@ trait ImageControllerTrait {
         if ( ! $container->containsImage($image)) {
             throw new NotFoundHttpException('That image is not associated.');
         }
-        $entityManager = $this->getDoctrine()->getManager();
         $container->removeImage($image);
-        $entityManager->remove($image);
-        $entityManager->flush();
+        $em->remove($image);
+        $em->flush();
         $this->addFlash('success', 'The image has been removed.');
 
         return $this->redirectToRoute($route, ['id' => $container->getId()]);

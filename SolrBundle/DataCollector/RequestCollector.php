@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -22,15 +22,7 @@ use Throwable;
  * @see https://symfony.com/doc/current/profiler/data_collector.html
  */
 class RequestCollector extends DataCollector {
-    /**
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * @var SolrLogger
-     */
-    private $logger;
+    private SolrLogger $logger;
 
     public function __construct(SolrLogger $logger) {
         $this->logger = $logger;
@@ -78,10 +70,8 @@ class RequestCollector extends DataCollector {
 
     /**
      * Name of the request collector.
-     *
-     * @return string
      */
-    public function getName() {
+    public function getName() : string {
         return 'solr.request_collector';
     }
 

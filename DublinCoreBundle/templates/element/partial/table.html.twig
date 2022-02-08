@@ -1,0 +1,44 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Label</th>
+            <th>Description</th>
+            <th>Uri</th>
+            <th>Comment</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for element in elements %}
+            <tr>
+                <td>
+                    <a href="{{ path('nines_dc_element_show', { 'id': element.id }) }}">
+                        {{ element.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ element.name }}
+                </td>
+
+                <td>
+                    {{ element.label }}
+                </td>
+
+                <td>
+                    {{ element.description|raw }}
+                </td>
+
+                <td>
+                    {{ element.uri }}
+                </td>
+
+                <td>
+                    {{ element.comment|raw }}
+                </td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

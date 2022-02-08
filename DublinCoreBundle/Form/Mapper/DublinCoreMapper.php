@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -23,7 +23,7 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
 
     private EntityManagerInterface $em;
 
-    private $parentCall = true;
+    private bool $parentCall = true;
 
     public function setParentCall(bool $call) : void {
         $this->parentCall = $call;
@@ -59,7 +59,6 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
             $this->em->remove($value);
         }
         foreach ($this->elementRepo->findAll() as $element) {
-            /** @var Element $element */
             foreach ($forms[$element->getName()]->getData() as $data) {
                 $value = new Value();
                 $value->setEntity($viewData);
@@ -72,6 +71,8 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
@@ -79,6 +80,8 @@ class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setElementRepository(ElementRepository $repo) : void {
         $this->elementRepo = $repo;

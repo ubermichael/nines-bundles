@@ -11,7 +11,7 @@ function getTinyMceConfig(editorUploadPath) {
         menubar: 'edit insert view format table tools help',
 
         toolbar: [
-            'undo redo | styleselect | pastetext | bold italic | alignleft aligncenter alignright alignjustify | table',
+            'undo redo | styleselect | paste pastetext | bold italic | alignleft aligncenter alignright alignjustify | table',
             'bullist numlist | outdent indent | link | charmap | code'],
 
         browser_spellcheck: true,
@@ -53,6 +53,10 @@ function getTinyMceConfig(editorUploadPath) {
                 },
             },
         ],
+
+        valid_elements : 'h1,h2,h3,h4,h5,h6,blockquote,dd,div,dl,dt,figcaption,figure,hr,li,ol,p,pre,ul,' +
+            'a[href|target=_blank],abbr[title],strong/b,br,cite,dfn,em/i,kbd,mark,q,s,sub,sup,u,wbr' +
+            'img,del,ins,caption,col,table,tbody,td,tfoot,th,thead,tr'
     };
 
 }

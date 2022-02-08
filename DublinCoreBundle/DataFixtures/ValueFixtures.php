@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,27 +11,38 @@ declare(strict_types=1);
 namespace Nines\DublinCoreBundle\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nines\DublinCoreBundle\Entity\Value;
 use stdClass;
 
-class ValueFixtures extends Fixture implements DependentFixtureInterface {
+class ValueFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
+    public static function getGroups() : array {
+        return ['test'];
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $em) : void {
-        for ($i = 1; $i <= 4; $i++) {
+    public function load(ObjectManager $manager) : void {
+        for ($i = 1; $i <= 5; $i++) {
             $fixture = new Value();
             $fixture->setData('Data ' . $i);
             $fixture->setEntity(stdClass::class . ':' . $i);
-            $fixture->setElement($this->getReference('dc_title'));
-            $em->persist($fixture);
+
+            $fixture->setElement($this->getReference('element.' . $i));
+            $manager->persist($fixture);
             $this->setReference('value.' . $i, $fixture);
         }
-        $em->flush();
+        $manager->flush();
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return array<string>
+     */
     public function getDependencies() : array {
         return [
             ElementFixtures::class,

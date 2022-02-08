@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -19,18 +19,18 @@ use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
 use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\AbstractEntityInterface;
 
 /**
  * Link management service for Symfony.
  */
 class LinkManager extends AbstractFileManager implements EventSubscriber {
-    /**
-     * @var LinkRepository
-     */
-    private $linkRepository;
+    private LinkRepository $linkRepository;
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setLinkRepository(LinkRepository $linkRepository) : void {
         $this->linkRepository = $linkRepository;
@@ -46,11 +46,9 @@ class LinkManager extends AbstractFileManager implements EventSubscriber {
     /**
      * Find the links for an entity.
      *
-     * @param mixed $entity
-     *
-     * @return Collection|Link[]
+     * @return array<Link>
      */
-    public function findLinks($entity) {
+    public function findLinks(AbstractEntityInterface $entity) : array {
         $class = ClassUtils::getClass($entity);
 
         return $this->linkRepository->findBy([
@@ -58,7 +56,10 @@ class LinkManager extends AbstractFileManager implements EventSubscriber {
         ]);
     }
 
-    public function setLinks(LinkableInterface $entity, Collection $links) : void {
+    /**
+     * @param array<Link>|Collection<int,Link> $links
+     */
+    public function setLinks(LinkableInterface $entity, $links) : void {
         foreach ($this->findLinks($entity) as $link) {
             $this->em->remove($link);
         }
@@ -68,7 +69,10 @@ class LinkManager extends AbstractFileManager implements EventSubscriber {
         }
     }
 
-    public function getSubscribedEvents() {
+    /**
+     * @return string[]
+     */
+    public function getSubscribedEvents() : array {
         return [
             Events::postLoad,
             Events::preRemove,

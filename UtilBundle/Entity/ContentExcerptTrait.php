@@ -3,32 +3,30 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\UtilBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 trait ContentExcerptTrait {
     /**
-     * @var string
      * @ORM\Column(type="text")
      */
-    protected $excerpt;
+    protected ?string $excerpt = null;
 
     /**
-     * @var string
      * @ORM\Column(type="text")
      */
-    protected $content;
+    protected ?string $content = null;
 
     /**
      * Set excerpt.
-     *
-     * @param string $excerpt
      */
-    public function setExcerpt($excerpt) : self {
+    public function setExcerpt(string $excerpt) : self {
         $this->excerpt = $excerpt;
 
         return $this;
@@ -47,10 +45,8 @@ trait ContentExcerptTrait {
 
     /**
      * Set content.
-     *
-     * @param string $content
      */
-    public function setContent($content) : self {
+    public function setContent(string $content) : self {
         $this->content = $content;
 
         return $this;

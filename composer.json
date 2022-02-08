@@ -23,18 +23,21 @@
         }
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.4.0",
+        "ext-imagick": "*",
         "ext-json": "*",
+        "doctrine/cache": "^2.1",
+        "doctrine/inflector": "^2.0",
         "egulias/email-validator": "^2.1",
-        "guzzlehttp/guzzle": "^6.5|^7.3",
+        "guzzlehttp/guzzle": "^7.4",
         "knplabs/knp-menu-bundle": "^2.0",
         "knplabs/knp-paginator-bundle": "^5.0",
         "minimalcode/search": "^1.0",
         "nyholm/psr7": "^1.4",
         "sensio/framework-extra-bundle": "^5.1",
         "solarium/solarium": "^6.0",
-        "twig/string-extra": "^3.0",
-        "setasign/fpdf": "^1.8"
+        "soundasleep/html2text": "^1.1",
+        "twig/string-extra": "^3.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
@@ -42,5 +45,10 @@
         "symfony/browser-kit": "4.4.*",
         "symfony/css-selector": "4.4.*",
         "symfony/phpunit-bridge": "^5.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     }
 }

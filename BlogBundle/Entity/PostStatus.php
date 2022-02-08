@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -18,22 +18,17 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 /**
  * PostStatus.
  *
- * @ORM\Table(name="blog_post_status")
+ * @ORM\Table(name="nines_blog_post_status")
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostStatusRepository")
  */
 class PostStatus extends AbstractTerm {
     /**
-     * True if the status is meant to be public.
-     *
-     * @var bool
      * @ORM\Column(type="boolean")
      */
-    private $public;
+    private bool $public = false;
 
     /**
-     * List of the posts with this status.
-     *
-     * @var Collection|Post[]
+     * @var Collection<int,Post>|Post[]
      * @ORM\OneToMany(targetEntity="Post", mappedBy="status")
      */
     private $posts;
@@ -43,56 +38,51 @@ class PostStatus extends AbstractTerm {
      */
     public function __construct() {
         parent::__construct();
-        $this->public = false;
         $this->posts = new ArrayCollection();
     }
 
     /**
-     * Add post.
-     *
-     * @return PostStatus
+     * @codeCoverageIgnore
      */
-    public function addPost(Post $post) {
-        $this->posts[] = $post;
-
-        return $this;
+    public function getPublic() : ?bool {
+        return $this->public;
     }
 
     /**
-     * Remove post.
+     * @codeCoverageIgnore
      */
-    public function removePost(Post $post) : void {
-        $this->posts->removeElement($post);
-    }
-
-    /**
-     * Get posts.
-     *
-     * @return Collection
-     */
-    public function getPosts() {
-        return $this->posts;
-    }
-
-    /**
-     * Set public.
-     *
-     * @param bool $public
-     *
-     * @return PostStatus
-     */
-    public function setPublic($public) {
+    public function setPublic(bool $public) : self {
         $this->public = $public;
 
         return $this;
     }
 
     /**
-     * Get public.
+     * @return Collection<int,Post>|Post[]
      *
-     * @return bool
+     * @codeCoverageIgnore
      */
-    public function getPublic() {
-        return $this->public;
+    public function getPosts() : Collection {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post) : self {
+        if ( ! $this->posts->contains($post)) {
+            $this->posts[] = $post;
+            $post->setStatus($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post) : self {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getStatus() === $this) {
+                $post->setStatus(null);
+            }
+        }
+
+        return $this;
     }
 }

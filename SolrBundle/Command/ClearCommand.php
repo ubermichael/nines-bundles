@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\SolrBundle\Command;
 
-use Nines\SolrBundle\Exception\SolrException;
+use Exception;
 use Nines\SolrBundle\Services\SolrManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,13 +33,11 @@ class ClearCommand extends Command {
 
     /**
      * Execute the command. Returns 0 for success.
-     *
-     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         try {
             $this->manager->clear();
-        } catch (SolrException $e) {
+        } catch (Exception $e) {
             $output->writeln('Clear failed: ' . $e->getMessage());
 
             return $e->getCode();
@@ -50,6 +48,8 @@ class ClearCommand extends Command {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setSolrManager(SolrManager $manager) : void {
         $this->manager = $manager;

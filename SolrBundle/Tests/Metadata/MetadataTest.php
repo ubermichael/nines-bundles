@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Tests\Metadata;
 
 use Nines\SolrBundle\Metadata\Metadata;
-use Nines\UtilBundle\Tests\BaseCase;
+use PHPUnit\Framework\TestCase;
 
-class MetadataTest extends BaseCase {
+class MetadataTest extends TestCase {
     protected $meta;
 
     /**
@@ -29,14 +29,17 @@ class MetadataTest extends BaseCase {
         $this->assertSame($functionArgs, $args);
     }
 
-    public function parseData() {
+    /**
+     * @return array<int,mixed>
+     */
+    public function parseData() : array {
         return [
             ['name', 'name', []],
             ['name()', 'name', ['']],
             ['name("")', 'name', ['']],
-            ['name(1)', 'name', [1]],
-            ['name(1,2)', 'name', [1, 2]],
-            ['name( 1 , 2  )', 'name', [1, 2]],
+            ['name(1)', 'name', ['1']],
+            ['name(1,2)', 'name', ['1', '2']],
+            ['name( 1 , 2  )', 'name', ['1', '2']],
             ['name(true)', 'name', ['true']],
             ['name(false)', 'name', ['false']],
             ['name("abc", null, "def")', 'name', ['abc', 'null', 'def']],

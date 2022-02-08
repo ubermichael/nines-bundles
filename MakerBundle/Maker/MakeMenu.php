@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -26,6 +26,10 @@ class MakeMenu extends AbstractNinesMaker {
      */
     public static function getCommandName() : string {
         return 'nines:make:menu';
+    }
+
+    public static function getCommandDescription() : string {
+        return 'Generate stub menu';
     }
 
     /**
@@ -56,5 +60,4 @@ class MakeMenu extends AbstractNinesMaker {
     public function interact(InputInterface $input, ConsoleStyle $io, Command $command) : void {
         // TODO: Implement interact() method.
     }
-
 }

@@ -1,0 +1,31 @@
+parameters:
+    # comment notifications
+    nines_feedback.sender: 'donotreply@%router.request_context.host%'
+    nines_feedback.recipients: '%env(json:FEEDBACK_RECIPIENTS)%'
+    nines_feedback.subject: New feedback received
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Nines\FeedbackBundle\:
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Resources,Tests}'
+
+    Nines\FeedbackBundle\Controller\:
+        resource: '../Controller/*'
+        public: true
+        tags:
+            - 'controller.service_arguments'
+            - 'knp_paginator.injectable'
+
+    Nines\FeedbackBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: feedbackMenu, alias: nines_feedback}
+
+    Nines\FeedbackBundle\Services\CommentService:
+        arguments:
+            $defaultStatusName: "%nines_feedback.default_status%"
+            $publicStatusName: "%nines_feedback.public_status%"

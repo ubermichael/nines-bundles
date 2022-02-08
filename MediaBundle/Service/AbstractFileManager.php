@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,17 +11,11 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Nines\MediaBundle\Entity\Audio;
-use Nines\MediaBundle\Entity\EntityReferenceInterface;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * File management base class.
- *
- * @author Michael Joyce <ubermichael@gmail.com>
  */
 abstract class AbstractFileManager {
     /**
@@ -31,41 +25,18 @@ abstract class AbstractFileManager {
      */
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var string
-     */
-    protected $root;
+    protected string $root;
 
-    /**
-     * @var string
-     */
-    protected $uploadDir;
+    protected string $uploadDir;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $em;
+    protected EntityManagerInterface $em;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $router;
+    private bool $copy = false;
 
-    /**
-     * Mapping of class name to route name.
-     *
-     * @var array
-     */
-    private $routing;
-
-    public function __construct($root, $routing) {
+    public function __construct(string $root) {
         $this->root = $root;
-        $this->routing = $routing;
     }
 
     /**
@@ -122,7 +93,7 @@ abstract class AbstractFileManager {
         return round($bytes);
     }
 
-    public function setUploadDir($dir) : void {
+    public function setUploadDir(string $dir) : void {
         if ('/' !== $dir[0]) {
             $this->uploadDir = $this->root . '/' . $dir;
         } else {
@@ -134,7 +105,7 @@ abstract class AbstractFileManager {
         return $this->uploadDir;
     }
 
-    public function upload(UploadedFile $file) {
+    public function upload(UploadedFile $file) : string {
         $basename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $filename = implode('.', [
             preg_replace(self::FORBIDDEN, '_', $basename),
@@ -144,54 +115,19 @@ abstract class AbstractFileManager {
         if ( ! file_exists($this->uploadDir)) {
             mkdir($this->uploadDir, 0777, true);
         }
-        $file->move($this->uploadDir, $filename);
+        if ($this->copy) {
+            copy($file->getPathname(), $this->uploadDir . '/' . $filename);
+        } else {
+            $file->move($this->uploadDir, $filename);
+        }
 
         return $filename;
     }
 
     /**
-     * Find the entity corresponding to a reference.
-     */
-    public function findEntity(EntityReferenceInterface $reference) : ?object {
-        list($class, $id) = explode(':', $reference->getEntity());
-        if ($this->em->getMetadataFactory()->isTransient($class)) {
-            return null;
-        }
-
-        return $this->em->getRepository($class)->find($id);
-    }
-
-    /**
-     * Return the short class name for the entity a audio refers to.
-     */
-    public function entityType(EntityReferenceInterface $reference) : ?string {
-        $entity = $this->findEntity($reference);
-        if ( ! $entity) {
-            return null;
-        }
-
-        $reflection = new ReflectionClass($entity);
-
-        return $reflection->getShortName();
-    }
-
-    /**
-     * Find the entity that the audio belongs to and generate a link to it.
-     */
-    public function linkToEntity(EntityReferenceInterface $reference) : ?string {
-        list($class, $id) = explode(':', $reference->getEntity());
-
-        if ( ! isset($this->routing[$class])) {
-            $this->logger->error('No routing information for ' . $class);
-
-            return null;
-        }
-
-        return $this->router->generate($this->routing[$class], ['id' => $id]);
-    }
-
-    /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
@@ -199,15 +135,14 @@ abstract class AbstractFileManager {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
     }
 
-    /**
-     * @required
-     */
-    public function setRouter(UrlGeneratorInterface $router) : void {
-        $this->router = $router;
+    public function setCopy(bool $copy) : void {
+        $this->copy = $copy;
     }
 }

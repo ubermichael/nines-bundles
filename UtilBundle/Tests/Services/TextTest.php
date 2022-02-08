@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,13 +11,10 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Tests\Services;
 
 use Nines\UtilBundle\Services\Text;
-use Nines\UtilBundle\Tests\ServiceBaseCase;
+use Nines\UtilBundle\TestCase\ServiceTestCase;
 
-class TextTest extends ServiceBaseCase {
-    /**
-     * @var Text
-     */
-    private $text;
+class TextTest extends ServiceTestCase {
+    private Text $text;
 
     public function testSetup() : void {
         $this->assertInstanceOf(Text::class, $this->text);
@@ -33,7 +30,10 @@ class TextTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->text->plain($str));
     }
 
-    public function plainData() {
+    /**
+     * @return string[][]
+     */
+    public function plainData() : array {
         return [
             ['plain text and stuff.', 'plain text and stuff.'],
             ['<b>Fancy stuff.', 'Fancy stuff.'],
@@ -56,7 +56,10 @@ class TextTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->text->searchHighlight($str, $kw));
     }
 
-    public function searchHighlightData() {
+    /**
+     * @return array<int,array<int,mixed>>
+     */
+    public function searchHighlightData() : array {
         return [
             ['chilli cheese fries', 'asparagus', []],
             ['chilli cheese fries', 'chilli', ['<mark>chilli</mark> cheese fries']],
@@ -78,9 +81,11 @@ class TextTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->text->slug($str));
     }
 
-    public function slugData() {
+    /**
+     * @return string[][]
+     */
+    public function slugData() : array {
         return [
-            [null, null],
             ['', ''],
             ['The Dinner', 'the-dinner'],
             ['  The Dinner  ', 'the-dinner'],
@@ -109,9 +114,11 @@ class TextTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->text->slug($str, $separator));
     }
 
-    public function slugSeparatorData() {
+    /**
+     * @return string[][]
+     */
+    public function slugSeparatorData() : array {
         return [
-            [null, null, null],
             ['', '', '.'],
             ['The Dinner', 'the-dinner', '-'],
             ['Part 2.1', 'part_2.1', '_'],
@@ -119,7 +126,6 @@ class TextTest extends ServiceBaseCase {
             ['Question? Yes.', 'question/yes', '/'],
             ['Question #1a', 'question1a', ''],
             ['Multi char seps', 'multi---char---seps', '---'],
-            ['Mash Words', 'mashwords', null],
             ['Mash Words', 'mashwords', ''],
         ];
     }
@@ -135,7 +141,10 @@ class TextTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->text->trim($string, $len));
     }
 
-    public function trimData() {
+    /**
+     * @return array<int,array<int,mixed>>
+     */
+    public function trimData() : array {
         return [
             ['This is a...', 3, 'This is a test of the emergency broadcast system.'],
             ['This is a...', 3, '   This is a test of the emergency broadcast system.'],

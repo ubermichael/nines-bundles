@@ -3,33 +3,23 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\UtilBundle\Services;
 
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-
 /**
  * Apply title casing to a string.
  */
 class TitleCaser {
     /**
-     * Monolog logger.
-     *
-     * @var Logger
-     */
-    private $logger;
-
-    /**
      * Words which should be lower case.
      *
-     * @var array
+     * @var array<string>
      */
-    private $lower = [
+    private array $lower = [
         'and', 'at', 'a', 'an', 'are', 'in', 'or', 'of', 'on', 'to', 'for',
         'was', 'with', 'by', 'from', 'which', 'the',
     ];
@@ -37,9 +27,9 @@ class TitleCaser {
     /**
      * Abbreviations which should always be upper case.
      *
-     * @var array
+     * @var array<string>
      */
-    private $states = [
+    private array $states = [
         'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'PE', 'PEI',
         'QC', 'SK', 'YT',
         'US', 'USA',
@@ -53,18 +43,18 @@ class TitleCaser {
     /**
      * Ordinal suffixes.
      *
-     * @var array
+     * @var array<string>
      */
-    private $ordinals = [
+    private array $ordinals = [
         'st', 'nd', 'rd', 'th',
     ];
 
     /**
      * Abbreviations which get special casing.
      *
-     * @var string
+     * @var array<string>
      */
-    private $exceptions = [
+    private array $exceptions = [
         'phd' => 'PhD',
         'cihm' => 'CIHM',
         'ichm' => 'ICHM',
@@ -72,111 +62,77 @@ class TitleCaser {
         's\.n\.' => 'S.N.',
     ];
 
-    public function __construct(LoggerInterface $logger) {
-        $this->logger = $logger;
-    }
-
     /**
      * Mangle the short words to lower case.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function shortWords($string) {
+    public function shortWords(string $string) : string {
         $match = implode('|', $this->lower);
 
-        return preg_replace_callback("/\\s(?:{$match})\\b/ui", fn (array $m) => mb_convert_case($m[0], MB_CASE_LOWER, 'utf-8'), $string);
+        return preg_replace_callback("/\\s(?:{$match})\\b/ui", fn(array $m) => mb_convert_case($m[0], MB_CASE_LOWER, 'utf-8'), $string);
     }
 
     /**
      * Mangle the punctuation and make it all title casey.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function punctuation($string) {
+    public function punctuation(string $string) : string {
         $match = implode('|', $this->lower);
 
         // spaces before punctuation
         $s = preg_replace('/\s*([[:punct:]])/u', '$1', $string);
 
         // punctuation stopword
-        return preg_replace_callback("/([[:punct:]])(\\s+)({$match})/iu", fn (array $m) => $m[1] . ' ' . mb_convert_case($m[3], MB_CASE_TITLE, 'utf-8'), $s);
+        return preg_replace_callback("/([[:punct:]])(\\s+)({$match})/iu", fn(array $m) => $m[1] . ' ' . mb_convert_case($m[3], MB_CASE_TITLE, 'utf-8'), $s);
     }
 
     /**
      * Make the state abbreviations upper case.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function states($string) {
+    public function states(string $string) : string {
         $match = implode('|', $this->states);
 
-        return preg_replace_callback("/\\b({$match})\\b/iu", fn (array $m) => mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8'), $string);
+        return preg_replace_callback("/\\b({$match})\\b/iu", fn(array $m) => mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8'), $string);
     }
 
     /**
      * Attempt to get the surnames right.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function names($string) {
-        return preg_replace_callback("/\\b(Mc|Mac|O'|D')([a-z])/iu", fn (array $m) => $m[1] . mb_convert_case($m[2], MB_CASE_UPPER, 'utf-8'), $string);
+    public function names(string $string) : string {
+        return preg_replace_callback("/\\b(Mc|Mac|O'|D')([a-z])/iu", fn(array $m) => $m[1] . mb_convert_case($m[2], MB_CASE_UPPER, 'utf-8'), $string);
     }
 
     /**
      * Mangle Roman numerials.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function roman($string) {
-        return preg_replace_callback('/\b([ivxlcdm]+)\b/iu', fn (array $m) => mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8'), $string);
+    public function roman(string $string) : string {
+        return preg_replace_callback('/\b([ivxlcdm]+)\b/iu', fn(array $m) => mb_convert_case($m[1], MB_CASE_UPPER, 'utf-8'), $string);
     }
 
     /**
      * Set the ordinals in a title to the correct case.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function ordinals($string) {
+    public function ordinals(string $string) : string {
         $match = implode('|', $this->ordinals);
 
-        return preg_replace_callback("/\\b([0-9]+)({$match})\\b/iu", fn (array $m) => $m[1] . mb_convert_case($m[2], MB_CASE_LOWER, 'utf-8'), $string);
+        return preg_replace_callback("/\\b([0-9]+)({$match})\\b/iu", fn(array $m) => $m[1] . mb_convert_case($m[2], MB_CASE_LOWER, 'utf-8'), $string);
     }
 
     /**
      * Handle the exceptions.
-     *
-     * @param string $string
-     *
-     * @return string
      */
-    public function exceptions($string) {
+    public function exceptions(string $string) : string {
         $match = implode('|', array_keys($this->exceptions));
 
-        return preg_replace_callback("/\\b({$match})\\b/iu", fn (array $m) => $this->exceptions[mb_convert_case($m[1], MB_CASE_LOWER, 'utf-8')], $string);
+        return preg_replace_callback("/\\b({$match})\\b/iu", fn(array $m) => $this->exceptions[mb_convert_case($m[1], MB_CASE_LOWER, 'utf-8')], $string);
     }
 
-    public function trim($string) {
+    public function trim(string $string) : string {
         return preg_replace('/^\p{Z}+|\p{Z}+$/u', '', $string);
     }
 
     /**
      * Returns the titlecased version of string.
-     *
-     * @param string $string
      */
-    public function titlecase($string) {
+    public function titlecase(string $string) : string {
         $s = mb_convert_case($string, MB_CASE_TITLE, 'utf-8');
         $s = $this->shortWords($s);
         $s = $this->punctuation($s);
@@ -192,18 +148,14 @@ class TitleCaser {
     /**
      * Generate a sortable title from a normal title. Eg.
      *  " A Tale of two Cities " => "tale of two cities, a".
-     *
-     * @param $string
-     *
-     * @return null|string|string[]
      */
-    public function sortableTitle($string) {
+    public function sortableTitle(string $string) : string {
         $filters = [
             '/^\p{Z}+|\p{Z}+$/u' => '',
-            '/^(the|an?)\b\s*(.*)/ius' => '$2, $1',
-            // move The, A, An to end.
             '/^[^[:word:][:space:]]+/us' => '',
             // remove non-word chars at start.
+            '/^(the|an?)\b\s*(.*)/ius' => '$2, $1',
+            // move The, A, An to end.
         ];
         $title = mb_convert_case($string, MB_CASE_LOWER, 'utf-8');
 

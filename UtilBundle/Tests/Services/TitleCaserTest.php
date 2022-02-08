@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,13 +11,10 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Tests\Services;
 
 use Nines\UtilBundle\Services\TitleCaser;
-use Nines\UtilBundle\Tests\ServiceBaseCase;
+use Nines\UtilBundle\TestCase\ServiceTestCase;
 
-class TitleCaserTest extends ServiceBaseCase {
-    /**
-     * @var TitleCaser
-     */
-    private $titleCaser;
+class TitleCaserTest extends ServiceTestCase {
+    private TitleCaser $titleCaser;
 
     public function testSetup() : void {
         $this->assertInstanceOf(TitleCaser::class, $this->titleCaser);
@@ -33,7 +30,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->titleCaser->titlecase($str));
     }
 
-    public function unicodeData() {
+    /**
+     * @return string[][]
+     */
+    public function unicodeData() : array {
         return [
             ['Hæmochromatosis', 'Hæmochromatosis'],
         ];
@@ -49,7 +49,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->titleCaser->shortWords($str));
     }
 
-    public function shortWordsData() {
+    /**
+     * @return string[][]
+     */
+    public function shortWordsData() : array {
         return [
             ['The World', 'The World'],
             ['The Brave And The Bold', 'The Brave and the Bold'],
@@ -68,7 +71,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->titleCaser->punctuation($str));
     }
 
-    public function punctuationData() {
+    /**
+     * @return string[][]
+     */
+    public function punctuationData() : array {
         return [
             ['The Brave: and the Bold', 'The Brave: And the Bold'],
             ['The Brave : and the bold', 'The Brave: And the bold'],
@@ -87,7 +93,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->titleCaser->states($str));
     }
 
-    public function statesData() {
+    /**
+     * @return string[][]
+     */
+    public function statesData() : array {
         return [
             ['Just Because', 'Just Because'],
             ['Just bc', 'Just BC'],
@@ -105,7 +114,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($e, $this->titleCaser->names($s));
     }
 
-    public function namesData() {
+    /**
+     * @return string[][]
+     */
+    public function namesData() : array {
         return [
             ["O'donnel and sons", "O'Donnel and sons"],
             ['James Macdonald', 'James MacDonald'],
@@ -125,7 +137,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($e, $this->titleCaser->roman($s));
     }
 
-    public function romanData() {
+    /**
+     * @return string[][]
+     */
+    public function romanData() : array {
         return [
             ['Elizabeth ii', 'Elizabeth II'],
             ['Poison ivy', 'Poison ivy'],
@@ -143,7 +158,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($e, $this->titleCaser->ordinals($s));
     }
 
-    public function ordinalsData() {
+    /**
+     * @return string[][]
+     */
+    public function ordinalsData() : array {
         return [
             ['Elizabeth the 2nd', 'Elizabeth the 2nd'],
             ['THE 2ND DAUGHTER', 'THE 2nd DAUGHTER'],
@@ -161,7 +179,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($e, $this->titleCaser->exceptions($s));
     }
 
-    public function exceptionsData() {
+    /**
+     * @return string[][]
+     */
+    public function exceptionsData() : array {
         return [
             ['May West, PHD', 'May West, PhD'],
             ['Billy Cihm', 'Billy CIHM'],
@@ -180,7 +201,10 @@ class TitleCaserTest extends ServiceBaseCase {
         $this->assertSame($expected, $this->titleCaser->titlecase($str));
     }
 
-    public function titleCaseData() {
+    /**
+     * @return string[][]
+     */
+    public function titleCaseData() : array {
         return [
             // start is still capitalized.
             ['THE WORLD', 'The World'],
@@ -215,6 +239,27 @@ class TitleCaserTest extends ServiceBaseCase {
             // Exceptions inside words aren't capitalized.
             ['BILLIE CHIMES HELLO', 'Billie Chimes Hello'],
             ['Hæmochromatosis', 'Hæmochromatosis'],
+        ];
+    }
+
+    /**
+     * @dataProvider sortableData
+     *
+     * @param mixed $expected
+     * @param mixed $given
+     */
+    public function testSortableTitle($expected, $given) : void {
+        $this->assertSame($expected, $this->titleCaser->sortableTitle($given));
+    }
+
+    /**
+     * @return array<int,array<string>>
+     */
+    public function sortableData() : array {
+        return [
+            ['2nd daughter, the', 'The 2nd Daughter'],
+            ['a history of punctuation', '! A HISTORY OF PUNCTUATION'],
+            ['history of punctuation, a', 'A HISTORY OF PUNCTUATION'],
         ];
     }
 

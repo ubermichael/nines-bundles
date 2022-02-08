@@ -3,67 +3,108 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\BlogBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\BlogBundle\Entity\Page;
 use Nines\BlogBundle\Form\PageType;
+use Nines\BlogBundle\Repository\PageRepository;
+use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Nines\UtilBundle\Services\Text;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Page controller.
- *
  * @Route("/page")
  */
 class PageController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
-     * Lists all Page entities.
-     *
-     * @return array
-     *
      * @Route("/", name="nines_blog_page_index", methods={"GET"})
-     *
-     * @Template
      */
-    public function indexAction(Request $request, AuthorizationCheckerInterface $checker) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Page::class);
-        $query = $repo->listQuery($checker->isGranted('ROLE_USER'));
-        $pages = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
+    public function index(Request $request, PageRepository $pageRepository) : Response {
+        $query = $pageRepository->indexQuery($this->isGranted('ROLE_USER'));
+        $pageSize = (int) $this->getParameter('page_size');
+        $page = $request->query->getint('page', 1);
 
-        return [
+        return $this->render('@NinesBlog/page/index.html.twig', [
+            'pages' => $this->paginator->paginate($query, $page, $pageSize),
+        ]);
+    }
+
+    /**
+     * @Route("/search", name="nines_blog_page_search", methods={"GET"})
+     */
+    public function search(Request $request, PageRepository $pageRepository) : Response {
+        $q = $request->query->get('q');
+        if ($q) {
+            $query = $pageRepository->searchQuery($q, $this->isGranted('ROLE_USER'));
+            $pages = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), [
+                'wrap-queries' => true,
+            ]);
+        } else {
+            $pages = [];
+        }
+
+        return $this->render('@NinesBlog/page/search.html.twig', [
             'pages' => $pages,
-        ];
+            'q' => $q,
+        ]);
+    }
+
+    /**
+     * @Route("/new", name="nines_blog_page_new", methods={"GET", "POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function new(Request $request) : Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $page = new Page();
+        $page->setUser($user);
+
+        $form = $this->createForm(PageType::class, $page);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($page);
+            $entityManager->flush();
+            $this->addFlash('success', 'The new page has been saved.');
+
+            return $this->redirectToRoute('nines_blog_page_show', ['id' => $page->getId()]);
+        }
+
+        return $this->render('@NinesBlog/page/new.html.twig', [
+            'page' => $page,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/new_popup", name="nines_blog_page_new_popup", methods={"GET", "POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function new_popup(Request $request) : Response {
+        return $this->new($request);
     }
 
     /**
      * @Route("/sort", name="nines_blog_page_sort", methods={"GET", "POST"})
      *
-     * @Template
      * @IsGranted("ROLE_BLOG_ADMIN")
-     *
-     * @return array
      */
-    public function sortAction(Request $request) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('NinesBlogBundle:Page');
-
+    public function sortAction(Request $request, EntityManagerInterface $em, PageRepository $repo) : Response {
         if ('POST' === $request->getMethod()) {
             $order = $request->request->get('order');
             $list = explode(',', $order);
@@ -75,146 +116,62 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
             $em->flush();
             $this->addFlash('success', 'The pages have been ordered.');
 
-            return $this->redirect($this->generateUrl('nines_blog_page_sort'));
+            return $this->redirectToRoute('nines_blog_page_index');
         }
 
         $pages = $repo->findBy(
-            ['public' => true],
-            ['weight' => 'ASC', 'title' => 'ASC']
+            [],
+            ['weight' => 'ASC', 'title' => 'ASC'],
         );
 
-        return [
+        return $this->render('@NinesBlog/page/sort.html.twig', [
             'pages' => $pages,
-        ];
+        ]);
     }
 
     /**
-     * Full text search for Page entities.
-     *
-     * @Route("/search", name="nines_blog_page_search", methods={"GET"})
-     *
-     * @Template
-     *
-     * @return array
+     * @Route("/{id}", name="nines_blog_page_show", methods={"GET"})
      */
-    public function searchAction(Request $request, AuthorizationCheckerInterface $checker) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('NinesBlogBundle:Page');
-        $q = $request->query->get('q');
-        if ($q) {
-            $query = $repo->fulltextQuery($q, $checker->isGranted('ROLE_USER'));
-
-            $pages = $this->paginator->paginate($query, $request->query->getInt('page', 1), 25);
-        } else {
-            $pages = [];
-        }
-
-        return [
-            'pages' => $pages,
-            'q' => $q,
-        ];
+    public function show(Page $page) : Response {
+        return $this->render('@NinesBlog/page/show.html.twig', [
+            'page' => $page,
+        ]);
     }
 
     /**
-     * Creates a new Page entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new", name="nines_blog_page_new", methods={"GET", "POST"})
-     *
-     * @Template
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @Route("/{id}/edit", name="nines_blog_page_edit", methods={"GET", "POST"})
      */
-    public function newAction(Request $request, Text $text) {
-        $page = new Page();
-        $page->setUser($this->getUser());
+    public function edit(Request $request, Page $page) : Response {
         $form = $this->createForm(PageType::class, $page);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $page->setSearchable($text->plain($page->getContent()));
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($page);
-            $em->flush();
-
-            $this->addFlash('success', 'The new page was created.');
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'The updated page has been saved.');
 
             return $this->redirectToRoute('nines_blog_page_show', ['id' => $page->getId()]);
         }
 
-        return [
+        return $this->render('@NinesBlog/page/edit.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
-     * Finds and displays a Page entity.
-     *
-     * @return array
-     *
-     * @Route("/{id}", name="nines_blog_page_show", methods={"GET"})
-     *
-     * @Template
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @Route("/{id}", name="nines_blog_page_delete", methods={"DELETE"})
      */
-    public function showAction(Page $page) {
-        if ( ! $page->getPublic()) {
-            $this->denyAccessUnlessGranted('ROLE_USER', null, 'Unable to access this page.');
+    public function delete(Request $request, Page $page) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete' . $page->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($page);
+            $entityManager->flush();
+            $this->addFlash('success', 'The page has been deleted.');
+        } else {
+            $this->addFlash('warning', 'The security token was not valid.');
         }
-
-        return [
-            'page' => $page,
-        ];
-    }
-
-    /**
-     * Displays a form to edit an existing Page entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="nines_blog_page_edit", methods={"GET", "POST"})
-     *
-     * @Template
-     */
-    public function editAction(Request $request, Page $page, Text $text) {
-        $editForm = $this->createForm(PageType::class, $page);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $page->setSearchable($text->plain($page->getContent()));
-            $em = $this->getDoctrine()->getManager();
-            if ($page->getHomepage()) {
-                // make sure all other pages are NOT the home page.
-                $repo = $em->getRepository(Page::class);
-                $repo->clearHomepages($page);
-            }
-
-            $em->flush();
-            $this->addFlash('success', 'The page has been updated.');
-
-            return $this->redirectToRoute('nines_blog_page_show', ['id' => $page->getId()]);
-        }
-
-        return [
-            'page' => $page,
-            'edit_form' => $editForm->createView(),
-        ];
-    }
-
-    /**
-     * Deletes a Page entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/delete", name="nines_blog_page_delete", methods={"GET"})
-     */
-    public function deleteAction(Request $request, Page $page) {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($page);
-        $em->flush();
-        $this->addFlash('success', 'The page was deleted.');
 
         return $this->redirectToRoute('nines_blog_page_index');
     }

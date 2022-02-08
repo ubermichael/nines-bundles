@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,15 +20,15 @@ class Document {
     /**
      * Copy data between fields.
      *
-     * @var array<Nines\SolrBundle\Annotation\CopyField>
+     * @var array<\Nines\SolrBundle\Annotation\CopyField>
      */
-    public $copyField = [];
+    public array $copyField = [];
 
     /**
      * Indexed (or virtual) fields may be computed from other fields during
      * indexing.
      *
-     * @var array<Nines\SolrBundle\Annotation\ComputedField>
+     * @var array<\Nines\SolrBundle\Annotation\ComputedField>
      */
-    public $computedFields = [];
+    public array $computedFields = [];
 }

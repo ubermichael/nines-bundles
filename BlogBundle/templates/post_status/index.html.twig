@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block pageheader %}
+    <h1>Post Status List</h1>
+    <p class="count">
+        Displaying {{ post_statuses|length }} post_statuses of {{ post_statuses.getTotalItemCount }} total.
+    </p>
+{% endblock %}
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        {% if is_granted('ROLE_BLOG_ADMIN') %}
+            <div class='btn-group'>
+                <a href="{{ path('nines_blog_post_status_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% embed '@NinesUtil/term/partial/index.html.twig' with {
+        'terms': post_statuses,
+        'path': 'nines_blog_post_status_show'
+    } %}
+    {% endembed %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(post_statuses) }}
+    </div>
+
+{% endblock %}

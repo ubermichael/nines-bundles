@@ -1,0 +1,13 @@
+<script>
+    const editorUploadPath = "{{ path('nines_editor_image_upload') }}";
+</script>
+
+<script src="{{ asset('yarn/tinymce/tinymce.min.js') }}"></script>
+
+{% if nines_editor_config is defined %}
+    <script src="{{ asset(nines_editor_config) }}"></script>
+{% else %}
+    <script src="{{ asset('bundles/nineseditor/js/editor-config.js') }}"></script>
+{% endif %}
+
+<script src="{{ asset('bundles/nineseditor/js/editor.js') }}"></script>

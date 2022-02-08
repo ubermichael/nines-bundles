@@ -1,0 +1,22 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Label</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for term in terms %}
+            <tr>
+                <td>
+                    <a href="{{ path(path, {'id': term.id}) }}">
+                        {{ term.label }}
+                    </a>
+                </td>
+                <td>
+                    {{ term.description|raw }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

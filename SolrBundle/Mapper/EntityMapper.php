@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -13,6 +13,7 @@ namespace Nines\SolrBundle\Mapper;
 use Doctrine\Common\Util\ClassUtils;
 use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Metadata\EntityMetadata;
+use ReflectionException;
 use Solarium\QueryType\Update\Query\Document;
 
 /**
@@ -22,23 +23,23 @@ class EntityMapper {
     /**
      * @var EntityMetadata[]
      */
-    private $map;
+    private array $map = [];
 
     /**
      * Map of entity field name to solr field name.
      *
-     * @var array
+     * @var array<string,string>
      */
-    private $fields;
+    private array $fields;
 
     /**
      * Map of entity field names to boost values.
      *
-     * @var array
+     * @var array<string,float>
      */
-    private $boosts;
+    private array $boosts = [];
 
-    private SolrLogger $logger;
+    private ?SolrLogger $logger = null;
 
     /**
      * EntityMapper constructor.
@@ -46,8 +47,6 @@ class EntityMapper {
      * @see EntityMapperFactory
      */
     public function __construct() {
-        $this->map = [];
-        $this->boosts = [];
         $this->fields = [
             'id' => 'id',
             'class' => 'class_s',
@@ -83,7 +82,9 @@ class EntityMapper {
     /**
      * Generate a document ID for an entity.
      *
-     * @param $entity
+     * @param ?mixed $entity
+     *
+     * @throws ReflectionException
      */
     public function identify($entity) : ?string {
         if ( ! $entity) {
@@ -104,13 +105,13 @@ class EntityMapper {
     /**
      * Map an entity to a solr document.
      *
-     * @param $entity
+     * @param ?mixed $entity
      *
-     * @return Document
+     * @throws ReflectionException
      */
-    public function toDocument($entity) {
+    public function toDocument($entity) : ?Document {
         if ( ! $entity) {
-            return;
+            return null;
         }
         $class = ClassUtils::getClass($entity);
         if ( ! ($entityMeta = ($this->map[$class] ?? null))) {
@@ -118,7 +119,7 @@ class EntityMapper {
                 'class' => $class,
             ]);
 
-            return;
+            return null;
         }
         $document = new Document();
         $document->setKey($entityMeta->getClass() . ':' . $entityMeta->getId()->fetch($entity));
@@ -165,13 +166,9 @@ class EntityMapper {
     }
 
     /**
-     * Get the solr field name based on a field name as defined in the.
-     *
-     * @field/name attribute.
-     *
-     * @param $name
+     * Get the solr field name based on a field name as defined in the field attribute.
      */
-    public function getSolrName($name) : ?string {
+    public function getSolrName(string $name) : ?string {
         if ( ! isset($this->fields[$name])) {
             $this->logger->warning('Cannot get solr name for unknown property {name}.', [
                 'name' => $name,
@@ -183,13 +180,13 @@ class EntityMapper {
         return $this->fields[$name];
     }
 
-    public function getBoost($name) {
+    public function getBoost(string $name) : ?float {
         if ( ! isset($this->boosts[$name])) {
             $this->logger->warning('Cannot get boost for unknown property {name}.', [
                 'name' => $name,
             ]);
 
-            return;
+            return null;
         }
 
         return $this->boosts[$name];
@@ -202,7 +199,7 @@ class EntityMapper {
      */
     public function getEntityMetadata($class) : ?EntityMetadata {
         if (is_object($class)) {
-            $class = ClassUtils::getRealClass($class);
+            $class = ClassUtils::getClass($class);
         }
         if ( ! isset($this->map[$class])) {
             $this->logger->warning('Cannot get entity metadata for unknown class {class}.', [
@@ -217,15 +214,8 @@ class EntityMapper {
 
     /**
      * Check if an entity is mapped.
-     *
-     * @param $entity
-     *
-     * @return bool
      */
-    public function isMapped($entity) {
-        if ( ! $entity) {
-            return false;
-        }
+    public function isMapped(object $entity) : bool {
         $class = ClassUtils::getClass($entity);
 
         return array_key_exists($class, $this->map);
@@ -234,14 +224,16 @@ class EntityMapper {
     /**
      * List the classes known to the entity mapper.
      *
-     * @return array
+     * @return array<string>
      */
-    public function getClasses() {
+    public function getClasses() : array {
         return array_keys($this->map);
     }
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;

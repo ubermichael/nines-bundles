@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -21,10 +21,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ChangePasswordCommand extends AbstractUserCommand {
-    /**
-     * @var UserManager
-     */
-    private $manager;
+    private UserManager $manager;
 
     protected static $defaultName = 'nines:user:password';
 
@@ -33,6 +30,9 @@ class ChangePasswordCommand extends AbstractUserCommand {
         $this->manager = $manager;
     }
 
+    /**
+     * @return array<int,mixed>
+     */
     protected function getArgs() : array {
         return [
             ['name' => 'email', 'desc' => 'Email address for the account', 'question' => 'Email address: ', 'valid' => [new NotBlank(), new Email()]],
@@ -47,7 +47,7 @@ class ChangePasswordCommand extends AbstractUserCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
         $email = $input->getArgument('email');
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if ( ! $user) {

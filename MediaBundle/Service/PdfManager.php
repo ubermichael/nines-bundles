@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,10 +28,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * stuff.
  */
 class PdfManager extends AbstractFileManager implements EventSubscriber {
-    /**
-     * @var Thumbnailer
-     */
-    private $thumbnailer;
+    private Thumbnailer $thumbnailer;
 
     /**
      * Store the pdf file, extracta  little metadata, and generate a thumbnail.
@@ -133,8 +130,8 @@ class PdfManager extends AbstractFileManager implements EventSubscriber {
             $fs = new Filesystem();
 
             try {
-                $fs->remove($entity->getFile());
-                $fs->remove($entity->getThumbFile());
+                $fs->remove($entity->getFile()->getRealPath());
+                $fs->remove($entity->getThumbFile()->getRealPath());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
             }
@@ -153,6 +150,8 @@ class PdfManager extends AbstractFileManager implements EventSubscriber {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setThumbnailer(Thumbnailer $thumbnailer) : void {
         $this->thumbnailer = $thumbnailer;

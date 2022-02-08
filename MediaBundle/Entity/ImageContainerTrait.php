@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\Collection;
 
 trait ImageContainerTrait {
     /**
-     * @var Collection|Image[]
+     * @var Collection<int,Image>|Image[]
      */
     protected $images;
 
@@ -23,10 +23,7 @@ trait ImageContainerTrait {
         $this->images = new ArrayCollection();
     }
 
-    /**
-     * @return mixed
-     */
-    public function addImage(Image $image) {
+    public function addImage(Image $image) : self {
         if ( ! $this->images->contains($image)) {
             $this->images[] = $image;
         }
@@ -34,10 +31,7 @@ trait ImageContainerTrait {
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function removeImage(Image $image) {
+    public function removeImage(Image $image) : self {
         if ($this->images->contains($image)) {
             $this->images->removeElement($image);
         }
@@ -50,11 +44,9 @@ trait ImageContainerTrait {
     }
 
     /**
-     * @param Collection|Image[] $images
-     *
-     * @return mixed
+     * @param array<Image>|Collection<int,Image> $images
      */
-    public function setImages($images) {
+    public function setImages($images) : self {
         if (is_array($images)) {
             $this->images = new ArrayCollection($images);
         } else {
@@ -65,9 +57,9 @@ trait ImageContainerTrait {
     }
 
     /**
-     * @return Image[]
+     * @return array<Image>
      */
-    public function getImages() {
+    public function getImages() : array {
         return $this->images->toArray();
     }
 }

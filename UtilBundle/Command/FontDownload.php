@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Command;
 
 use GuzzleHttp\Client;
-use Psr\Log\LoggerInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,19 +27,8 @@ use Twig\Error\SyntaxError;
  * Download and save fonts from Google Fonts and generate the CSS for them.
  */
 class FontDownload extends Command {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private Environment $twig;
 
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var string
-     */
     protected static $defaultName = 'nines:fonts:download';
 
     /**
@@ -49,24 +38,21 @@ class FontDownload extends Command {
         $this
             ->setDescription('Fetch the fonts defined in config/fonts.yaml')
             ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description');
     }
 
     /**
      * Render the CSS for one font family.
      *
-     * @param $config
-     * @param $variant
-     * @param $accepted
+     * @param array<string,string> $config
+     * @param array<string,string> $variant
+     * @param array<string> $accepted
      *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
-     *
-     * @return string
      */
-    protected function render($config, $variant, $accepted) {
+    protected function render(array $config, array $variant, array $accepted) : string {
         return $this->twig->render('@NinesUtil/font/font.css.twig', [
             'family' => $variant['fontFamily'],
             'locals' => $variant['local'] ?? [],
@@ -80,14 +66,14 @@ class FontDownload extends Command {
     /**
      * Download the font file from Google Fonts and store it.
      *
-     * @param $id
-     * @param $name
-     * @param $variant
-     * @param $config
+     * @param array<string,string> $variant
+     * @param array<string,mixed> $config
      *
-     * @return array
+     * @throws GuzzleException
+     *
+     * @return array<string,string>
      */
-    protected function fetch($id, $name, $variant, $config) {
+    protected function fetch(string $id, string $name, array $variant, array $config) : array {
         $client = new Client();
         $filenames = [];
         $filenameTemplate = $config['filename'];
@@ -100,17 +86,12 @@ class FontDownload extends Command {
                 'ext' => $format,
             ];
 
-            $filename = preg_replace_callback('/\{(\w+)\}/', fn ($matches) => $callback[$matches[1]], $filenameTemplate);
+            $filename = preg_replace_callback('/\{(\w+)\}/', fn($matches) => $callback[$matches[1]], $filenameTemplate);
             $file = $config['path'] . '/' . $filename;
 
-            if (file_exists($file)) {
-                $this->logger->notice('Skipped existing ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
-            } else {
-                $this->logger->notice('Downloading ' . $name . ' ' . $variant['fontStyle'] . ' ' . $variant['fontWeight'] . ' ' . $format);
-                $client->get($variant[$format], [
-                    'sink' => $file,
-                ]);
-            }
+            $client->get($variant[$format], [
+                'sink' => $file,
+            ]);
             $filenames[$format] = $filename;
         }
 
@@ -120,24 +101,18 @@ class FontDownload extends Command {
     /**
      * Compare the font variant $variant returned from the API against the requested fonts.
      *
-     * @param $id
-     * @param string $name
-     * @param array $variant
-     * @param array $config
+     * @param array<string,string> $variant
+     * @param array<string,mixed> $config
      *
      * @return bool true if the font should be included in the CSS and downloaded.
      */
-    protected function checkVariant($id, $name, $variant, $config) {
+    protected function checkVariant(string $id, string $name, array $variant, array $config) : bool {
         $styles = $config['families'][$id]['styles'];
         if ( ! in_array($variant['fontStyle'], $styles, false)) {
-            $this->logger->info('Skipping style ' . $name . ' ' . $variant['fontStyle']);
-
             return false;
         }
         $weights = $config['families'][$id]['weights'];
         if ( ! in_array($variant['fontWeight'], $weights, false)) {
-            $this->logger->info('Skipping weight ' . $name . ' ' . $variant['fontWeight']);
-
             return false;
         }
 
@@ -147,17 +122,14 @@ class FontDownload extends Command {
     /**
      * Process one font definition as returned by the API and return the rendered CSS for the font.
      *
-     * @param $id
-     * @param $data
-     * @param $config
+     * @param array<string,mixed> $data
+     * @param array<string,mixed> $config
      *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
-     *
-     * @return string
      */
-    protected function processFont($id, $data, $config) {
+    protected function processFont(string $id, array $data, array $config) : string {
         $css = '';
 
         foreach ($data['variants'] as $variant) {
@@ -182,6 +154,7 @@ class FontDownload extends Command {
     /**
      * Execute the command.
      *
+     * @throws GuzzleException
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -218,13 +191,8 @@ class FontDownload extends Command {
 
     /**
      * @required
-     */
-    public function setLogger(LoggerInterface $logger) : void {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setTwigEngine(Environment $twig) : void {
         $this->twig = $twig;

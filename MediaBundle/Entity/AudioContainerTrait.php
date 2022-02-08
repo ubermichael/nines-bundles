@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -15,18 +15,15 @@ use Doctrine\Common\Collections\Collection;
 
 trait AudioContainerTrait {
     /**
-     * @var Audio[]|Collection
+     * @var Audio[]|Collection<int,Audio>
      */
-    protected $audios;
+    protected Collection $audios;
 
     protected function __construct() {
         $this->audios = new ArrayCollection();
     }
 
-    /**
-     * @return mixed
-     */
-    public function addAudio(Audio $audio) {
+    public function addAudio(Audio $audio) : self {
         if ( ! $this->audios->contains($audio)) {
             $this->audios[] = $audio;
         }
@@ -34,10 +31,7 @@ trait AudioContainerTrait {
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function removeAudio(Audio $audio) {
+    public function removeAudio(Audio $audio) : self {
         if ($this->audios->contains($audio)) {
             $this->audios->removeElement($audio);
         }
@@ -50,11 +44,9 @@ trait AudioContainerTrait {
     }
 
     /**
-     * @param Audio[]|Collection $audios
-     *
-     * @return mixed
+     * @param array<Audio>|Collection<int,Audio> $audios
      */
-    public function setAudios($audios) {
+    public function setAudios($audios) : self {
         if (is_array($audios)) {
             $this->audios = new ArrayCollection($audios);
         } else {
@@ -65,9 +57,9 @@ trait AudioContainerTrait {
     }
 
     /**
-     * @return Audio[]
+     * @return array<Audio>
      */
-    public function getAudios() {
+    public function getAudios() : array {
         return $this->audios->toArray();
     }
 }

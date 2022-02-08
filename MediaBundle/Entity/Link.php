@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -13,30 +13,30 @@ namespace Nines\MediaBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\LinkedEntityInterface;
+use Nines\UtilBundle\Entity\LinkedEntityTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=LinkRepository::class)
- * @ORM\Table(indexes={
- *     @ORM\Index(columns={"url", "text"}, flags={"fulltext"}),
+ * @ORM\Table(name="nines_media_link", indexes={
+ *     @ORM\Index(name="nines_media_link_ft", columns={"url", "text"}, flags={"fulltext"}),
  *     @ORM\Index(columns={"entity"})
  * })
  */
-class Link extends AbstractEntity implements EntityReferenceInterface {
-    use EntityReferenceTrait;
+class Link extends AbstractEntity implements LinkedEntityInterface {
+    use LinkedEntityTrait;
 
     /**
-     * @var string
      * @Assert\Url
      * @ORM\Column(type="string", length=500, nullable=false)
      */
-    private $url;
+    private ?string $url = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=200, nullable=true)
      */
-    private $text;
+    private ?string $text = null;
 
     public function __construct() {
         parent::__construct();
@@ -51,16 +51,25 @@ class Link extends AbstractEntity implements EntityReferenceInterface {
         return "<a href='{$this->url}'>{$host}</a>";
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getUrl() : ?string {
         return $this->url;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function setUrl(string $url) : self {
         $this->url = $url;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getText() : ?string {
         return $this->text;
     }
@@ -71,35 +80,35 @@ class Link extends AbstractEntity implements EntityReferenceInterface {
         return $this;
     }
 
-    public function getScheme() {
+    public function getScheme() : string {
         return parse_url($this->url, PHP_URL_SCHEME);
     }
 
-    public function getHost() {
+    public function getHost() : string {
         return parse_url($this->url, PHP_URL_HOST);
     }
 
-    public function getPort() {
+    public function getPort() : int {
         return parse_url($this->url, PHP_URL_PORT);
     }
 
-    public function getUser() {
+    public function getUser() : string {
         return parse_url($this->url, PHP_URL_USER);
     }
 
-    public function getPass() {
+    public function getPass() : string {
         return parse_url($this->url, PHP_URL_PASS);
     }
 
-    public function getPath() {
+    public function getPath() : string {
         return parse_url($this->url, PHP_URL_PATH);
     }
 
-    public function getQuery() {
+    public function getQuery() : string {
         return parse_url($this->url, PHP_URL_QUERY);
     }
 
-    public function getFragment() {
+    public function getFragment() : string {
         return parse_url($this->url, PHP_URL_FRAGMENT);
     }
 }

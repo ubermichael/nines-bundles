@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,22 +12,31 @@ namespace Nines\MediaBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 
 trait LinkableTrait {
     /**
-     * @var Collection|Link[]
+     * @var Collection<int,Link>|Link[]
      */
-    protected $links;
+    protected Collection $links;
 
     public function __construct() {
         $this->links = new ArrayCollection();
     }
 
-    public function getLinks() {
-        return $this->links;
+    /**
+     * @return array<Link>
+     */
+    public function getLinks() : array {
+        return $this->links->toArray();
     }
 
-    public function setLinks($links = null) {
+    /**
+     * @param array<Link>|Collection<int,Link> $links
+     *
+     * @throws Exception
+     */
+    public function setLinks($links = null) : self {
         $this->links = new ArrayCollection();
         if ( ! $links) {
             return $this;
@@ -40,7 +49,10 @@ trait LinkableTrait {
         return $this;
     }
 
-    public function addLink(Link $link) {
+    /**
+     * @throws Exception
+     */
+    public function addLink(Link $link) : self {
         $link->setEntity($this);
         $this->links[] = $link;
 

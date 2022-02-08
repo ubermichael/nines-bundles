@@ -1,0 +1,5 @@
+{% set linked_entity = linker.findEntity(entity) %}
+{{ linker.entityType(entity) }}
+<a href='{{ linker.link(linked_entity) }}'>
+    {{ linked_entity }}
+</a>

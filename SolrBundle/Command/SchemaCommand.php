@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -21,10 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Show a description of the Solr search schema.
  */
 class SchemaCommand extends Command {
-    /**
-     * @var EntityMapper
-     */
-    private $mapper;
+    private EntityMapper $mapper;
 
     protected static $defaultName = 'nines:solr:schema';
 
@@ -38,10 +35,8 @@ class SchemaCommand extends Command {
 
     /**
      * Execute the command. Returns 0 for success.
-     *
-     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $classes = $input->getArgument('classes');
         if ( ! $classes) {
             $classes = $this->mapper->getClasses();
@@ -89,6 +84,8 @@ class SchemaCommand extends Command {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityMapper(EntityMapper $mapper) : void {
         $this->mapper = $mapper;

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -18,11 +18,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * ElementType form.
+ * Element form.
  */
 class ElementType extends TermType {
     /**
      * Add form fields to $builder.
+     *
+     * @param array<string,mixed> $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         parent::buildForm($builder, $options);
@@ -30,14 +32,14 @@ class ElementType extends TermType {
             'label' => 'Uri',
             'required' => true,
             'attr' => [
-                'help_block' => 'The Uniform Resource Identifier used to uniquely identify a term.',
+                'help_block' => '',
             ],
         ]);
         $builder->add('comment', TextareaType::class, [
             'label' => 'Comment',
             'required' => true,
             'attr' => [
-                'help_block' => 'Additional information about the term or its application.',
+                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);

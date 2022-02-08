@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,24 +20,20 @@ use ReflectionMethod;
 class IdMetadata extends Metadata {
     /**
      * Name of the ID field.
-     *
-     * @var string
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * Name and params of the method to get the id.
-     *
-     * @var string
      */
-    private $getter;
+    private ?string $getter = null;
 
     /**
      * Arguments to pass to the getter.
      *
-     * @var array
+     * @var array<int,string>
      */
-    private $getterArgs;
+    private array $getterArgs = [];
 
     public function getName() : string {
         return $this->name;
@@ -61,14 +57,15 @@ class IdMetadata extends Metadata {
         return $this->getter;
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function getGetterArgs() : array {
         return $this->getterArgs;
     }
 
     /**
      * Set the getter function.
-     *
-     * @return $this
      */
     public function setGetter(string $getter) : self {
         list($name, $args) = $this->parseFunctionCall($getter);

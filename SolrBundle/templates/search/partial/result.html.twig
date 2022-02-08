@@ -1,0 +1,15 @@
+{# @var result #}
+<div class='list-group'>
+    {% for i in 0..(result.count-1) %}
+        {% set document = result.getDocument(i) %}
+        {% set entity = result.entity(i) %}
+        <a href='{{ linker.link(entity) }}' class='list-group-item'> <b>{{ document.type_s -}}: {{ entity }}</b><br />
+            {% for h in result.getHighlighting(i) %}
+                {{ h|join("...")|raw }}
+            {% endfor %}
+            {% if is_granted('ROLE_USER') %}
+                <span class='pull-right text-muted'>{{ document.score }}</span><br/>
+            {% endif %}
+        </a>
+    {% endfor %}
+</div>

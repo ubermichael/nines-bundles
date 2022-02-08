@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -14,27 +14,19 @@ use Doctrine\Common\Collections\Collection;
 use Nines\UtilBundle\Entity\AbstractEntityInterface;
 
 interface ImageContainerInterface extends AbstractEntityInterface {
-    /**
-     * @return mixed
-     */
-    public function addImage(Image $image);
+    public function addImage(Image $image) : self;
 
-    /**
-     * @return mixed
-     */
-    public function removeImage(Image $image);
+    public function removeImage(Image $image) : self;
 
     public function containsImage(Image $image) : bool;
 
     /**
-     * @param Collection|Image[] $images
-     *
-     * @return mixed
+     * @param array<Image>|Collection<int,Image> $images
      */
-    public function setImages($images);
+    public function setImages($images) : self;
 
     /**
-     * @return Collection|Image[]
+     * @return array<Image>
      */
-    public function getImages();
+    public function getImages() : array;
 }

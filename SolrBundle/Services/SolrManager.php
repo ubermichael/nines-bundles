@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -19,6 +19,7 @@ use Nines\SolrBundle\Logging\SolrLogger;
 use Nines\SolrBundle\Mapper\EntityMapper;
 use Nines\SolrBundle\Query\QueryBuilder;
 use Nines\SolrBundle\Query\Result;
+use ReflectionException;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Update\Query\Query as UpdateQuery;
@@ -27,41 +28,29 @@ use Solarium\QueryType\Update\Query\Query as UpdateQuery;
  * Thin wrapper around the query builder and query execution.
  */
 class SolrManager {
-    /**
-     * @var Client
-     */
-    private $client;
+    private ?Client $client = null;
 
-    /**
-     * @var EntityMapper
-     */
-    private $mapper;
+    private ?EntityMapper $mapper = null;
 
-    /**
-     * @var DoctrineHydrator
-     */
-    private $hydrator;
+    private ?DoctrineHydrator $hydrator = null;
 
-    private SolrLogger $logger;
+    private ?SolrLogger $logger = null;
 
-    /**
-     * @var UpdateQuery
-     */
-    private $update;
+    private ?UpdateQuery $update = null;
 
-    /**
-     * @var bool
-     */
-    private $enabled;
+    private bool $enabled;
 
-    public function __construct($enabled) {
+    private int $pageSize;
+
+    public function __construct(bool $enabled, int $pageSize) {
         $this->enabled = $enabled;
+        $this->pageSize = $pageSize;
     }
 
     /**
-     * @return QueryBuilder
+     * @throws NotConfiguredException
      */
-    public function createQueryBuilder() {
+    public function createQueryBuilder() : QueryBuilder {
         if ( ! $this->client) {
             throw new NotConfiguredException();
         }
@@ -72,22 +61,18 @@ class SolrManager {
     /**
      * Execute a query and returl the result.
      *
-     * @param mixed $options
-     * @param ?PaginatorInterface $pager
+     * @param ?array<string,mixed> $options
+     *
+     * @throws NotConfiguredException
      */
-    public function execute(Query $query, ?PaginatorInterface $pager = null, $options = []) : ?Result {
+    public function execute(Query $query, ?PaginatorInterface $pager = null, ?array $options = []) : ?Result {
         if ( ! $this->client) {
             throw new NotConfiguredException();
-        }
-        if ( ! $this->client) {
-            $this->logger->error('No client configured for this envirnoment.');
-
-            return null;
         }
 
         $this->logger->addQuery($query);
         if ($pager) {
-            $paginated = $pager->paginate([$this->client, $query], $options['page'], $options['pageSize']);
+            $paginated = $pager->paginate([$this->client, $query], $options['page'] ?? 1, $options['pageSize'] ?? $this->pageSize);
 
             return new Result($paginated->getCustomParameter('result'), $this->hydrator, $paginated);
         }
@@ -95,7 +80,11 @@ class SolrManager {
         return new Result($this->client->select($query), $this->hydrator);
     }
 
-    public function index($entity) : void {
+    /**
+     * @throws NotConfiguredException
+     * @throws ReflectionException
+     */
+    public function index(object $entity) : void {
         if ( ! $this->client) {
             throw new NotConfiguredException();
         }
@@ -108,6 +97,9 @@ class SolrManager {
         $this->update->addDocument($this->mapper->toDocument($entity));
     }
 
+    /**
+     * @throws NotConfiguredException
+     */
     public function flush() : void {
         if ( ! $this->client) {
             throw new NotConfiguredException();
@@ -117,11 +109,15 @@ class SolrManager {
         }
         $this->logger->addQuery($this->update);
         $this->update->addCommit();
-        $this->client->update($this->update);
+        $result = $this->client->update($this->update);
         $this->update = null;
     }
 
-    public function remove($entity) : void {
+    /**
+     * @throws NotConfiguredException
+     * @throws ReflectionException
+     */
+    public function remove(object $entity) : void {
         if ( ! $this->client) {
             throw new NotConfiguredException();
         }
@@ -150,6 +146,8 @@ class SolrManager {
 
     /**
      * @throws SolrException
+     *
+     * @return array<string,mixed>
      */
     public function ping() : array {
         if ( ! $this->client) {
@@ -180,9 +178,9 @@ class SolrManager {
     /**
      * @required
      *
-     * @return SolrManager
+     * @codeCoverageIgnore
      */
-    public function setHydrator(DoctrineHydrator $hydrator) {
+    public function setHydrator(DoctrineHydrator $hydrator) : self {
         $this->hydrator = $hydrator;
 
         return $this;
@@ -196,10 +194,8 @@ class SolrManager {
      * @required
      *
      * @param ?Client $client
-     *
-     * @return SolrManager
      */
-    public function setClient(?Client $client) {
+    public function setClient(?Client $client) : self {
         $this->client = $client;
 
         return $this;
@@ -212,9 +208,9 @@ class SolrManager {
     /**
      * @required
      *
-     * @return SolrManager
+     * @codeCoverageIgnore
      */
-    public function setMapper(EntityMapper $mapper) {
+    public function setMapper(EntityMapper $mapper) : self {
         $this->mapper = $mapper;
 
         return $this;
@@ -222,6 +218,8 @@ class SolrManager {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;
@@ -240,7 +238,14 @@ class SolrManager {
         $this->client->getPlugin(LoggerPlugin::class)->setOptions(['enabled' => false]);
     }
 
-    public function log($level, $message, $context = []) : void {
+    /**
+     * @see LogLevel
+     *
+     * @param mixed $level
+     * @param mixed $message
+     * @param array<string,string> $context
+     */
+    public function log($level, $message, array $context = []) : void {
         $this->logger->log($level, $message, $context);
     }
 

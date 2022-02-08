@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -17,8 +17,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * Comment Note.
  *
- * @ORM\Table(name="comment_note", indexes={
- *     @ORM\Index(name="commentnote_ft_idx",  columns={"content"},  flags={"fulltext"})
+ * @ORM\Table(name="nines_feedback_comment_note", indexes={
+ *     @ORM\Index(name="comment_note_ft", columns={"content"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentNoteRepository")
  */
@@ -26,100 +26,80 @@ class CommentNote extends AbstractEntity {
     /**
      * User who created the note.
      *
-     * @var User
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    private $user;
+    private ?User $user = null;
 
     /**
      * Content of the note.
      *
      * @ORM\Column(type="text")
-     *
-     * @var string
      */
-    private $content;
+    private ?string $content = null;
 
     /**
      * Note the comment applies to.
      *
-     * @var Comment
      * @ORM\ManyToOne(targetEntity="Comment", inversedBy="notes")
      * @ORM\JoinColumn(name="comment_id", referencedColumnName="id", nullable=false)
      */
-    private $comment;
+    private ?Comment $comment = null;
 
     /**
      * Return the content of the note.
+     *
+     * @codeCoverageIgnore
      */
     public function __toString() : string {
         return $this->content;
     }
 
     /**
-     * Set content.
-     *
-     * @param string $content
-     *
-     * @return CommentNote
+     * @codeCoverageIgnore
      */
-    public function setContent($content) {
+    public function getContent() : ?string {
+        return $this->content;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setContent(string $content) : self {
         $this->content = $content;
 
         return $this;
     }
 
     /**
-     * Get content.
-     *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getContent() {
-        return $this->content;
+    public function getUser() : ?User {
+        return $this->user;
     }
 
     /**
-     * Set comment.
-     *
-     * @param Comment $comment
-     *
-     * @return CommentNote
+     * @codeCoverageIgnore
      */
-    public function setComment(?Comment $comment = null) {
-        $this->comment = $comment;
-
-        return $this;
-    }
-
-    /**
-     * Get comment.
-     *
-     * @return Comment
-     */
-    public function getComment() {
-        return $this->comment;
-    }
-
-    /**
-     * Set user.
-     *
-     * @param User $user
-     *
-     * @return CommentNote
-     */
-    public function setUser(?User $user = null) {
+    public function setUser(?User $user) : self {
         $this->user = $user;
 
         return $this;
     }
 
     /**
-     * Get user.
-     *
-     * @return User
+     * @codeCoverageIgnore
      */
-    public function getUser() {
-        return $this->user;
+    public function getComment() : ?Comment {
+        return $this->comment;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setComment(?Comment $comment) : self {
+        $this->comment = $comment;
+
+        return $this;
     }
 }

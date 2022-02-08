@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -28,98 +28,84 @@ class QueryBuilder {
 
     public const ESCAPE_NONE = 4;
 
-    /**
-     * @var EntityMapper
-     */
-    private $mapper;
+    private EntityMapper $mapper;
 
     /**
      * The query string for the query.
-     *
-     * @var string
      */
-    private $q;
+    private string $q;
 
     /**
      * List of fields to query.
      *
-     * @var array
+     * @var array<string,float>
      */
-    private $queryFields;
+    private array $queryFields = [];
 
     /**
      * Name of the default search field.
-     *
-     * @var string
      */
-    private $defaultField;
+    private ?string $defaultField = null;
 
     /**
      * Query filters as key=>value pairs.
      *
-     * @var array
+     * @var array<string,mixed>
      */
-    private $filters;
+    private array $filters = [];
 
     /**
-     * Names of fields to highlight.
-     *
-     * @var array
+     * Comma separated list of field names to highlight.
      */
-    private $highlightFields;
+    private ?string $highlightFields = null;
 
     /**
      * Facet fields as name => solr name pairs.
      *
-     * @var array
+     * @var array<string,string>
      */
-    private $facetFields;
+    private array $facetFields = [];
 
     /**
      * List of facet ranges for the query.
      *
-     * @var array
+     * @var array<string,mixed>
      */
-    private $facetRanges;
+    private array $facetRanges = [];
 
     /**
      * List of filter ranges for the query.
      *
-     * @var array
+     * @var array<string,mixed>
      */
-    private $filterRanges;
+    private array $filterRanges = [];
 
     /**
      * List of fields to return from the query.
      *
      * @var string[]
      */
-    private $fields;
+    private array $fields;
 
     /**
      * List of field => direction pairs to sort the query results.
      *
      * @var string[]
      */
-    private $sorting;
+    private array $sorting;
 
     /**
      * Geographic filters to apply to the query.
+     *
+     * @var array<string,mixed>
      */
-    private array $geoFilters;
+    private array $geoFilters = [];
 
     private Helper $helper;
 
     public function __construct(EntityMapper $mapper) {
         $this->q = '*:*';
         $this->mapper = $mapper;
-        $this->queryFields = [];
-        $this->filters = [];
-        $this->filterRanges = [];
-        $this->geoFilters = [];
-        $this->highlightFields = [];
-        $this->facetRanges = [];
-        $this->facetFields = [];
         $this->fields = ['*', 'score'];
         $this->sorting = [
             'score' => 'desc',
@@ -130,13 +116,13 @@ class QueryBuilder {
     /**
      * Find the solr field name from the entity field name.
      *
-     * @param $field
+     * @param array<int,string>|string $field
      *
-     * @return array|string|string[]
+     * @return array<int,string>|string
      */
     protected function solrName($field) {
         if (is_array($field)) {
-            return array_map(fn ($s) => $this->mapper->getSolrName($s) ?? $s, $field);
+            return array_map(fn($s) => $this->mapper->getSolrName($s) ?? $s, $field);
         }
 
         return $this->mapper->getSolrName($field) ?? $field;
@@ -144,11 +130,8 @@ class QueryBuilder {
 
     /**
      * Set the query string.
-     *
-     * @param $q
-     * @param null|mixed $escape
      */
-    public function setQueryString($q, $escape = self::ESCAPE_NONE) : void {
+    public function setQueryString(string $q, ?int $escape = self::ESCAPE_NONE) : void {
         switch ($escape) {
             case self::ESCAPE_GENERAL:
                 // see https://solr.apache.org/guide/8_8/the-standard-query-parser.html#escaping-special-characters
@@ -176,28 +159,29 @@ class QueryBuilder {
 
     /**
      * Set the default search field.
-     *
-     * @param $defaultField
      */
-    public function setDefaultField($defaultField) : void {
+    public function setDefaultField(string $defaultField) : void {
         $this->defaultField = $this->solrName($defaultField);
     }
 
-    public function setQueryFields($queryFields) : void {
+    /**
+     * @param array<int,string> $queryFields
+     */
+    public function setQueryFields(array $queryFields) : void {
         $this->queryFields = [];
         foreach ($queryFields as $f) {
             $this->queryFields[$this->solrName($f)] = $this->mapper->getBoost($f);
         }
     }
 
-    public function addQueryField($queryField) : void {
+    public function addQueryField(string $queryField) : void {
         $this->queryFields[$this->solrName($queryField)] = $this->mapper->getBoost($queryField);
     }
 
     /**
      * Field or fields to highlight.
      *
-     * @param mixed $fields
+     * @param array<int,string>|string $fields
      */
     public function setHighlightFields($fields) : void {
         if (is_array($fields)) {
@@ -211,22 +195,19 @@ class QueryBuilder {
 
     /**
      * Add a facet field.
-     *
-     * @param $name
      */
-    public function addFacetField($name) : void {
+    public function addFacetField(string $name) : void {
         $this->facetFields[$name] = $this->solrName($name);
     }
 
     /**
      * Add a facet range to the query.
      *
-     * @param string $name
-     * @param numeric $start
-     * @param numeric $end
-     * @param numeric $gap
+     * @param mixed $start
+     * @param mixed $end
+     * @param mixed $gap
      */
-    public function addFacetRange($name, $start, $end, $gap) : void {
+    public function addFacetRange(string $name, $start, $end, $gap) : void {
         $this->facetRanges[$name] = [
             'field' => $this->solrName($name),
             'start' => $start,
@@ -238,21 +219,19 @@ class QueryBuilder {
     /**
      * Add a filter to the search query.
      *
-     * @param string $key
-     * @param array $terms
+     * @param array<int,mixed> $terms
      */
-    public function addFilter($key, $terms) : void {
+    public function addFilter(string $key, array $terms) : void {
         $this->filters[$this->solrName($key)] = $terms;
     }
 
     /**
      * Add a filter range to the query.
      *
-     * @param string $name
-     * @param numeric $start
-     * @param numeric $end
+     * @param mixed $start
+     * @param mixed $end
      */
-    public function addFilterRange($name, $start, $end) : void {
+    public function addFilterRange(string $name, $start, $end) : void {
         $solrName = $this->solrName($name);
         if (array_key_exists($solrName, $this->filterRanges)) {
             $this->filterRanges[$this->solrName($name)][] = [
@@ -269,44 +248,37 @@ class QueryBuilder {
 
     /**
      * Filter search results by geographic distance from field $name.
-     *
-     * @param string $name
-     * @param string $latitude
-     * @param string $longitude
-     * @param string $distance
      */
-    public function addGeographicFilter($name, $latitude, $longitude, $distance) : void {
+    public function addGeographicFilter(string $name, string $latitude, string $longitude, string $distance) : void {
         $this->filters[$this->solrName($name)] = $this->helper->geofilt($this->solrName($name), $latitude, $longitude, $distance);
     }
 
-    public function addDistanceField($name, $latitude, $longitude) : void {
+    public function addDistanceField(string $name, string $latitude, string $longitude) : void {
         $this->fields[] = 'distance:' . $this->helper->geodist($this->solrName($name), $latitude, $longitude);
     }
 
     /**
      * Set the fields to return.
      *
-     * @param array $fields
+     * @param array<int,string> $fields
      */
-    public function setFields($fields = []) : void {
-        $this->fields = array_map(fn ($s) => $this->solrName($s), $fields);
+    public function setFields(array $fields = []) : void {
+        $this->fields = array_map(fn($s) => $this->solrName($s), $fields);
     }
 
     /**
      * Add a field to the query output.
-     *
-     * @param $field
      */
-    public function addField($field) : void {
+    public function addField(string $field) : void {
         $this->fields[] = $this->solrName($field);
     }
 
     /**
      * Set the sorting information for the query.
      *
-     * @param array $sorting
+     * @param ?array<string,string> $sorting
      */
-    public function setSorting($sorting = []) : void {
+    public function setSorting(?array $sorting = []) : void {
         $this->sorting = [];
 
         foreach ($sorting as $field => $dir) {
@@ -316,25 +288,20 @@ class QueryBuilder {
 
     /**
      * Add a sort to the query.
-     *
-     * @param $field
-     * @param $direction
      */
-    public function addSorting($field, $direction) : void {
+    public function addSorting(string $field, string $direction) : void {
         $this->sorting[$this->solrName($field)] = $direction;
     }
 
-    public function addDistanceSorting($field, $latitude, $longitude, $direction) : void {
+    public function addDistanceSorting(string $field, string $latitude, string $longitude, string $direction) : void {
         $geodist = $this->helper->geodist($this->solrName($field), $latitude, $longitude);
         $this->sorting[$geodist] = $direction;
     }
 
     /**
      * Generate and return a query.
-     *
-     * @return Query
      */
-    public function getQuery() {
+    public function getQuery() : Query {
         $query = new Query();
         $query->setQuery($this->q);
         if ($this->defaultField) {
@@ -342,32 +309,29 @@ class QueryBuilder {
         }
         if (count($this->queryFields) > 0) {
             $dismax = $query->getDisMax();
-            $qf = array_map(fn ($k, $v) => $k . ($v ? "^{$v}" : ''), array_keys($this->queryFields), $this->queryFields);
+            $qf = array_map(fn($k, $v) => $k . ($v ? "^{$v}" : ''), array_keys($this->queryFields), $this->queryFields);
             $dismax->setQueryFields(implode(' ', $qf));
         }
 
         foreach ($this->filters as $key => $values) {
             $terms = $values;
             if (is_array($values)) {
-                $terms = implode(' or ', array_map(fn ($s) => '"' . $s . '"', $values));
+                $terms = implode(' or ', array_map(fn($s) => '"' . $s . '"', $values));
             }
             $query->createFilterQuery('fq_' . $key)->addTag('exclude')
-                ->setQuery("{$key}:({$terms})")
-            ;
+                ->setQuery("{$key}:({$terms})");
         }
 
         foreach ($this->filterRanges as $key => $ranges) {
-            $range = implode(' OR ', array_map(fn ($range) => "[{$range['start']} TO {$range['end']}]", $ranges));
+            $range = implode(' OR ', array_map(fn($range) => "[{$range['start']} TO {$range['end']}]", $ranges));
 
             $query->createFilterQuery('fr_' . $key)->addTag('exclude')
-                ->setQuery("{$key}:({$range})")
-            ;
+                ->setQuery("{$key}:({$range})");
         }
 
         foreach ($this->geoFilters as $key => $filter) {
             $query->createFilterQuery('fq_' . $key)->addTag('exclude')
-                ->setQuery()
-            ;
+                ->setQuery();
         }
 
         $facetSet = $query->getFacetSet();

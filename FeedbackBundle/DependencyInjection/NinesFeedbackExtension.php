@@ -3,13 +3,15 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\FeedbackBundle\DependencyInjection;
 
+use Exception;
+use InvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -22,11 +24,16 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class NinesFeedbackExtension extends Extension {
     /**
-     * {@inheritdoc}
+     * Loads a specific configuration.
+     *
+     * @param array<mixed> $configs
+     *
+     * @throws Exception
+     * @throws InvalidArgumentException When provided tag is not defined in this extension
      */
     public function load(array $configs, ContainerBuilder $container) : void {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config'));
+        $loader->load('services.yaml');
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -34,13 +41,5 @@ class NinesFeedbackExtension extends Extension {
         $container->setParameter('nines_feedback.public_status', $config['public_status']);
         $container->setParameter('nines_feedback.sender', $config['sender']);
         $container->setParameter('nines_feedback.subject', $config['subject']);
-        $container->setParameter('nines_feedback.recipients', $config['recipients']);
-
-        $map = [];
-
-        foreach ($config['routing'] as $routing) {
-            $map[$routing['class']] = $routing['route'];
-        }
-        $container->setParameter('nines_feedback.routing', $map);
     }
 }

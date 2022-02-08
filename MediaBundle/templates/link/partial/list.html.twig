@@ -1,0 +1,7 @@
+{% if entity.links|length > 0 %}
+    <ul>
+        {% for link in entity.links %}
+            <li>{{ link|raw }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
