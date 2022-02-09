@@ -22,7 +22,7 @@ use Nines\FeedbackBundle\Entity\Comment;
 
 class CommentFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     public static function getGroups() : array {
-        return ['test'];
+        return ['dev', 'test'];
     }
 
     /**

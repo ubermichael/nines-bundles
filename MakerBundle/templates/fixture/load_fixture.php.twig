@@ -17,7 +17,7 @@ implements FixtureGroupInterface{%- if fkeys|length > 0 %}, DependentFixtureInte
 class {{ fixture_class_name }} extends Fixture {{ implements }} {
 
     public static function getGroups() : array {
-        return ['test'];
+        return ['dev', 'test'];
     }
 
     /**

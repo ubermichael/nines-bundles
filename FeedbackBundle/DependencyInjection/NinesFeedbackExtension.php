@@ -41,5 +41,6 @@ class NinesFeedbackExtension extends Extension {
         $container->setParameter('nines_feedback.public_status', $config['public_status']);
         $container->setParameter('nines_feedback.sender', $config['sender']);
         $container->setParameter('nines_feedback.subject', $config['subject']);
+        $container->setParameter('nines_feedback.recipients', $config['recipients']);
     }
 }

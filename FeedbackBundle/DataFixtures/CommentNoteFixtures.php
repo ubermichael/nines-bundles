@@ -19,7 +19,7 @@ use Nines\UserBundle\DataFixtures\UserFixtures;
 
 class CommentNoteFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     public static function getGroups() : array {
-        return ['test'];
+        return ['dev', 'test'];
     }
 
     /**

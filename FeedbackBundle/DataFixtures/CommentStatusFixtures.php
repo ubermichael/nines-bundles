@@ -17,7 +17,7 @@ use Nines\FeedbackBundle\Entity\CommentStatus;
 
 class CommentStatusFixtures extends Fixture implements FixtureGroupInterface {
     public static function getGroups() : array {
-        return ['test'];
+        return ['dev', 'test'];
     }
 
     /**
