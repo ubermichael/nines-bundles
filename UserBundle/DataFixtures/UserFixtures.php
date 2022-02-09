@@ -42,9 +42,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface {
      * {@inheritdoc}
      */
     public static function getGroups() : array {
-        return [
-            'test',
-        ];
+        return ['dev', 'test'];
     }
 
     public function load(ObjectManager $manager) : void {
