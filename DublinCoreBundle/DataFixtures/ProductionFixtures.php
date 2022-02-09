@@ -16,7 +16,6 @@ use Doctrine\Persistence\ObjectManager;
 use Nines\DublinCoreBundle\Entity\Element;
 
 class ProductionFixtures extends Fixture implements FixtureGroupInterface {
-
     /**
      * @return array<int,array<string,string>>
      */

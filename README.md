@@ -96,5 +96,12 @@ migrations](https://symfony.com/bundles/DoctrineMigrationsBundle/current/index.h
 ### Post Installation
 
 This should be enough to get the bundles working. You may also wish to load the
-[Doctrine fixtures](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html) 
-in a development environment.
+[Doctrine fixtures](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html).
+
+Fixtures are available for development, testing, and production. They are 
+labelled `dev`, `test`, and `prod`.
+
+```console
+$ ./bin/console doctrine:fixtures:load --group=dev
+```
+

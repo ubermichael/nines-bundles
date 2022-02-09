@@ -10,13 +10,10 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\TestCase;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 abstract class CommandTestCase extends ServiceTestCase {
-    protected EntityManagerInterface $em;
-
     protected Application $app;
 
     /**
