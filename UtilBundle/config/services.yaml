@@ -37,3 +37,12 @@ services:
     Nines\UtilBundle\Twig\TextExtension:
         tags:
             - { name : twig.extension }
+
+    nines.formatter.request:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] [%%channel%%.%%level_name%%] [%%extra.ip%%] [%%extra.url%%]\n%%message%%\n\n"
+
+    Nines\UtilBundle\Logger\RequestProcessor:
+        tags:
+            - { name: monolog.processor }
