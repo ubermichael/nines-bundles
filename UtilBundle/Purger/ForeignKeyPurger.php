@@ -18,6 +18,7 @@ class ForeignKeyPurger extends ORMPurger {
 
     public function __construct(?EntityManagerInterface $em = null, array $excluded = []) {
         parent::__construct($em, $excluded);
+        $this->setPurgeMode(self::PURGE_MODE_TRUNCATE);
         $this->em = $em;
     }
 
