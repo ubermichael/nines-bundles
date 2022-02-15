@@ -22,6 +22,10 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
+    Nines\UtilBundle\Purger\ForeignKeyPurgerFactory:
+        tags:
+            - { name: doctrine.fixtures.purger_factory, alias: fk_purger }
+
     Nines\UtilBundle\Services\EntityLinker:
         arguments:
             $routing: '%nines_util.routing%'
