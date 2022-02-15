@@ -104,3 +104,25 @@ twig:
         ...
         linker: '@Nines\UtilBundle\Services\EntityLinker'
 ```
+
+### Logging
+Util bundle includes a Monolog formatter which adds URL and IP information to
+log messages. Enable it by adding it to the monolog config like so:
+
+```yaml
+# config/packages/dev/monolog.yaml
+
+monolog:
+    handlers:
+        main:
+            [...]
+            formatter: nines.formatter.request
+
+```
+
+Messages in the dev log will look like this:
+
+```
+[2022-02-15 18:41:40] [request.ERROR] [127.0.0.1] [http://localhost/nines_demo/public/asdf]
+Uncaught PHP Exception Symfony\Component\HttpKernel\Exception\NotFoundHttpException: "No route found for "GET /asdf"" at /Users/michael/Sites/nines_demo/vendor/symfony/http-kernel/EventListener/RouterListener.php line 136
+```
