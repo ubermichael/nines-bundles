@@ -63,7 +63,7 @@ class CommentNoteController extends AbstractController implements PaginatorAware
 
     /**
      * @Route("/new", name="nines_feedback_comment_note_new", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      */
     public function new(Request $request) : Response {
         $commentNote = new CommentNote();
@@ -95,7 +95,7 @@ class CommentNoteController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      * @Route("/{id}", name="nines_feedback_comment_note_delete", methods={"DELETE"})
      */
     public function delete(Request $request, CommentNote $commentNote) : RedirectResponse {

@@ -64,7 +64,7 @@ class ElementController extends AbstractController implements PaginatorAwareInte
 
     /**
      * @Route("/new", name="nines_dc_element_new", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_DC_ADMIN")
      */
     public function new(Request $request, EntityManagerInterface $em) : Response {
         $element = new Element();
@@ -95,7 +95,7 @@ class ElementController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_DC_ADMIN")
      * @Route("/{id}/edit", name="nines_dc_element_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, Element $element, EntityManagerInterface $em) : Response {
@@ -116,7 +116,7 @@ class ElementController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_DC_ADMIN")
      * @Route("/{id}", name="nines_dc_element_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Element $element, EntityManagerInterface $em) : RedirectResponse {

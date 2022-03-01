@@ -113,7 +113,7 @@ class CommentController extends AbstractController implements PaginatorAwareInte
 
     /**
      * @Route("/new_popup", name="nines_feedback_comment_new_popup", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      *
      * @throws Exception
      * @throws OptimisticLockException
@@ -160,7 +160,7 @@ class CommentController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      * @Route("/{id}", name="nines_feedback_comment_delete", methods={"DELETE"})
      * @IsGranted("ROLE_COMMENT_ADMIN")
      */

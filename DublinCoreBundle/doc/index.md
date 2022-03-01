@@ -1,8 +1,8 @@
-Nines Feedback Bundle
+Nines Blog Bundle
 =================
 
-The Nines Feedback Bundle provides a framework for including comments along
-with entities.
+The Nines Dublin Core Bundle provides a framework for associating [Dublin
+Core metadata][dcmi] with any entity.
 
 Installation
 ------------
@@ -19,3 +19,5 @@ Usage
 -----
 
 [Usage](usage.md) describes the layout of the bundle and how to make good use of it.
+
+[dcmi]: https://www.dublincore.org/specifications/dublin-core/dcmi-terms/

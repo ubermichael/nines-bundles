@@ -19,11 +19,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * Document form.
  */
-class ValueType extends AbstractType {
+abstract class ValueType extends AbstractType {
     /**
      * @param array<string,mixed> $options
      */
     public static function add(FormBuilderInterface $builder, array $options) : void {
+        // @TODO can this option be moved to dependency injection?
         $repo = $options['repo'];
         foreach ($repo->indexQuery()->execute() as $element) {
             // @var Element $element

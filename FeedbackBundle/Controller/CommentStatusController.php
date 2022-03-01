@@ -43,7 +43,7 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
 
     /**
      * @Route("/new", name="nines_feedback_comment_status_new", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      */
     public function new(Request $request) : Response {
         $commentStatus = new CommentStatus();
@@ -75,7 +75,7 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      * @Route("/{id}/edit", name="nines_feedback_comment_status_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, CommentStatus $commentStatus) : Response {
@@ -96,7 +96,7 @@ class CommentStatusController extends AbstractController implements PaginatorAwa
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      * @Route("/{id}", name="nines_feedback_comment_status_delete", methods={"DELETE"})
      */
     public function delete(Request $request, CommentStatus $commentStatus) : RedirectResponse {

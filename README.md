@@ -2,8 +2,7 @@ Installation
 ============
 
 Make sure Composer is installed globally, as explained in the
-[installation chapter](https://getcomposer.org/doc/00-intro.md)
-of the Composer documentation.
+[installation chapter][composer] of the Composer documentation.
 
 Applications that use Symfony Flex
 ----------------------------------
@@ -91,12 +90,12 @@ $ cp vendor/ubermichael/nines/*/config/nines_*.yaml config/packages/
 ### Step 5: Update Your Database Schema
 
 How you do this one depends on your project and your config. [Doctrine 
-migrations](https://symfony.com/bundles/DoctrineMigrationsBundle/current/index.html) are the recommended approach.
+migrations][migrations] are the recommended approach.
 
 ### Post Installation
 
 This should be enough to get the bundles working. You may also wish to load the
-[Doctrine fixtures](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html).
+[Doctrine fixtures][fixtures].
 
 Fixtures are available for development, testing, and production. They are 
 labelled `dev`, `test`, and `prod`.
@@ -105,3 +104,21 @@ labelled `dev`, `test`, and `prod`.
 $ ./bin/console doctrine:fixtures:load --group=dev
 ```
 
+Included Bundles
+----------------
+
+* [BlogBundle](BlogBundle/doc/index.md) - various blogging functionality
+* [DublinCoreBundle](DublinCoreBundle/doc/index.md) - Attaches [Dublin Core Metadata][dcmi] to entities
+* [EditorBundle](EditorBundle/doc/index.md) - Wrapper around CKEditor
+* [FeedbackBundle](FeedbackBundle/doc/index.md) - Attach comments to entities
+* [MediaBundle](MediaBundle/doc/index.md) - Upload media files and attach them to entities
+* [SolrBundle](SolrBundle/doc/index.md) - Solr server client
+* [UserBundle](UserBundle/doc/index.md) - User logins and security related things
+* [UtilBundle](UtilBundle/doc/index.md) - Various things that don't fit well elsewhere
+
+Each bundle should include documentation.
+
+[composer]: https://getcomposer.org/doc/00-intro.md
+[dcmi]: https://www.dublincore.org/specifications/dublin-core/dcmi-terms/
+[migrations]: https://symfony.com/bundles/DoctrineMigrationsBundle/current/index.html
+[fixtures]: https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html
