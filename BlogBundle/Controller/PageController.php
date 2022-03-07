@@ -67,7 +67,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      * @Route("/new", name="nines_blog_page_new", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
-    public function new(Request $request) : Response {
+    public function new(Request $request, PageRepository $repo) : Response {
         /** @var User $user */
         $user = $this->getUser();
         $page = new Page();
@@ -77,6 +77,10 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($page->getHomepage()) {
+                // make sure all other pages are NOT the home page.
+                $repo->clearHomepages($page);
+            }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($page);
             $entityManager->flush();
@@ -95,8 +99,8 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      * @Route("/new_popup", name="nines_blog_page_new_popup", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
-    public function new_popup(Request $request) : Response {
-        return $this->new($request);
+    public function new_popup(Request $request, PageRepository $repo) : Response {
+        return $this->new($request, $repo);
     }
 
     /**
@@ -142,11 +146,16 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="nines_blog_page_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, Page $page) : Response {
+    public function edit(Request $request, Page $page, PageRepository $repo) : Response {
         $form = $this->createForm(PageType::class, $page);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($page->getHomepage()) {
+                // make sure all other pages are NOT the home page.
+                $repo->clearHomepages($page);
+            }
+
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The updated page has been saved.');
 

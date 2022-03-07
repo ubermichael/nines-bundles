@@ -38,6 +38,19 @@ class PageRepository extends ServiceEntityRepository {
         return $qb->getQuery();
     }
 
+    public function findHomepage() : ?Page {
+        return $this->findOneBy(['homepage' => 1]);
+    }
+
+    public function clearHomepages(Page $page) : void {
+        $qb = $this->createQueryBuilder('e');
+        $qb->update(Page::class, 'e');
+        $qb->set('e.homepage', 0);
+        $qb->where('e.id <> :id');
+        $qb->setParameter('id', $page->getId());
+        $qb->getQuery()->execute();
+    }
+
     public function searchQuery(string $q, ?bool $private = false) : Query {
         $qb = $this->createQueryBuilder('page');
         $qb->addSelect('MATCH (page.title, page.searchable) AGAINST(:q BOOLEAN) as HIDDEN score');
