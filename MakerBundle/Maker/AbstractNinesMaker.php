@@ -157,7 +157,7 @@ abstract class AbstractNinesMaker implements MakerInterface {
             'Test',
         );
 
-        $routeName = Str::asRouteName($controllerClassDetails->getRelativeNameWithoutSuffix());
+        $routeName = preg_replace('/^app_/', '', Str::asRouteName($controllerClassDetails->getRelativeNameWithoutSuffix()));
         $templatesPath = Str::asFilePath($controllerClassDetails->getRelativeNameWithoutSuffix());
 
         $classMetadata = $this->doctrineHelper->getMetadata($entityClassDetails->getFullName());
