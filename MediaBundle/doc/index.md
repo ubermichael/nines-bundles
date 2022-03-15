@@ -19,3 +19,9 @@ Usage
 -----
 
 [Usage](usage.md) describes the layout of the bundle and how to make good use of it.
+
+Testing
+-------
+
+[Testing](testing.md) includes example fixtures and tests that can be added to
+your application tests to ensure everything is configured correctly.
