@@ -33,7 +33,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/", name="nines_media_audio_index", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function index(Request $request, AudioRepository $audioRepository) : Response {
@@ -49,7 +49,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/search", name="nines_media_audio_search", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function search(Request $request, AudioRepository $audioRepository) : Response {
@@ -70,7 +70,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/{id}", name="nines_media_audio_show", methods={"GET"})
      * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      */
     public function show(Audio $audio, AudioManager $manager) : Response {
         return $this->render('@NinesMedia/audio/show.html.twig', [

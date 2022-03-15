@@ -33,7 +33,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/", name="nines_media_image_index", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function index(Request $request, ImageRepository $imageRepository) : Response {
@@ -49,7 +49,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/search", name="nines_media_image_search", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function search(Request $request, ImageRepository $imageRepository) : Response {
@@ -69,7 +69,7 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
 
     /**
      * @Route("/{id}", name="nines_media_image_show", methods={"GET"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function show(Image $image, ImageManager $manager) : Response {

@@ -31,7 +31,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     /**
      * @Route("/", name="nines_media_link_index", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function index(Request $request, LinkRepository $linkRepository, LinkManager $linkManager) : Response {
@@ -48,7 +48,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
     /**
      * @Route("/search", name="nines_media_link_search", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function search(Request $request, LinkRepository $linkRepository, LinkManager $linkManager) : Response {
@@ -69,7 +69,7 @@ class LinkController extends AbstractController implements PaginatorAwareInterfa
 
     /**
      * @Route("/{id}", name="nines_media_link_show", methods={"GET"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function show(Link $link, LinkManager $linkManager) : Response {

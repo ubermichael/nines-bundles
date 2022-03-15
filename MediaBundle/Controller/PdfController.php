@@ -33,7 +33,7 @@ class PdfController extends AbstractController implements PaginatorAwareInterfac
     /**
      * @Route("/", name="nines_media_pdf_index", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function index(Request $request, PdfRepository $pdfRepository) : Response {
@@ -49,7 +49,7 @@ class PdfController extends AbstractController implements PaginatorAwareInterfac
     /**
      * @Route("/search", name="nines_media_pdf_search", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function search(Request $request, PdfRepository $pdfRepository) : Response {
@@ -69,7 +69,7 @@ class PdfController extends AbstractController implements PaginatorAwareInterfac
 
     /**
      * @Route("/{id}", name="nines_media_pdf_show", methods={"GET"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
     public function show(Pdf $pdf, PdfManager $manager) : Response {
