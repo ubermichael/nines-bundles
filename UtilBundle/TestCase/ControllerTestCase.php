@@ -19,6 +19,7 @@ use Soundasleep\Html2TextException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 abstract class ControllerTestCase extends WebTestCase {
@@ -43,6 +44,15 @@ abstract class ControllerTestCase extends WebTestCase {
             $this->client->getCookieJar()->set($cookie);
             self::$container->get('security.token_storage')->setToken($token);
         }
+    }
+
+    protected function addField(Crawler $crawler, string $formName, string $name, string $type = 'text') : void {
+        $doc = $crawler->getNode(0)->ownerDocument;
+        $input = $doc->createElement('input');
+        $input->setAttribute('name', $name);
+        $input->setAttribute('type', $type);
+        $formNode = $crawler->filter("form[name='{$formName}']")->getNode(0);
+        $formNode->appendChild($input);
     }
 
     protected function reset() : void {
