@@ -96,7 +96,7 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
 
     public function postRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Audio) {
+        if ($entity instanceof Audio && $entity->getFile()) {
             $fs = new Filesystem();
 
             try {

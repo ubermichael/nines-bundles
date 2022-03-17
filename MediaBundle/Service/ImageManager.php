@@ -130,7 +130,7 @@ class ImageManager extends AbstractFileManager implements EventSubscriber {
      */
     public function postRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Image) {
+        if ($entity instanceof Image && $entity->getFile()) {
             $fs = new Filesystem();
 
             try {

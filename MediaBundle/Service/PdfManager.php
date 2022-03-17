@@ -126,7 +126,7 @@ class PdfManager extends AbstractFileManager implements EventSubscriber {
      */
     public function postRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Pdf) {
+        if ($entity instanceof Pdf && $entity->getFile()) {
             $fs = new Filesystem();
 
             try {
