@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Entity;
 
-use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 trait ContributorTrait {
@@ -53,7 +53,7 @@ trait ContributorTrait {
         return $this;
     }
 
-    public function addContribution(DateTimeImmutable $date, string $name) : self {
+    public function addContribution(DateTimeInterface $date, string $name) : self {
         if ( ! $this->contributions) {
             $this->contributions = [];
         }

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\UtilBundle\Entity;
 
-use DateTimeImmutable;
+use DateTimeInterface;
 
 interface ContributorInterface extends AbstractEntityInterface {
     /**
@@ -23,5 +23,5 @@ interface ContributorInterface extends AbstractEntityInterface {
      */
     public function setContributions(array $contributions) : self;
 
-    public function addContribution(DateTimeImmutable $date, string $name) : self;
+    public function addContribution(DateTimeInterface $date, string $name) : self;
 }
