@@ -1,9 +1,9 @@
 (function ($, window, document) {
 
-    var hostname = window.location.hostname.replace('www.', '');
+    const hostname = window.location.hostname.replace('www.', '');
 
     function confirm() {
-        var $this = $(this);
+        const $this = $(this);
         $this.click(function () {
             return window.confirm($this.data('confirm'));
         });
@@ -17,22 +17,22 @@
     }
 
     function windowBeforeUnload(e) {
-        var clean = true;
+        let clean = true;
         $('form').each(function () {
-            var $form = $(this);
+            const $form = $(this);
             if ($form.data('dirty')) {
                 clean = false;
             }
         });
         if (!clean) {
-            var message = 'You have unsaved changes.';
+            let message = 'You have unsaved changes.';
             e.returnValue = message;
             return message;
         }
     }
 
     function formDirty() {
-        var $form = $(this);
+        const $form = $(this);
         $form.data('dirty', false);
         $form.on('change', function () {
             $form.data('dirty', true);
@@ -44,7 +44,7 @@
 
     function formPopup(e) {
         e.preventDefault();
-        var url = $(this).prop('href');
+        const url = $(this).prop('href');
         window.open(url, "_blank", "toolbar=no,scrollbars=yes,resizable=yes,top=60,left=60,width=500,height=600");
     }
 
@@ -81,9 +81,9 @@
 
     function imageModals() {
         $('#imgModal').on('show.bs.modal', function (event) {
-            var $button = $(event.relatedTarget);
+            const $button = $(event.relatedTarget);
             // Button that triggered the modal
-            var $modal = $(this);
+            const $modal = $(this);
 
             $modal.find('#modalTitle').text($button.data('title'));
             $modal.find('figcaption').html($button.parent().parent().find('.caption').clone());
