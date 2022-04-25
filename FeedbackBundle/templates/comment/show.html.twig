@@ -23,7 +23,7 @@
     {% embed '@NinesFeedback/comment/partial/detail.html.twig' %}
     {% endembed %}
 
-    {% if(is_granted('ROLE_COMMENT_ADMIN')) %}
+    {% if(is_granted('ROLE_FEEDBACK_ADMIN')) %}
         <h2>Status Update</h2>
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -55,7 +55,7 @@
         {% endfor %}
     {% endif %}
 
-    {% if(is_granted('ROLE_COMMENT_ADMIN')) %}
+    {% if(is_granted('ROLE_FEEDBACK_ADMIN')) %}
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Add a note</h3>

@@ -162,7 +162,7 @@ class CommentController extends AbstractController implements PaginatorAwareInte
     /**
      * @IsGranted("ROLE_FEEDBACK_ADMIN")
      * @Route("/{id}", name="nines_feedback_comment_delete", methods={"DELETE"})
-     * @IsGranted("ROLE_COMMENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      */
     public function delete(Request $request, Comment $comment) : RedirectResponse {
         if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {

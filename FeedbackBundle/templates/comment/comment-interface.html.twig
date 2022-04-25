@@ -10,7 +10,7 @@
         <div id="commentList" class="panel-collapse collapse" role="tabpanel" aria-labelledby="widgetHeader">
             <div class="panel-body">
                 {% include '@NinesFeedback/comment/comment-form.html.twig' with { 'entity': entity } %}
-                {% if is_granted('ROLE_COMMENT_ADMIN') %}
+                {% if is_granted('ROLE_FEEDBACK_ADMIN') %}
                     {% include '@NinesFeedback/comment/comments-admin.html.twig' %}
                 {% else %}
                     {% include '@NinesFeedback/comment/comments-view.html.twig' %}
