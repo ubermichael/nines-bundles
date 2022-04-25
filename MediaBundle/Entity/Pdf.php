@@ -24,47 +24,6 @@ use Symfony\Component\HttpFoundation\File\File;
  *     @ORM\Index(columns={"entity"})
  * })
  */
-class Pdf extends AbstractEntity implements LinkedEntityInterface, StoredFileInterface {
+class Pdf extends AbstractPdf implements LinkedEntityInterface, StoredFileInterface {
     use LinkedEntityTrait;
-
-    use StoredFileTrait;
-
-    protected ?File $thumbFile = null;
-
-    /**
-     * @ORM\Column(type="string", length=128, nullable=false)
-     */
-    protected ?string $thumbPath = null;
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function getThumbFile() : ?File {
-        return $this->thumbFile;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function setThumbFile(File $thumbFile) : self {
-        $this->thumbFile = $thumbFile;
-
-        return $this;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function getThumbPath() : string {
-        return $this->thumbPath;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function setThumbPath(string $thumbPath) : self {
-        $this->thumbPath = $thumbPath;
-
-        return $this;
-    }
 }
