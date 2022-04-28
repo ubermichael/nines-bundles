@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface {
             ->scalarNode('public_status')->defaultNull()->end()
             ->scalarNode('sender')->defaultNull()->end()
             ->scalarNode('subject')->defaultNull()->end()
-            ->arrayNode('recipients')->scalarPrototype()->end()->end()
+            ->variableNode('recipients')->end()
             ->end();
 
         return $treeBuilder;
