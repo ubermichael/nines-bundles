@@ -20,6 +20,8 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Field\FormField;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 abstract class ControllerTestCase extends WebTestCase {
@@ -53,6 +55,14 @@ abstract class ControllerTestCase extends WebTestCase {
         $input->setAttribute('type', $type);
         $formNode = $crawler->filter("form[name='{$formName}']")->getNode(0);
         $formNode->appendChild($input);
+    }
+
+    /**
+     * @param Form|FormField $form
+     * @param mixed $value
+     */
+    protected function overrideField($form, string $fieldName, $value) : void {
+        $form[$fieldName]->disableValidation()->setValue($value);
     }
 
     protected function reset() : void {
