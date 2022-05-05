@@ -48,11 +48,12 @@ abstract class ControllerTestCase extends WebTestCase {
         }
     }
 
-    protected function addField(Crawler $crawler, string $formName, string $name, string $type = 'text') : void {
+    protected function addField(Crawler $crawler, string $formName, string $name, string $value = '', string $type = 'text') : void {
         $doc = $crawler->getNode(0)->ownerDocument;
         $input = $doc->createElement('input');
         $input->setAttribute('name', $name);
         $input->setAttribute('type', $type);
+        $input->setAttribute('value', $value);
         $formNode = $crawler->filter("form[name='{$formName}']")->getNode(0);
         $formNode->appendChild($input);
     }
