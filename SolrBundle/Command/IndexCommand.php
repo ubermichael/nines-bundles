@@ -33,11 +33,11 @@ class IndexCommand extends Command {
      */
     public const BATCH_SIZE = 250;
 
-    private EntityMapper $mapper;
+    private ?EntityMapper $mapper = null;
 
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
-    private SolrManager $manager;
+    private ?SolrManager $manager = null;
 
     protected static $defaultName = 'nines:solr:index';
 

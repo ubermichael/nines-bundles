@@ -22,7 +22,7 @@ use Throwable;
  * @see https://symfony.com/doc/current/profiler/data_collector.html
  */
 class RequestCollector extends DataCollector {
-    private SolrLogger $logger;
+    private ?SolrLogger $logger = null;
 
     public function __construct(SolrLogger $logger) {
         $this->logger = $logger;

@@ -14,7 +14,7 @@ use Nines\BlogBundle\Repository\PostCategoryRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PostCategoryRepositoryTest extends ServiceTestCase {
-    private PostCategoryRepository $repo;
+    private ?PostCategoryRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(PostCategoryRepository::class, $this->repo);

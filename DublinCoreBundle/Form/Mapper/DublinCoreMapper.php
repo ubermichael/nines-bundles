@@ -19,9 +19,9 @@ use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
 
 class DublinCoreMapper extends PropertyPathMapper implements DataMapperInterface {
-    private ElementRepository $elementRepo;
+    private ?ElementRepository $elementRepo = null;
 
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     private bool $parentCall = true;
 

@@ -16,7 +16,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 use stdClass;
 
 class DoctrineHydratorTest extends ServiceTestCase {
-    private DoctrineHydrator $hydrator;
+    private ?DoctrineHydrator $hydrator = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(DoctrineHydrator::class, $this->hydrator);

@@ -14,7 +14,7 @@ use Nines\MediaBundle\Repository\ImageRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ImageRepositoryTest extends ServiceTestCase {
-    private ImageRepository $repo;
+    private ?ImageRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ImageRepository::class, $this->repo);

@@ -17,7 +17,7 @@ use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProfileControllerTest extends ControllerTestCase {
-    private UserRepository $repository;
+    private ?UserRepository $repository = null;
 
     public function testUserIndex() : void {
         $this->login(UserFixtures::ADMIN);

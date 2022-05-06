@@ -14,7 +14,7 @@ use Nines\UtilBundle\Services\Text;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class TextTest extends ServiceTestCase {
-    private Text $text;
+    private ?Text $text = null;
 
     public function testSetup() : void {
         $this->assertInstanceOf(Text::class, $this->text);

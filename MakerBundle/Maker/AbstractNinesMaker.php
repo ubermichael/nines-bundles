@@ -31,15 +31,15 @@ use Twig\Environment;
 abstract class AbstractNinesMaker implements MakerInterface {
     protected const GENERATED = ['id', 'created', 'updated'];
 
-    protected DoctrineHelper $doctrineHelper;
+    protected ?DoctrineHelper $doctrineHelper = null;
 
-    protected FormTypeRenderer $formTypeRenderer;
+    protected ?FormTypeRenderer $formTypeRenderer = null;
 
-    protected Environment $twig;
+    protected ?Environment $twig = null;
 
-    protected int $fixtureCount;
+    protected ?int $fixtureCount = null;
 
-    private Inflector $inflector;
+    private ?Inflector $inflector = null;
 
     public function __construct() {
         $this->inflector = InflectorFactory::create()->build();

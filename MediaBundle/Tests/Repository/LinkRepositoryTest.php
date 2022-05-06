@@ -14,7 +14,7 @@ use Nines\MediaBundle\Repository\LinkRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class LinkRepositoryTest extends ServiceTestCase {
-    private LinkRepository $repo;
+    private ?LinkRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(LinkRepository::class, $this->repo);

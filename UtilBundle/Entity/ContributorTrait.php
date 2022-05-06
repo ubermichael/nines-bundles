@@ -19,14 +19,14 @@ trait ContributorTrait {
      *
      * @var array<int,array<string,string>>
      */
-    private array $contributions;
+    private ?array $contributions = null;
 
     public function __construct() {
         $this->contributions = [];
     }
 
     /**
-     * @return null|array<string,mixed>
+     * @return null|array<string,string>
      */
     public function getContributions() : ?array {
         if ( ! $this->contributions) {
@@ -45,7 +45,7 @@ trait ContributorTrait {
     }
 
     /**
-     * @param array<string,mixed> $contributions
+     * @param array<string,string> $contributions
      */
     public function setContributions(array $contributions) : self {
         $this->contributions = $contributions;

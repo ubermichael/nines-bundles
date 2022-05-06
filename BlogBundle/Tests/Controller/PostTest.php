@@ -123,8 +123,8 @@ class PostTest extends ControllerTestCase {
             'post[excerpt]' => '<p>Updated Text</p>',
             'post[content]' => '<p>Updated Text</p>',
         ]);
-        $form['post[category]']->disableValidation()->setValue(2);
-        $form['post[status]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'post[category]', 2);
+        $this->overrideField($form, 'post[status]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/post/1', Response::HTTP_FOUND);
@@ -165,8 +165,8 @@ class PostTest extends ControllerTestCase {
             'post[excerpt]' => '<p>Updated Text</p>',
             'post[content]' => '<p>Updated Text</p>',
         ]);
-        $form['post[category]']->disableValidation()->setValue(2);
-        $form['post[status]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'post[category]', 2);
+        $this->overrideField($form, 'post[status]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/post/6', Response::HTTP_FOUND);
@@ -185,8 +185,8 @@ class PostTest extends ControllerTestCase {
             'post[excerpt]' => '<p>Updated Text</p>',
             'post[content]' => '<p>Updated Text</p>',
         ]);
-        $form['post[category]']->disableValidation()->setValue(2);
-        $form['post[status]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'post[category]', 2);
+        $this->overrideField($form, 'post[status]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/post/7', Response::HTTP_FOUND);

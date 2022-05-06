@@ -25,9 +25,9 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * Link management service for Symfony.
  */
 class ValueManager implements EventSubscriber {
-    private ValueRepository $valueRepository;
+    private ?ValueRepository $valueRepository = null;
 
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     /**
      * Find the values for an entity.

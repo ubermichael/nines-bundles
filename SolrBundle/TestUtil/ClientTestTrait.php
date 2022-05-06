@@ -19,8 +19,11 @@ use Solarium\Client;
 use Solarium\Core\Client\Adapter\Psr18Adapter;
 
 trait ClientTestTrait {
-    private $responses = [];
+    private array $responses = [];
 
+    /**
+     * @param array|string $data
+     */
     protected function addResponse($data, ?int $status = 200) : void {
         if (is_array($data)) {
             $data = json_encode($data);

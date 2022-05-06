@@ -29,19 +29,19 @@ class SolrLogger extends AbstractLogger {
      *
      * @var array<int,mixed>
      */
-    private array $logs;
+    private ?array $logs = null;
 
     /**
      * Count the log entries in various levels.
      *
      * @var array<string,int>
      */
-    private array $counts;
+    private ?array $counts = null;
 
     /**
      * @var Query[]
      */
-    private array $queries;
+    private ?array $queries = null;
 
     public function __construct() {
         $this->logs = [];

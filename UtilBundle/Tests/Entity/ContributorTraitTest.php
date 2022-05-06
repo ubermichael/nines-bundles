@@ -17,7 +17,7 @@ use Nines\UtilBundle\Entity\ContributorTrait;
 use PHPUnit\Framework\TestCase;
 
 class ContributorTraitTest extends TestCase {
-    private $entity;
+    private ?object $entity = null;
 
     public function testAddContribution() : void {
         $this->entity->addContribution(new DateTimeImmutable('2020-01-01 10:34'), 'Bob');
@@ -77,7 +77,7 @@ class ContributorTraitTest extends TestCase {
             }
 
             /**
-             * @return array<string,string>
+             * @return array<int,array<string,string>>
              */
             public function rawData() : array {
                 return $this->contributions;

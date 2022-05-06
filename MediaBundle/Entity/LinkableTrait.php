@@ -18,7 +18,7 @@ trait LinkableTrait {
     /**
      * @var Collection<int,Link>|Link[]
      */
-    protected Collection $links;
+    protected ?Collection $links = null;
 
     public function __construct() {
         $this->links = new ArrayCollection();

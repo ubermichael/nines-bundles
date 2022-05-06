@@ -16,7 +16,7 @@ use Knp\Component\Pager\PaginatorInterface;
  * Convienence trait for the use of paginators.
  */
 trait PaginatorTrait {
-    protected PaginatorInterface $paginator;
+    protected ?PaginatorInterface $paginator = null;
 
     /**
      * Set the paginator service.

@@ -16,7 +16,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 use Nines\UtilBundle\Services\Text;
 
 class TermNameListener {
-    private Text $text;
+    private ?Text $text = null;
 
     public function __construct(Text $text) {
         $this->text = $text;

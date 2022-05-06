@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\DublinCoreBundle\Tests\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Nines\DublinCoreBundle\Entity\Element;
 use Nines\DublinCoreBundle\Entity\Value;
 use Nines\DublinCoreBundle\Entity\ValueInterface;
@@ -18,7 +19,7 @@ use Nines\DublinCoreBundle\Entity\ValueTrait;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ValueTraitTest extends ServiceTestCase {
-    private $entity;
+    private ?object $entity = null;
 
     public function testGetValues() : void {
         $elements = $this->em->getRepository(Element::class)->findAll();
@@ -44,6 +45,11 @@ class ValueTraitTest extends ServiceTestCase {
         $this->entity = new class() implements ValueInterface {
             use ValueTrait;
 
+            /**
+             * @param null|array<Value>|Collection<int,Value> $values
+             *
+             * @return null|Collection<int,Value>|Value[]
+             */
             public function rawData($values = null) {
                 if ($values) {
                     $this->values = $values;

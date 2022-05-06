@@ -14,7 +14,7 @@ use Nines\DublinCoreBundle\Repository\ElementRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ElementRepositoryTest extends ServiceTestCase {
-    private ElementRepository $repo;
+    private ?ElementRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ElementRepository::class, $this->repo);

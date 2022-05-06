@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
 use Symfony\Component\Form\Form;
 
 class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     private bool $parentCall = true;
 

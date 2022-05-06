@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 class RequestSubscriber implements EventSubscriberInterface {
     use TargetPathTrait;
 
-    private SessionInterface $session;
+    private ?SessionInterface $session = null;
 
     public function __construct(SessionInterface $session) {
         $this->session = $session;

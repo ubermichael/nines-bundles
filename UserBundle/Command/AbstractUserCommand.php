@@ -13,6 +13,7 @@ namespace Nines\UserBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,11 +23,11 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class AbstractUserCommand extends Command {
-    protected ValidatorInterface $validator;
+    protected ?ValidatorInterface $validator = null;
 
-    protected UserPasswordEncoderInterface $encoder;
+    protected ?UserPasswordEncoderInterface $encoder = null;
 
-    protected EntityManagerInterface $em;
+    protected ?EntityManagerInterface $em = null;
 
     public function __construct(ValidatorInterface $validator, EntityManagerInterface $em) {
         $this->validator = $validator;
@@ -73,6 +74,7 @@ abstract class AbstractUserCommand extends Command {
     }
 
     protected function interact(InputInterface $input, OutputInterface $output) : void {
+        /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         foreach ($this->getArgs() as $arg) {

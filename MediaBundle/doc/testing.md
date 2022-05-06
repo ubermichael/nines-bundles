@@ -19,7 +19,7 @@ class ArtefactFixtures extends Fixture {
         '49654941212_6e3bb28a75_c.jpg',
     ];
 
-    private ImageManager $manager;
+    private ?ImageManager $manager = null;
 
     public function load(ObjectManager $manager) : void {
         $this->manager->setCopy(true);
@@ -66,7 +66,7 @@ class RecordingFixtures extends Fixture {
         '94934__bletort__taegum-1.mp3',
     ];
 
-    private AudioManager $manager;
+    private ?AudioManager $manager = null;
 
     /**
      * {@inheritDoc}
@@ -116,7 +116,7 @@ class DocumentFixtures extends Fixture {
         'holmes_5.pdf',
     ];
 
-    private PdfManager $manager;
+    private ?PdfManager $manager = null;
 
     public function load(ObjectManager $manager) : void {
         $this->manager->setCopy(true);

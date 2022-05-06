@@ -25,15 +25,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * Commenting service for Symfony.
  */
 class CommentService {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
-    private AuthorizationCheckerInterface $authChecker;
+    private ?AuthorizationCheckerInterface $authChecker = null;
 
-    private FormFactoryInterface $formFactory;
+    private ?FormFactoryInterface $formFactory = null;
 
-    private string $defaultStatusName;
+    private ?string $defaultStatusName = null;
 
-    private string $publicStatusName;
+    private ?string $publicStatusName = null;
 
     public function __construct(string $defaultStatusName, string $publicStatusName) {
         $this->defaultStatusName = $defaultStatusName;

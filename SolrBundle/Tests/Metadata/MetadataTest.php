@@ -14,7 +14,7 @@ use Nines\SolrBundle\Metadata\Metadata;
 use PHPUnit\Framework\TestCase;
 
 class MetadataTest extends TestCase {
-    protected $meta;
+    protected ?Metadata $meta = null;
 
     /**
      * @dataProvider parseData

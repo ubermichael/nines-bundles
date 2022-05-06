@@ -23,11 +23,11 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 class Builder extends AbstractBuilder {
     use ContainerAwareTrait;
 
-    private PostStatusRepository $postStatusRepository;
+    private ?PostStatusRepository $postStatusRepository = null;
 
-    private PostRepository $postRepository;
+    private ?PostRepository $postRepository = null;
 
-    private PageRepository $pageRepository;
+    private ?PageRepository $pageRepository = null;
 
     /**
      * @param array<string,string> $options

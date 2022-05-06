@@ -16,7 +16,7 @@ use Nines\UserBundle\Services\UserManager;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class UserManagerTest extends ServiceTestCase {
-    private UserManager $manager;
+    private ?UserManager $manager = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(UserManager::class, $this->manager);

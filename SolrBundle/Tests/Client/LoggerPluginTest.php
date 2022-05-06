@@ -14,7 +14,7 @@ use Nines\SolrBundle\Client\LoggerPlugin;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class LoggerPluginTest extends ServiceTestCase {
-    private LoggerPlugin $plugin;
+    private ?LoggerPlugin $plugin = null;
 
     public function testSetup() : void {
         $this->assertInstanceOf(LoggerPlugin::class, $this->plugin);

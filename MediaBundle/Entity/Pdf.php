@@ -12,10 +12,8 @@ namespace Nines\MediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Nines\MediaBundle\Repository\PdfRepository;
-use Nines\UtilBundle\Entity\AbstractEntity;
 use Nines\UtilBundle\Entity\LinkedEntityInterface;
 use Nines\UtilBundle\Entity\LinkedEntityTrait;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @ORM\Entity(repositoryClass=PdfRepository::class)

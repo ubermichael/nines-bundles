@@ -25,13 +25,13 @@ abstract class AbstractFileManager {
      */
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
-    protected LoggerInterface $logger;
+    protected ?LoggerInterface $logger = null;
 
-    protected string $root;
+    protected ?string $root = null;
 
-    protected string $uploadDir;
+    protected ?string $uploadDir = null;
 
-    protected EntityManagerInterface $em;
+    protected ?EntityManagerInterface $em = null;
 
     private bool $copy = false;
 

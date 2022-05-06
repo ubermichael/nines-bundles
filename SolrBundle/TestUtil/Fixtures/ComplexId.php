@@ -22,7 +22,7 @@ class ComplexId {
      * @ORM\Id
      * @Solr\Id(name="idname", getter="idGetter('abc', 1, true)")
      */
-    private int $id;
+    private ?int $id = null;
 
     public function __construct() {
         $this->id = 7;

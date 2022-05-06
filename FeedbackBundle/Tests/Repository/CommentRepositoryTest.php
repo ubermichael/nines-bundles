@@ -14,7 +14,7 @@ use Nines\FeedbackBundle\Repository\CommentRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class CommentRepositoryTest extends ServiceTestCase {
-    private CommentRepository $repo;
+    private ?CommentRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(CommentRepository::class, $this->repo);

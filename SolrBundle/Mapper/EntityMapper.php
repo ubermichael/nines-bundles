@@ -30,7 +30,7 @@ class EntityMapper {
      *
      * @var array<string,string>
      */
-    private array $fields;
+    private ?array $fields = null;
 
     /**
      * Map of entity field names to boost values.

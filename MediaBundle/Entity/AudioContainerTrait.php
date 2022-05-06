@@ -17,7 +17,7 @@ trait AudioContainerTrait {
     /**
      * @var Audio[]|Collection<int,Audio>
      */
-    protected Collection $audios;
+    protected ?Collection $audios = null;
 
     protected function __construct() {
         $this->audios = new ArrayCollection();

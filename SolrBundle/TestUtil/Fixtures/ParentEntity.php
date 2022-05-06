@@ -21,28 +21,30 @@ class ParentEntity {
      * @ORM\Id
      * @Solr\Id
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @Solr\Field(type="string")
      */
-    private string $something;
+    private ?string $something = null;
 
-    public function getId() {
+    public function getId() : ?int {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId(int $id) : self {
         $this->id = $id;
 
         return $this;
     }
 
-    public function getSomething() : string {
+    public function getSomething() : ?string {
         return $this->something;
     }
 
-    public function setSomething(string $something) : void {
+    public function setSomething(string $something) : self {
         $this->something = $something;
+
+        return $this;
     }
 }

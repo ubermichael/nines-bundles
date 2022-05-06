@@ -29,9 +29,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * stuff.
  */
 class ImageManager extends AbstractFileManager implements EventSubscriber {
-    private Thumbnailer $thumbnailer;
+    private ?Thumbnailer $thumbnailer = null;
 
-    private ImageRepository $repo;
+    private ?ImageRepository $repo = null;
 
     /**
      * Store the image file, extracta  little metadata, and generate a thumbnail.

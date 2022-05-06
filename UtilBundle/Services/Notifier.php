@@ -16,13 +16,13 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 
 class Notifier {
-    private string $sender;
+    private ?string $sender = null;
 
-    private MailerInterface $mailer;
+    private ?MailerInterface $mailer = null;
 
-    private LoggerInterface $logger;
+    private ?LoggerInterface $logger = null;
 
-    private EntityLinker $linker;
+    private ?EntityLinker $linker = null;
 
     public function __construct(string $sender) {
         $this->sender = $sender;

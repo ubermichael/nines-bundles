@@ -13,7 +13,7 @@ namespace Nines\UtilBundle\Logger;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestProcessor {
-    private RequestStack $stack;
+    private ?RequestStack $stack = null;
 
     public function __construct(RequestStack $stack) {
         $this->stack = $stack;

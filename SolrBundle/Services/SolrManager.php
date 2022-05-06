@@ -38,9 +38,9 @@ class SolrManager {
 
     private ?UpdateQuery $update = null;
 
-    private bool $enabled;
+    private ?bool $enabled = null;
 
-    private int $pageSize;
+    private ?int $pageSize = null;
 
     public function __construct(bool $enabled, int $pageSize) {
         $this->enabled = $enabled;

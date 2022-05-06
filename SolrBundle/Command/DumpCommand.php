@@ -22,9 +22,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Map an entity to a Solr document and display the result.
  */
 class DumpCommand extends Command {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
-    private EntityMapper $mapper;
+    private ?EntityMapper $mapper = null;
 
     protected static $defaultName = 'nines:solr:dump';
 

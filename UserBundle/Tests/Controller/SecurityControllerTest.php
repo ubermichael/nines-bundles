@@ -18,7 +18,7 @@ use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityControllerTest extends ControllerTestCase {
-    private UserRepository $repository;
+    private ?UserRepository $repository = null;
 
     public function testLogin() : void {
         $user = $this->repository->findOneByEmail(UserFixtures::USER['username']);

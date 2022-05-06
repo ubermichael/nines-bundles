@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * Logger plugin collects queries and query metadata for debugging purposes.
  */
 class LoggerPlugin extends AbstractPlugin {
-    private SolrLogger $logger;
+    private ?SolrLogger $logger = null;
 
     /**
      * Pass ['enabled' => false] to disable the plugin.

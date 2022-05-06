@@ -20,7 +20,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class EntityMapperTest extends ServiceTestCase {
-    private $entity;
+    private ?object $entity = null;
 
     public function testId() : void {
         $meta = new EntityMetadata();
@@ -107,8 +107,6 @@ class EntityMapperTest extends ServiceTestCase {
             public function __toString() : string {
                 return 'string';
             }
-
-            private string $field = 'field data';
 
             public function exec() : string {
                 return 'called';

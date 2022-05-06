@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\SolrBundle\TestUtil\Fixtures;
 
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,34 +27,26 @@ class Entity extends ParentEntity {
     /**
      * @Solr\Field(type="text", boost=2.0)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @Solr\Field(name="sortable", type="string")
      */
-    private $sortableName;
-
-    /**
-     * @var string
-     *
-     * ENT_QUOTES | ENT_HTML5 === 51
-     * @Solr\Field(type="text", filters={"strip_tags", "html_entity_decode(51, 'UTF-8')"})
-     */
-    private string $content;
+    private ?string $sortableName = null;
 
     /**
      * @Solr\Field(type="strings", getter="getTags(true)")
      */
-    private Collection $tags;
+    private ?Collection $tags = null;
 
     /**
      * @Solr\Field(type="datetime", mutator="format('Y-m-d\TH:i:sP')")
      */
-    private $date;
+    private ?DateTimeInterface $date = null;
 
-    private float $latitude;
+    private ?float $latitude = null;
 
-    private float $longitude;
+    private ?float $longitude = null;
 
     public function __construct() {
         $this->tags = new ArrayCollection();

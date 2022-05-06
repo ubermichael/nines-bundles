@@ -14,7 +14,7 @@ use Nines\UtilBundle\Twig\TextExtension;
 use PHPUnit\Framework\TestCase;
 
 class TextExtensionTest extends TestCase {
-    private TextExtension $text;
+    private ?TextExtension $text = null;
 
     /**
      * @dataProvider camelTitleData

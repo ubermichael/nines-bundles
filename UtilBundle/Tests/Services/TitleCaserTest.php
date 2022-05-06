@@ -14,7 +14,7 @@ use Nines\UtilBundle\Services\TitleCaser;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class TitleCaserTest extends ServiceTestCase {
-    private TitleCaser $titleCaser;
+    private ?TitleCaser $titleCaser = null;
 
     public function testSetup() : void {
         $this->assertInstanceOf(TitleCaser::class, $this->titleCaser);

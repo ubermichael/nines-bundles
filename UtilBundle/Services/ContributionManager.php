@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Security;
  * Contribution service for Symfony.
  */
 class ContributionManager implements EventSubscriber {
-    private Security $security;
+    private ?Security $security = null;
 
     /**
      * @param mixed $entity

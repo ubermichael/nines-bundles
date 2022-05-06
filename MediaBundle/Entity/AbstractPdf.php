@@ -24,12 +24,12 @@ use Symfony\Component\HttpFoundation\File\File;
 abstract class AbstractPdf extends AbstractEntity implements StoredFileInterface {
     use StoredFileTrait;
 
-    protected File $thumbFile;
+    protected ?File $thumbFile = null;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=false)
      */
-    protected string $thumbPath;
+    protected ?string $thumbPath = null;
 
     /**
      * @codeCoverageIgnore

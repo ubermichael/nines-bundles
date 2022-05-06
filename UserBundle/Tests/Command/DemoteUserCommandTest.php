@@ -15,9 +15,9 @@ use Nines\UserBundle\Services\UserManager;
 use Nines\UtilBundle\TestCase\CommandTestCase;
 
 class DemoteUserCommandTest extends CommandTestCase {
-    private UserRepository $repo;
+    private ?UserRepository $repo = null;
 
-    private UserManager $manager;
+    private ?UserManager $manager = null;
 
     public function testExecute() : void {
         $user = $this->repo->findOneByEmail('user@example.com');

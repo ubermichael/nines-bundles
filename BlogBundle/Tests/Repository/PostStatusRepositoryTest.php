@@ -14,7 +14,7 @@ use Nines\BlogBundle\Repository\PostStatusRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PostStatusRepositoryTest extends ServiceTestCase {
-    private PostStatusRepository $repo;
+    private ?PostStatusRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(PostStatusRepository::class, $this->repo);

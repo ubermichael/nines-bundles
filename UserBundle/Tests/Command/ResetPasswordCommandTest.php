@@ -14,7 +14,7 @@ use Nines\UserBundle\Repository\UserRepository;
 use Nines\UtilBundle\TestCase\CommandTestCase;
 
 class ResetPasswordCommandTest extends CommandTestCase {
-    private UserRepository $repo;
+    private ?UserRepository $repo = null;
 
     public function testExecute() : void {
         $output = $this->execute('nines:user:reset', [

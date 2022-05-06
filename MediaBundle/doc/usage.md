@@ -344,7 +344,7 @@ This is done so that the link form can be embedded in an entity form type.
 
 ```php
 class BookmarkType extends AbstractType {
-    private LinkableMapper $mapper;
+    private ?LinkableMapper $mapper = null;
 
     /**
      * Add form fields to $builder.

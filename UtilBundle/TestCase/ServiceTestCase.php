@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ServiceTestCase extends KernelTestCase {
-    protected EntityManagerInterface $em;
+    protected ?EntityManagerInterface $em = null;
 
     protected function setUp() : void {
         parent::setUp();

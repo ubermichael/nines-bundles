@@ -14,7 +14,7 @@ use Nines\DublinCoreBundle\Repository\ValueRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ValueRepositoryTest extends ServiceTestCase {
-    private ValueRepository $repo;
+    private ?ValueRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ValueRepository::class, $this->repo);

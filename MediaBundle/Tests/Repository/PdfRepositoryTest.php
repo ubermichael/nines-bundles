@@ -14,7 +14,7 @@ use Nines\MediaBundle\Repository\PdfRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PdfRepositoryTest extends ServiceTestCase {
-    private PdfRepository $repo;
+    private ?PdfRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(PdfRepository::class, $this->repo);

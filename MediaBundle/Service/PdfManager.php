@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * stuff.
  */
 class PdfManager extends AbstractFileManager implements EventSubscriber {
-    private Thumbnailer $thumbnailer;
+    private ?Thumbnailer $thumbnailer = null;
 
     /**
      * Store the pdf file, extracta  little metadata, and generate a thumbnail.

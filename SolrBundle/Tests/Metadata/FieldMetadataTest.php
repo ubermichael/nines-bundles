@@ -17,7 +17,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use PHPUnit\Framework\TestCase;
 
 class FieldMetadataTest extends TestCase {
-    private AbstractEntity $entity;
+    private ?AbstractEntity $entity = null;
 
     public function testFetch() : void {
         $meta = new FieldMetadata();
@@ -75,8 +75,6 @@ class FieldMetadataTest extends TestCase {
     protected function setUp() : void {
         parent::setUp();
         $this->entity = new class() extends AbstractEntity {
-            private string $field = 'field data';
-
             public function __toString() {
                 return 'ok';
             }

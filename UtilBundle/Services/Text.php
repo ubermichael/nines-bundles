@@ -14,7 +14,7 @@ namespace Nines\UtilBundle\Services;
  * Various text mangling functions for twig and for other symfony stuff.
  */
 class Text {
-    private int $defaultTrimLenth;
+    private ?int $defaultTrimLenth = null;
 
     public function __construct(int $defaultTrimLength) {
         $this->defaultTrimLenth = $defaultTrimLength;

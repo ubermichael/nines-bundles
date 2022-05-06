@@ -171,7 +171,7 @@ class {{ test_class_name }} extends ControllerTestCase {
             {%- set relation = relations[field] %}
             {%- set association = associations[field] %}
             {%- set label = relation['entity_class_name'] %}
-            $form['{{ entity_twig_var_singular }}[{{ field }}]']->disableValidation()->setValue(2);
+            $this->overrideField($form, '{{ entity_twig_var_singular }}[{{ field }}]', 2);
         {% endfor %}
 
         $this->client->submit($form);
@@ -232,7 +232,7 @@ class {{ test_class_name }} extends ControllerTestCase {
             {%- set relation = relations[field] %}
             {%- set association = associations[field] %}
             {%- set label = relation['entity_class_name'] %}
-            $form['{{ entity_twig_var_singular }}[{{ field }}]']->disableValidation()->setValue(2);
+            $this->overrideField($form, '{{ entity_twig_var_singular }}[{{ field }}]', 2);
         {% endfor %}
 
         $this->client->submit($form);
@@ -271,7 +271,7 @@ class {{ test_class_name }} extends ControllerTestCase {
             {%- set relation = relations[field] %}
             {%- set association = associations[field] %}
             {%- set label = relation['entity_class_name'] %}
-            $form['{{ entity_twig_var_singular }}[{{ field }}]']->disableValidation()->setValue(2);
+            $this->overrideField($form, '{{ entity_twig_var_singular }}[{{ field }}]', 2);
         {% endfor %}
 
         $this->client->submit($form);

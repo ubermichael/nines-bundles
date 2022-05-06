@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType {
-    private UserManager $manager;
+    private ?UserManager $manager = null;
 
     public function __construct(UserManager $manager) {
         $this->manager = $manager;

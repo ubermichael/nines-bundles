@@ -21,11 +21,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class AbstractBuilder implements ContainerAwareInterface {
     use ContainerAwareTrait;
 
-    protected FactoryInterface $factory;
+    protected ?FactoryInterface $factory = null;
 
-    protected AuthorizationCheckerInterface $authChecker;
+    protected ?AuthorizationCheckerInterface $authChecker = null;
 
-    protected TokenStorageInterface $tokenStorage;
+    protected ?TokenStorageInterface $tokenStorage = null;
 
     protected function hasRole(string $role) : bool {
         if ( ! $this->tokenStorage->getToken()) {

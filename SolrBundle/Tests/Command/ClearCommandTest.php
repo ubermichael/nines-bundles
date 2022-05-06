@@ -17,7 +17,7 @@ use Nines\UtilBundle\TestCase\CommandTestCase;
 class ClearCommandTest extends CommandTestCase {
     use ClientTestTrait;
 
-    private SolrManager $manager;
+    private ?SolrManager $manager = null;
 
     public function testExecute() : void {
         $this->addResponse([

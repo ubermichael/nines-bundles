@@ -28,12 +28,12 @@ class QueryBuilder {
 
     public const ESCAPE_NONE = 4;
 
-    private EntityMapper $mapper;
+    private ?EntityMapper $mapper = null;
 
     /**
      * The query string for the query.
      */
-    private string $q;
+    private ?string $q = null;
 
     /**
      * List of fields to query.
@@ -85,14 +85,14 @@ class QueryBuilder {
      *
      * @var string[]
      */
-    private array $fields;
+    private ?array $fields = null;
 
     /**
      * List of field => direction pairs to sort the query results.
      *
      * @var string[]
      */
-    private array $sorting;
+    private ?array $sorting = null;
 
     /**
      * Geographic filters to apply to the query.
@@ -101,7 +101,7 @@ class QueryBuilder {
      */
     private array $geoFilters = [];
 
-    private Helper $helper;
+    private ?Helper $helper = null;
 
     public function __construct(EntityMapper $mapper) {
         $this->q = '*:*';

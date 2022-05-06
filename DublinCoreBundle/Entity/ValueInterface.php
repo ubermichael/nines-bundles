@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\DublinCoreBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Exception;
 
 interface ValueInterface {
     /**
@@ -19,10 +20,15 @@ interface ValueInterface {
     public function getValues(?string $name = null);
 
     /**
-     * @param array<Value>|Collection<int,Value> $values
+     * @param null|array<Value>|Collection<int,Value> $values
+     *
+     * @throws Exception
      */
-    public function setValues($values) : self;
+    public function setValues($values = []) : self;
 
+    /**
+     * @throws Exception
+     */
     public function addValue(Value $value) : self;
 
     public function removeValue(Value $value) : self;

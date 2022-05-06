@@ -14,13 +14,13 @@ class CopyFieldMetadata {
     /**
      * @var array<int,string>
      */
-    private array $from;
+    private ?array $from = null;
 
-    private string $name;
+    private ?string $name = null;
 
-    private string $solrName;
+    private ?string $solrName = null;
 
-    private string $type;
+    private ?string $type = null;
 
     public function getName() : string {
         return $this->name;

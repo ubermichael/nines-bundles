@@ -32,13 +32,13 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface {
     use TargetPathTrait;
 
-    private UrlGeneratorInterface $urlGenerator;
+    private ?UrlGeneratorInterface $urlGenerator = null;
 
-    private CsrfTokenManagerInterface $csrfTokenManager;
+    private ?CsrfTokenManagerInterface $csrfTokenManager = null;
 
-    private UserPasswordEncoderInterface $passwordEncoder;
+    private ?UserPasswordEncoderInterface $passwordEncoder = null;
 
-    private UserManager $userManager;
+    private ?UserManager $userManager = null;
 
     protected function getLoginUrl() : string {
         return $this->urlGenerator->generate('nines_user_security_login');

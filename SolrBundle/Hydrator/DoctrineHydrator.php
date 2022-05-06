@@ -18,7 +18,7 @@ use stdClass;
  * Map a search result document to an ORM entity.
  */
 class DoctrineHydrator {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     /**
      * Fetch an entity from the database from the ID stored in the solr

@@ -24,41 +24,41 @@ class User extends AbstractEntity implements UserInterface {
     /**
      * @ORM\Column(type="boolean")
      */
-    private bool $active;
+    private ?bool $active = null;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\Email
      */
-    private string $email;
+    private ?string $email = null;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private string $password;
+    private ?string $password = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $resetToken;
+    private ?string $resetToken = null;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
-    private ?DateTimeInterface $resetExpiry;
+    private ?DateTimeInterface $resetExpiry = null;
 
     /**
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      */
-    private string $fullname;
+    private ?string $fullname = null;
 
     /**
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      */
-    private string $affiliation;
+    private ?string $affiliation = null;
 
     /**
      * @ORM\Column(type="array")

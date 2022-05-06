@@ -16,7 +16,7 @@ class SequentialMapper implements DataMapperInterface {
     /**
      * @var DataMapperInterface[]
      */
-    private array $mappers;
+    private ?array $mappers = null;
 
     public function __construct(DataMapperInterface ...$mappers) {
         $this->mappers = $mappers;

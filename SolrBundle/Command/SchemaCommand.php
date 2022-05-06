@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Show a description of the Solr search schema.
  */
 class SchemaCommand extends Command {
-    private EntityMapper $mapper;
+    private ?EntityMapper $mapper = null;
 
     protected static $defaultName = 'nines:solr:schema';
 

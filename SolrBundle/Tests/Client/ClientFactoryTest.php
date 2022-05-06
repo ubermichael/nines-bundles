@@ -15,7 +15,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 use Solarium\Client;
 
 class ClientFactoryTest extends ServiceTestCase {
-    private ClientFactory $factory;
+    private ?ClientFactory $factory = null;
 
     public function testSetup() : void {
         $this->assertInstanceOf(ClientFactory::class, $this->factory);

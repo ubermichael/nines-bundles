@@ -94,9 +94,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Poem form.
  */
 class PoemType extends AbstractType {
-    private ElementRepository $repo;
+    private ?ElementRepository $repo = null;
 
-    private DublinCoreMapper $mapper;
+    private ?DublinCoreMapper $mapper = null;
 
     /**
      * Add form fields to $builder.

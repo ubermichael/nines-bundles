@@ -17,7 +17,7 @@ use Nines\UtilBundle\TestCase\CommandTestCase;
 class PingCommandTest extends CommandTestCase {
     use ClientTestTrait;
 
-    private SolrManager $manager;
+    private ?SolrManager $manager = null;
 
     public function testExecute() : void {
         $this->addResponse([

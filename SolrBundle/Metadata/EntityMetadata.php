@@ -16,24 +16,24 @@ use Nines\SolrBundle\Annotation\Field;
  * Collection of Solr metadata for an entity, as defined by the annotations.
  */
 class EntityMetadata extends Metadata {
-    private IdMetadata $id;
+    private ?IdMetadata $id = null;
 
     /**
      * The FQCN of the entity.
      */
-    private string $class;
+    private ?string $class = null;
 
     /**
      * @var CopyFieldMetadata[]
      */
-    private array $copyFields;
+    private ?array $copyFields = null;
 
     /**
      * List of key, value pairs to add to all documents going into Solr.
      *
      * @var array<string,string>
      */
-    private array $fixed;
+    private ?array $fixed = null;
 
     /**
      * Map of entity field name => FieldMetadata.

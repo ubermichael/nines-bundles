@@ -28,7 +28,7 @@ class ClientFactory {
     /**
      * @var array<string,mixed>
      */
-    private array $config;
+    private ?array $config = null;
 
     private ?LoggerPlugin $loggerPlugin = null;
 

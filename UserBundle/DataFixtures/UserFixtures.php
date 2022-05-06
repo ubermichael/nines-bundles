@@ -32,7 +32,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface {
         'password' => 'sleeping',
     ];
 
-    private UserPasswordEncoderInterface $encoder;
+    private ?UserPasswordEncoderInterface $encoder = null;
 
     public function __construct(UserPasswordEncoderInterface $encoder) {
         $this->encoder = $encoder;

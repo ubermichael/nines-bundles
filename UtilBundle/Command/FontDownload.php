@@ -27,7 +27,7 @@ use Twig\Error\SyntaxError;
  * Download and save fonts from Google Fonts and generate the CSS for them.
  */
 class FontDownload extends Command {
-    private Environment $twig;
+    private ?Environment $twig = null;
 
     protected static $defaultName = 'nines:fonts:download';
 

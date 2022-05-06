@@ -16,7 +16,7 @@ use Nines\UtilBundle\Entity\ContentEntityInterface;
 use Nines\UtilBundle\Services\Text;
 
 class ContentExcerptListener {
-    private Text $text;
+    private ?Text $text = null;
 
     public function __construct(Text $text) {
         $this->text = $text;

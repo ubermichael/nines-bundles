@@ -53,7 +53,7 @@ class FieldMetadata extends Metadata {
      *
      * @var array<int,string>
      */
-    private array $mutatorArgs;
+    private ?array $mutatorArgs = null;
 
     /**
      * Name of functions to filter the data returned by the

@@ -25,11 +25,11 @@ class EntityLinker {
      *
      * @var array<string,string>
      */
-    private array $routing;
+    private ?array $routing = null;
 
-    private UrlGeneratorInterface $urlGenerator;
+    private ?UrlGeneratorInterface $urlGenerator = null;
 
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     /**
      * @param array<string,string> $routing

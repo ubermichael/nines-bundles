@@ -14,7 +14,7 @@ use Nines\DublinCoreBundle\Service\ValueManager;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ValueManagerTest extends ServiceTestCase {
-    private ValueManager $manager;
+    private ?ValueManager $manager = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ValueManager::class, $this->manager);

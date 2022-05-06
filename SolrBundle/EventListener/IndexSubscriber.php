@@ -24,7 +24,7 @@ use ReflectionException;
  * index.
  */
 class IndexSubscriber implements EventSubscriber {
-    private SolrManager $manager;
+    private ?SolrManager $manager = null;
 
     /**
      * Returns an array of events this subscriber wants to listen to.

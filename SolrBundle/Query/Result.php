@@ -28,7 +28,7 @@ class Result {
     /**
      * @var array<int,DocumentInterface>
      */
-    private array $documents;
+    private ?array $documents = null;
 
     private ?DoctrineHydrator $hydrator = null;
 

@@ -36,11 +36,11 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
  * Construct the EntityMapper by parsing annotations on entities.
  */
 class EntityMapperFactory {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
-    private string $env;
+    private ?string $env = null;
 
-    private SolrLogger $logger;
+    private ?SolrLogger $logger = null;
 
     private static ?EntityMapper $mapper = null;
 

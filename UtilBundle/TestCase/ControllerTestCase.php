@@ -25,9 +25,9 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 abstract class ControllerTestCase extends WebTestCase {
-    protected KernelBrowser $client;
+    protected ?KernelBrowser $client = null;
 
-    protected EntityManagerInterface $em;
+    protected ?EntityManagerInterface $em = null;
 
     /**
      * @param ?array<string,string> $credentials

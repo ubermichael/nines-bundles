@@ -14,7 +14,7 @@ use Nines\BlogBundle\Repository\PageRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PageRepositoryTest extends ServiceTestCase {
-    private PageRepository $repo;
+    private ?PageRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(PageRepository::class, $this->repo);

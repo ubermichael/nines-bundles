@@ -33,28 +33,28 @@ class UserManager {
 
     public const TOKEN_EXPIRY = ' +1 day';
 
-    private UserPasswordEncoderInterface $encoder;
+    private ?UserPasswordEncoderInterface $encoder = null;
 
-    private LoggerInterface $logger;
+    private ?LoggerInterface $logger = null;
 
-    private UserRepository $repository;
+    private ?UserRepository $repository = null;
 
-    private MailerInterface $mailer;
+    private ?MailerInterface $mailer = null;
 
     /**
      * @var array<string>
      */
-    private array $roles;
+    private ?array $roles = null;
 
-    private string $afterLogin;
+    private ?string $afterLogin = null;
 
-    private string $afterRequest;
+    private ?string $afterRequest = null;
 
-    private string $afterReset;
+    private ?string $afterReset = null;
 
-    private string $afterLogout;
+    private ?string $afterLogout = null;
 
-    private string $sender;
+    private ?string $sender = null;
 
     /**
      * UserManager constructor.
@@ -137,7 +137,7 @@ class UserManager {
     }
 
     public function findByToken(string $token) : ?User {
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $this->repository->findOneBy(['resetToken' => $token]);
         if ($user && ($user->getResetExpiry() < new DateTimeImmutable())) {
             $this->logger->warning("{$user->getEmail()} attempted to use expired token.");

@@ -14,7 +14,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ForeignKeyPurger extends ORMPurger {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     public function __construct(?EntityManagerInterface $em = null, array $excluded = []) {
         parent::__construct($em, $excluded);

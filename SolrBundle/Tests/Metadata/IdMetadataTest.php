@@ -15,7 +15,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use PHPUnit\Framework\TestCase;
 
 class IdMetadataTest extends TestCase {
-    private AbstractEntity $entity;
+    private ?AbstractEntity $entity = null;
 
     public function testFetch() : void {
         $meta = new IdMetadata();

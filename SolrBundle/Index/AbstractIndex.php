@@ -19,7 +19,7 @@ use Nines\SolrBundle\Services\SolrManager;
  * but meant for the solr search index.
  */
 abstract class AbstractIndex {
-    protected SolrManager $manager;
+    protected ?SolrManager $manager = null;
 
     /**
      * Build and return a query builder.

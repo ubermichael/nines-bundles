@@ -14,7 +14,7 @@ use Nines\UserBundle\Repository\UserRepository;
 use Nines\UtilBundle\TestCase\CommandTestCase;
 
 class DeactivateUserCommandTest extends CommandTestCase {
-    private UserRepository $repo;
+    private ?UserRepository $repo = null;
 
     public function testExecute() : void {
         $output = $this->execute('nines:user:deactivate', [

@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 abstract class CommandTestCase extends ServiceTestCase {
-    protected Application $app;
+    protected ?Application $app = null;
 
     /**
      * @param ?array<string> $arguments

@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditorControllerTest extends ControllerTestCase {
-    protected string $filePath;
+    protected ?string $filePath = null;
 
-    protected UploadedFile $upload;
+    protected ?UploadedFile $upload = null;
 
     public function testAnonUpload() : void {
         $this->client->request('POST', '/editor/upload/image', [], ['file' => $this->upload]);

@@ -13,6 +13,7 @@ namespace Nines\UserBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Nines\UserBundle\Entity\User;
 use Nines\UserBundle\Services\UserManager;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Constraints\Email;
@@ -21,7 +22,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ChangePasswordCommand extends AbstractUserCommand {
-    private UserManager $manager;
+    private ?UserManager $manager = null;
 
     protected static $defaultName = 'nines:user:password';
 
@@ -57,6 +58,7 @@ class ChangePasswordCommand extends AbstractUserCommand {
         }
 
         if ( ! $input->hasArgument('password')) {
+            /** @var SymfonyQuestionHelper $helper */
             $helper = $this->getHelper('question');
             $password = $helper->ask($input, $output, $this->question('New password: ', [new Length(['min' => 8])], true));
             $confirm = $helper->ask($input, $output, $this->question('Confirm password: ', [new Length(['min' => 8])], true));

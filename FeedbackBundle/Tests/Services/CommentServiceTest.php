@@ -17,7 +17,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CommentServiceTest extends ServiceTestCase {
-    private CommentService $service;
+    private ?CommentService $service = null;
 
     public function testSetup() : void {
         $this->assertInstanceOf(CommentService::class, $this->service);

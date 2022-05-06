@@ -25,7 +25,7 @@ use Nines\UtilBundle\Entity\AbstractEntityInterface;
  * Link management service for Symfony.
  */
 class LinkManager extends AbstractFileManager implements EventSubscriber {
-    private LinkRepository $linkRepository;
+    private ?LinkRepository $linkRepository = null;
 
     /**
      * @required

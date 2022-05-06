@@ -14,7 +14,7 @@ use Nines\MediaBundle\Repository\AudioRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class AudioRepositoryTest extends ServiceTestCase {
-    private AudioRepository $repo;
+    private ?AudioRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(AudioRepository::class, $this->repo);

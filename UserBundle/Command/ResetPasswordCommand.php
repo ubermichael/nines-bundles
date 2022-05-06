@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ResetPasswordCommand extends AbstractUserCommand {
-    private UserManager $manager;
+    private ?UserManager $manager = null;
 
     protected static $defaultName = 'nines:user:reset';
 

@@ -18,7 +18,7 @@ use Nines\UtilBundle\Services\ContributionManager;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
 
 class ContributionManagerTest extends ControllerTestCase {
-    private $entity;
+    private ?object $entity = null;
 
     public function testAddContributor() : void {
         $this->login(UserFixtures::ADMIN);
@@ -37,7 +37,7 @@ class ContributionManagerTest extends ControllerTestCase {
             }
 
             /**
-             * @return array<string,string>
+             * @return array<int,array<string,string>>
              */
             public function rawData() : array {
                 return $this->contributions;

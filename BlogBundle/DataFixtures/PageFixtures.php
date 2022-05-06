@@ -31,7 +31,7 @@ class PageFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $fixture->setInMenu(0 === $i % 2);
             $fixture->setWeight($i);
             $fixture->setPublic(0 === $i % 2);
-            $fixture->setHomepage(0 === $i);
+            $fixture->setHomepage(1 === $i);
             $fixture->setIncludeComments(0 === $i % 2);
             $fixture->setTitle('Title ' . $i);
             $fixture->setExcerpt("<p>This is paragraph {$i}</p>");
