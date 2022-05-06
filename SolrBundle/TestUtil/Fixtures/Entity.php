@@ -35,6 +35,13 @@ class Entity extends ParentEntity {
     private ?string $sortableName = null;
 
     /**
+     * ENT_QUOTES | ENT_HTML5 === 51.
+     *
+     * @Solr\Field(type="text", filters={"strip_tags", "html_entity_decode(51, 'UTF-8')"})
+     */
+    private ?string $content = null;
+
+    /**
      * @Solr\Field(type="strings", getter="getTags(true)")
      */
     private ?Collection $tags = null;
@@ -50,6 +57,14 @@ class Entity extends ParentEntity {
 
     public function __construct() {
         $this->tags = new ArrayCollection();
+    }
+
+    public function getContent() : ?string {
+        return $this->content;
+    }
+
+    public function setContent(?string $content) : void {
+        $this->content = $content;
     }
 
     /**
