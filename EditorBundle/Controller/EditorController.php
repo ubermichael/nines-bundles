@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EditorController extends AbstractController {
-    public const FORBIDDEN = '/[^a-z0-9_.-]/i';
+    public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
     private function getUploadDir() : string {
         $uploadDir = $this->getParameter('nines.editor.upload_dir');
