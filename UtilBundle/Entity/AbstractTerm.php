@@ -33,7 +33,7 @@ abstract class AbstractTerm extends AbstractEntity {
     /**
      * Name of the term.
      *
-     * @ORM\Column(type="string", length=200)
+     * @ORM\Column(type="string", length=191)
      * @Solr\Field(type="string")
      */
     private ?string $name = null;

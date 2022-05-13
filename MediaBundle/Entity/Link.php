@@ -34,7 +34,7 @@ class Link extends AbstractEntity implements LinkedEntityInterface {
     private ?string $url = null;
 
     /**
-     * @ORM\Column(type="string", length=200, nullable=true)
+     * @ORM\Column(type="string", length=191, nullable=true)
      */
     private ?string $text = null;
 
