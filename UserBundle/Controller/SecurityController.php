@@ -49,7 +49,7 @@ class SecurityController extends AbstractController {
         }
 
         $parts = parse_url($header);
-        if (false === $parts) {
+        if (false === $parts || is_string($parts)) {
             return;
         }
         $referrerHost = $parts['host'] ?? $request->getHost();
