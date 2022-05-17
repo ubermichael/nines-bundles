@@ -31,7 +31,7 @@ class EditorControllerTest extends ControllerTestCase {
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $json = json_decode($this->client->getResponse()->getContent());
-        $this->assertMatchesRegularExpression('/tmp_[a-z0-9_-]*\.png/i', $json->location);
+        $this->assertMatchesRegularExpression('/tmp[a-z0-9_ -]*\.png$/i', $json->location);
     }
 
     public function testUploadMultiple() : void {
@@ -47,7 +47,7 @@ class EditorControllerTest extends ControllerTestCase {
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $json = json_decode($this->client->getResponse()->getContent());
-        $this->assertMatchesRegularExpression('/tmp___[a-z0-9_-]*\.png/i', $json->location);
+        $this->assertMatchesRegularExpression('/tmp[a-z0-9_ -]*\.png$/i', urldecode($json->location));
     }
 
     public function testView() : void {

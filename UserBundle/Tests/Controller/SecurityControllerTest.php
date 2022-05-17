@@ -239,6 +239,51 @@ class SecurityControllerTest extends ControllerTestCase {
         $this->assertEmailCount(0);
     }
 
+    /**
+     * @dataProvider loginRedirectData
+     */
+    public function testLoginRedirects(?string $referrer, string $redirect = '/') : void {
+        $headers = [];
+        if ($referrer) {
+            $headers['HTTP_REFERER'] = $referrer;
+        }
+        $crawler = $this->client->request('GET', '/login', [], [], $headers);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Login')->form(
+            [
+                'email' => 'user@example.com',
+                'password' => 'secret',
+            ],
+        );
+
+        $this->client->submit($form);
+        $this->assertResponseRedirects($redirect, Response::HTTP_FOUND);
+    }
+
+    public function loginRedirectData() : array {
+        return [
+            ['http://localhost/page/2', 'http://localhost/page/2'],
+            ['http://localhost/page', 'http://localhost/page'],
+            ['http://localhost/', 'http://localhost/'],
+            ['http://localhost'],
+            ['http://localhost/login'],
+            ['http://localhost/request'],
+            ['http://localhost/reset'],
+            ['http://example.com/page/2'],
+            ['http://localhost/not/a/path'],
+            ['/page/2', '/page/2'],
+            ['/login'],
+            ['/request'],
+            ['/reset'],
+            ['/reset/somebigtokenhere'],
+            ['/not/a/path'],
+            ['not/a/path'],
+            [''],
+            [null],
+        ];
+    }
+
     protected function setUp() : void {
         parent::setUp();
         $this->repository = self::$container->get(UserRepository::class);
