@@ -14,6 +14,7 @@ use Nines\BlogBundle\Entity\Page;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Services\CommentService;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
+use stdClass;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CommentServiceTest extends ServiceTestCase {
@@ -38,8 +39,7 @@ class CommentServiceTest extends ServiceTestCase {
         $checker->method('isGranted')->willReturn(true);
         $this->service->setAuthorizationChecker($checker);
 
-        $entity = $this->em->find(Page::class, 1);
-        $comments = $this->service->findComments($entity);
+        $comments = $this->service->findComments(stdClass::class . ':1');
         $this->assertCount(1, $comments);
     }
 

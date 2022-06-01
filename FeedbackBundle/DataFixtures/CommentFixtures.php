@@ -14,11 +14,8 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Nines\BlogBundle\DataFixtures\PageFixtures;
-use Nines\BlogBundle\DataFixtures\PostFixtures;
-use Nines\BlogBundle\Entity\Page;
-use Nines\BlogBundle\Entity\Post;
 use Nines\FeedbackBundle\Entity\Comment;
+use stdClass;
 
 class CommentFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     public static function getGroups() : array {
@@ -34,7 +31,7 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setFullname('Fullname ' . $i);
             $fixture->setEmail('email_' . $i . '@example.com');
             $fixture->setFollowUp(0 === $i % 2);
-            $fixture->setEntity((0 === $i % 2 ? Post::class : Page::class) . ':' . $i);
+            $fixture->setEntity(stdClass::class . ':' . $i);
             $fixture->setContent("<p>This is paragraph {$i}</p>");
             $fixture->setStatus($this->getReference('commentstatus.' . $i));
             $manager->persist($fixture);
@@ -51,8 +48,6 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface, Fixt
     public function getDependencies() : array {
         return [
             CommentStatusFixtures::class,
-            PageFixtures::class,
-            PostFixtures::class,
         ];
     }
 }

@@ -73,14 +73,23 @@ class CommentService {
      *
      * @param mixed $entity
      *
+     * @throws Exception
+     *
      * @return Comment[]
      */
     public function findComments($entity) : array {
-        $class = get_class($entity);
+        if (is_object($entity)) {
+            $id = get_class($entity) . ':' . $entity->getId();
+        } elseif (is_string($entity)) {
+            $id = $entity;
+        } else {
+            throw new Exception('Unknown type ' . gettype($entity));
+        }
+
         $comments = [];
         if ($this->authChecker->isGranted('ROLE_ADMIN')) {
             $comments = $this->em->getRepository(Comment::class)->findBy([
-                'entity' => $class . ':' . $entity->getId(),
+                'entity' => $id,
             ]);
         } else {
             $status = $this->em->getRepository(CommentStatus::class)->findOneBy([
@@ -88,7 +97,7 @@ class CommentService {
             ]);
             if ($status) {
                 $comments = $this->em->getRepository(Comment::class)->findBy([
-                    'entity' => $class . ':' . $entity->getId(),
+                    'entity' => $id,
                     'status' => $status,
                 ]);
             }
