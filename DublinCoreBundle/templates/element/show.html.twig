@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+    {% if is_granted('ROLE_DC_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('nines_dc_element_edit', {'id': element.id }) }}" class="btn btn-default">

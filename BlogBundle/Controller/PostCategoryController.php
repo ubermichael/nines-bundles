@@ -44,7 +44,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
 
     /**
      * @Route("/new", name="nines_blog_post_category_new", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      */
     public function new(Request $request) : Response {
         $postCategory = new PostCategory();
@@ -82,7 +82,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="nines_blog_post_category_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, PostCategory $postCategory) : Response {
@@ -103,7 +103,7 @@ class PostCategoryController extends AbstractController implements PaginatorAwar
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}", name="nines_blog_post_category_delete", methods={"DELETE"})
      */
     public function delete(Request $request, PostCategory $postCategory) : RedirectResponse {

@@ -65,7 +65,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
 
     /**
      * @Route("/new", name="nines_blog_page_new", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      */
     public function new(Request $request, PageRepository $repo) : Response {
         /** @var User $user */
@@ -97,7 +97,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
 
     /**
      * @Route("/new_popup", name="nines_blog_page_new_popup", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      */
     public function new_popup(Request $request, PageRepository $repo) : Response {
         return $this->new($request, $repo);
@@ -143,7 +143,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}/edit", name="nines_blog_page_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, Page $page, PageRepository $repo) : Response {
@@ -169,7 +169,7 @@ class PageController extends AbstractController implements PaginatorAwareInterfa
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/{id}", name="nines_blog_page_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Page $page) : RedirectResponse {

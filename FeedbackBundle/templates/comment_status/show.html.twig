@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+    {% if is_granted('ROLE_FEEDBACK_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('nines_feedback_comment_status_edit', {'id': comment_status.id }) }}" class="btn btn-default">

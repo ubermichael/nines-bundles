@@ -5,7 +5,7 @@
 #}
 
 <div class="thumbnail">
-    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+    {% if is_granted('ROLE_MEDIA_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path(path_edit, {'id': container.id, 'image_id': image.id }) }}" class="btn btn-default">

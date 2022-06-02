@@ -13,7 +13,7 @@
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            {% if is_granted('ROLE_CONTENT_ADMIN') %}
+            {% if is_granted('ROLE_FEEDBACK_ADMIN') %}
                 <a href="{{ path('nines_feedback_comment_note_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
