@@ -36,7 +36,7 @@ class CommentTest extends ControllerTestCase {
         $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/comment/');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $crawler->selectLink('New')->count());
+        $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
     public function testAnonShow() : void {

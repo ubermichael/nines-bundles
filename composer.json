@@ -34,21 +34,16 @@
         "knplabs/knp-paginator-bundle": "^5.8",
         "minimalcode/search": "^1.0",
         "nyholm/psr7": "^1.4",
-        "sensio/framework-extra-bundle": "^5.1|^6.1",
+        "sensio/framework-extra-bundle": "^5.1|^6.2",
         "solarium/solarium": "^6.0",
         "soundasleep/html2text": "^1.1",
         "twig/string-extra": "^3.0"
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "liip/test-fixtures-bundle": "^1.0.0",
         "symfony/browser-kit": "4.4.*",
         "symfony/css-selector": "4.4.*",
         "symfony/phpunit-bridge": "^5.0"
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true
-        }
     }
 }
