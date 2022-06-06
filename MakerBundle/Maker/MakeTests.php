@@ -21,23 +21,33 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class MakeEntityTest extends AbstractNinesMaker {
+class MakeTests extends AbstractNinesMaker {
     /**
-     * {@inheritdoc}
+     * @param array<string,string> $params
+     *
+     * @return array<string,string>
      */
+    private function mapping(array $params) : array {
+        return [
+            '@NinesMaker/test/controller-test.php.twig' => 'tests/Controller/' . $params['controller_class_name'] . 'Test.php',
+            '@NinesMaker/test/entity-test.php.twig' => 'tests/Entity/' . $params['entity_class_name'] . 'Test.php',
+            '@NinesMaker/test/repository-test.php.twig' => 'tests/Repository/' . $params['repository_class_name'] . 'Test.php',
+        ];
+    }
+
     public static function getCommandName() : string {
-        return 'nines:make:entity-test';
+        return 'nines:make:tests';
     }
 
     public static function getCommandDescription() : string {
-        return 'Generate a doctrine entity';
+        return 'Generate a controller, form, and templates based on a doctrine entity';
     }
 
     /**
      * {@inheritdoc}
      */
     public function configureCommand(Command $command, InputConfiguration $inputConfig) : void {
-        $command->setDescription('Creates or updates an entity test.');
+        $command->setDescription('Creates CRUD for Doctrine entity class');
         $command->addArgument('name', InputArgument::IS_ARRAY, 'The class name of the entity.');
     }
 
@@ -52,17 +62,17 @@ class MakeEntityTest extends AbstractNinesMaker {
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator) : void {
         foreach ($input->getArgument('name') as $name) {
             $params = $this->collect($generator, $name);
+            if ( ! class_exists($params['entity_full_class_name'])) {
+                $io->warning('Class not found: ' . $params['entity_full_class_name']);
 
-            $data = $this->twig->render('@NinesMaker/test/entity-test.php.twig', $params);
-            $generator->dumpFile("tests/Entity/{$params['entity_class_name']}Test.php", $data);
+                continue;
+            }
+
+            foreach ($this->mapping($params) as $src => $dst) {
+                $data = $this->twig->render($src, $params);
+                $generator->dumpFile($dst, $data);
+            }
         }
         $generator->writeChanges();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function interact(InputInterface $input, ConsoleStyle $io, Command $command) : void {
-        // TODO: Implement interact() method.
     }
 }

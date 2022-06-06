@@ -63,6 +63,7 @@ class SecurityController extends AbstractController {
             return;
         }
         $path = str_replace($request->getBaseUrl(), '', $parts['path']);
+
         try {
             $route = $matcher->match($path);
         } catch (ResourceNotFoundException $e) {

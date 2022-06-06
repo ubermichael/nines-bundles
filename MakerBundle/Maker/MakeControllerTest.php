@@ -51,7 +51,7 @@ class MakeControllerTest extends AbstractNinesMaker {
             $params = $this->collect($generator, $name);
 
             $data = $this->twig->render('@NinesMaker/test/controller-test.php.twig', $params);
-            $generator->dumpFile('tests/Controller/' . $params['test_class_name'] . '.php', $data);
+            $generator->dumpFile('tests/Controller/' . $params['controller_class_name'] . 'Test.php', $data);
         }
         $generator->writeChanges();
     }

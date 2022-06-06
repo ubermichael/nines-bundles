@@ -10,7 +10,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 class {{ repository_class_name }}Test extends ServiceTestCase {
     private const TYPEAHEAD_QUERY = '{{ entity_var_singular }}';
 
-    private {{ repository_class_name }} $repo;
+    private ?{{ repository_class_name }} $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf({{ repository_class_name }}::class, $this->repo);
