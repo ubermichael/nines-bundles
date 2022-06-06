@@ -186,6 +186,35 @@ class SecurityControllerTest extends ControllerTestCase {
         $this->assertSelectorTextContains('h1', 'Welcome');
     }
 
+    public function testResetPasswordTwice() : void {
+        $requestCrawler = $this->client->request('GET', '/request');
+        $this->assertResponseIsSuccessful();
+
+        $requestForm = $requestCrawler->selectButton('Reset')->form([
+            'request_token[email]' => 'user@example.com',
+        ]);
+        $this->client->submit($requestForm);
+        $email = $this->getMailerMessage();
+        $text = $email->getBody()->getBody();
+        $matches = [];
+        preg_match('|http://localhost/reset/([A-Za-z0-9-_]*)|', $text, $matches);
+
+        $responseCrawler = $this->client->request('GET', "/reset/{$matches[1]}");
+        $this->assertResponseIsSuccessful();
+
+        $responseForm = $responseCrawler->selectButton('Reset')->form([
+            'reset_password[password][first]' => 'abcdefg',
+            'reset_password[password][second]' => 'abcdefg',
+        ]);
+        $this->client->submit($responseForm);
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+
+        $this->client->request('GET', "/reset/{$matches[1]}");
+        $this->assertResponseRedirects('/');
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('div.alert:nth-child(2)', 'That security token is not valid.');
+    }
+
     public function testResetPasswordExpiredToken() : void {
         $user = new User();
         $user->setEmail('temp@example.com');

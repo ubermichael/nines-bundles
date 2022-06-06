@@ -140,6 +140,8 @@ class SecurityController extends AbstractController {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setPassword($encoder->encodePassword($user, $form->get('password')->getData()));
+            $user->setResetToken(null);
+            $user->setResetExpiry(null);
             $em->flush();
             $this->addFlash('success', 'The password has been reset. You should now login to confirm.');
 
