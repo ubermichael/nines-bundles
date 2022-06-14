@@ -1,4 +1,4 @@
-Configuring the Util Bundle
+Configuring the Solr Bundle
 ===========================
 
 Configuring the bundle is covered in the main [Nines Bundles](../../README.md) 
