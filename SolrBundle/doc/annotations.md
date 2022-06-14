@@ -1,7 +1,7 @@
 Annotations in the Solr Bundle
 ==============================
 
-This bundle used Doctrine-style [annotations](annotations) on each entity that
+This bundle used Doctrine-style [annotations][doctrine-annotations] on each entity that
 should be indexed in solr. These annotations describe the types of each field
 and how the data for those fields is fetched from the entity.
 
@@ -91,7 +91,7 @@ arguments maybe be specified.
 
 > 51 is a magic number in this example. It is `ENT_QUOTES|ENT_HTML5`. The Solr
 bundle is not able to handle anything other than simple constants as arguments. 
-See the flags in [html_entity_decode](html_entity_decode) for more information.
+See the flags in [html_entity_decode][html_entity_decode] for more information.
 
 In the next example the method `getCreated` returns a DateTimeInterface object 
 which must be converted to a string. The `mutator` property is used to 
@@ -219,5 +219,5 @@ to string as in this example below.
     }
 ```
 
-[annotations]: https://www.doctrine-project.org/projects/doctrine-annotations/en/1.13/index.html#introduction
+[doctrine-annotations]: https://www.doctrine-project.org/projects/doctrine-annotations/en/1.13/index.html#introduction
 [html_entity_decode]: https://www.php.net/manual/en/function.html-entity-decode.php

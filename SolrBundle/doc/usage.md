@@ -216,7 +216,181 @@ search results. Facets are defined in the [index classes](index_classes.md).
 Indexes
 -------
 
+A SolrBundle Index class is like a Doctrine Repository class. They provide ways
+to query the Solr index, along with ordering and filtering the results.
 
+A simple search in a Solr index might look like this. The `$filters`, 
+`$rangeFilters`, and `$order` will be explained below.
+
+```php
+    public function searchQuery(string $q, $filters = [], $rangeFilters = [], $order = null) {
+        $qb = $this->createQueryBuilder();
+        $qb->setQueryString($q);
+        $qb->setDefaultField('content');
+        return $qb->getQuery();
+    }
+```
+
+In the example above, the `content` field is a copy field - it duplicates all
+of field data in a single place for convenience. Without it, the code would 
+need to construct a complex query string listing all of the fields to be 
+searched, perhaps something like 
+
+```php
+ "title:{$q} OR subtitle:{$q} OR author:{$q}"`
+ ```
+
+and this query string would easily become out of date if fields are added or
+removed.
+
+### Limit Results by Type
+
+By default, Solr queries will return any type of indexed docuemnt. The bundle
+can limit results to one or more types with the `addFilter` method.
+
+```php
+        $qb->addFilter('type', ['Person', 'Alias']);
+```
+
+### Add Simple Filters
+
+The `$filters` parameter in the `searchQuery` example above is expected to be an
+array with string keys and string-array values. Add the filters to the query 
+with the `addFilter` method in the query builder.
+
+```php
+        foreach ($filters as $key => $values) {
+            $qb->addFilter($key, $values);
+        }
+```
+
+> Text fields do not filter properly due to the way they are processed. String
+and numeric fields filter well.
+
+### Add Date Range Filters
+
+Date range filters are also supported on `date` and `datetime` types. In this 
+example, the facet spans a 50 year period, starting from 1750 and ending in 
+the current year.
+
+```php
+        // Add the filters to the query input
+        foreach ($rangeFilters as $key => $values) {
+            foreach ($values as $v) {
+                list($start, $end) = explode(' ', $v);
+                $qb->addFilterRange($key, $start, $end);
+            }
+        }
+
+        // Include the birthDate facet in the query output
+        $year = date('Y');
+        $qb->addFacetRange('birthDate', 1750, $year, 50);
+```
+
+### Highlighting Fields
+
+Solr can return highlighted search results.
+
+```php
+        $qb->setHighlightFields(['fullName', 'description',
+            'birthPlace', 'deathPlace', 'residences', 'aliases', ]);
+```
+
+### Set Result Order
+
+If specified, the `$order` parameter should be the name of a Solr field with 
+`.desc` or `.asc` appended. This parameter is used to set the sort order in the
+index function.
+
+```php
+        if ($order) {
+            $qb->setSorting($order);
+        }
+```
+
+Finally, a complete example with all features enabled:
+
+```php
+namespace App\Index;
+
+use Nines\SolrBundle\Index\AbstractIndex;
+use Solarium\QueryType\Select\Query\Query;
+
+class PersonIndex extends AbstractIndex {
+    public function searchQuery(string $q, array $filters = [], array $rangeFilters = [], ?string $order = null) : Query {
+        $qb = $this->createQueryBuilder();
+        $qb->setQueryString($q);
+        $qb->setDefaultField('content');
+
+        $qb->addFilter('type', ['Person']);
+        foreach ($filters as $key => $values) {
+            $qb->addFilter($key, $values);
+        }
+        foreach ($rangeFilters as $key => $values) {
+            foreach ($values as $v) {
+                list($start, $end) = explode(' ', $v);
+                $qb->addFilterRange($key, $start, $end);
+            }
+        }
+
+        $year = date('Y');
+        $qb->addFacetRange('birthDate', 1750, $year, 50);
+        $qb->addFacetRange('deathDate', 1750, $year, 50);
+
+        $qb->setHighlightFields(['fullName', 'description',
+            'birthPlace', 'deathPlace', 'residences', 'aliases', ]);
+
+        if ($order) {
+            $qb->setSorting($order);
+        }
+
+        return $qb->getQuery();
+    }
+
+```
+
+Controller Actions
+------------------
+
+A Symfony controller action to perform a search and return results must get the
+query string, filters, range filters, and order from the HTTP request object. 
+Then it creates the search query from an index class, and passes that query
+to a `SolrManager` class to do the search and apply pagination.
+
+In the example below, the action searches for Person records using the search
+query function defined above.
+
+```php
+    /**
+     * @Route("/solr", name="person_solr")
+     * @Template
+     */
+    public function solrAction(Request $request, PersonIndex $repo, SolrManager $solr) {
+        $q = $request->query->get('q');
+        $result = null;
+        if ($q) {
+            $filters = $request->query->get('filter', []);
+            $rangeFilters = $request->query->get('filter_range', []);
+
+            $order = null;
+            $m = [];
+            if (preg_match('/^(\\w+).(asc|desc)$/', $request->query->get('order', 'score.desc'), $m)) {
+                $order = [$m[1] => $m[2]];
+            }
+
+            $query = $repo->searchQuery($q, $filters, $rangeFilters, $order);
+            $result = $solr->execute($query, $this->paginator, [
+                'page' => (int) $request->query->get('page', 1),
+                'pageSize' => (int) $this->getParameter('page_size'),
+            ]);
+        }
+
+        return [
+            'q' => $q,
+            'result' => $result,
+        ];
+    }
+```
 
 Templates
 ---------
