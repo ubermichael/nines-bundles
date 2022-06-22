@@ -3,6 +3,8 @@
         <tr>
             <th>Original Name</th>
             <th>Size</th>
+            <th>Description</th>
+            <th>License</th>
             <th>Entity</th>
         </tr>
     </thead>
@@ -17,9 +19,17 @@
                 <td>
                     {{ audio.fileSize|byte_size }}
                 </td>
+                <td>
+                    {{ audio.description|raw }}
+                </td>
 
                 <td>
-                    {{ audio.entity }}
+                    {{ audio.license|raw }}
+                </td>
+                <td>
+                    {% include '@NinesUtil/linked_entity/link.html.twig' with {
+                        'entity': audio
+                    } %}
                 </td>
 
             </tr>

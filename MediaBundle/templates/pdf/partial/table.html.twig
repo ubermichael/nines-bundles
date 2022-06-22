@@ -29,7 +29,9 @@
                 </td>
 
                 <td>
-                    {{ pdf.entity }}
+                    {% include '@NinesUtil/linked_entity/link.html.twig' with {
+                        'entity': pdf
+                    } %}
                 </td>
 
             </tr>

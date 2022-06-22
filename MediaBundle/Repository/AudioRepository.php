@@ -29,7 +29,7 @@ class AudioRepository extends ServiceEntityRepository {
 
     public function indexQuery() : Query {
         return $this->createQueryBuilder('audio')
-            ->orderBy('audio.id')
+            ->orderBy('audio.originalName')
             ->getQuery();
     }
 

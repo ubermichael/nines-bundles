@@ -29,7 +29,9 @@
                 </td>
 
                 <td>
-                    {{ image.entity }}
+                    {% include '@NinesUtil/linked_entity/link.html.twig' with {
+                        'entity': image
+                    } %}
                 </td>
 
             </tr>
