@@ -21,11 +21,11 @@ class AudioRepositoryTest extends ServiceTestCase {
     }
 
     public function testIndexQuery() : void {
-        $this->assertCount(5, $this->repo->indexQuery()->execute());
+        $this->assertCount(10, $this->repo->indexQuery()->execute());
     }
 
     public function testSearchQuery() : void {
-        $this->assertCount(1, $this->repo->searchQuery('santur')->execute());
+        $this->assertCount(2, $this->repo->searchQuery('santur')->execute());
     }
 
     protected function setUp() : void {

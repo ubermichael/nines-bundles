@@ -21,11 +21,11 @@ class PdfRepositoryTest extends ServiceTestCase {
     }
 
     public function testIndexQuery() : void {
-        $this->assertCount(5, $this->repo->indexQuery()->execute());
+        $this->assertCount(10, $this->repo->indexQuery()->execute());
     }
 
     public function testSearchQuery() : void {
-        $this->assertCount(1, $this->repo->searchQuery('holmes_4')->execute());
+        $this->assertCount(2, $this->repo->searchQuery('holmes_4')->execute());
     }
 
     protected function setUp() : void {
