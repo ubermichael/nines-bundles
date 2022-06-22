@@ -130,8 +130,8 @@ class PdfManager extends AbstractFileManager implements EventSubscriber {
             $fs = new Filesystem();
 
             try {
-                $fs->remove($entity->getFile()->getRealPath());
-                $fs->remove($entity->getThumbFile()->getRealPath());
+                $this->remove($entity->getFile());
+                $this->remove($entity->getThumbFile());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occurred removing {$ex->getPath()}: {$ex->getMessage()}");
             }

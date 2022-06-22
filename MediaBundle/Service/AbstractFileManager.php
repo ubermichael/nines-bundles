@@ -12,6 +12,8 @@ namespace Nines\MediaBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -34,6 +36,8 @@ abstract class AbstractFileManager {
     protected ?EntityManagerInterface $em = null;
 
     private bool $copy = false;
+
+    private bool $remove = true;
 
     public function __construct(string $root) {
         $this->root = $root;
@@ -124,6 +128,14 @@ abstract class AbstractFileManager {
         return $filename;
     }
 
+    protected function remove(File $file) : void {
+        // In a test environment we don't want to actually remove the files
+        if ($this->remove) {
+            $fs = new Filesystem();
+            $fs->remove($file->getRealPath());
+        }
+    }
+
     /**
      * @required
      *
@@ -144,5 +156,11 @@ abstract class AbstractFileManager {
 
     public function setCopy(bool $copy) : void {
         $this->copy = $copy;
+    }
+
+    public function setEnv(string $env) : void {
+        if ('test' === $env) {
+            $this->remove = false;
+        }
     }
 }

@@ -27,6 +27,7 @@ services:
             $root: '%kernel.project_dir%'
         calls:
             - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/audio' ] ]
+            - [ setEnv, [ '%kernel.environment%' ] ]
         tags:
             - { name: 'doctrine.event_subscriber' }
 
@@ -41,6 +42,7 @@ services:
             $root: '%kernel.project_dir%'
         calls:
             - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/image' ] ]
+            - [ setEnv, [ '%kernel.environment%' ] ]
         tags:
             - { name: 'doctrine.event_subscriber' }
 
@@ -49,6 +51,7 @@ services:
             $root: '%kernel.project_dir%'
         calls:
             - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/pdf' ] ]
+            - [ setEnv, [ '%kernel.environment%' ] ]
         tags:
             - { name: 'doctrine.event_subscriber' }
 

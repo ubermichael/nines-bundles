@@ -100,7 +100,7 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
             $fs = new Filesystem();
 
             try {
-                $fs->remove($entity->getFile()->getRealPath());
+                $this->remove($entity->getFile());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occured removing {$ex->getPath()}: {$ex->getMessage()}");
             }
