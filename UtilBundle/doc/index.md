@@ -1,7 +1,7 @@
-Nines Foo Bundle
+Nines Util Bundle
 =================
 
-The Nines Foo Bundle provides a framework for ...
+The Nines Util Bundle provides basic functionality for other bundles.
 
 Installation
 ------------
