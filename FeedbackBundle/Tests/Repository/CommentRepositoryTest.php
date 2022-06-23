@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\FeedbackBundle\Tests\Repository;
 
+use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Repository\CommentRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
@@ -22,6 +23,11 @@ class CommentRepositoryTest extends ServiceTestCase {
 
     public function testIndexQuery() : void {
         $this->assertCount(5, $this->repo->indexQuery()->execute());
+    }
+
+    public function testIndexQueryStatus() : void {
+        $status = $this->em->find(CommentStatus::class, 1);
+        $this->assertCount(1, $this->repo->indexQuery($status->getName())->execute());
     }
 
     public function testSearchQuery() : void {

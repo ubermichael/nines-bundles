@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Nines\FeedbackBundle\Tests\Services;
 
+use Exception;
 use Nines\BlogBundle\Entity\Page;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Services\CommentService;
@@ -31,6 +32,12 @@ class CommentServiceTest extends ServiceTestCase {
 
         $entity = $this->em->find(Page::class, 1);
         $comments = $this->service->findComments($entity);
+        $this->assertCount(0, $comments);
+    }
+
+    public function testFindCommentsException() : void {
+        $this->expectException(Exception::class);
+        $comments = $this->service->findComments([]);
         $this->assertCount(0, $comments);
     }
 

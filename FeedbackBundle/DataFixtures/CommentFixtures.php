@@ -32,7 +32,7 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setEmail('email_' . $i . '@example.com');
             $fixture->setFollowUp(0 === $i % 2);
             $fixture->setEntity(stdClass::class . ':' . $i);
-            $fixture->setContent("<p>This is paragraph {$i}</p>");
+            $fixture->setContent("This is paragraph {$i}");
             $fixture->setStatus($this->getReference('commentstatus.' . $i));
             $manager->persist($fixture);
             $this->setReference('comment.' . $i, $fixture);

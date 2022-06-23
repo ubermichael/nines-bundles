@@ -36,7 +36,6 @@ class CommentNoteTest extends ControllerTestCase {
         $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/comment_note/');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
     public function testAnonShow() : void {
@@ -100,17 +99,6 @@ class CommentNoteTest extends ControllerTestCase {
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         $this->assertSame(5, $responseCrawler->filter('table.table > tbody > tr')->count());
-    }
-
-    public function testAnonNew() : void {
-        $crawler = $this->client->request('GET', '/comment_note/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
-    }
-
-    public function testUserNew() : void {
-        $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/comment_note/new');
-        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() : void {

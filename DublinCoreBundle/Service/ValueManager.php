@@ -16,6 +16,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Exception;
 use Nines\DublinCoreBundle\Entity\Value;
 use Nines\DublinCoreBundle\Entity\ValueInterface;
 use Nines\DublinCoreBundle\Repository\ValueRepository;
@@ -46,10 +47,12 @@ class ValueManager implements EventSubscriber {
 
     /**
      * @param Collection<int,Value>|Value[] $values
+     *
+     * @throws Exception
      */
     public function setValues(AbstractEntity $entity, $values) : void {
         if ( ! $entity instanceof ValueInterface) {
-            return;
+            throw new Exception(get_class($entity) . ' does not implement ValueInterface.');
         }
         foreach ($this->findValues($entity) as $value) {
             $this->em->remove($value);

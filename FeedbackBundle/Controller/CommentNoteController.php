@@ -12,7 +12,6 @@ namespace Nines\FeedbackBundle\Controller;
 
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\FeedbackBundle\Entity\CommentNote;
-use Nines\FeedbackBundle\Form\CommentNoteType;
 use Nines\FeedbackBundle\Repository\CommentNoteRepository;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -58,30 +57,6 @@ class CommentNoteController extends AbstractController implements PaginatorAware
         return $this->render('@NinesFeedback/comment_note/search.html.twig', [
             'comment_notes' => $commentNotes,
             'q' => $q,
-        ]);
-    }
-
-    /**
-     * @Route("/new", name="nines_feedback_comment_note_new", methods={"GET", "POST"})
-     * @IsGranted("ROLE_FEEDBACK_ADMIN")
-     */
-    public function new(Request $request) : Response {
-        $commentNote = new CommentNote();
-        $form = $this->createForm(CommentNoteType::class, $commentNote);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($commentNote);
-            $entityManager->flush();
-            $this->addFlash('success', 'The new commentNote has been saved.');
-
-            return $this->redirectToRoute('comment_note_show', ['id' => $commentNote->getId()]);
-        }
-
-        return $this->render('@NinesFeedback/comment_note/new.html.twig', [
-            'comment_note' => $commentNote,
-            'form' => $form->createView(),
         ]);
     }
 

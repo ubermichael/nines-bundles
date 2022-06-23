@@ -25,13 +25,13 @@ class ImageTest extends ControllerTestCase {
 
     public function testUserIndex() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/audio/');
+        $crawler = $this->client->request('GET', '/image/');
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testAdminIndex() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/audio/');
+        $crawler = $this->client->request('GET', '/image/');
         $this->assertResponseIsSuccessful();
     }
 

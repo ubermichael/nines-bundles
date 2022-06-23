@@ -40,6 +40,21 @@ class ValueTraitTest extends ServiceTestCase {
         $this->assertCount(0, $this->entity->rawData());
     }
 
+    public function testRemoveValue() : void {
+        $elements = $this->em->getRepository(Element::class)->findAll();
+        $values = new ArrayCollection();
+        foreach ($elements as $element) {
+            $v = new Value();
+            $v->setElement($element);
+            $v->setData($element->getLabel());
+            $values->add($v);
+        }
+        $this->entity->rawData($values);
+        $this->entity->removeValue($values[0]);
+        $this->assertCount(4, $this->entity->getValues());
+        $this->assertCount(0, $this->entity->getValues('label-1'));
+    }
+
     protected function setUp() : void {
         parent::setUp();
         $this->entity = new class() implements ValueInterface {
