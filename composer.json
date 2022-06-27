@@ -37,7 +37,7 @@
         "nyholm/psr7": "^1.4",
         "sensio/framework-extra-bundle": "^5.1|^6.2",
         "solarium/solarium": "^6.0",
-        "soundasleep/html2text": "^1.1",
+        "soundasleep/html2text": "^2.0",
         "twig/string-extra": "^3.0"
     },
     "require-dev": {

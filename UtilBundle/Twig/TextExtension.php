@@ -12,6 +12,8 @@ namespace Nines\UtilBundle\Twig;
 
 use InvalidArgumentException;
 use ReflectionClass;
+use Soundasleep\Html2Text;
+use Soundasleep\Html2TextException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -29,6 +31,8 @@ class TextExtension extends AbstractExtension {
             new TwigFilter('short_name', [$this, 'shortName']),
             new TwigFilter('camel_title', [$this, 'camelTitle']),
             new TwigFilter('byte_size', [$this, 'byteSize']),
+            new TwigFilter('unescape', [$this, 'unescape']),
+            new TwigFilter('html2txt', [$this, 'html2txt']),
         ];
     }
 
@@ -77,5 +81,19 @@ class TextExtension extends AbstractExtension {
         $est = round($bytes / 1024 ** $exp, 1);
 
         return $est . $units[$exp];
+    }
+
+    public function unescape(string $value) : string {
+        return html_entity_decode($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * @throws Html2TextException
+     */
+    public function html2txt(string $value) : string {
+        $converted = Html2Text::convert($value);
+        $converted = htmlspecialchars($converted, ENT_NOQUOTES | ENT_XML1);
+        $converted = preg_replace("/\n\n+/", '&#10;&#10;', $converted);
+        return preg_replace('/\[[^\]]*\]\(([^\)]*)\)/', '$1', $converted);
     }
 }
