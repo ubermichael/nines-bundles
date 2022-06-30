@@ -30,6 +30,7 @@ abstract class TermRepository extends ServiceEntityRepository {
         $qb = $this->createQueryBuilder('v');
         $qb->where('v.label like :q');
         $qb->setParameter('q', '%' . $q . '%');
+        $qb->orderBy('v.label');
 
         return $qb->getQuery();
     }
