@@ -31,7 +31,7 @@
         "knplabs/knp-paginator-bundle": "^5.0",
         "minimalcode/search": "^1.0",
         "nyholm/psr7": "^1.4",
-        "sensio/framework-extra-bundle": "^5.1|^6.3",
+        "sensio/framework-extra-bundle": "^5.1|^6.2",
         "solarium/solarium": "^6.0",
         "twig/string-extra": "^3.0",
         "setasign/fpdf": "^1.8"
