@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -19,8 +19,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -33,28 +33,26 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/", name="nines_media_image_index", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
-    public function index(Request $request, ImageRepository $imageRepository) : array {
+    public function index(Request $request, ImageRepository $imageRepository) : Response {
         $query = $imageRepository->indexQuery();
         $pageSize = (int) $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
-        return [
+        return $this->render('@NinesMedia/image/index.html.twig', [
             'images' => $this->paginator->paginate($query, $page, $pageSize),
-        ];
+        ]);
     }
 
     /**
      * @Route("/search", name="nines_media_image_search", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
-     *
-     * @return array
      */
-    public function search(Request $request, ImageRepository $imageRepository) {
+    public function search(Request $request, ImageRepository $imageRepository) : Response {
         $q = $request->query->get('q');
         if ($q) {
             $query = $imageRepository->searchQuery($q);
@@ -63,55 +61,28 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
             $images = [];
         }
 
-        return [
+        return $this->render('@NinesMedia/image/search.html.twig', [
             'images' => $images,
             'q' => $q,
-        ];
-    }
-
-    /**
-     * @Route("/typeahead", name="nines_media_image_typeahead", methods={"GET"})
-     *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @return JsonResponse
-     */
-    public function typeahead(Request $request, ImageRepository $imageRepository) {
-        $q = $request->query->get('q');
-        if ( ! $q) {
-            return new JsonResponse([]);
-        }
-        $data = [];
-
-        foreach ($imageRepository->typeaheadQuery($q) as $result) {
-            $data[] = [
-                'id' => $result->getId(),
-                'text' => (string) $result,
-            ];
-        }
-
-        return new JsonResponse($data);
+        ]);
     }
 
     /**
      * @Route("/{id}", name="nines_media_image_show", methods={"GET"})
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
-     *
-     * @return array
      */
-    public function show(Image $image, ImageManager $manager) {
-        return [
+    public function show(Image $image, ImageManager $manager) : Response {
+        return $this->render('@NinesMedia/image/show.html.twig', [
             'image' => $image,
             'manager' => $manager,
-        ];
+        ]);
     }
 
     /**
      * @Route("/{id}/view", name="nines_media_image_view", methods={"GET"})
-     *
-     * @return BinaryFileResponse
      */
-    public function view(Image $image) {
+    public function view(Image $image) : BinaryFileResponse {
         if ( ! $image->getPublic() && ! $this->getUser()) {
             throw new AccessDeniedHttpException();
         }
@@ -121,10 +92,8 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
 
     /**
      * @Route("/{id}/thumb", name="nines_media_image_thumb", methods={"GET"})
-     *
-     * @return BinaryFileResponse
      */
-    public function thumbnail(Image $image) {
+    public function thumbnail(Image $image) : BinaryFileResponse {
         if ( ! $image->getPublic() && ! $this->getUser()) {
             throw new AccessDeniedHttpException();
         }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -15,51 +15,41 @@ use Symfony\Component\HttpFoundation\File\File;
 
 trait StoredFileTrait {
     /**
-     * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $description;
+    protected ?string $description = null;
 
     /**
-     * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $license;
+    protected ?string $license = null;
+
+    private ?File $file = null;
 
     /**
-     * @var File
-     */
-    private $file;
-
-    /**
-     * @var bool
      * @ORM\Column(type="boolean", nullable=false)
      */
-    private $public;
+    private bool $public = false;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=128, nullable=false)
      */
-    private $originalName;
+    private ?string $originalName = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=128, nullable=false)
      */
-    private $path;
+    private ?string $path = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=64, nullable=false)
      */
-    private $mimeType;
+    private ?string $mimeType = null;
 
     /**
-     * @var int
      * @ORM\Column(type="integer", nullable=false)
      */
-    private $fileSize;
+    private ?int $fileSize = null;
 
     public function __toString() : string {
         if ($this->file) {
@@ -75,36 +65,57 @@ trait StoredFileTrait {
         return '';
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getDescription() : ?string {
         return $this->description;
     }
 
-    public function setDescription(string $description) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setDescription(?string $description) : self {
         $this->description = $description;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getLicense() : ?string {
         return $this->license;
     }
 
-    public function setLicense(string $license) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setLicense(?string $license) : self {
         $this->license = $license;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getFile() : ?File {
         return $this->file;
     }
 
-    public function setFile(File $file) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setFile(?File $file) : self {
         $this->file = $file;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getExtension() : ?string {
         if ( ! $this->file) {
             return null;
@@ -113,51 +124,81 @@ trait StoredFileTrait {
         return $this->file->getExtension();
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getPublic() : ?bool {
         return $this->public;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function setPublic(bool $public) : self {
         $this->public = $public;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getOriginalName() : ?string {
         return $this->originalName;
     }
 
-    public function setOriginalName(string $originalName) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setOriginalName(?string $originalName) : self {
         $this->originalName = $originalName;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getPath() : ?string {
         return $this->path;
     }
 
-    public function setPath(string $path) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setPath(?string $path) : self {
         $this->path = $path;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getMimeType() : ?string {
         return $this->mimeType;
     }
 
-    public function setMimeType(string $mimeType) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setMimeType(?string $mimeType) : self {
         $this->mimeType = $mimeType;
 
         return $this;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getFileSize() : ?int {
         return $this->fileSize;
     }
 
-    public function setFileSize(int $fileSize) : self {
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setFileSize(?int $fileSize) : self {
         $this->fileSize = $fileSize;
 
         return $this;

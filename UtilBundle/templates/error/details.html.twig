@@ -1,0 +1,55 @@
+<dl class="dl-horizontal" id='error-details'>
+    <dt>Date</dt>
+    <dd>{{ date }}</dd>
+    <dt>IP</dt>
+    <dd>{{ ip }}</dd>
+    <dt>URL</dt>
+    <dd>{{ url }}</dd>
+    <dt>Referrer</dt>
+    <dd>{{ referrer|default('No referrer') }}</dd>
+    <dt>Class</dt>
+    <dd>{{ status }} - {{ class }}</dd>
+    <dt>Message</dt>
+    <dd>{{ message }}</dd>
+    <dt>Browser Info</dt>
+    <dd id='browser-info'></dd>
+</dl>
+
+<p class='clearfix'>
+    <button class="btn btn-default pull-right" id='copy-btn'>Copy Details</button>
+</p>
+
+{% if is_granted('ROLE_ADMIN') %}
+    <div>
+        <h3>Details</h3>
+        <ol>
+            {% for trace in backtrace %}
+                <li>
+                    {{ trace['file']|slice(trim) }}:{{ trace['line'] }} {% if trace['function'] %} in {{ trace['function'] }}(){% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endif %}
+
+{% if app.environment != 'test' %}
+<script type='application/javascript'>
+    function copyDetails(e) {
+        e.preventDefault();
+        let text = "";
+        let details = document.querySelectorAll("#error-details dd");
+        for(let d of details.values()) {
+            text += d.textContent + "\n";
+        }
+        navigator.clipboard.writeText(text).then(
+            () => document.querySelector("#copy-btn").innerText="Copied",
+            () => alert("Copy to clipboard failed. Please copy manually.")
+        );
+    }
+
+    $(document).ready(function(){
+        $("#browser-info").text(navigator.userAgent);
+        $("#copy-btn").on('click', (e) => copyDetails(e));
+    });
+</script>
+{% endif %}

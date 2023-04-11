@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\MakerBundle\Maker;
 
+use ReflectionException;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
@@ -28,6 +29,10 @@ class MakeEntity extends AbstractNinesMaker {
         return 'nines:make:entity';
     }
 
+    public static function getCommandDescription() : string {
+        return 'Generate a doctrine entity';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -40,6 +45,7 @@ class MakeEntity extends AbstractNinesMaker {
      * {@inheritdoc}
      *
      * @throws LoaderError
+     * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
      */

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -16,26 +16,14 @@ use ImagickException;
 use ImagickPixel;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\Pdf;
-use Psr\Log\LoggerInterface;
 
 /**
  * Description of Thumbnailer.
- *
- * @author mjoyce
  */
 class Thumbnailer {
-    private $width;
+    private ?int $width = null;
 
-    private $height;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(LoggerInterface $logger) {
-        $this->logger = $logger;
-    }
+    private ?int $height = null;
 
     /**
      * @throws ImagickException
@@ -70,19 +58,19 @@ class Thumbnailer {
         return $thumbname;
     }
 
-    public function setWidth($width) : void {
+    public function setWidth(int $width) : void {
         $this->width = $width;
     }
 
-    public function setHeight($height) : void {
+    public function setHeight(int $height) : void {
         $this->height = $height;
     }
 
     /**
      * @param Image|Pdf $item
      *
-     * @throws ImagickException
      * @throws Exception
+     * @throws ImagickException
      */
     public function thumbnail($item) : string {
         if ($item instanceof Image) {

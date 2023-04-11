@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -17,32 +17,32 @@ use Doctrine\Persistence\ObjectManager;
 use Nines\FeedbackBundle\Entity\CommentNote;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 
-/**
- * Load some users for unit tests.
- */
 class CommentNoteFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
-    /**
-     * {@inheritdoc}
-     */
     public static function getGroups() : array {
-        return [
-            'nines_feedback',
-        ];
+        return ['dev', 'test'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager) : void {
+        for ($i = 1; $i <= 5; $i++) {
+            $fixture = new CommentNote();
+            $fixture->setContent("<p>This is paragraph {$i}</p>");
+            $fixture->setUser($this->getReference('user.user'));
+            $fixture->setComment($this->getReference('comment.' . $i));
+            $manager->persist($fixture);
+            $this->setReference('commentnote.' . $i, $fixture);
+        }
+        $manager->flush();
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return array<string>
      */
-    public function load(ObjectManager $em) : void {
-        $note = new CommentNote();
-        $note->setComment($this->getReference('comment.1'));
-        $note->setContent('This is a note.');
-        $note->setUser($this->getReference('user.user'));
-        $em->persist($note);
-        $em->flush();
-    }
-
-    public function getDependencies() {
+    public function getDependencies() : array {
         return [
             UserFixtures::class,
             CommentFixtures::class,

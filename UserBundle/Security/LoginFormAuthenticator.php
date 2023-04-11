@@ -3,17 +3,18 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\UserBundle\Security;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Nines\UserBundle\Entity\User;
+use Nines\UserBundle\Services\UserManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -31,31 +32,63 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface {
     use TargetPathTrait;
 
-    private $entityManager;
+    private ?UrlGeneratorInterface $urlGenerator = null;
 
-    private $urlGenerator;
+    private ?CsrfTokenManagerInterface $csrfTokenManager = null;
 
-    private $csrfTokenManager;
+    private ?UserPasswordEncoderInterface $passwordEncoder = null;
 
-    private $passwordEncoder;
+    private ?UserManager $userManager = null;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder) {
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
-    }
-
-    protected function getLoginUrl() {
+    protected function getLoginUrl() : string {
         return $this->urlGenerator->generate('nines_user_security_login');
     }
 
-    public function supports(Request $request) {
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setUserManager(UserManager $userManager) : void {
+        $this->userManager = $userManager;
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setUrlGenerator(UrlGeneratorInterface $urlGenerator) : void {
+        $this->urlGenerator = $urlGenerator;
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setCsrfTokenManager(CsrfTokenManagerInterface $csrfTokenManager) : void {
+        $this->csrfTokenManager = $csrfTokenManager;
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setPasswordEncoder(UserPasswordEncoderInterface $passwordEncoder) : void {
+        $this->passwordEncoder = $passwordEncoder;
+    }
+
+    public function supports(Request $request) : bool {
         return 'nines_user_security_login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
-    public function getCredentials(Request $request) {
+    /**
+     * @return array<string,mixed>
+     */
+    public function getCredentials(Request $request) : array {
         $credentials = [
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
@@ -63,19 +96,24 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
-            $credentials['email']
+            $credentials['email'],
         );
 
         return $credentials;
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider) {
+    /**
+     * @phpstan-param array<string,mixed> $credentials
+     *
+     * @param mixed $credentials
+     */
+    public function getUser($credentials, UserProviderInterface $userProvider) : User {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if ( ! $this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+        $user = $this->userManager->find($credentials['email']);
 
         if ( ! $user) {
             // fail authentication with a custom error
@@ -85,7 +123,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         return $user;
     }
 
-    public function checkCredentials($credentials, UserInterface $user) {
+    public function checkCredentials($credentials, UserInterface $user) : bool {
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
@@ -95,14 +133,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      * @param mixed $credentials
      */
     public function getPassword($credentials) : ?string {
-        return $credentials['password'];
+        return $credentials['password'] ?? null;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) {
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey) : Response {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('homepage'));
+        return new RedirectResponse($this->urlGenerator->generate($this->userManager->getAfterLogin()));
     }
 }

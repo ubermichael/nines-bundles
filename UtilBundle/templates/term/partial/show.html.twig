@@ -1,0 +1,21 @@
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Label</th>
+                <td>{{ term.label }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ term.description|raw }}</td>
+            </tr>
+            {% block callback %}{% endblock %}
+            <tr>
+                <th>Created</th>
+                <td>{% if term.created %}{{ term.created|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if term.updated %}{{ term.updated|date }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>

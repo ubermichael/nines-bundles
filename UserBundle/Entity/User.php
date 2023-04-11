@@ -3,103 +3,84 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\UserBundle\Entity;
 
-use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
+use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="Nines\UserBundle\Repository\UserRepository")
  * @ORM\Table(name="nines_user")
- * @ORM\HasLifecycleCallbacks
  */
-class User implements UserInterface {
+class User extends AbstractEntity implements UserInterface {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @var bool
      * @ORM\Column(type="boolean")
      */
-    private $active;
+    private ?bool $active = null;
 
-    /** @var string
+    /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email
      */
-    private $email;
+    private ?string $email = null;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private ?string $password = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $resetToken;
+    private ?string $resetToken = null;
 
     /**
-     * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
-    private $resetExpiry;
+    private ?DateTimeInterface $resetExpiry = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=64)
+     * @Assert\NotBlank
      */
-    private $fullname;
+    private ?string $fullname = null;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=64)
+     * @Assert\NotBlank
      */
-    private $affiliation;
+    private ?string $affiliation = null;
 
     /**
-     * @var array
      * @ORM\Column(type="array")
+     *
+     * @var array<string>
      */
-    private $roles = [];
+    private array $roles = [];
 
     /**
-     * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
-    private $login;
-
-    /**
-     * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable", nullable=false)
-     */
-    private $created;
-
-    /**
-     * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable", nullable=false)
-     */
-    private $updated;
+    private ?DateTimeInterface $login;
 
     public function __construct() {
+        parent::__construct();
         $this->active = false;
+        $this->login = null;
         $this->roles = ['ROLE_USER'];
     }
 
     public function __toString() : string {
-        return $this->email;
+        return $this->fullname;
     }
 
     /**
@@ -113,11 +94,20 @@ class User implements UserInterface {
 
     /**
      * @see UserInterface
+     *
+     * @return array<string>
      */
     public function getRoles() : array {
+        if ( ! in_array('ROLE_USER', $this->roles, true)) {
+            $this->roles[] = 'ROLE_USER';
+        }
+
         return $this->roles;
     }
 
+    /**
+     * @param array<string> $roles
+     */
     public function setRoles(array $roles) : self {
         $this->roles = $roles;
         if ( ! in_array('ROLE_USER', $roles, true)) {
@@ -127,7 +117,7 @@ class User implements UserInterface {
         return $this;
     }
 
-    public function addRole($role) : self {
+    public function addRole(string $role) : self {
         if ( ! in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
         }
@@ -135,7 +125,7 @@ class User implements UserInterface {
         return $this;
     }
 
-    public function removeRole($role) : self {
+    public function removeRole(string $role) : self {
         if ('ROLE_USER' !== $role && in_array($role, $this->roles, true)) {
             array_splice($this->roles, array_search($role, $this->roles, true), 1);
         }
@@ -143,7 +133,7 @@ class User implements UserInterface {
         return $this;
     }
 
-    public function hasRole($role) : bool {
+    public function hasRole(string $role) : bool {
         return in_array($role, $this->roles, true);
     }
 
@@ -163,8 +153,8 @@ class User implements UserInterface {
     /**
      * @see UserInterface
      */
-    public function getSalt() : void {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+    public function getSalt() : ?string {
+        return null;
     }
 
     /**
@@ -173,10 +163,6 @@ class User implements UserInterface {
     public function eraseCredentials() : void {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    public function getId() : ?int {
-        return $this->id;
     }
 
     public function isActive() : ?bool {
@@ -229,59 +215,22 @@ class User implements UserInterface {
         return $this;
     }
 
-    public function getResetExpiry() : ?DateTimeImmutable {
+    public function getResetExpiry() : ?DateTimeInterface {
         return $this->resetExpiry;
     }
 
-    public function setResetExpiry(?DateTimeImmutable $resetExpiry) : self {
+    public function setResetExpiry(?DateTimeInterface $resetExpiry) : self {
         $this->resetExpiry = $resetExpiry;
 
         return $this;
     }
 
-    public function getLogin() : ?DateTimeImmutable {
+    public function getLogin() : ?DateTimeInterface {
         return $this->login;
     }
 
-    public function setLogin(?DateTimeImmutable $login) : self {
+    public function setLogin(?DateTimeInterface $login) : self {
         $this->login = $login;
-
-        return $this;
-    }
-
-    public function getCreated() : ?DateTimeImmutable {
-        return $this->created;
-    }
-
-    /**
-     * @ORM\PrePersist
-     *
-     * @throws Exception
-     *
-     * @return User
-     */
-    public function setCreated() : self {
-        if ( ! $this->created) {
-            $this->created = new DateTimeImmutable();
-            $this->updated = new DateTimeImmutable();
-        }
-
-        return $this;
-    }
-
-    public function getUpdated() : ?DateTimeImmutable {
-        return $this->updated;
-    }
-
-    /**
-     * @ORM\PreUpdate
-     *
-     * @throws Exception
-     *
-     * @return User
-     */
-    public function setUpdated() : self {
-        $this->updated = new DateTimeImmutable();
 
         return $this;
     }

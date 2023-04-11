@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -22,7 +22,7 @@ use Twig\Environment;
 class ErrorController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    public function show(Request $request, FlattenException $exception, Environment $twig, SerializerInterface $serializer, ?DebugLoggerInterface $dbgLogger = null) {
+    public function show(Request $request, FlattenException $exception, Environment $twig, SerializerInterface $serializer, ?DebugLoggerInterface $dbgLogger = null) : Response {
         $format = $request->getRequestFormat();
         $status = $exception->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR;
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,9 +12,8 @@ namespace Nines\SolrBundle\Mapper;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Annotations\PsrCachedReader;
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Annotation;
 use Exception;
@@ -31,43 +30,22 @@ use Nines\SolrBundle\Metadata\FieldMetadata;
 use Nines\SolrBundle\Metadata\IdMetadata;
 use ReflectionClass;
 use ReflectionProperty;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 /**
  * Construct the EntityMapper by parsing annotations on entities.
  */
 class EntityMapperFactory {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    private ?EntityManagerInterface $em = null;
 
-    /**
-     * @var string
-     */
-    private $env;
+    private ?string $env = null;
 
-    /**
-     * @var string
-     */
-    private $cacheDir;
+    private ?SolrLogger $logger = null;
 
-    /**
-     * @var SolrLogger
-     */
-    private $logger;
+    private static ?EntityMapper $mapper = null;
 
-    /**
-     * @var EntityMapper
-     */
-    private static $mapper;
-
-    /**
-     * @param string $env
-     * @param string $cacheDir
-     */
-    public function __construct($env, $cacheDir) {
+    public function __construct(string $env) {
         $this->env = $env;
-        $this->cacheDir = $cacheDir;
     }
 
     /**
@@ -82,15 +60,9 @@ class EntityMapperFactory {
         $mapper->setSolrLogger($logger);
 
         AnnotationRegistry::registerLoader('class_exists');
-        $reader = new CachedReader(
-            new AnnotationReader(),
-            new PhpFileCache($this->cacheDir . '/solr_annotations'),
-            ('prod' !== $this->env)
-        );
-
+        $cache = new PhpFilesAdapter('doctrine_queries');
+        $reader = new PsrCachedReader(new AnnotationReader(), $cache, ('prod' !== $this->env));
         $this->em->getMetadataFactory()->getAllMetadata();
-
-        $solrNames = [];
 
         foreach ($this->em->getMetadataFactory()->getAllMetadata() as $meta) {
             $reflectionClass = $meta->getReflectionClass();
@@ -103,6 +75,10 @@ class EntityMapperFactory {
         return $mapper;
     }
 
+    /**
+     * @throws Exception
+     * @throws MappingException
+     */
     public function getEntityMetadata(ReflectionClass $reflectionClass, Reader $reader) : ?EntityMetadata {
         $document = $reader->getClassAnnotation($reflectionClass, Document::class);
         if ( ! $document) {
@@ -114,11 +90,12 @@ class EntityMapperFactory {
         $entityMeta->setClass($reflectionClass->getName());
         $entityMeta->addFixed('type_s', $reflectionClass->getShortName());
 
+        /** @var Id $idAnnotation */
         /** @var ReflectionProperty $idProperty */
-        /** @var Annotation $idAnnotation */
         list($idAnnotation, $idProperty) = $this->getIdProperty($reader, $properties);
-        $idMeta = $this->analyzeIdField($idProperty, $idAnnotation);
+        $idMeta = $this->analyzeIdField($idAnnotation, $idProperty);
         $entityMeta->setId($idMeta);
+        $solrNames = [];
 
         foreach ($properties as $property) {
             $propertyAnnotation = $reader->getPropertyAnnotation($property, Field::class);
@@ -152,14 +129,13 @@ class EntityMapperFactory {
      * that defined the ID and the ReflectionProperty that the annotation is
      * defined on.
      *
-     * @param AnnotationReader $reader
      * @param ReflectionProperty[] $reflectionProperties
      *
      * @throws Exception if two or more IDs are defined on an entity
      *
-     * @return array of Id, ReflectionProperty
+     * @return array<int,mixed>
      */
-    public function getIdProperty($reader, $reflectionProperties) {
+    public function getIdProperty(Reader $reader, array $reflectionProperties) : array {
         $idProperty = null;
         $idAnnotation = null;
 
@@ -185,7 +161,7 @@ class EntityMapperFactory {
      *
      * @return ReflectionProperty[]
      */
-    public function getProperties(ReflectionClass $rc) {
+    public function getProperties(ReflectionClass $rc) : array {
         $properties = [];
         do {
             foreach ($rc->getProperties() as $property) {
@@ -196,7 +172,7 @@ class EntityMapperFactory {
         return $properties;
     }
 
-    public function analyzeIdField(ReflectionProperty $property, Id $id) {
+    public function analyzeIdField(Id $id, ReflectionProperty $property) : IdMetadata {
         $idMeta = new IdMetadata();
         $idMeta->setName($property->getName());
         $idMeta->setGetter($id->getter ?? 'get' . ucfirst($property->getName()));
@@ -204,11 +180,14 @@ class EntityMapperFactory {
         return $idMeta;
     }
 
-    public function analyzeField(ReflectionProperty $property, Field $field) {
-        $suffix = Field::TYPE_MAP[$field->type];
-        if ( ! $suffix) {
+    /**
+     * @throws MappingException
+     */
+    public function analyzeField(ReflectionProperty $property, Field $field) : FieldMetadata {
+        if ( ! array_key_exists($field->type, Field::TYPE_MAP)) {
             throw new MappingException('Unknown solr type ' . $field->type);
         }
+        $suffix = Field::TYPE_MAP[$field->type];
         if ($field->name) {
             $solrName = $field->name;
         } else {
@@ -229,7 +208,7 @@ class EntityMapperFactory {
         return $fieldMeta;
     }
 
-    public function analyzeComputedField(ComputedField $computedField) {
+    public function analyzeComputedField(ComputedField $computedField) : FieldMetadata {
         $solrName = $computedField->name . Field::TYPE_MAP[$computedField->type];
         $fieldMeta = new FieldMetadata();
         $fieldMeta->setSolrName($solrName);
@@ -240,11 +219,14 @@ class EntityMapperFactory {
         return $fieldMeta;
     }
 
-    public function analyzeCopyField(CopyField $copyField, $solrNames) {
+    /**
+     * @param array<string,string> $solrNames
+     */
+    public function analyzeCopyField(CopyField $copyField, array $solrNames) : CopyFieldMetadata {
         $fieldMeta = new CopyFieldMetadata();
         $fieldMeta->setName($copyField->to);
         $solrName = $copyField->to . Field::TYPE_MAP[$copyField->type];
-        $from = array_map(fn ($s) => $solrNames[$s], $copyField->from);
+        $from = array_map(fn($s) => $solrNames[$s], $copyField->from);
         $fieldMeta->setFrom($from);
         $fieldMeta->setSolrName($solrName);
 
@@ -266,6 +248,8 @@ class EntityMapperFactory {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
@@ -273,6 +257,8 @@ class EntityMapperFactory {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setSolrLogger(SolrLogger $logger) : void {
         $this->logger = $logger;

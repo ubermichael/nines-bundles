@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -17,10 +17,8 @@ use Nines\UtilBundle\Entity\ContentEntityInterface;
 use Nines\UtilBundle\Entity\ContentExcerptTrait;
 
 /**
- * Page.
- *
- * @ORM\Table(name="blog_page", indexes={
- *     @ORM\Index(name="blog_page_content", columns={"title", "searchable"}, flags={"fulltext"})
+ * @ORM\Table(name="nines_blog_page", indexes={
+ *     @ORM\Index(name="blog_page_ft", columns={"title", "searchable"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PageRepository")
  * @ORM\HasLifecycleCallbacks
@@ -29,78 +27,57 @@ class Page extends AbstractEntity implements ContentEntityInterface {
     use ContentExcerptTrait;
 
     /**
-     * @var bool
      * @ORM\Column(type="boolean", nullable=false)
      */
-    private $inMenu;
+    private bool $inMenu = false;
 
     /**
-     * Heavier weighted pages will sort to the bottom.
-     *
-     * @var int
      * @ORM\Column(name="weight", type="integer", nullable=false)
      */
-    private $weight;
+    private int $weight = 0;
 
     /**
-     * True if the page is public. Defaults to false.
-     *
-     * @var bool
-     * @ORM\Column(name="public", type="boolean")
+     * @ORM\Column(name="public", type="boolean", nullable=false)
      */
-    private $public;
+    private bool $public = false;
 
     /**
-     * True if this is the home page. There can only be one.
-     *
-     * @var bool
-     * @ORM\Column(name="homepage", type="boolean", options={"default": 0})
+     * @ORM\Column(name="homepage", type="boolean", options={"default" = 0})
      */
-    private $homepage;
+    private bool $homepage = false;
 
     /**
-     * @var bool
      * @ORM\Column(name="include_comments", type="boolean", nullable=false)
      */
-    private $includeComments;
+    private bool $includeComments = false;
 
     /**
      * Blog post title.
      *
-     * @var string
-     *
      * @ORM\Column(name="title", type="string", nullable=false)
      */
-    private $title;
+    private ?string $title = null;
 
     /**
      * Searchable version of the content, with the tags stripped out.
      *
-     * @var string
-     *
      * @ORM\Column(name="searchable", type="text", nullable=false)
      */
-    private $searchable;
+    private ?string $searchable = null;
 
     /**
      * User that created the post.
      *
-     * @var User
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private ?User $user = null;
 
     /**
      * Build a page.
      */
     public function __construct() {
         parent::__construct();
-        $this->weight = 0;
-        $this->public = false;
-        $this->homepage = false;
-        $this->includeComments = false;
-        $this->inMenu = true;
     }
 
     public function __toString() : string {
@@ -108,163 +85,132 @@ class Page extends AbstractEntity implements ContentEntityInterface {
     }
 
     /**
-     * Set public.
-     *
-     * @param bool $public
-     *
-     * @return Page
+     * @codeCoverageIgnore
      */
-    public function setPublic($public) {
-        $this->public = $public;
+    public function getInMenu() : ?bool {
+        return $this->inMenu;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setInMenu(bool $inMenu) : self {
+        $this->inMenu = $inMenu;
 
         return $this;
     }
 
     /**
-     * Get public.
-     *
-     * @return bool
+     * @codeCoverageIgnore
      */
-    public function getPublic() {
-        return $this->public;
+    public function getWeight() : ?int {
+        return $this->weight;
     }
 
     /**
-     * Set homepage.
-     *
-     * @param bool $homepage
-     *
-     * @return Page
+     * @codeCoverageIgnore
      */
-    public function setHomepage($homepage) {
-        $this->homepage = $homepage;
-
-        return $this;
-    }
-
-    /**
-     * Get homepage.
-     *
-     * @return bool
-     */
-    public function getHomepage() {
-        return $this->homepage;
-    }
-
-    /**
-     * Set title.
-     *
-     * @param string $title
-     *
-     * @return Page
-     */
-    public function setTitle($title) {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * Get title.
-     *
-     * @return string
-     */
-    public function getTitle() {
-        return $this->title;
-    }
-
-    /**
-     * Set searchable.
-     *
-     * @param string $searchable
-     *
-     * @return Page
-     */
-    public function setSearchable($searchable) {
-        $this->searchable = $searchable;
-
-        return $this;
-    }
-
-    /**
-     * Get searchable.
-     *
-     * @return string
-     */
-    public function getSearchable() {
-        return $this->searchable;
-    }
-
-    /**
-     * Set user.
-     *
-     * @return Page
-     */
-    public function setUser(User $user) {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user.
-     *
-     * @return User
-     */
-    public function getUser() {
-        return $this->user;
-    }
-
-    /**
-     * Set weight.
-     *
-     * @param int $weight
-     *
-     * @return Page
-     */
-    public function setWeight($weight) {
+    public function setWeight(int $weight) : self {
         $this->weight = $weight;
 
         return $this;
     }
 
     /**
-     * Get weight.
-     *
-     * @return int
+     * @codeCoverageIgnore
      */
-    public function getWeight() {
-        return $this->weight;
+    public function getPublic() : ?bool {
+        return $this->public;
     }
 
     /**
-     * Set includeComments.
-     *
-     * @param bool $includeComments
-     *
-     * @return Page
+     * @codeCoverageIgnore
      */
-    public function setIncludeComments($includeComments) {
+    public function setPublic(bool $public) : self {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getHomepage() : ?bool {
+        return $this->homepage;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setHomepage(bool $homepage) : self {
+        $this->homepage = $homepage;
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getIncludeComments() : ?bool {
+        return $this->includeComments;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setIncludeComments(bool $includeComments) : self {
         $this->includeComments = $includeComments;
 
         return $this;
     }
 
     /**
-     * Get includeComments.
-     *
-     * @return bool
+     * @codeCoverageIgnore
      */
-    public function getIncludeComments() {
-        return $this->includeComments;
+    public function getTitle() : ?string {
+        return $this->title;
     }
 
-    public function getInMenu() : ?bool {
-        return $this->inMenu;
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setTitle(string $title) : self {
+        $this->title = $title;
+
+        return $this;
     }
 
-    public function setInMenu(bool $inMenu) : self {
-        $this->inMenu = $inMenu;
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getSearchable() : ?string {
+        return $this->searchable;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setSearchable() : self {
+        if ($this->content) {
+            $this->searchable = strip_tags($this->content);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getUser() : ?User {
+        return $this->user;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setUser(?User $user) : self {
+        $this->user = $user;
 
         return $this;
     }

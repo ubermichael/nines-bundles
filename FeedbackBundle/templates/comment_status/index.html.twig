@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment Status List{% endblock %}
+
+{% block pageheader %}
+    <h1>Comment Status List</h1>
+    <p class="count">
+        Displaying {{ comment_statuses|length }} comment_statuses of {{ comment_statuses.getTotalItemCount }} total.
+    </p>
+{% endblock %}
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_FEEDBACK_ADMIN') %}
+                <a href="{{ path('nines_feedback_comment_status_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% embed '@NinesUtil/term/partial/index.html.twig' with {
+        'terms': comment_statuses,
+        'path': 'nines_feedback_comment_status_show',
+    } %}
+    {% endembed %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(comment_statuses) }}
+    </div>
+
+{% endblock %}

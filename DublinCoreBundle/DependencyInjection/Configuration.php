@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,12 +20,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface {
     /**
-     * {@inheritdoc}
+     * Generates the configuration tree builder.
      */
-    public function getConfigTreeBuilder() {
+    public function getConfigTreeBuilder() : TreeBuilder {
         return new TreeBuilder('nines_dublin_core');
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
     }
 }

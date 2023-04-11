@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+    {% block title %}New Comment Status {% endblock %}
+
+    {% block body %}
+        <h1>New Comment Status</h1>
+
+        {% embed '@NinesFeedback/comment_status/partial/form.html.twig' %}
+        {% endembed %}
+
+    {% endblock %}
+
+    {% block javascripts %}
+        {% include '@NinesEditor/editor/widget.html.twig' %}
+    {% endblock %}

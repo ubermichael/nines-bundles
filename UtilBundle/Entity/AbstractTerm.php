@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Nines\UtilBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Nines\SolrBundle\Annotation as Solr;
 
 /**
  * An abstract term has a computer friendly name, a human readable label,
@@ -33,30 +33,26 @@ abstract class AbstractTerm extends AbstractEntity {
     /**
      * Name of the term.
      *
-     * @ORM\Column(type="string", length=120)
-     *
-     * @var string
-     * @Groups({"shallow"})
+     * @ORM\Column(type="string", length=191)
+     * @Solr\Field(type="string")
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * Human readable term label.
      *
-     * @var string
-     * @ORM\Column(type="string", length=120)
-     * @Groups({"shallow"})
+     * @ORM\Column(type="string", length=200)
+     * @Solr\Field(type="string")
      */
-    private $label;
+    private ?string $label = null;
 
     /**
      * Description of the term.
      *
-     * @var string
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"shallow"})
+     * @Solr\Field(type="text")
      */
-    private $description;
+    private ?string $description = null;
 
     public function __construct() {
         parent::__construct();
@@ -72,11 +68,9 @@ abstract class AbstractTerm extends AbstractEntity {
     /**
      * Set name.
      *
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name) : self {
+    public function setName(string $name) : self {
         $this->name = $name;
 
         return $this;
@@ -94,11 +88,9 @@ abstract class AbstractTerm extends AbstractEntity {
     /**
      * Set label.
      *
-     * @param string $label
-     *
      * @return $this
      */
-    public function setLabel($label) : self {
+    public function setLabel(string $label) : self {
         $this->label = $label;
 
         return $this;
@@ -116,11 +108,9 @@ abstract class AbstractTerm extends AbstractEntity {
     /**
      * Set description.
      *
-     * @param string $description
-     *
      * @return $this
      */
-    public function setDescription($description) : self {
+    public function setDescription(string $description) : self {
         $this->description = $description;
 
         return $this;

@@ -3,183 +3,128 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\BlogBundle\Menu;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Nines\BlogBundle\Repository\PageRepository;
+use Nines\BlogBundle\Repository\PostRepository;
+use Nines\BlogBundle\Repository\PostStatusRepository;
+use Nines\UtilBundle\Menu\AbstractBuilder;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class to build some menus for navigation.
  */
-class Builder implements ContainerAwareInterface {
+class Builder extends AbstractBuilder {
     use ContainerAwareTrait;
 
-    /**
-     * @var FactoryInterface
-     */
-    private $factory;
+    private ?PostStatusRepository $postStatusRepository = null;
+
+    private ?PostRepository $postRepository = null;
+
+    private ?PageRepository $pageRepository = null;
 
     /**
-     * @var AuthorizationCheckerInterface
+     * @param array<string,string> $options
      */
-    private $authChecker;
+    public function postMenu(array $options) : ItemInterface {
+        $menu = $this->dropdown($options['title'] ?? 'Announcements');
 
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
+        $public = $this->postStatusRepository->findBy(['public' => true]);
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, EntityManagerInterface $em) {
-        $this->factory = $factory;
-        $this->authChecker = $authChecker;
-        $this->tokenStorage = $tokenStorage;
-        $this->em = $em;
-    }
-
-    private function hasRole($role) {
-        if ( ! $this->tokenStorage->getToken()) {
-            return false;
-        }
-
-        return $this->authChecker->isGranted($role);
-    }
-
-    /**
-     * Build a menu for blog posts.
-     *
-     * @return ItemInterface
-     */
-    public function postNavMenu(array $options) {
-        $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttributes([
-            'class' => 'nav navbar-nav',
-        ]);
-        $menu->setAttribute('dropdown', true);
-
-        $status = $this->em->getRepository('NinesBlogBundle:PostStatus')->findOneBy([
-            'public' => true,
-        ]);
-        $posts = $this->em->getRepository('NinesBlogBundle:Post')->findBy(
-            ['status' => $status],
-            ['id' => 'DESC']
+        // @TODO turn this into menuQuery() or something.
+        $posts = $this->postRepository->findBy(
+            ['status' => $public],
+            ['id' => 'DESC'],
+            2,
         );
-        $title = $options['title'] ?? 'Announcements';
-
-        $menu->addChild('announcements', [
-            'uri' => '#',
-            'label' => $title,
-        ]);
-        $menu['announcements']->setAttribute('dropdown', true);
-        $menu['announcements']->setLinkAttribute('class', 'dropdown-toggle');
-        $menu['announcements']->setLinkAttribute('data-toggle', 'dropdown');
-        $menu['announcements']->setChildrenAttribute('class', 'dropdown-menu');
-
         foreach ($posts as $post) {
-            $menu['announcements']->addChild($post->getTitle(), [
-                'route' => 'post_show',
+            $menu->addChild($post->getTitle(), [
+                'route' => 'nines_blog_post_show',
                 'routeParameters' => [
                     'id' => $post->getId(),
                 ],
             ]);
         }
-        $menu['announcements']->addChild('divider', [
-            'label' => '',
-        ]);
-        $menu['announcements']['divider']->setAttributes([
-            'role' => 'separator',
-            'class' => 'divider',
-        ]);
+        $this->addDivider($menu);
 
-        $menu['announcements']->addChild('All Announcements', [
+        $menu->addChild('All Announcements', [
             'route' => 'nines_blog_post_index',
         ]);
 
         if ($this->hasRole('ROLE_BLOG_ADMIN')) {
-            $menu['announcements']->addChild('divider', [
-                'label' => '',
-            ]);
-            $menu['announcements']['divider']->setAttributes([
-                'role' => 'separator',
-                'class' => 'divider',
-            ]);
+            $this->addDivider($menu, 'divider2');
 
-            $menu['announcements']->addChild('nines_blog_post_category', [
-                'label' => 'Post Categories',
+            $menu->addChild('Post Categories', [
                 'route' => 'nines_blog_post_category_index',
             ]);
-            $menu['announcements']->addChild('nines_blog_post_status', [
-                'label' => 'Post Statuses',
+            $menu->addChild('Post Statuses', [
                 'route' => 'nines_blog_post_status_index',
             ]);
         }
 
-        return $menu;
+        return $menu->getParent();
     }
 
     /**
-     * Build a menu for blog pages.
-     *
-     * @return ItemInterface
+     * @param array<string,string> $options
      */
-    public function pageNavMenu(array $options) {
-        $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttributes([
-            'class' => 'nav navbar-nav',
-        ]);
-        $menu->setAttribute('dropdown', true);
-        $pages = $this->em->getRepository('NinesBlogBundle:Page')->findBy(
+    public function pageMenu(array $options) : ItemInterface {
+        $menu = $this->dropdown($options['title'] ?? 'About');
+
+        // @TODO turn this into menuQuery().
+        $pages = $this->pageRepository->findBy(
             ['public' => true, 'homepage' => false, 'inMenu' => true],
-            ['weight' => 'ASC', 'title' => 'ASC']
+            ['weight' => 'ASC', 'title' => 'ASC'],
         );
-
-        $title = $options['title'] ?? 'About';
-        $about = $menu->addChild('about', [
-            'uri' => '#',
-            'label' => $title,
-        ]);
-        $about->setAttribute('dropdown', true);
-        $about->setLinkAttribute('class', 'dropdown-toggle');
-        $about->setLinkAttribute('data-toggle', 'dropdown');
-        $about->setChildrenAttribute('class', 'dropdown-menu');
-
         foreach ($pages as $page) {
-            $about->addChild($page->getTitle(), [
+            $menu->addChild($page->getTitle(), [
                 'route' => 'nines_blog_page_show',
                 'routeParameters' => [
                     'id' => $page->getId(),
                 ],
             ]);
         }
-        if ($this->hasRole('ROLE_BLOG_ADMIN')) {
-            $divider = $about->addChild('divider', [
-                'label' => '',
-            ]);
-            $divider->setAttributes([
-                'role' => 'separator',
-                'class' => 'divider',
-            ]);
 
-            $about->addChild('nines_blog_page_admin', [
-                'label' => 'All Pages',
+        if ($this->hasRole('ROLE_BLOG_ADMIN')) {
+            $this->addDivider($menu);
+            $menu->addChild('All Pages', [
                 'route' => 'nines_blog_page_index',
             ]);
         }
 
-        return $menu;
+        return $menu->getParent();
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setPostStatusRepository(PostStatusRepository $postStatusRepository) : void {
+        $this->postStatusRepository = $postStatusRepository;
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setPostRepository(PostRepository $postRepository) : void {
+        $this->postRepository = $postRepository;
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setPageRepository(PageRepository $pageRepository) : void {
+        $this->pageRepository = $pageRepository;
     }
 }

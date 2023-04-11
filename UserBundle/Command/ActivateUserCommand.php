@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -19,9 +19,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class ActivateUserCommand extends AbstractUserCommand {
     protected static $defaultName = 'nines:user:activate';
 
+    /**
+     * @return array<int,mixed>
+     */
     protected function getArgs() : array {
         return [
-            ['name' => 'email', 'desc' => 'Email address for the new user account', 'question' => 'Email address: ', 'valid' => [new NotBlank(), new Email()]],
+            ['name' => 'email', 'desc' => 'Email address for the account', 'question' => 'Email address: ', 'valid' => [new NotBlank(), new Email()]],
         ];
     }
 
@@ -32,6 +35,7 @@ class ActivateUserCommand extends AbstractUserCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
         $email = $input->getArgument('email');
+        /** @var ?User $user */
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if ( ! $user) {

@@ -1,0 +1,22 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Nines\BlogBundle\:
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Migrations,Resources,Tests}'
+
+    Nines\BlogBundle\Controller\:
+        resource: '../Controller/*'
+        public: true
+        tags:
+            - 'controller.service_arguments'
+            - 'knp_paginator.injectable'
+
+    Nines\BlogBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: postMenu, alias: nines_blog_posts}
+            - { name: knp_menu.menu_builder, method: pageMenu, alias: nines_blog_pages}

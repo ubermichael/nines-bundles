@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -16,27 +16,33 @@ use Doctrine\Persistence\ManagerRegistry;
 use Nines\FeedbackBundle\Entity\Comment;
 
 /**
- * Comment Repository.
+ * @method null|Comment find($id, $lockMode = null, $lockVersion = null)
+ * @method Comment[] findAll()
+ * @method Comment[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method null|Comment findOneBy(array $criteria, array $orderBy = null)
+ * @phpstan-extends ServiceEntityRepository<Comment>
  */
 class CommentRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Comment::class);
     }
 
-    /**
-     * Prepare a full-text search query and return it.
-     *
-     * @param string $q
-     *
-     * @return Query
-     *
-     * @todo Add a $private parameter to include private/unpublished comments.
-     */
-    public function fulltextQuery($q) {
-        $qb = $this->createQueryBuilder('e');
-        $qb->addSelect("MATCH_AGAINST (e.fullname, e.content, :q 'IN BOOLEAN MODE') as score");
-        $qb->add('where', "MATCH_AGAINST (e.fullname, e.content, :q 'IN BOOLEAN MODE') > 0.5");
-        $qb->orderBy('score', 'desc');
+    public function indexQuery(?string $status = null) : Query {
+        $qb = $this->createQueryBuilder('comment');
+        if ($status) {
+            $qb->innerJoin('comment.status', 'status');
+            $qb->andWhere('status.name = :status');
+            $qb->setParameter('status', $status);
+        }
+
+        return $qb->orderBy('comment.id')->getQuery();
+    }
+
+    public function searchQuery(string $q) : Query {
+        $qb = $this->createQueryBuilder('comment');
+        $qb->addSelect('MATCH (comment.fullname, comment.content) AGAINST(:q BOOLEAN) as HIDDEN score');
+        $qb->andHaving('score > 0');
+        $qb->orderBy('score', 'DESC');
         $qb->setParameter('q', $q);
 
         return $qb->getQuery();

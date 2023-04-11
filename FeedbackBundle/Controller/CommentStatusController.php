@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -13,133 +13,101 @@ namespace Nines\FeedbackBundle\Controller;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\CommentStatusType;
+use Nines\FeedbackBundle\Repository\CommentStatusRepository;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * CommentStatus controller.
- *
  * @Route("/comment_status")
- * @IsGranted("ROLE_USER")
  */
 class CommentStatusController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
-     * Lists all CommentStatus entities.
-     *
-     * @return array
-     *
      * @Route("/", name="nines_feedback_comment_status_index", methods={"GET"})
-     *
-     * @Template
      */
-    public function indexAction(Request $request) {
-        $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-        $qb->select('e')->from(CommentStatus::class, 'e')->orderBy('e.id', 'ASC');
-        $query = $qb->getQuery();
+    public function index(Request $request, CommentStatusRepository $commentStatusRepository) : Response {
+        $query = $commentStatusRepository->indexQuery();
+        $pageSize = (int) $this->getParameter('page_size');
+        $page = $request->query->getint('page', 1);
 
-        $commentStatuses = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
-
-        return [
-            'commentStatuses' => $commentStatuses,
-        ];
+        return $this->render('@NinesFeedback/comment_status/index.html.twig', [
+            'comment_statuses' => $this->paginator->paginate($query, $page, $pageSize),
+        ]);
     }
 
     /**
-     * Creates a new CommentStatus entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_COMMENT_ADMIN")
      * @Route("/new", name="nines_feedback_comment_status_new", methods={"GET", "POST"})
-     *
-     * @Template
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      */
-    public function newAction(Request $request) {
+    public function new(Request $request) : Response {
         $commentStatus = new CommentStatus();
         $form = $this->createForm(CommentStatusType::class, $commentStatus);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($commentStatus);
-            $em->flush();
-
-            $this->addFlash('success', 'The new commentStatus was created.');
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($commentStatus);
+            $entityManager->flush();
+            $this->addFlash('success', 'The new commentStatus has been saved.');
 
             return $this->redirectToRoute('nines_feedback_comment_status_show', ['id' => $commentStatus->getId()]);
         }
 
-        return [
-            'commentStatus' => $commentStatus,
+        return $this->render('@NinesFeedback/comment_status/new.html.twig', [
+            'comment_status' => $commentStatus,
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
-     * Finds and displays a CommentStatus entity.
-     *
-     * @return array
-     *
      * @Route("/{id}", name="nines_feedback_comment_status_show", methods={"GET"})
-     *
-     * @Template
      */
-    public function showAction(CommentStatus $commentStatus) {
-        return [
-            'commentStatus' => $commentStatus,
-        ];
+    public function show(CommentStatus $commentStatus) : Response {
+        return $this->render('@NinesFeedback/comment_status/show.html.twig', [
+            'comment_status' => $commentStatus,
+        ]);
     }
 
     /**
-     * Displays a form to edit an existing CommentStatus entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_COMMENT_ADMIN")
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      * @Route("/{id}/edit", name="nines_feedback_comment_status_edit", methods={"GET", "POST"})
-     *
-     * @Template
      */
-    public function editAction(Request $request, CommentStatus $commentStatus) {
-        $editForm = $this->createForm(CommentStatusType::class, $commentStatus);
-        $editForm->handleRequest($request);
+    public function edit(Request $request, CommentStatus $commentStatus) : Response {
+        $form = $this->createForm(CommentStatusType::class, $commentStatus);
+        $form->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            $this->addFlash('success', 'The commentStatus has been updated.');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'The updated commentStatus has been saved.');
 
             return $this->redirectToRoute('nines_feedback_comment_status_show', ['id' => $commentStatus->getId()]);
         }
 
-        return [
-            'commentStatus' => $commentStatus,
-            'edit_form' => $editForm->createView(),
-        ];
+        return $this->render('@NinesFeedback/comment_status/edit.html.twig', [
+            'comment_status' => $commentStatus,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
-     * Deletes a CommentStatus entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Route("/{id}/delete", name="nines_feedback_comment_status_delete", methods={"GET"})
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
+     * @Route("/{id}", name="nines_feedback_comment_status_delete", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, CommentStatus $commentStatus) {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($commentStatus);
-        $em->flush();
-        $this->addFlash('success', 'The commentStatus was deleted.');
+    public function delete(Request $request, CommentStatus $commentStatus) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete' . $commentStatus->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($commentStatus);
+            $entityManager->flush();
+            $this->addFlash('success', 'The commentStatus has been deleted.');
+        } else {
+            $this->addFlash('warning', 'The security token was not valid.');
+        }
 
         return $this->redirectToRoute('nines_feedback_comment_status_index');
     }

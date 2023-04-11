@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -19,8 +19,8 @@ use Nines\UtilBundle\Entity\ContentExcerptTrait;
 /**
  * A blog post.
  *
- * @ORM\Table(name="blog_post", indexes={
- *     @ORM\Index(name="blog_post_content", columns={"title", "searchable"}, flags={"fulltext"})
+ * @ORM\Table(name="nines_blog_post", indexes={
+ *     @ORM\Index(name="blog_post_ft", columns={"title", "searchable"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\BlogBundle\Repository\PostRepository")
  * @ORM\HasLifecycleCallbacks
@@ -29,61 +29,40 @@ class Post extends AbstractEntity implements ContentEntityInterface {
     use ContentExcerptTrait;
 
     /**
-     * Blog post title.
-     *
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", nullable=false)
-     */
-    private $title;
-
-    /**
-     * @var bool
      * @ORM\Column(name="include_comments", type="boolean", nullable=false)
      */
-    private $includeComments;
+    private bool $includeComments = false;
 
     /**
-     * Searchable version of the content, with the tags stripped out.
-     *
-     * @var string
-     *
+     * @ORM\Column(name="title", type="string", nullable=false)
+     */
+    private ?string $title = null;
+
+    /**
      * @ORM\Column(name="searchable", type="text", nullable=false)
      */
-    private $searchable;
+    private ?string $searchable = null;
 
     /**
-     * Post category.
-     *
-     * @var PostCategory
-     *
      * @ORM\ManyToOne(targetEntity="PostCategory", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $category;
+    private ?PostCategory $category = null;
 
     /**
-     * Post status.
-     *
-     * @var PostStatus
-     *
      * @ORM\ManyToOne(targetEntity="PostStatus", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $status;
+    private ?PostStatus $status = null;
 
     /**
-     * User that created the post.
-     *
-     * @var User
      * @ORM\ManyToOne(targetEntity="Nines\UserBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private ?User $user = null;
 
     public function __construct() {
         parent::__construct();
-        $this->includeComments = false;
     }
 
     /**
@@ -94,133 +73,101 @@ class Post extends AbstractEntity implements ContentEntityInterface {
     }
 
     /**
-     * Set title.
-     *
-     * @param string $title
-     *
-     * @return Post
+     * @codeCoverageIgnore
      */
-    public function setTitle($title) {
-        $this->title = $title;
-
-        return $this;
+    public function getIncludeComments() : ?bool {
+        return $this->includeComments;
     }
 
     /**
-     * Get title.
-     *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getTitle() {
-        return $this->title;
-    }
-
-    /**
-     * Set category.
-     *
-     * @param PostCategory $category
-     *
-     * @return Post
-     */
-    public function setCategory(?PostCategory $category = null) {
-        $this->category = $category;
-
-        return $this;
-    }
-
-    /**
-     * Get category.
-     *
-     * @return PostCategory
-     */
-    public function getCategory() {
-        return $this->category;
-    }
-
-    /**
-     * Set status.
-     *
-     * @param PostStatus $status
-     *
-     * @return Post
-     */
-    public function setStatus(?PostStatus $status = null) {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * Get status.
-     *
-     * @return PostStatus
-     */
-    public function getStatus() {
-        return $this->status;
-    }
-
-    /**
-     * Set user.
-     *
-     * @param User $user
-     *
-     * @return Post
-     */
-    public function setUser(?User $user = null) {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user.
-     *
-     * @return User
-     */
-    public function getUser() {
-        return $this->user;
-    }
-
-    /**
-     * Set searchable.
-     *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function setSearchable() {
-        $this->searchable = strip_tags($this->content);
-
-        return $this;
-    }
-
-    /**
-     * Get searchable.
-     *
-     * @return string
-     */
-    public function getSearchable() {
-        return $this->searchable;
-    }
-
-    /**
-     * Set includeComments.
-     *
-     * @param bool $includeComments
-     *
-     * @return Post
-     */
-    public function setIncludeComments($includeComments) {
+    public function setIncludeComments(bool $includeComments) : self {
         $this->includeComments = $includeComments;
 
         return $this;
     }
 
     /**
-     * Get includeComments.
-     *
-     * @return bool
+     * @codeCoverageIgnore
      */
-    public function getIncludeComments() {
-        return $this->includeComments;
+    public function getTitle() : ?string {
+        return $this->title;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setTitle(string $title) : self {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getSearchable() : ?string {
+        return $this->searchable;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setSearchable() : self {
+        if ($this->content) {
+            $this->searchable = strip_tags($this->content);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getCategory() : ?PostCategory {
+        return $this->category;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setCategory(?PostCategory $category) : self {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getStatus() : ?PostStatus {
+        return $this->status;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setStatus(?PostStatus $status) : self {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getUser() : ?User {
+        return $this->user;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setUser(?User $user) : self {
+        $this->user = $user;
+
+        return $this;
     }
 }

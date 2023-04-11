@@ -1,0 +1,52 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Nines\UtilBundle\:
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Resources,Tests}'
+
+    Nines\UtilBundle\Controller\:
+        resource: '../Controller'
+        tags: ['controller.service_arguments', 'knp_paginator.injectable']
+
+    Nines\UtilBundle\EventListener\ContentExcerptListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    Nines\UtilBundle\EventListener\TermNameListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    Nines\UtilBundle\Purger\ForeignKeyPurgerFactory:
+        tags:
+            - { name: doctrine.fixtures.purger_factory, alias: fk_purger }
+
+    Nines\UtilBundle\Services\EntityLinker:
+        arguments:
+            $routing: '%nines_util.routing%'
+
+    Nines\UtilBundle\Services\Notifier:
+        arguments:
+            $sender: '%nines_util.sender%'
+
+    Nines\UtilBundle\Services\Text:
+        arguments:
+            $defaultTrimLength: ~
+
+    Nines\UtilBundle\Twig\TextExtension:
+        tags:
+            - { name : twig.extension }
+
+    nines.formatter.request:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] [%%channel%%.%%level_name%%] [%%extra.ip%%] [%%extra.url%%]\n%%message%%\n\n"
+
+    Nines\UtilBundle\Logger\RequestProcessor:
+        tags:
+            - { name: monolog.processor }

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment List{% endblock %}
+
+{% block pageheader %}
+    <h1>Comment List</h1>
+    <p class="count">
+        Displaying {{ comments|length }} comments of {{ comments.getTotalItemCount }} total.
+    </p>
+{% endblock %}
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            <a href="{{ path('nines_feedback_comment_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search </a>
+        </div>
+    </div>
+
+    <div class='row'>
+        <div class='col-sm-2'>
+            <div class='panel panel-default'>
+                <div class="panel-heading"><strong class='panel-title'>Filter</strong></div>
+                <div class='panel-body'>
+                    Filter comments by status
+                </div>
+                <ul class='list-group'>
+                    {% for status in statuses %}
+                        <li class='list-group-item'>
+                            <a href="{{ path('nines_feedback_comment_index', { 'status': status.name}) }}">{{ status.label }}</a>
+                        </li>
+                    {% endfor %}
+                    <li class='list-group-item'><a href="{{ path('nines_feedback_comment_index') }}">All Comments</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class='col-sm-10'>
+            {% embed '@NinesFeedback/comment/partial/table.html.twig' %}
+            {% endembed %}
+        </div>
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(comments) }}
+    </div>
+
+{% endblock %}

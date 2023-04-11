@@ -1,0 +1,37 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Content</th>
+            <td>
+                {{ comment_note.content|raw }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>User</th>
+            <td>
+                {% if comment_note.user %}
+                    {{ comment_note.user }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Comment</th>
+            <td>
+                {% if comment_note.comment %}
+                    <a href='{{ path("nines_feedback_comment_show", {"id": comment_note.comment.id}) }}'>{{ comment_note.comment }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ comment_note.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ comment_note.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+

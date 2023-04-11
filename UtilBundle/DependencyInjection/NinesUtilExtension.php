@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -22,11 +22,12 @@ class NinesUtilExtension extends Extension {
     /**
      * Loads a specific configuration.
      *
-     * @throws InvalidArgumentException When provided tag is not defined in this extension
      * @throws Exception
+     * @throws InvalidArgumentException When provided tag is not defined in this extension
+     * @phpstan-param array<mixed> $configs
      */
     public function load(array $configs, ContainerBuilder $container) : void {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config'));
         $loader->load('services.yaml');
 
         $configuration = new Configuration();
@@ -34,8 +35,9 @@ class NinesUtilExtension extends Extension {
         $definition = $container->getDefinition(Text::class);
         $definition->replaceArgument('$defaultTrimLength', $config['trim_length']);
 
-        $map = [];
+        $container->setParameter('nines_util.sender', $config['sender']);
 
+        $map = [];
         foreach ($config['routing'] as $routing) {
             $map[$routing['class']] = $routing['route'];
         }

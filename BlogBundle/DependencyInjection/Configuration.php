@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -27,14 +27,12 @@ class Configuration implements ConfigurationInterface {
 
         $treeBuilder->getRootNode()
             ->children()
+            ->scalarNode('excerpt_length')->end()
+            ->scalarNode('homepage_posts')->end()
+            ->scalarNode('menu_posts')->end()
             ->scalarNode('default_status')->end()
             ->scalarNode('default_category')->end()
-            ->end()
-        ;
-
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+            ->end();
 
         return $treeBuilder;
     }

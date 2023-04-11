@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -21,30 +21,27 @@ class ComputedField {
      * Type of the data to be indexed. See Field::TYPE_MAP for a list of
      * supported types.
      *
-     * @var string
      * @Required
      */
-    public $type;
+    public ?string $type = null;
 
     /**
      * Field boost, to make some fields more or less important. Defaults to 1.
      * Higher values are more important.
-     *
-     * @var float
      */
-    public $boost;
+    public ?float $boost = null;
 
     /**
      * Virtual property name.
      *
-     * @var string
+     * @Required
      */
-    public $name;
+    public ?string $name = null;
 
     /**
      * A method from the indexed entity.
      *
-     * @var string
+     * @Required
      */
-    public $getter;
+    public ?string $getter = null;
 }

@@ -1,0 +1,24 @@
+{% set comments = comment_service.findComments(entity) %}
+{% if comments|length %}
+    <div class="well">
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {{ comment.content }}
+                </div>
+                <div class="panel-footer">
+                    {{ comment.status.label }} - Submitted by
+                    {% if comment.followUp %}
+                        {{ comment.fullname }} <a href="mailto:{{ comment.email }}">{{ comment.email }}</a>
+                    {% else %}
+                        {{ comment.fullname }} - please do not contact.
+                    {% endif %}
+                    <span class="pull-right">
+                        <a href="{{ path('nines_feedback_comment_show', {'id': comment.id}) }}">{{ comment.created|date }}</a>
+                    </span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

@@ -3,126 +3,89 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\FeedbackBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\FeedbackBundle\Entity\Comment;
 use Nines\FeedbackBundle\Entity\CommentNote;
-use Nines\FeedbackBundle\Entity\CommentStatus;
 use Nines\FeedbackBundle\Form\AdminCommentType;
 use Nines\FeedbackBundle\Form\CommentNoteType;
 use Nines\FeedbackBundle\Form\CommentType;
+use Nines\FeedbackBundle\Repository\CommentRepository;
+use Nines\FeedbackBundle\Repository\CommentStatusRepository;
 use Nines\FeedbackBundle\Services\CommentService;
-use Nines\FeedbackBundle\Services\NotifierService;
 use Nines\UtilBundle\Controller\PaginatorTrait;
+use Nines\UtilBundle\Services\EntityLinker;
+use Nines\UtilBundle\Services\Notifier;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Comment controller.
- *
  * @Route("/comment")
  */
 class CommentController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
-     * Lists all Comment entities.
-     *
-     * @return array
-     *
      * @Route("/", name="nines_feedback_comment_index", methods={"GET"})
-     * @IsGranted("ROLE_COMMENT_ADMIN")
-     *
-     * @Template
+     * @IsGranted("ROLE_USER")
      */
-    public function indexAction(Request $request, CommentService $service) {
-        $em = $this->getDoctrine()->getManager();
-        $statusRepo = $em->getRepository(CommentStatus::class);
-        $commentRepo = $em->getRepository(Comment::class);
-        $qb = $commentRepo->createQueryBuilder('e');
+    public function index(Request $request, CommentRepository $commentRepository, CommentStatusRepository $statusRepository) : Response {
+        $query = $commentRepository->indexQuery($request->query->get('status'));
+        $pageSize = (int) $this->getParameter('page_size');
+        $page = $request->query->getint('page', 1);
 
-        $statusName = $request->query->get('status');
-        if ($statusName) {
-            $status = $statusRepo->findOneBy([
-                'name' => $statusName,
-            ]);
-            $qb->andWhere('e.status = :status');
-            $qb->setParameter('status', $status);
-        }
-        $qb->orderBy('e.id');
-        $query = $qb->getQuery();
-
-        $comments = $this->paginator->paginate($query, $request->query->getInt('page', 1), 25);
-
-        return [
-            'comments' => $comments,
-            'service' => $service,
-            'statuses' => $statusRepo->findAll(),
-        ];
+        return $this->render('@NinesFeedback/comment/index.html.twig', [
+            'comments' => $this->paginator->paginate($query, $page, $pageSize),
+            'statuses' => $statusRepository->findBy([], ['label' => 'ASC']),
+        ]);
     }
 
     /**
-     * Full text search for Comment entities.
-     *
-     * @Route("/fulltext", name="nines_feedback_comment_fulltext", methods={"GET"})
-     *
-     * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Template
-     *
-     * @return array
+     * @Route("/search", name="nines_feedback_comment_search", methods={"GET"})
+     * @IsGranted("ROLE_USER")
      */
-    public function fulltextAction(Request $request) {
-        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Comment::class);
+    public function search(Request $request, CommentRepository $commentRepository) : Response {
         $q = $request->query->get('q');
         if ($q) {
-            $query = $repo->fulltextQuery($q);
-
-            $comments = $this->paginator->paginate($query, $request->query->getInt('page', 1), 25);
+            $query = $commentRepository->searchQuery($q);
+            $comments = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), [
+                'wrap-queries' => true,
+            ]);
         } else {
             $comments = [];
         }
 
-        return [
+        return $this->render('@NinesFeedback/comment/search.html.twig', [
             'comments' => $comments,
             'q' => $q,
-        ];
+        ]);
     }
 
     /**
-     * Post a comment on an entity.
-     *
-     * @Route("/post", name="nines_feedback_comment_post", methods={"POST"})
-     *
-     * @Template
-     *
      * @throws Exception
+     * @throws OptimisticLockException
+     * @throws ORMException
      * @throws TransportExceptionInterface
-     *
-     * @return array|RedirectResponse
+     * @Route("/new", name="nines_feedback_comment_new", methods={"GET", "POST"})
      */
-    public function postAction(Request $request, CommentService $service, NotifierService $notifier) {
-        $em = $this->getDoctrine()->getManager();
+    public function new(Request $request, CommentService $service, EntityManagerInterface $em, EntityLinker $linker, Notifier $notifier) : Response {
         $id = $request->request->get('entity_id', null);
         $class = $request->request->get('entity_class', null);
-
-        if ( ! $service->acceptsComments($class)) {
-            throw new Exception('Cannot accept comments for this class.');
-        }
         $repo = $em->getRepository($class);
         $entity = $repo->find($id);
 
@@ -132,84 +95,83 @@ class CommentController extends AbstractController implements PaginatorAwareInte
 
         if ($form->isSubmitted() && $form->isValid()) {
             $service->addComment($entity, $comment);
-            $notifier->newComment($comment);
-            $this->addFlash('success', 'Thank you for your suggestion.');
+            $em->flush();
+            $this->addFlash('success', 'The new comment has been saved.');
+            $recipients = $this->getParameter('nines_feedback.recipients');
+            $notifier->notify($recipients, 'New Comment Received', '@NinesFeedback/notification/comment.html.twig', [
+                'comment' => $comment,
+            ]);
 
-            return $this->redirect($service->entityUrl($comment));
+            return $this->redirect($linker->link($entity));
         }
 
-        return [
-            'entity' => $entity,
-            'service' => $service,
-        ];
+        return $this->render('@NinesFeedback/comment/new.html.twig', [
+            'comment' => $comment,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
-     * Finds and displays a Comment entity.
+     * @Route("/new_popup", name="nines_feedback_comment_new_popup", methods={"GET", "POST"})
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      *
-     * @Route("/{id}", name="nines_feedback_comment_show", methods={"GET", "POST"})
-     *
-     * @IsGranted("ROLE_COMMENT_ADMIN")
-     * @Template
-     *
-     * @return array|RedirectResponse
+     * @throws Exception
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws TransportExceptionInterface
      */
-    public function showAction(Request $request, Comment $comment, CommentService $service) {
-        $this->denyAccessUnlessGranted('ROLE_COMMENT_ADMIN');
-        $em = $this->getDoctrine()->getManager();
-        $statusForm = $this->createForm(AdminCommentType::class, $comment);
-        $statusForm->handleRequest($request);
-        if ($statusForm->isSubmitted() && $statusForm->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'The comment was updated.');
+    public function new_popup(Request $request, CommentService $service, EntityManagerInterface $em, EntityLinker $linker, Notifier $notifier) : Response {
+        return $this->new($request, $service, $em, $linker, $notifier);
+    }
 
-            return $this->redirect($this->generateUrl('nines_feedback_comment_show', [
-                'id' => $comment->getId(),
-            ]));
+    /**
+     * @Route("/{id}", name="nines_feedback_comment_show", methods={"GET", "POST"})
+     * @IsGranted("ROLE_USER")
+     */
+    public function show(Request $request, Comment $comment, EntityManagerInterface $em) : Response {
+        $adminForm = $this->createForm(AdminCommentType::class, $comment);
+        $adminForm->handleRequest($request);
+        if ($adminForm->isSubmitted() && $adminForm->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'The comment has been updated.');
+
+            return $this->redirectToRoute('nines_feedback_comment_show', ['id' => $comment->getId()]);
         }
 
-        $commentNote = new CommentNote();
-        $commentNote->setComment($comment);
-        $commentNote->setUser($this->getUser());
-        $noteForm = $this->createForm(CommentNoteType::class, $commentNote);
+        $note = new CommentNote();
+        $note->setUser($this->getUser());
+        $note->setComment($comment);
+        $noteForm = $this->createForm(CommentNoteType::class, $note);
         $noteForm->handleRequest($request);
         if ($noteForm->isSubmitted() && $noteForm->isValid()) {
-            $comment->addNote($commentNote);
-            $em->persist($commentNote);
+            $comment->addNote($note);
+            $em->persist($note);
             $em->flush();
-            $this->addFlash('success', 'The comment note was added.');
+            $this->addFlash('success', 'The note has been saved.');
 
-            return $this->redirect($this->generateUrl('nines_feedback_comment_show', [
-                'id' => $comment->getId(),
-            ]));
+            return $this->redirectToRoute('nines_feedback_comment_show', ['id' => $comment->getId()]);
         }
 
-        return [
+        return $this->render('@NinesFeedback/comment/show.html.twig', [
             'comment' => $comment,
-            'service' => $service,
-            'statuses' => $em->getRepository(CommentStatus::class)->findAll(),
-            'statusForm' => $statusForm->createView(),
-            'noteForm' => $noteForm->createView(),
-        ];
+            'note_form' => $noteForm->createView(),
+            'admin_form' => $adminForm->createView(),
+        ]);
     }
 
     /**
-     * Deletes a Comment entity.
-     *
-     * @Route("/{id}/delete", name="nines_feedback_comment_delete", methods={"GET"})
-     *
-     * @IsGranted("ROLE_COMMENT_ADMIN")
-     *
-     * @return RedirectResponse
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
+     * @Route("/{id}", name="nines_feedback_comment_delete", methods={"DELETE"})
+     * @IsGranted("ROLE_FEEDBACK_ADMIN")
      */
-    public function deleteAction(Request $request, Comment $comment) {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($comment);
-        $em->flush();
-        $this->addFlash('success', 'The comment was deleted.');
-
-        if ($request->query->has('ref')) {
-            return $this->redirect($request->query->get('ref'));
+    public function delete(Request $request, Comment $comment) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($comment);
+            $entityManager->flush();
+            $this->addFlash('success', 'The comment has been deleted.');
+        } else {
+            $this->addFlash('warning', 'The security token was not valid.');
         }
 
         return $this->redirectToRoute('nines_feedback_comment_index');

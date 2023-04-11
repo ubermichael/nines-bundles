@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -16,6 +16,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\AudioContainerInterface;
+use Nines\MediaBundle\Repository\AudioRepository;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -24,10 +25,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Description of FileUploader.
- *
- * @author Michael Joyce <ubermichael@gmail.com>
  */
 class AudioManager extends AbstractFileManager implements EventSubscriber {
+    private ?AudioRepository $repo = null;
+
     private function uploadFile(Audio $audio) : void {
         $file = $audio->getFile();
         if ( ! $file instanceof UploadedFile) {
@@ -42,6 +43,15 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
         $audio->setFile($audioFile);
         $audio->setPath($filename);
         $audio->setMimeType($audioFile->getMimeType());
+    }
+
+    /**
+     * @required
+     *
+     * @codeCoverageIgnore
+     */
+    public function setRepo(?AudioRepository $repo) : void {
+        $this->repo = $repo;
     }
 
     public function prePersist(LifecycleEventArgs $args) : void {
@@ -61,7 +71,7 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
         try {
             $fs->remove($this->uploadDir . '/' . $entity->getPath());
         } catch (IOExceptionInterface $e) {
-            $this->logger->error('Cannot remote old file ' . $this->uploadDir . '/' . $entity->getAudioPath());
+            $this->logger->error('Cannot remote old file ' . $this->uploadDir . '/' . $entity->getPath());
         }
         $this->uploadFile($entity);
     }
@@ -77,9 +87,7 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
             }
         }
         if ($entity instanceof AudioContainerInterface) {
-            $repo = $this->em->getRepository(Audio::class);
-            /** @var Audio[] $audios */
-            $audios = $repo->findBy([
+            $audios = $this->repo->findBy([
                 'entity' => get_class($entity) . ':' . $entity->getId(),
             ]);
             $entity->setAudios($audios);
@@ -88,11 +96,11 @@ class AudioManager extends AbstractFileManager implements EventSubscriber {
 
     public function postRemove(LifecycleEventArgs $args) : void {
         $entity = $args->getEntity();
-        if ($entity instanceof Audio) {
+        if ($entity instanceof Audio && $entity->getFile()) {
             $fs = new Filesystem();
 
             try {
-                $fs->remove($entity->getFile());
+                $this->remove($entity->getFile());
             } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occured removing {$ex->getPath()}: {$ex->getMessage()}");
             }

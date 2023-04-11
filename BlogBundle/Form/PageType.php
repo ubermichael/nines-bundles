@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\BlogBundle\Form;
 
+use Nines\BlogBundle\Entity\Page;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -17,11 +18,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * PageType form.
+ * Page form.
  */
 class PageType extends AbstractType {
     /**
      * Add form fields to $builder.
+     *
+     * @param array<string,mixed> $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('title', null, [
@@ -113,7 +116,7 @@ class PageType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) : void {
         $resolver->setDefaults([
-            'data_class' => 'Nines\BlogBundle\Entity\Page',
+            'data_class' => Page::class,
         ]);
     }
 }

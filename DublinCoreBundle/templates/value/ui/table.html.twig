@@ -1,0 +1,10 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        {% for value in entity.values %}
+            <tr>
+                <th>{{ value.element.label }}</th>
+                <td>{{ value.data }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -3,22 +3,31 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\MakerBundle\Maker;
 
+use ReflectionException;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class MakeCrud extends AbstractNinesMaker {
-    private function mapping($params) {
+    /**
+     * @param array<string,string> $params
+     *
+     * @return array<string,string>
+     */
+    private function mapping(array $params) : array {
         return [
             '@NinesMaker/controller/controller.php.twig' => 'src/Controller/' . $params['controller_class_name'] . '.php',
             '@NinesMaker/form/form_type.php.twig' => 'src/Form/' . $params['form_class_name'] . '.php',
@@ -38,6 +47,10 @@ class MakeCrud extends AbstractNinesMaker {
         return 'nines:make:crud';
     }
 
+    public static function getCommandDescription() : string {
+        return 'Generate a controller, form, and templates based on a doctrine entity';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -46,6 +59,14 @@ class MakeCrud extends AbstractNinesMaker {
         $command->addArgument('name', InputArgument::IS_ARRAY, 'The class name of the entity.');
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws LoaderError
+     * @throws ReflectionException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator) : void {
         foreach ($input->getArgument('name') as $name) {
             $params = $this->collect($generator, $name);

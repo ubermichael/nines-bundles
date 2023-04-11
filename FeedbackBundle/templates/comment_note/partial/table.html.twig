@@ -1,0 +1,24 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Content</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for comment_note in comment_notes %}
+            <tr>
+                <td>
+                    <a href="{{ path('nines_feedback_comment_note_show', { 'id': comment_note.id }) }}">
+                        {{ comment_note.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ comment_note.content|raw }}
+                </td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

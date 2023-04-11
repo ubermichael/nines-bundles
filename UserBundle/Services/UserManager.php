@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -18,8 +18,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class UserManager.
@@ -33,66 +33,35 @@ class UserManager {
 
     public const TOKEN_EXPIRY = ' +1 day';
 
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $encoder;
+    private ?UserPasswordEncoderInterface $encoder = null;
+
+    private ?LoggerInterface $logger = null;
+
+    private ?UserRepository $repository = null;
+
+    private ?MailerInterface $mailer = null;
 
     /**
-     * @var LoggerInterface
+     * @var array<string>
      */
-    private $logger;
+    private ?array $roles = null;
 
-    /**
-     * @var UserRepository
-     */
-    private $repository;
+    private ?string $afterLogin = null;
 
-    /**
-     * @var MailerInterface
-     */
-    private $mailer;
+    private ?string $afterRequest = null;
 
-    /**
-     * @var array
-     */
-    private $roles;
+    private ?string $afterReset = null;
 
-    /**
-     * @var string
-     */
-    private $afterLogin;
+    private ?string $afterLogout = null;
 
-    /**
-     * @var string
-     */
-    private $afterRequest;
-
-    /**
-     * @var string
-     */
-    private $afterReset;
-
-    /**
-     * @var string
-     */
-    private $afterLogout;
-
-    /**
-     * @var string
-     */
-    private $sender;
+    private ?string $sender = null;
 
     /**
      * UserManager constructor.
      *
-     * @param $afterLogin
-     * @param $afterRequest
-     * @param $afterReset
-     * @param $afterLogout
-     * @param array $roles
+     * @param array<string> $roles
      */
-    public function __construct($afterLogin, $afterRequest, $afterReset, $afterLogout, $roles = []) {
+    public function __construct(string $afterLogin, string $afterRequest, string $afterReset, string $afterLogout, array $roles = []) {
         $this->roles = $roles;
         $this->afterLogin = $afterLogin;
         $this->afterRequest = $afterRequest;
@@ -100,12 +69,14 @@ class UserManager {
         $this->afterLogout = $afterLogout;
     }
 
-    public function setSender($sender) : void {
+    public function setSender(string $sender) : void {
         $this->sender = $sender;
     }
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEncoder(UserPasswordEncoderInterface $encoder) : void {
         $this->encoder = $encoder;
@@ -113,6 +84,8 @@ class UserManager {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setLogger(LoggerInterface $logger) : void {
         $this->logger = $logger;
@@ -120,6 +93,8 @@ class UserManager {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setRepository(UserRepository $repository) : void {
         $this->repository = $repository;
@@ -127,11 +102,16 @@ class UserManager {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setMailer(MailerInterface $mailer) : void {
         $this->mailer = $mailer;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getRoles() : array {
         return $this->roles;
     }
@@ -152,22 +132,14 @@ class UserManager {
         return $this->afterLogout;
     }
 
-    /**
-     * @param $email
-     */
-    public function find($email) : ?UserInterface {
+    public function find(string $email) : ?User {
         return $this->repository->findOneByEmail($email);
     }
 
-    /**
-     * @param $token
-     *
-     * @throws Exception
-     */
-    public function findByToken($token) : ?UserInterface {
-        /** @var User $user */
-        $user = $this->repository->findOneByResetToken($token);
-        if ($user && $user->getResetExpiry() < new DateTimeImmutable()) {
+    public function findByToken(string $token) : ?User {
+        /** @var ?User $user */
+        $user = $this->repository->findOneBy(['resetToken' => $token]);
+        if ($user && ($user->getResetExpiry() < new DateTimeImmutable())) {
             $this->logger->warning("{$user->getEmail()} attempted to use expired token.");
 
             return null;
@@ -203,43 +175,26 @@ class UserManager {
         $user->setResetExpiry($expiry);
     }
 
-    /**
-     * @param $password
-     *
-     * @throws Exception
-     */
-    public function encodePassword(UserInterface $user, $password) : string {
+    public function encodePassword(User $user, string $password) : string {
         return $this->encoder->encodePassword($user, $password);
     }
 
-    /**
-     * @param $password
-     */
-    public function changePassword(UserInterface $user, $password) : void {
+    public function changePassword(User $user, string $password) : void {
         $user->setPassword($this->encoder->encodePassword($user, $password));
     }
 
-    /**
-     * @param $password
-     */
-    public function validatePassword(UserInterface $user, $password) : bool {
+    public function validatePassword(User $user, string $password) : bool {
         return $this->encoder->isPasswordValid($user, $password);
     }
 
-    /**
-     * @param $role
-     */
-    public function promote(UserInterface $user, $role) : void {
+    public function promote(User $user, string $role) : void {
         if ( ! in_array($role, $this->roles, true)) {
             $this->logger->warning("Unknown role {$role}.");
         }
         $user->addRole($role);
     }
 
-    /**
-     * @param $role
-     */
-    public function demote(UserInterface $user, $role) : void {
+    public function demote(User $user, string $role) : void {
         if ( ! in_array($role, $this->roles, true)) {
             $this->logger->warning("Unknown role {$role}.");
         }
@@ -247,9 +202,11 @@ class UserManager {
     }
 
     /**
+     * @param array<string,mixed> $data
+     *
      * @throws TransportExceptionInterface
      */
-    public function sendReset(User $user, array $data) : void {
+    public function sendReset(User $user, array $data) : Email {
         $email = new TemplatedEmail();
         $email->from($this->sender);
         $email->to($user->getEmail());
@@ -261,5 +218,7 @@ class UserManager {
             'ip' => $data['ip'] ?? '',
         ]);
         $this->mailer->send($email);
+
+        return $email;
     }
 }

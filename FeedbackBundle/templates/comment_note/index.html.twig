@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment Note List{% endblock %}
+
+{% block pageheader %}
+    <h1>Comment Note List</h1>
+    <p class="count">
+        Displaying {{ comment_notes|length }} comment_notes of {{ comment_notes.getTotalItemCount }} total.
+    </p>
+{% endblock %}
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            <a href="{{ path('nines_feedback_comment_note_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search </a>
+        </div>
+    </div>
+
+    {% embed '@NinesFeedback/comment_note/partial/table.html.twig' %}
+    {% endembed %}
+
+    <div class="navigation">
+        {{ knp_pagination_render(comment_notes) }}
+    </div>
+
+{% endblock %}

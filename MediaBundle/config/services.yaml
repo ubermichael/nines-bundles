@@ -1,0 +1,61 @@
+parameters:
+    nines_media.root: 'data'
+    nines_media.routing: ~
+    nines_media.thumb.width: 450
+    nines_media.thumb.height: 350
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Nines\MediaBundle\:
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Resources,Tests}'
+
+    Nines\MediaBundle\Controller\:
+        resource: '../Controller/*'
+        tags: [ 'controller.service_arguments', 'knp_paginator.injectable' ]
+
+    Nines\MediaBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: navMenu, alias: nines_media}
+
+    Nines\MediaBundle\Service\AudioManager:
+        arguments:
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/audio' ] ]
+            - [ setEnv, [ '%kernel.environment%' ] ]
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
+    Nines\MediaBundle\Service\LinkManager:
+        arguments:
+            $root: '%kernel.project_dir%'
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
+    Nines\MediaBundle\Service\ImageManager:
+        arguments:
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/image' ] ]
+            - [ setEnv, [ '%kernel.environment%' ] ]
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
+    Nines\MediaBundle\Service\PdfManager:
+        arguments:
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%nines_media.root%/%kernel.environment%/pdf' ] ]
+            - [ setEnv, [ '%kernel.environment%' ] ]
+        tags:
+            - { name: 'doctrine.event_subscriber' }
+
+    Nines\MediaBundle\Service\Thumbnailer:
+        calls:
+            - [ setHeight, [ '%nines_media.thumb.height%' ] ]
+            - [ setWidth, [ '%nines_media.thumb.width%' ] ]

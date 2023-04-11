@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -48,46 +48,37 @@ class Field {
      * Type of the data to be indexed. See Field::TYPE_MAP for a list of
      * supported types.
      *
-     * @var string
      * @Required
      */
-    public $type;
+    public ?string $type = null;
 
     /**
      * Field boost, to make some fields more or less important. Defaults to 1.
      * Higher values are more important.
-     *
-     * @var float
      */
-    public $boost;
+    public ?float $boost = null;
 
     /**
      * Entity property name.
-     *
-     * @var string
      */
-    public $name;
+    public ?string $name = null;
 
     /**
      * A method from the indexed entity.
-     *
-     * @var string
      */
-    public $getter;
+    public ?string $getter = null;
 
     /**
      * A callable function on the field's object. For dates this could be
      * format('Y-m-d').
-     *
-     * @var string
      */
-    public $mutator;
+    public ?string $mutator = null;
 
     /**
      * List of functions to call. The data returned by getter or mutator will
      * be passed as the first argument to each function.
      *
-     * @var array
+     * @var ?array<string>
      */
-    public $filters;
+    public ?array $filters = null;
 }

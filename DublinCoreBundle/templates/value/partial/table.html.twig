@@ -1,0 +1,29 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Entity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for value in values %}
+            <tr>
+                <td>
+                    <a href="{{ path('nines_dc_value_show', { 'id': value.id }) }}">
+                        {{ value.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ value.data }}
+                </td>
+
+                <td>
+                    {% include '@NinesUtil/linked_entity/link.html.twig' with {
+                        'entity': value
+                    } %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,20 +12,17 @@ namespace Nines\UserBundle\Tests\Controller;
 
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UserBundle\Entity\User;
-use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Nines\UserBundle\Repository\UserRepository;
+use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProfileControllerTest extends ControllerBaseCase {
-    protected function fixtures() : array {
-        return [
-            UserFixtures::class,
-        ];
-    }
+class ProfileControllerTest extends ControllerTestCase {
+    private ?UserRepository $repository = null;
 
     public function testUserIndex() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/profile/');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseIsSuccessful();
     }
 
     public function testAnonIndex() : void {
@@ -34,9 +31,9 @@ class ProfileControllerTest extends ControllerBaseCase {
     }
 
     public function testUserEdit() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/profile/edit');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Save')->form([
             'profile[email]' => 'other@example.com',
             'profile[fullname]' => 'New Name',
@@ -46,16 +43,15 @@ class ProfileControllerTest extends ControllerBaseCase {
         $responseCrawler = $this->client->submit($form);
         $this->assertResponseRedirects('/profile/', Response::HTTP_FOUND);
         $this->client->followRedirect();
+
         $this->assertSelectorTextContains('div.alert', 'Your profile has been updated.');
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => 'other@example.com',
-        ]);
+        $user = $this->repository->findOneByEmail('other@example.com');
         $this->assertNotNull($user);
     }
 
     public function testUserEditWrongPassword() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/profile/edit');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $form = $crawler->selectButton('Save')->form([
@@ -67,9 +63,8 @@ class ProfileControllerTest extends ControllerBaseCase {
         $responseCrawler = $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertSelectorTextContains('div.alert', 'The password does not match');
-        $user = $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => 'other@example.com',
-        ]);
+        $user = $this->repository->findOneByEmail('other@example.com');
+
         $this->assertNull($user);
     }
 
@@ -79,7 +74,7 @@ class ProfileControllerTest extends ControllerBaseCase {
     }
 
     public function testUserChangePassword() : void {
-        $user = $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/profile/password');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $form = $crawler->selectButton('Save')->form([
@@ -95,14 +90,12 @@ class ProfileControllerTest extends ControllerBaseCase {
         $encoder = $this->client->getContainer()->get('security.password_encoder');
 
         // Refresh the user from the database.
-        $changedUser = $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => $user->getEmail(),
-        ]);
+        $changedUser = $this->repository->findOneByEmail(UserFixtures::USER['username']);
         $this->assertTrue($encoder->isPasswordValid($changedUser, 'othersecret'));
     }
 
     public function testUserChangePasswordFail() : void {
-        $user = $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/profile/password');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $form = $crawler->selectButton('Save')->form([
@@ -112,5 +105,10 @@ class ProfileControllerTest extends ControllerBaseCase {
         ]);
         $this->client->submit($form);
         $this->assertSelectorTextContains('div.alert', 'The password does not match.');
+    }
+
+    protected function setUp() : void {
+        parent::setUp();
+        $this->repository = self::$container->get(UserRepository::class);
     }
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\SolrBundle\Query;
 
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Nines\SolrBundle\Hydrator\DoctrineHydrator;
 use Solarium\Component\Result\Facet\FacetResultInterface;
 use Solarium\Component\Result\Highlighting\Highlighting;
@@ -24,100 +23,67 @@ use stdClass;
  * Query result set.
  */
 class Result {
-    /**
-     * @var SolrResult
-     */
-    private $resultSet;
+    private ?SolrResult $resultSet = null;
 
     /**
-     * @var DocumentInterface[]
+     * @var array<int,DocumentInterface>
      */
-    private $documents;
+    private ?array $documents = null;
+
+    private ?DoctrineHydrator $hydrator = null;
+
+    private ?Highlighting $highlighting = null;
 
     /**
-     * @var array
+     * @var ?array<string,mixed>
      */
-    private $entities;
+    private ?array $filters = null;
 
-    /**
-     * @var DoctrineHydrator
-     */
-    private $hydrator;
-
-    /**
-     * @var ?Highlighting
-     */
-    private $highlighting;
-
-    /**
-     * @var array
-     */
-    private $filters;
-
-    /**
-     * @var ?PaginatorInterface
-     */
-    private $paginator;
+    private ?PaginationInterface $paginator;
 
     public function __construct(SolrResult $result, DoctrineHydrator $hydrator, ?PaginationInterface $paginator = null) {
         $this->resultSet = $result;
         $this->hydrator = $hydrator;
         $this->paginator = $paginator;
-
         $this->documents = $result->getDocuments();
-        $this->entities = [];
-        $this->highlighting = null;
-        $this->filters = null;
     }
 
     /**
      * Count the results in this result set. Use total() for the number of
      * results available.
-     *
-     * @return int
      */
-    public function count() {
+    public function count() : int {
         return $this->resultSet->count();
     }
 
     /**
      * Get the total number of results found. Use count() for the number
      * of results in the result set.
-     *
-     * @return null|int
      */
-    public function total() {
+    public function total() : ?int {
         return $this->resultSet->getNumFound();
     }
 
     /**
      * Get the $i'th result document.
      *
-     * @param int $i
-     *
      * @return DocumentInterface|stdClass
      */
-    public function getDocument($i) {
+    public function getDocument(int $i) {
         return $this->documents[$i];
     }
 
     /**
      * Get the entity corresponding to the $i'th result document.
-     *
-     * @param int $i
-     *
-     * @return null|object
      */
-    public function getEntity($i) {
+    public function getEntity(int $i) : ?object {
         return $this->hydrator->hydrate($this->documents[$i]);
     }
 
     /**
      * Check if result highlighting is enabled in the results.
-     *
-     * @return bool
      */
-    public function hasHighlighting() {
+    public function hasHighlighting() : bool {
         if ($this->highlighting) {
             return true;
         }
@@ -129,11 +95,9 @@ class Result {
     /**
      * Get the highlighted fields for the $i'th result.
      *
-     * @param int $i
-     *
      * @return null|array|HighlightResult
      */
-    public function getHighlighting($i) {
+    public function getHighlighting(int $i) {
         if ( ! $this->hasHighlighting()) {
             return [];
         }
@@ -144,21 +108,15 @@ class Result {
 
     /**
      * Get the named facet.
-     *
-     * @param $name
-     *
-     * @return null|FacetResultInterface
      */
-    public function getFacet($name) {
+    public function getFacet(string $name) : ?FacetResultInterface {
         return $this->resultSet->getFacetSet()->getFacet($name);
     }
 
     /**
      * Check if there are filters in this query result.
-     *
-     * @return bool
      */
-    public function hasFilters() {
+    public function hasFilters() : bool {
         if ($this->filters) {
             return true;
         }
@@ -169,9 +127,9 @@ class Result {
     /**
      * Get the filters for the query.
      *
-     * @return array
+     * @return array<int,mixed>
      */
-    public function getFilters() {
+    public function getFilters() : array {
         if (null === $this->filters) {
             $this->filters = [];
 
@@ -191,10 +149,8 @@ class Result {
 
     /**
      * If the query was paginated, return the paginator.
-     *
-     * @return ?PaginatorInterface
      */
-    public function getPaginator() {
+    public function getPaginator() : ?PaginationInterface {
         return $this->paginator;
     }
 }

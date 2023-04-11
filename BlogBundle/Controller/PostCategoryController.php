@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,183 +11,110 @@ declare(strict_types=1);
 namespace Nines\BlogBundle\Controller;
 
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-use Nines\BlogBundle\Entity\Post;
 use Nines\BlogBundle\Entity\PostCategory;
 use Nines\BlogBundle\Form\PostCategoryType;
+use Nines\BlogBundle\Repository\PostCategoryRepository;
+use Nines\BlogBundle\Repository\PostRepository;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * PostCategory controller.
- *
  * @Route("/post_category")
  */
 class PostCategoryController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
-     * Lists all PostCategory entities.
-     *
-     * @return array
-     *
      * @Route("/", name="nines_blog_post_category_index", methods={"GET"})
-     *
-     * @Template
      */
-    public function indexAction(Request $request) {
-        $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-        $qb->select('e')->from(PostCategory::class, 'e')->orderBy('e.id', 'ASC');
-        $query = $qb->getQuery();
+    public function index(Request $request, PostCategoryRepository $postCategoryRepository) : Response {
+        $query = $postCategoryRepository->indexQuery();
+        $pageSize = (int) $this->getParameter('page_size');
+        $page = $request->query->getint('page', 1);
 
-        $postCategories = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
-
-        return [
-            'postCategories' => $postCategories,
-        ];
+        return $this->render('@NinesBlog/post_category/index.html.twig', [
+            'post_categories' => $this->paginator->paginate($query, $page, $pageSize),
+        ]);
     }
 
     /**
-     * Typeahead API endpoint for PostCategory entities.
-     *
-     * @Route("/typeahead", name="nines_blog_post_category_typeahead", methods={"GET"})
-     * @IsGranted("ROLE_BLOG_ADMIN")
-     *
-     * @return JsonResponse
-     */
-    public function typeahead(Request $request) {
-        $q = $request->query->get('q');
-        if ( ! $q) {
-            return new JsonResponse([]);
-        }
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(PostCategory::class);
-        $data = [];
-
-        foreach ($repo->typeaheadQuery($q) as $result) {
-            $data[] = [
-                'id' => $result->getId(),
-                'text' => (string) $result,
-            ];
-        }
-
-        return new JsonResponse($data);
-    }
-
-    /**
-     * Creates a new PostCategory entity.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_BLOG_ADMIN")
      * @Route("/new", name="nines_blog_post_category_new", methods={"GET", "POST"})
-     *
-     * @Template
+     * @IsGranted("ROLE_BLOG_ADMIN")
      */
-    public function newAction(Request $request) {
+    public function new(Request $request) : Response {
         $postCategory = new PostCategory();
         $form = $this->createForm(PostCategoryType::class, $postCategory);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($postCategory);
-            $em->flush();
-
-            $this->addFlash('success', 'The new postCategory was created.');
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($postCategory);
+            $entityManager->flush();
+            $this->addFlash('success', 'The new postCategory has been saved.');
 
             return $this->redirectToRoute('nines_blog_post_category_show', ['id' => $postCategory->getId()]);
         }
 
-        return [
-            'postCategory' => $postCategory,
+        return $this->render('@NinesBlog/post_category/new.html.twig', [
+            'post_category' => $postCategory,
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
-     * Creates a new PostCategory entity in a popup.
-     *
-     * @return array|RedirectResponse
-     *
-     * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/new_popup", name="nines_blog_post_category_new_popup", methods={"GET"})
-     *
-     * @Template
-     */
-    public function newPopupAction(Request $request) {
-        return $this->newAction($request);
-    }
-
-    /**
-     * Finds and displays a PostCategory entity.
-     *
-     * @return array
-     *
      * @Route("/{id}", name="nines_blog_post_category_show", methods={"GET"})
-     *
-     * @Template
      */
-    public function showAction(Request $request, PostCategory $postCategory) {
-        $repo = $this->getDoctrine()->getManager()->getRepository(PostCategory::class);
-        $query = $repo->getPosts($postCategory, $this->isGranted('ROLE_USER'))->execute();
+    public function show(Request $request, PostCategory $postCategory, PostRepository $repo) : Response {
+        $pageSize = (int) $this->getParameter('page_size');
 
-        $posts = $this->paginator->paginate($query, $request->query->getint('page', 1), 25);
+        $query = $repo->categoryQuery($postCategory, $this->isGranted('ROLE_USER'));
+        $posts = $this->paginator->paginate($query, $request->query->getInt('page', 1), $pageSize);
 
-        return [
-            'postCategory' => $postCategory,
+        return $this->render('@NinesBlog/post_category/show.html.twig', [
+            'post_category' => $postCategory,
             'posts' => $posts,
-        ];
+        ]);
     }
 
     /**
-     * Displays a form to edit an existing PostCategory entity.
-     *
-     * @return array|RedirectResponse
-     *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/edit", name="nines_blog_post_category_edit", methods={"GET"})
-     *
-     * @Template
+     * @Route("/{id}/edit", name="nines_blog_post_category_edit", methods={"GET", "POST"})
      */
-    public function editAction(Request $request, PostCategory $postCategory) {
-        $editForm = $this->createForm(PostCategoryType::class, $postCategory);
-        $editForm->handleRequest($request);
+    public function edit(Request $request, PostCategory $postCategory) : Response {
+        $form = $this->createForm(PostCategoryType::class, $postCategory);
+        $form->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            $this->addFlash('success', 'The postCategory has been updated.');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'The updated postCategory has been saved.');
 
             return $this->redirectToRoute('nines_blog_post_category_show', ['id' => $postCategory->getId()]);
         }
 
-        return [
-            'postCategory' => $postCategory,
-            'edit_form' => $editForm->createView(),
-        ];
+        return $this->render('@NinesBlog/post_category/edit.html.twig', [
+            'post_category' => $postCategory,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
-     * Deletes a PostCategory entity.
-     *
-     * @return array|RedirectResponse
-     *
      * @IsGranted("ROLE_BLOG_ADMIN")
-     * @Route("/{id}/delete", name="nines_blog_post_category_delete", methods={"GET"})
+     * @Route("/{id}", name="nines_blog_post_category_delete", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, PostCategory $postCategory) {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($postCategory);
-        $em->flush();
-        $this->addFlash('success', 'The postCategory was deleted.');
+    public function delete(Request $request, PostCategory $postCategory) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete' . $postCategory->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($postCategory);
+            $entityManager->flush();
+            $this->addFlash('success', 'The postCategory has been deleted.');
+        } else {
+            $this->addFlash('warning', 'The security token was not valid.');
+        }
 
         return $this->redirectToRoute('nines_blog_post_category_index');
     }

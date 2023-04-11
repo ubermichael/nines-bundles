@@ -3,22 +3,18 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\UtilBundle\Entity;
 
-interface ContentEntityInterface {
+interface ContentEntityInterface extends AbstractEntityInterface {
     /**
      * Set the excerpt for an entity.
-     *
-     * @param $excerpt
-     *
-     * @return $this
      */
-    public function setExcerpt($excerpt);
+    public function setExcerpt(string $excerpt) : self;
 
     /**
      * Get the excerpt for an entity.
@@ -27,12 +23,8 @@ interface ContentEntityInterface {
 
     /**
      * Set the content of an entity.
-     *
-     * @param $content
-     *
-     * @return $this
      */
-    public function setContent($content);
+    public function setContent(string $content) : self;
 
     /**
      * Get the content from an entity.

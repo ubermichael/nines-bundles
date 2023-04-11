@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -16,34 +16,29 @@ use Nines\SolrBundle\Annotation\Field;
  * Collection of Solr metadata for an entity, as defined by the annotations.
  */
 class EntityMetadata extends Metadata {
-    /**
-     * @var IdMetadata
-     */
-    private $id;
+    private ?IdMetadata $id = null;
 
     /**
      * The FQCN of the entity.
-     *
-     * @var string
      */
-    private $class;
+    private ?string $class = null;
 
     /**
      * @var CopyFieldMetadata[]
      */
-    private $copyFields;
+    private ?array $copyFields = null;
 
     /**
      * List of key, value pairs to add to all documents going into Solr.
      *
-     * @var array
+     * @var array<string,string>
      */
-    private $fixed;
+    private ?array $fixed = null;
 
     /**
      * Map of entity field name => FieldMetadata.
      *
-     * @var FieldMetadata[];
+     * @var array<string,FieldMetadata>;
      */
     private $fieldMetadata;
 
@@ -94,6 +89,8 @@ class EntityMetadata extends Metadata {
 
     /**
      * Get the fixed fields for this entity.
+     *
+     * @return array<string,string>
      */
     public function getFixed() : array {
         return $this->fixed;
@@ -101,6 +98,8 @@ class EntityMetadata extends Metadata {
 
     /**
      * Set the fixed fields for this entity.
+     *
+     * @param array<string,string> $fixed
      *
      * @return $this
      */
@@ -113,13 +112,8 @@ class EntityMetadata extends Metadata {
     /**
      * Add a fixed field to the metadata. It will be added to every search
      * document that is indexed.
-     *
-     * @param $name
-     * @param $value
-     *
-     * @return $this
      */
-    public function addFixed($name, $value) : self {
+    public function addFixed(string $name, string $value) : self {
         $this->fixed[$name] = $value;
 
         return $this;
@@ -128,7 +122,7 @@ class EntityMetadata extends Metadata {
     /**
      * Get all the field metadata.
      *
-     * @return FieldMetadata[]
+     * @return array<string,FieldMetadata>
      */
     public function getFieldMetadata() : array {
         return $this->fieldMetadata;
@@ -157,9 +151,9 @@ class EntityMetadata extends Metadata {
     /**
      * Get the copy fields.
      *
-     * @return array
+     * @return array<string,CopyFieldMetadata>
      */
-    public function getCopyFields() {
+    public function getCopyFields() : array {
         return $this->copyFields;
     }
 }

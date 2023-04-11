@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,31 +11,22 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Nines\UtilBundle\Entity\AbstractEntityInterface;
 
-interface AudioContainerInterface {
-    public function getId() : ?int;
+interface AudioContainerInterface extends AbstractEntityInterface {
+    public function addAudio(Audio $audio) : self;
 
-    /**
-     * @return mixed
-     */
-    public function addAudio(Audio $audio);
-
-    /**
-     * @return mixed
-     */
-    public function removeAudio(Audio $audio);
+    public function removeAudio(Audio $audio) : self;
 
     public function containsAudio(Audio $audio) : bool;
 
     /**
-     * @param Audio[]|Collection $audios
-     *
-     * @return mixed
+     * @param array<Audio>|Collection<int,Audio> $audios
      */
-    public function setAudios($audios);
+    public function setAudios($audios) : self;
 
     /**
-     * @return Audio[]|Collection
+     * @return array<Audio>
      */
-    public function getAudios();
+    public function getAudios() : array;
 }

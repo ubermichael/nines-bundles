@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -20,6 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,28 +33,26 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/", name="nines_media_audio_index", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
      */
-    public function index(Request $request, AudioRepository $audioRepository) : array {
+    public function index(Request $request, AudioRepository $audioRepository) : Response {
         $query = $audioRepository->indexQuery();
         $pageSize = (int) $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
-        return [
+        return $this->render('@NinesMedia/audio/index.html.twig', [
             'audios' => $this->paginator->paginate($query, $page, $pageSize),
-        ];
+        ]);
     }
 
     /**
      * @Route("/search", name="nines_media_audio_search", methods={"GET"})
      *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      * @Template
-     *
-     * @return array
      */
-    public function search(Request $request, AudioRepository $audioRepository) {
+    public function search(Request $request, AudioRepository $audioRepository) : Response {
         $q = $request->query->get('q');
         if ($q) {
             $query = $audioRepository->searchQuery($q);
@@ -62,31 +61,28 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
             $audios = [];
         }
 
-        return [
+        return $this->render('@NinesMedia/audio/search.html.twig', [
             'audios' => $audios,
             'q' => $q,
-        ];
+        ]);
     }
 
     /**
      * @Route("/{id}", name="nines_media_audio_show", methods={"GET"})
      * @Template
-     *
-     * @return array
+     * @IsGranted("ROLE_MEDIA_ADMIN")
      */
-    public function show(Audio $audio, AudioManager $manager) {
-        return [
+    public function show(Audio $audio, AudioManager $manager) : Response {
+        return $this->render('@NinesMedia/audio/show.html.twig', [
             'audio' => $audio,
             'manager' => $manager,
-        ];
+        ]);
     }
 
     /**
      * @Route("/{id}/play", name="nines_media_audio_play", methods={"GET"})
-     *
-     * @return BinaryFileResponse
      */
-    public function play(Audio $audio) {
+    public function play(Audio $audio) : BinaryFileResponse {
         if ( ! $audio->getPublic() && ! $this->getUser()) {
             throw new AccessDeniedHttpException();
         }

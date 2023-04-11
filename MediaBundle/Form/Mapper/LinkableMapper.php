@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\MediaBundle\Form\Mapper;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Nines\MediaBundle\Entity\Link;
 use Nines\MediaBundle\Entity\LinkableInterface;
 use Symfony\Component\Form\DataMapperInterface;
@@ -18,14 +19,18 @@ use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
 use Symfony\Component\Form\Form;
 
 class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
-    private $parentCall = true;
+    private bool $parentCall = true;
 
     public function setParentCall(bool $call) : void {
         $this->parentCall = $call;
     }
 
+    /**
+     * @param mixed $viewData
+     * @param mixed $forms
+     */
     public function mapDataToForms($viewData, $forms) : void {
         if ( ! $viewData instanceof LinkableInterface) {
             return;
@@ -45,6 +50,12 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
         $forms['links']->setData($data);
     }
 
+    /**
+     * @param mixed $viewData
+     * @param mixed $forms
+     *
+     * @throws Exception
+     */
     public function mapFormsToData($forms, &$viewData) : void {
         if ( ! $viewData instanceof LinkableInterface) {
             return;
@@ -76,6 +87,8 @@ class LinkableMapper extends PropertyPathMapper implements DataMapperInterface {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;

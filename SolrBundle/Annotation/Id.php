@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -19,15 +19,11 @@ namespace Nines\SolrBundle\Annotation;
 class Id {
     /**
      * Name of the ID property.
-     *
-     * @var string
      */
-    public $name;
+    public ?string $name = null;
 
     /**
      * A method from the indexed entity to get the ID of an entity.
-     *
-     * @var string
      */
-    public $getter;
+    public ?string $getter = null;
 }

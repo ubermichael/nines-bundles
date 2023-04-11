@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -12,36 +12,36 @@ namespace Nines\SolrBundle\Logging;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
+use Solarium\Core\Query\AbstractQuery;
 use Solarium\QueryType\Select\Query\Query;
+use Solarium\QueryType\Select\Query\Query as SelectQuery;
+use Solarium\QueryType\Update\Query\Query as UpdateQuery;
 
 /**
  * Solr Logger collects queries and log data for use in the Symfony toolbar and
  * profiler.
  */
 class SolrLogger extends AbstractLogger {
-    /**
-     * @var bool
-     */
-    private $enabled = true;
+    private bool $enabled = true;
 
     /**
      * Log messages.
      *
-     * @var array
+     * @var array<int,mixed>
      */
-    private $logs;
+    private ?array $logs = null;
 
     /**
      * Count the log entries in various levels.
      *
-     * @var array
+     * @var array<string,int>
      */
-    private $counts;
+    private ?array $counts = null;
 
     /**
      * @var Query[]
      */
-    private $queries;
+    private ?array $queries = null;
 
     public function __construct() {
         $this->logs = [];
@@ -52,9 +52,9 @@ class SolrLogger extends AbstractLogger {
     /**
      * Interpolates context values into the message placeholders.
      *
-     * @param string $message
+     * @param array<string,string> $context
      */
-    private function interpolate($message, array $context = []) : string {
+    private function interpolate(string $message, array $context = []) : string {
         // build a replacement array with braces around the context keys
         $replace = [];
 
@@ -75,7 +75,8 @@ class SolrLogger extends AbstractLogger {
      * @see LogLevel
      *
      * @param mixed $level
-     * @param string $message
+     * @param mixed $message
+     * @param array<string,string> $context
      */
     public function log($level, $message, array $context = []) : void {
         if ( ! $this->enabled) {
@@ -100,9 +101,9 @@ class SolrLogger extends AbstractLogger {
     /**
      * Add a query to the logs.
      *
-     * @param $query
+     * @param SelectQuery|UpdateQuery $query
      */
-    public function addQuery($query) : void {
+    public function addQuery(AbstractQuery $query) : void {
         if ( ! $this->enabled) {
             return;
         }
@@ -112,18 +113,18 @@ class SolrLogger extends AbstractLogger {
     /**
      * Get the log messages.
      *
-     * @return array
+     * @return array<int,mixed>
      */
-    public function getLogs() {
+    public function getLogs() : array {
         return $this->logs;
     }
 
     /**
      * Get a count of the logs by level.
      *
-     * @return array
+     * @return array<string,int>
      */
-    public function getCounts() {
+    public function getCounts() : array {
         return $this->counts;
     }
 
@@ -132,17 +133,15 @@ class SolrLogger extends AbstractLogger {
      *
      * @return Query[]
      */
-    public function getQueries() {
+    public function getQueries() : array {
         return $this->queries;
     }
 
     /**
      * Enable or disable the logger. For bulk data loads this logger may consume
      * a lot of memory.
-     *
-     * @param $enabled
      */
-    public function setEnabled($enabled) : void {
+    public function setEnabled(bool $enabled) : void {
         $this->enabled = $enabled;
     }
 }

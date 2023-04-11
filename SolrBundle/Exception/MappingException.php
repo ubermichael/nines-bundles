@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -17,7 +17,7 @@ class MappingException extends SolrException {
 
     public const MESSAGE = 'The index mapping is misconfigured.';
 
-    public function __construct($message = self::MESSAGE, $code = self::CODE, ?Throwable $previous = null) {
+    public function __construct(?string $message = self::MESSAGE, ?int $code = self::CODE, ?Throwable $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 }

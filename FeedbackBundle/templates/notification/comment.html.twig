@@ -1,0 +1,16 @@
+{% set URL_TYPE = constant('Symfony\\Component\\Routing\\Generator\\UrlGenerator::ABSOLUTE_URL') -%}
+{% set entity = linker.findEntity(comment) -%}
+<p>A new comment has been received.</p>
+
+<p>
+    Sender: {{ comment.fullname }} {{ comment.email }}<br />
+    Follow-up: {% if comment.followUp %}Yes{% else %}No{% endif %}.<br />
+    Re: <a href="{{ linker.link(entity, {}, URL_TYPE) }}">
+        {{ linker.link(entity, {}, URL_TYPE) }}
+    </a><br />
+    Date: {{ comment.created|date }}<br />
+</p>
+
+<p>
+    {{ comment.content }}
+</p>

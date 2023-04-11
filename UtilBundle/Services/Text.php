@@ -3,42 +3,29 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\UtilBundle\Services;
 
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-
 /**
  * Various text mangling functions for twig and for other symfony stuff.
  */
 class Text {
-    /**
-     * Monolog logger.
-     *
-     * @var Logger
-     */
-    private $logger;
+    private ?int $defaultTrimLenth = null;
 
-    private $defaultTrimLenth;
-
-    public function __construct($defaultTrimLength, LoggerInterface $logger) {
+    public function __construct(int $defaultTrimLength) {
         $this->defaultTrimLenth = $defaultTrimLength;
-        $this->logger = $logger;
     }
 
     /**
      * Build a plain, searchable version of a marked up text.
      *
-     * @param mixed $content
-     *
-     * @return null|string|string[]
+     * @TODO Use html2text or similar
      */
-    public function plain($content) {
+    public function plain(string $content) : string {
         if ( ! $content) {
             return '';
         }
@@ -53,12 +40,9 @@ class Text {
      * Find the keyword in the plain text and highlight it. Returns a list
      * of the higlights as KWIC results.
      *
-     * @param string $content
-     * @param string $keyword
-     *
-     * @return array
+     * @return array<string>
      */
-    public function searchHighlight($content, $keyword) {
+    public function searchHighlight(string $content, string $keyword) : array {
         $text = $this->plain($content);
         $i = mb_stripos($text, $keyword);
         $regex = preg_quote($keyword);
@@ -78,15 +62,10 @@ class Text {
      * Drops leading/trailing spaces, transliterates digraphs, lowercases,
      * and replaces non letter/digit characters to the separator. Periods at
      * the end of the string are removed.
-     *
-     * @param string $string
-     * @param string $separator
-     *
-     * @return string
      */
-    public function slug($string, $separator = '-') {
-        if (null === $string) {
-            return;
+    public function slug(string $string, string $separator = '-') : string {
+        if ( ! $string) {
+            return '';
         }
 
         // trim spaces and periods.
@@ -102,21 +81,15 @@ class Text {
         $s = preg_replace('/[^a-z0-9 _.-]/u', '', $s);
 
         // transform spaces and runs of separators to separator.
-        $quoted = preg_quote($separator ?? '', '/');
+        $quoted = preg_quote($separator, '/');
 
         return preg_replace("/(\\s|{$quoted})+/u", $separator, $s);
     }
 
     /**
      * Strip tags from HTML and then trim it to a number of words.
-     *
-     * @param string $string
-     * @param string $length
-     * @param string $suffix
-     *
-     * @return string
      */
-    public function trim($string, $length = null, $suffix = '...') {
+    public function trim(string $string, ?int $length = null, string $suffix = '...') : string {
         if (null === $length) {
             $length = $this->defaultTrimLenth;
         }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Nines\UserBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Nines\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -19,9 +21,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method null|User find($id, $lockMode = null, $lockVersion = null)
- * @method null|User findOneBy(array $criteria, array $orderBy = null)
  * @method User[] findAll()
  * @method User[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method null|User findOneBy(array $criteria, array $orderBy = null)
+ * @method null|User findOneByEmail(string $email)
+ * @phpstan-extends ServiceEntityRepository<User>
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface {
     public function __construct(ManagerRegistry $registry) {
@@ -31,8 +35,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function upgradePassword(UserInterface $user, string $newEncodedPassword) : void {
         if ( ! $user instanceof User) {

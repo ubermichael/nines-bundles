@@ -1,0 +1,25 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Nines\DublinCoreBundle\:
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Resources,Tests}'
+
+    Nines\DublinCoreBundle\Controller\:
+        resource: '../Controller/*'
+        public: true
+        tags:
+            - 'controller.service_arguments'
+            - 'knp_paginator.injectable'
+
+    Nines\DublinCoreBundle\Menu\Builder:
+        tags:
+            - { name: knp_menu.menu_builder, method: dcNavMenu, alias: nines_dc }
+
+    Nines\DublinCoreBundle\Service\ValueManager:
+        tags:
+            - { name: 'doctrine.event_subscriber' }

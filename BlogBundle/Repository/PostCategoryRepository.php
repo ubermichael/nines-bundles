@@ -3,49 +3,25 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\BlogBundle\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Nines\BlogBundle\Entity\Post;
 use Nines\BlogBundle\Entity\PostCategory;
+use Nines\UtilBundle\Repository\TermRepository;
 
 /**
- * PostCategoryRepository.
+ * @method null|PostCategory find($id, $lockMode = null, $lockVersion = null)
+ * @method PostCategory[] findAll()
+ * @method PostCategory[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method null|PostCategory findOneBy(array $criteria, array $orderBy = null)
  */
-class PostCategoryRepository extends ServiceEntityRepository {
+class PostCategoryRepository extends TermRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, PostCategory::class);
-    }
-
-    public function typeaheadQuery($q) {
-        $qb = $this->createQueryBuilder('e');
-        $qb->andWhere('e.label LIKE :q');
-        $qb->orderBy('e.label');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery()->execute();
-    }
-
-    public function getPosts(PostCategory $postCategory, $isUser = false) {
-        $qb = $this->_em->createQueryBuilder();
-        $qb->select('e');
-        $qb->from(Post::class, 'e');
-
-        $qb->where('e.category = :category');
-
-        if ( ! $isUser) {
-            $qb->innerJoin('e.status', 's');
-            $qb->andWhere('s.public = true');
-        }
-        $qb->orderBy('e.id', 'DESC');
-        $qb->setParameter('category', $postCategory);
-
-        return $qb->getQuery();
     }
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -21,50 +21,39 @@ use ReflectionMethod;
 class FieldMetadata extends Metadata {
     /**
      * Name of the field as declared in the entity.
-     *
-     * @var string
      */
-    private $fieldName;
+    private ?string $fieldName = null;
 
     /**
      * Name of the field as generated in a Solr document.
-     *
-     * @var string
      */
-    private $solrName;
+    private ?string $solrName = null;
 
-    /**
-     * @var null|float
-     */
-    private $boost;
+    private ?float $boost = null;
 
     /**
      * Name of the getter function.
-     *
-     * @var string
      */
-    private $getter;
+    private ?string $getter = null;
 
     /**
      * Arguments to pass to the getter function.
      *
-     * @var array
+     * @var array<int,string>
      */
-    private $getterArgs;
+    private array $getterArgs = [];
 
     /**
      * Name of a mutator function, called on the results of the getter.
-     *
-     * @var string
      */
-    private $mutator;
+    private ?string $mutator = null;
 
     /**
      * List of arguments to pass to the mutator function.
      *
-     * @var array
+     * @var array<int,string>
      */
-    private $mutatorArgs;
+    private ?array $mutatorArgs = null;
 
     /**
      * Name of functions to filter the data returned by the
@@ -73,16 +62,16 @@ class FieldMetadata extends Metadata {
      *
      * Eg. [`strip_tags(), `html_entity_decode(ENT_QUOTES|ENT_HTML5, 'UTF-8')`]
      *
-     * @var array
+     * @var array<int,string>
      */
-    private $filters;
+    private array $filters = [];
 
     /**
      * Arguments to pass to each filter function.
      *
-     * @var array
+     * @var array<int,array<int,string>>
      */
-    private $filterArgs;
+    private array $filterArgs = [];
 
     /**
      * FieldMetadata constructor.
@@ -96,6 +85,8 @@ class FieldMetadata extends Metadata {
 
     /**
      * Get a list of filters for data processing.
+     *
+     * @return array<int,string>
      */
     public function getFilters() : array {
         return $this->filters;
@@ -104,9 +95,7 @@ class FieldMetadata extends Metadata {
     /**
      * Add filters to the metadata.
      *
-     * @param ?array $filters
-     *
-     * @return $this
+     * @param ?array<int,string> $filters
      */
     public function setFilters(?array $filters) : self {
         if ( ! $filters) {
@@ -126,6 +115,8 @@ class FieldMetadata extends Metadata {
     /**
      * Get a list of filter function arguments. Each array item is a list of
      * arguments for a filter function.
+     *
+     * @return array<int,array<int,string>>
      */
     public function getFilterArgs() : array {
         return $this->filterArgs;
@@ -134,8 +125,6 @@ class FieldMetadata extends Metadata {
     /**
      * Add a filter for the field. The field data will be passed as the first
      * argument to the filter function.
-     *
-     * @return $this
      */
     public function addFilter(string $filter) : self {
         list($name, $args) = $this->parseFunctionCall($filter);
@@ -147,6 +136,8 @@ class FieldMetadata extends Metadata {
 
     /**
      * Get a list of arguments to pass to the getter function for this field.
+     *
+     * @return array<int,string>
      */
     public function getGetterArgs() : array {
         return $this->getterArgs;
@@ -154,6 +145,8 @@ class FieldMetadata extends Metadata {
 
     /**
      * Get a list of arguments to pass to the mutator function for this field.
+     *
+     * @return array<int,string>
      */
     public function getMutatorArgs() : array {
         return $this->mutatorArgs;
@@ -163,9 +156,6 @@ class FieldMetadata extends Metadata {
         return $this->fieldName;
     }
 
-    /**
-     * @return $this
-     */
     public function setFieldName(string $fieldName) : self {
         $this->fieldName = $fieldName;
 
@@ -176,9 +166,6 @@ class FieldMetadata extends Metadata {
         return $this->solrName;
     }
 
-    /**
-     * @return $this
-     */
     public function setSolrName(string $solrName) : self {
         $this->solrName = $solrName;
 
@@ -189,9 +176,6 @@ class FieldMetadata extends Metadata {
         return $this->getter;
     }
 
-    /**
-     * @return $this
-     */
     public function setGetter(string $getter) : self {
         list($name, $args) = $this->parseFunctionCall($getter);
         $this->getter = $name;
@@ -204,11 +188,6 @@ class FieldMetadata extends Metadata {
         return $this->mutator;
     }
 
-    /**
-     * @param ?string $mutator
-     *
-     * @return $this
-     */
     public function setMutator(?string $mutator) : self {
         if ( ! $mutator) {
             $this->mutator = null;
@@ -234,7 +213,7 @@ class FieldMetadata extends Metadata {
      *
      * @throws ReflectionException
      *
-     * @return null|mixed
+     * @return null|array<int,mixed>|string
      */
     public function fetch(AbstractEntity $entity) {
         $data = null;
@@ -247,7 +226,7 @@ class FieldMetadata extends Metadata {
         }
 
         if ( ! $data) {
-            return;
+            return $data;
         }
 
         if ($this->mutator) {

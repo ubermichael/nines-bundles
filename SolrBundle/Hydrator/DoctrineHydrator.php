@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -18,17 +18,15 @@ use stdClass;
  * Map a search result document to an ORM entity.
  */
 class DoctrineHydrator {
-    private EntityManagerInterface $em;
+    private ?EntityManagerInterface $em = null;
 
     /**
      * Fetch an entity from the database from the ID stored in the solr
      * search result.
      *
      * @param DocumentInterface|stdClass $document
-     *
-     * @return null|object
      */
-    public function hydrate($document) {
+    public function hydrate($document) : ?object {
         list($class, $id) = explode(':', $document->id);
 
         return $this->em->find($class, $id);
@@ -36,6 +34,8 @@ class DoctrineHydrator {
 
     /**
      * @required
+     *
+     * @codeCoverageIgnore
      */
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;

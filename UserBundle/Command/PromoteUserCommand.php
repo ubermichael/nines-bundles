@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Nines\UserBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Nines\UserBundle\Entity\User;
 use Nines\UserBundle\Services\UserManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,10 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PromoteUserCommand extends AbstractUserCommand {
-    /**
-     * @var UserManager
-     */
-    private $manager;
+    private ?UserManager $manager = null;
 
     protected static $defaultName = 'nines:user:promote';
 
@@ -31,6 +29,9 @@ class PromoteUserCommand extends AbstractUserCommand {
         $this->manager = $manager;
     }
 
+    /**
+     * @return array<int,mixed>
+     */
     protected function getArgs() : array {
         return [
             ['name' => 'email', 'desc' => 'Email address to promote', 'question' => 'Email address: ', 'valid' => [new NotBlank(), new Email()]],
@@ -44,10 +45,11 @@ class PromoteUserCommand extends AbstractUserCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
-        $email = $input->getArgument('email');
         $role = $input->getArgument('role');
-        $user = $this->manager->find($email);
 
+        $email = $input->getArgument('email');
+        /** @var ?User $user */
+        $user = $this->manager->find($email);
         if ( ! $user) {
             $output->writeln("Cannot find user {$email}.");
 

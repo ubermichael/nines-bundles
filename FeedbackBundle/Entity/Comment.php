@@ -3,86 +3,74 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace Nines\FeedbackBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\LinkedEntityInterface;
+use Nines\UtilBundle\Entity\LinkedEntityTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Comment.
  *
- * @ORM\Table(name="comment", indexes={
- *     @ORM\Index(name="comment_ft_idx", columns={"fullname", "content"}, flags={"fulltext"})
+ * @ORM\Table(name="nines_feedback_comment", indexes={
+ *     @ORM\Index(name="comment_ft", columns={"fullname", "content"}, flags={"fulltext"})
  * })
  * @ORM\Entity(repositoryClass="Nines\FeedbackBundle\Repository\CommentRepository")
  */
-class Comment extends AbstractEntity {
+class Comment extends AbstractEntity implements LinkedEntityInterface {
+    use LinkedEntityTrait;
+
     /**
      * Full name of the commenter.
      *
-     * @var string
      * @ORM\Column(type="string", length=120)
      */
-    private $fullname;
+    private ?string $fullname = null;
 
     /**
      * Commenter's email.
      *
-     * @var string
      * @ORM\Column(type="string", length=120)
      * @Assert\Email
      */
-    private $email;
+    private ?string $email = null;
 
     /**
      * True if the user would like a followup email.
      *
      * @ORM\Column(type="boolean")
-     *
-     * @var bool
      */
-    private $followUp;
-
-    /**
-     * A string of the form entity:id where entity is the un-namespaced
-     * class name in lowercase and id is the numeric id.
-     *
-     * @ORM\Column(type="string", length=120)
-     *
-     * @var string
-     */
-    private $entity;
+    private bool $followUp = false;
 
     /**
      * Content of the comment.
      *
      * @ORM\Column(type="text")
-     *
-     * @var string
      */
-    private $content;
+    private ?string $content = null;
 
     /**
      * Status of the comment.
      *
-     * @var null|CommentStatus
-     *
      * @ORM\ManyToOne(targetEntity="CommentStatus", inversedBy="comments")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", nullable=false)
      */
-    private $status;
+    private ?CommentStatus $status = null;
 
     /**
      * Any notes the application users have added to the note.
      *
-     * @var Collection|CommentNote[]
+     * @var Collection<int,CommentNote>|CommentNote[]
+     *
      * @ORM\OneToMany(targetEntity="CommentNote", mappedBy="comment", orphanRemoval=true)
      */
     private $notes;
@@ -91,193 +79,124 @@ class Comment extends AbstractEntity {
      * Construct the comment.
      */
     public function __construct() {
-        $this->status = null;
         parent::__construct();
+        $this->notes = new ArrayCollection();
     }
 
     /**
      * Return the content of the comment.
+     *
+     * @codeCoverageIgnore
      */
     public function __toString() : string {
         return $this->content;
     }
 
     /**
-     * Set title.
-     *
-     * @param string $title
-     *
-     * @return Comment
+     * @codeCoverageIgnore
      */
-    public function setTitle($title) {
-        $this->title = $title;
-
-        return $this;
+    public function getFullname() : ?string {
+        return $this->fullname;
     }
 
     /**
-     * Get title.
-     *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getTitle() {
-        return $this->title;
-    }
-
-    /**
-     * Set fullname.
-     *
-     * @param string $fullname
-     *
-     * @return Comment
-     */
-    public function setFullname($fullname) {
+    public function setFullname(string $fullname) : self {
         $this->fullname = $fullname;
 
         return $this;
     }
 
     /**
-     * Get fullname.
-     *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getFullname() {
-        return $this->fullname;
+    public function getEmail() : ?string {
+        return $this->email;
     }
 
     /**
-     * Set email.
-     *
-     * @param string $email
-     *
-     * @return Comment
+     * @codeCoverageIgnore
      */
-    public function setEmail($email) {
+    public function setEmail(string $email) : self {
         $this->email = $email;
 
         return $this;
     }
 
     /**
-     * Get email.
-     *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getEmail() {
-        return $this->email;
+    public function getFollowUp() : ?bool {
+        return $this->followUp;
     }
 
     /**
-     * Set followUp.
-     *
-     * @param bool $followUp
-     *
-     * @return Comment
+     * @codeCoverageIgnore
      */
-    public function setFollowUp($followUp) {
+    public function setFollowUp(bool $followUp) : self {
         $this->followUp = $followUp;
 
         return $this;
     }
 
     /**
-     * Get followUp.
-     *
-     * @return bool
+     * @codeCoverageIgnore
      */
-    public function getFollowUp() {
-        return $this->followUp;
+    public function getContent() : ?string {
+        return $this->content;
     }
 
     /**
-     * Set content.
-     *
-     * @param string $content
-     *
-     * @return Comment
+     * @codeCoverageIgnore
      */
-    public function setContent($content) {
+    public function setContent(string $content) : self {
         $this->content = $content;
 
         return $this;
     }
 
     /**
-     * Get content.
-     *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getContent() {
-        return $this->content;
+    public function getStatus() : ?CommentStatus {
+        return $this->status;
     }
 
     /**
-     * Set entity.
-     *
-     * @param string $entity
-     *
-     * @return Comment
+     * @codeCoverageIgnore
      */
-    public function setEntity($entity) {
-        $this->entity = $entity;
-
-        return $this;
-    }
-
-    /**
-     * Get entity.
-     *
-     * @return string
-     */
-    public function getEntity() {
-        return $this->entity;
-    }
-
-    /**
-     * Set status.
-     *
-     * @return Comment
-     */
-    public function setStatus(CommentStatus $status) {
+    public function setStatus(?CommentStatus $status) : self {
         $this->status = $status;
 
         return $this;
     }
 
     /**
-     * Get status.
-     *
-     * @return CommentStatus
+     * @return Collection<int,CommentNote>|CommentNote[]
+     * @codeCoverageIgnore
      */
-    public function getStatus() {
-        return $this->status;
+    public function getNotes() : Collection {
+        return $this->notes;
     }
 
-    /**
-     * Add note.
-     *
-     * @return Comment
-     */
-    public function addNote(CommentNote $note) {
-        $this->notes[] = $note;
+    public function addNote(CommentNote $note) : self {
+        if ( ! $this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setComment($this);
+        }
 
         return $this;
     }
 
-    /**
-     * Remove note.
-     */
-    public function removeNote(CommentNote $note) : void {
-        $this->notes->removeElement($note);
-    }
+    public function removeNote(CommentNote $note) : self {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getComment() === $this) {
+                $note->setComment(null);
+            }
+        }
 
-    /**
-     * Get notes.
-     *
-     * @return Collection
-     */
-    public function getNotes() {
-        return $this->notes;
+        return $this;
     }
 }

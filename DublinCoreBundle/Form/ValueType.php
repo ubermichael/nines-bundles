@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Nines\DublinCoreBundle\Form;
 
 use Nines\DublinCoreBundle\Entity\Element;
-use Nines\DublinCoreBundle\Repository\ElementRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -22,9 +21,10 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 abstract class ValueType extends AbstractType {
     /**
-     * Add form fields to $builder.
+     * @param array<string,mixed> $options
      */
-    public static function add(FormBuilderInterface $builder, array $options, ElementRepository $repo) : void {
+    public static function add(FormBuilderInterface $builder, array $options) : void {
+        $repo = $options['repo'];
         foreach ($repo->indexQuery()->execute() as $element) {
             // @var Element $element
             $builder->add($element->getName(), CollectionType::class, [

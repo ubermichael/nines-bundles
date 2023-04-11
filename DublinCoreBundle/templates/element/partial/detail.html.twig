@@ -1,0 +1,61 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>
+                {{ element.name }}
+            </td>
+        </tr>
+        <tr>
+            <th>Label</th>
+            <td>
+                {{ element.label }}
+            </td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>
+                {{ element.description|raw }}
+            </td>
+        </tr>
+        <tr>
+            <th>Uri</th>
+            <td>
+                {{ element.uri }}
+            </td>
+        </tr>
+        <tr>
+            <th>Comment</th>
+            <td>
+                {{ element.comment|raw }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Value</th>
+            <td>
+                {% if element.values|length > 0 %}
+                    <ul>
+                        {% for value in element.values %}
+                            <li>
+                                <a href='{{ path("nines_dc_value_show", {"id":value.id }) }}'>
+                                    {{ value }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ element.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ element.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+

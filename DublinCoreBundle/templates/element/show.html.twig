@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Element Details {% endblock %}
+
+ {% block pageheader %}
+     <h1>Element Details</h1>
+ {% endblock %}
+
+{% block body %}
+
+    {% if is_granted('ROLE_DC_ADMIN') %}
+        <div class='btn-toolbar pull-right'>
+            <div class='btn-group'>
+                <a href="{{ path('nines_dc_element_edit', {'id': element.id }) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-edit"></span> Edit </a>
+            </div>
+            <div class='btn-group'>
+                <form class='delete-form' method="post" action="{{ path('nines_dc_element_delete', {'id': element.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ element.id) }}">
+                    <button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    {% embed '@NinesDublinCore/element/partial/detail.html.twig' %}
+    {% endembed %}
+
+{% endblock %}
