@@ -1,3 +1,0 @@
-nines_media:
-    resource: "@NinesMediaBundle/Controller"
-    type: annotation

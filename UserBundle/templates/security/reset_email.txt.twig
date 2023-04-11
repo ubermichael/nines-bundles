@@ -1,8 +1,0 @@
-Hello {{ user.fullname }}.
-
-Use the link below to reset your password. The link is only valid for 24 hours.
-
-{{ url('nines_user_security_reset_password', {'token': user.resetToken}) }}
-
-This request was received from {{ ip }}. If you did not request
-a password reset please ignore this email.

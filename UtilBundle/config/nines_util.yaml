@@ -1,6 +1,0 @@
-nines_util:
-    trim_length: 50
-    routing: ~
-    sender: 'donotreply@%router.request_context.host%'
-#    routing:
-#        - { class: App\Entity\Foo, route: foo_show }

@@ -1,6 +1,0 @@
-nines_blog:
-    excerpt_length: 100
-    homepage_posts: 3
-    menu_posts: 5
-    default_status: draft
-    default_category: post

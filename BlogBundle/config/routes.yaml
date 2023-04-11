@@ -1,3 +1,0 @@
-nines_blog:
-    resource: "@NinesBlogBundle/Controller"
-    type: annotation

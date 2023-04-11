@@ -1,3 +1,0 @@
-nines_feedback:
-    resource: "@NinesFeedbackBundle/Controller"
-    type: annotation
