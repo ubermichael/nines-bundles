@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ entity_test_ns }};
+
+use {{ entity_class_name }};
+use Exception;
+use PHPUnit\Framework\TestCase;
+
+class {{ entity_test_shortName }} extends TestCase {
+    private ?{{ entity_class_shortName }} $entity = null;
+
+    /**
+     * @test
+     */
+    public function config() : void {
+        $this->assertNotNull($this->entity);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp() : void {
+        $this->entity = new {{ entity_class_shortName }}();
+    }
+}

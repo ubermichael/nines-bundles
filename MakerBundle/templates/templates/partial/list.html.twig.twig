@@ -1,0 +1,11 @@
+{% autoescape false %}
+<ul>
+    {{ '{% for ' ~ twig_var_single ~ ' in ' ~ twig_var_plural ~ ' %}' }}
+    <li>
+        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': " ~ twig_var_single ~ ".id" ~ " }) }}" }}">
+            {{ '{{ ' ~ twig_var_single ~ ' }}' }}
+        </a>
+    </li>
+    {{ '{% endfor %}' }}
+</ul>
+{% endautoescape %}

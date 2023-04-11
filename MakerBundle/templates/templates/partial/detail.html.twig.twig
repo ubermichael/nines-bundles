@@ -1,0 +1,59 @@
+{% autoescape false %}
+<table class='table table-detail'>
+  <tbody>
+      {%- for key in entity_fields|keys|filter(k => k != 'id') %}
+      {%- set data = entity_fields[key] %}
+      {%- set name = data.fieldName %}
+      {%- set label = name|camel_title %}
+        <tr>
+          <th>{{ label }}</th>
+          {%- if data.enumType is defined %}
+            <td>{{" {{ " ~ twig_var_single ~ "." ~ name }}" }}</td>
+          {%- elseif data.type in ['boolean'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}Yes{% else %}No{% endif %}' }}</td>
+
+          {%- elseif data.type in ['date', 'date_immutable'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_date }}{% endif %}' }}</td>
+
+          {%- elseif data.type in ['datetime', 'datetime_immutable', 'datetimetz', 'datetimetz_immutable'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_datetime }}{% endif %}' }}</td>
+
+          {%- elseif data.type in ['time', 'time_immutable'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_time }}{% endif %}' }}</td>
+
+          {%- elseif data.type in ['int', 'smallint', 'integer', 'bigint'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_number }}' }}</td>
+
+          {%- elseif data.type in ['decimal', 'float'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_number }}' }}</td>
+
+          {%- elseif data.type in ['text'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|raw }}' }}</td>
+
+          {%- elseif data.type in ['string'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ ' }}' }}</td>
+
+          {%- elseif data.type in ['array', 'json'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|join(", ") }}' }}</td>
+
+          {%- else %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ ' }}' }}</td>
+
+        {%- endif %}
+        </tr>
+      {%- endfor %}
+      {% for relation in association_fields %}
+        {% if relation['type'] in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE'), constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE')] %}
+          <tr>
+            <th>{{ relation['fieldName']|camel_title }}</th>
+            <td>
+              <a href='{{ '{{ path("' ~ relation['route_name_prefix'] ~ '_show"), {"id": ' ~ twig_var_single ~ '.' ~ relation['fieldName'] ~ '.id}) }}' }}'>
+                {{ '{{ ' ~ twig_var_single ~ '.' ~ relation['fieldName'] ~ ' }}' }}
+              </a>
+          </td>
+          </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% endautoescape %}

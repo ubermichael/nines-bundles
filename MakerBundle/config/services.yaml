@@ -1,0 +1,29 @@
+parameters:
+  nines.maker.fixture_count: 5
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Nines\MakerBundle\:
+    resource: '../src/*'
+    exclude: '../src/{DependencyInjection,Entity,Resources,Tests}'
+
+  Nines\MakerBundle\Service\Metadata:
+    arguments:
+      $doctrineHelper: '@maker.doctrine_helper'
+      $fileManager: '@maker.file_manager'
+      $generator: '@maker.generator'
+
+  Nines\MakerBundle\Maker\Entity\:
+    resource: '../src/Maker/Entity'
+    tags:
+      - { name: 'maker.command' }
+
+  Nines\MakerBundle\Maker\Service\:
+    resource: '../src/Maker/Service'
+    arguments:
+      $fileManager: '@maker.file_manager'
+    tags:
+      - { name: 'maker.command' }

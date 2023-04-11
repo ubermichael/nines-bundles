@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ ns }};
+
+use {{ serviceName }};
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+class {{ testDetails.shortName }} extends KernelTestCase {
+    private ?{{ serviceDetails.shortName }} $service = null;
+
+    /**
+     * @test
+     */
+    public function config() : void {
+        $this->assertNotNull($this->service);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp() : void {
+        self::bootKernel();
+        $container = static::getContainer();
+        $this->service = $container->get({{ serviceDetails.shortName }}::class);
+    }
+}

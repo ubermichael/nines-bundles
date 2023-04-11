@@ -1,0 +1,81 @@
+<?php
+
+namespace {{ controller_class_ns }};
+
+use {{ entity_class_name }};
+use {{ form_class_name }};
+use {{ repository_class_name }};
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('{{ route_path_prefix }}')]
+class {{ controller_class_shortName }} extends AbstractController {
+
+    #[Route('/', name: '{{ route_name_prefix }}_index', methods: ['GET'])]
+    public function index(Request $request, {{ repository_class_shortName }} ${{ repository_var_single }}, PaginatorInterface $paginator) : Response {
+        $query = ${{ repository_var_single }}->indexQuery();
+        $pageSize = $this->getParameter('app.page_size');
+        $page = $request->query->getInt('page', 1);
+        ${{ entity_var_plural }} = $paginator->paginate($query, $page, $pageSize);
+        return $this->render('{{ twig_path_prefix }}/index.html.twig', [
+            '{{ twig_var_plural }}' => ${{ entity_var_plural }},
+        ]);
+    }
+
+    #[Route('/new', name: '{{ route_name_prefix }}_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, {{ repository_class_shortName }} ${{ repository_var_single }}) : Response {
+        ${{ entity_var_single }} = new {{ entity_class_shortName }}();
+        $form = $this->createForm({{ form_class_shortName }}::class, ${{ entity_var_single }});
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            ${{ repository_var_single }}->save(${{ entity_var_single }}, true);
+            $this->addFlash('success', 'The record has been saved.');
+
+            return $this->redirectToRoute('{{ route_name_prefix }}_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('{{ twig_path_prefix }}/new.html.twig', [
+            '{{ twig_var_single }}' => ${{ entity_var_single }},
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: '{{ route_name_prefix }}_show', methods: ['GET'])]
+    public function show({{ entity_class_shortName }} ${{ entity_var_single }}) : Response {
+        return $this->render('{{ twig_path_prefix }}/show.html.twig', [
+            '{{ twig_var_single }}' => ${{ entity_var_single }},
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: '{{ route_name_prefix }}_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, {{ entity_class_shortName }} ${{ entity_var_single }}, {{ repository_class_shortName }} ${{ repository_var_single }}) : Response {
+        $form = $this->createForm({{ form_class_shortName }}::class, ${{ entity_var_single }});
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            ${{ repository_var_single }}->save(${{ entity_var_single }}, true);
+            $this->addFlash('success', 'The record has been updated.');
+
+            return $this->redirectToRoute('{{ route_name_prefix }}_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('{{ twig_path_prefix }}/edit.html.twig', [
+            '{{ twig_var_single }}' => ${{ entity_var_single }},
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: '{{ route_name_prefix }}_delete', methods: ['POST'])]
+    public function delete(Request $request, {{ entity_class_shortName }} ${{ entity_var_single }}, {{ repository_class_shortName }} ${{ repository_var_single }}) : Response {
+        if ($this->isCsrfTokenValid('delete'.${{ entity_var_single }}->getId(), $request->request->get('_token'))) {
+            ${{ repository_var_single }}->remove(${{ entity_var_single }}, true);
+            $this->addFlash('success', 'The record has been deleted.');
+        }
+
+        return $this->redirectToRoute('{{ route_name_prefix }}_index', [], Response::HTTP_SEE_OTHER);
+    }
+}

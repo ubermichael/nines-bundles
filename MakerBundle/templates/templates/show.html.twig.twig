@@ -1,0 +1,16 @@
+{% autoescape false %}
+{{ "{% extends 'base.html.twig' %}" }}
+
+{{ '{% block title %}' }}{{ entity_class_shortName|camel_title }} Details {{ '{% endblock %}' }}
+
+{{ " {% block pageheader %} " }}
+    <h1>{{ entity_class_shortName|camel_title }} Details</h1>
+{{ " {% endblock %} " }}
+
+{{ "{% block body %}" }}
+
+    {{ "{% embed '" ~ route_name_prefix ~ "/partial/detail.html.twig' %}" }}
+    {{ "{% endembed %}" }}
+
+{{ "{% endblock %}" }}
+{% endautoescape %}

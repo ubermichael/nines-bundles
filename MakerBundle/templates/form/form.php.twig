@@ -1,0 +1,168 @@
+<?php
+
+namespace {{ form_class_ns }};
+
+use {{ entity_class_name }};
+{% set seen = [] %}
+{% for field in fkeys|keys %}
+{% set relation = association_fields[field]['targetEntity'] %}
+{% if relation not in seen %}
+{% set seen = seen|merge([relation]) %}
+use {{ relation }};
+{% endif %}
+{%- endfor %}
+
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class {{ form_class_shortName }} extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+      {% for key, data in entity_fields %}
+        {%- set name = data.fieldName %}
+        {%- set label = name|camel_title %}
+        {%- if data.id is defined %}
+          {# do nothing #}
+
+        {%- elseif name in ['created', 'updated', 'deleted'] %}
+          {# do nothing #}
+
+        {%- elseif data.enumType is defined %}
+          $builder->add('{{ name }}', EnumType::class, [
+            'class' => \{{ data.enumType }}::class,
+            'label' => '{{ label }}',
+            'help' => '',
+            'required' => {{ data.nullable ? 'false' : 'true' }},
+          ]);
+
+        {%- elseif data.type in ['boolean'] %}
+          $builder->add('{{ name }}', ChoiceType::class, [
+            'choices' => [
+              'Yes' => true,
+              'No' => false,
+              {% if data.nullable %}'Unknown' => null,{% endif %}
+            ]
+            'expanded' => true,
+            'help' => '',
+            'label' => '{{ label }}',
+            'multiple' => false,
+            'required' => {{ data.nullable ? 'false' : 'true' }},
+          ]);
+
+        {%- elseif data.type in ['date', 'date_immutable'] %}
+          $builder->add('{{ name }}', DateType::class, [
+            'help' => '',
+            'label' => '{{ label }}',
+            'html5' => true,
+            'widget' => 'single_text',
+            'required' => {{ data.nullable ? 'false' : 'true' }},
+          ]);
+
+        {%- elseif data.type in ['datetime', 'datetime_immutable', 'datetimetz', 'datetimetz_immutable'] %}
+        $builder->add('{{ name }}', DateTimeType::class, [
+          // 'date_label' => ''
+          // 'date_widget' => 'html5'
+          'help' => '',
+          'label' => '{{ label }}',
+          'html5' => true,
+          'widget' => 'single_text',
+          'required' => {{ data.nullable ? 'false' : 'true' }},
+          // 'time_label' => '',
+          // 'time_widget' => 'html5',
+        ]);
+
+        {%- elseif data.type in ['time', 'time_immutable'] %}
+        $builder->add('{{ name }}', TimeType::class, [
+          'help' => '',
+          'label' => '{{ label }}',
+          'html5' => true,
+          'input' => 'string',
+          'input_format' => 'HH:ii:ss'
+          'required' => {{ data.nullable ? 'false' : 'true' }},
+          'widget' => 'single_text',
+          'with_seconds' => true,
+        ]);
+
+        {%- elseif data.type in ['int', 'smallint', 'integer', 'bigint'] %}
+        $builder->add('{{ name }}', IntegerType::class, [
+          'help' => '',
+          'label' => '{{ label }}',
+          'html5' => 'true',
+          'input' => 'number'
+          'required' => {{ data.nullable ? 'false' : 'true' }},
+        ]);
+
+        {%- elseif data.type in ['decimal', 'float'] %}
+        $builder->add('{{ name }}', DecimalType::class, [
+          'help' => '',
+          'label' => '{{ label }}',
+          'html5' => 'true',
+          'input' => 'number'
+          'required' => {{ data.nullable ? 'false' : 'true' }},
+        ]);
+
+        {%- elseif data.type in ['text'] %}
+        $builder->add('{{ name }}', TextareaType::class, [
+          'help' => '',
+          'label' => '{{ label }}',
+          'required' => {{ data.nullable ? 'false' : 'true' }},
+          'attr' => ['class' => 'quill'],
+        ]);
+
+        {%- elseif data.type in ['string'] %}
+        $builder->add('{{ name }}', TextType::class, [
+          'help' => '',
+          'label' => '{{ label }}',
+          'required' => {{ data.nullable ? 'false' : 'true' }},
+        ]);
+
+        {%- else %}
+          // Unknown data type {{ data.type }} for {{ name }} in {{ entity_class_shortName }}.
+          $builder->add('{{ name }}', null, [
+            'label' => '{{ label }}',
+          ]);
+        {% endif %}
+      {% endfor %}
+
+      {% for field in association_fields|keys %}
+      {% set relation = fkeys[field] %}
+      {% if relation['type'] in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE'), constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE')] %}
+      $builder->add('{{ field }}', EntityType::class, [
+        'class' => \{{ relation['targetEntity'] }}::class,
+        'help' => '',
+        'label' => '{{ field|camel_title }}',
+        'multiple' => false,
+        'expanded' => false,
+        'required' => {{ relation['joinColumns'][0]['nullable'] ? 'false' : 'true' }},
+      ]);
+      {% elseif relation['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_MANY') %}
+      $builder->add('{{ field }}', EntityType::class, [
+        'class' => \{{ relation['targetEntity'] }}::class,
+        'help' => '',
+        'label' => '{{ field|camel_title }}',
+        'multiple' => true,
+        'expanded' => false,
+        'required' => {{ relation['joinColumns'][0]['nullable'] ? 'false' : 'true' }},
+      ]);
+      {% endif %}
+      {% endfor %}
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => {{ entity_class_shortName }}::class,
+        ]);
+    }
+}

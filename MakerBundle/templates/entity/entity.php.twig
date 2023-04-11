@@ -1,0 +1,50 @@
+<?php
+
+namespace {{ entity_class_ns }};
+
+use {{ repository_class_name }};
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: {{ repository_class_shortName }}::class)]
+#[ORM\HasLifecycleCallbacks]
+class {{ entity_class_shortName }} {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(name: 'created', type: Types::DATETIME_IMMUTABLE)]
+    private ?DateTimeImmutable $created = null;
+
+    #[ORM\Column(name: 'updated', type: Types::DATETIME_IMMUTABLE)]
+    private ?DateTimeImmutable $updated = null;
+
+    public function getId() : ?int {
+        return $this->id;
+    }
+
+    public function getCreated() : ?DateTimeImmutable {
+        return $this->created;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreated() : self {
+        $this->created = new DateTimeImmutable();
+        $this->updated = new DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getUpdated() : ?DateTimeImmutable {
+        return $this->updated;
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdated() : self {
+        $this->updated = new DateTimeImmutable();
+
+        return $this;
+    }
+}

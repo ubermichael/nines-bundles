@@ -1,0 +1,16 @@
+{% autoescape false %}
+    {{ "{% extends 'base.html.twig' %}" }}
+
+    {{ '{% block title %}' }}New {{ entity_class_shortName|u.camel.title }} {{ '{% endblock %}' }}
+
+    {{ "{% block pageheader %}" }}
+      <h1>New {{ entity_class_shortName|u.camel.title}}</h1>
+    {{ " {% endblock %} " }}
+
+    {{ "{% block body %}" }}
+
+    {{ "{% embed '" ~ route_name_prefix ~ "/partial/form.html.twig' %}" }}
+    {{ "{% endembed %}" }}
+
+    {{ "{% endblock %}" }}
+{% endautoescape %}

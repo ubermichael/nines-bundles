@@ -1,0 +1,68 @@
+{% autoescape false %}
+<table class='table table-list'>
+  <thead>
+    <tr>
+    <th>{{ entity_class_shortName|camel_title }}</th>
+    {%- for key, data in entity_fields %}
+      {%- set name = data.fieldName %}
+      {%- if name not in ['id', 'created', 'createdBy', 'updated', 'updatedBy', 'deleted', 'deletedBy'] %}
+      <th>
+        {{ "{{ knp_pagination_sortable(" ~ twig_var_plural ~ ", '" ~ name|camel_title ~ "', '" ~ entity_var_single ~ '.' ~ name ~ "') }}" }}
+      </th>
+      {%- endif %}
+    {%- endfor %}
+    </tr>
+  </thead>  
+  <tbody>
+    {{ '{% for ' ~ twig_var_single ~ ' in ' ~ twig_var_plural ~ ' %}' }}
+    <tr>
+      <td>
+        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': " ~ twig_var_single ~ ".id" ~ " }) }}" }}">
+            {{ '{{ ' ~ twig_var_single ~ ' }}' }}
+        </a>
+      </td>
+
+      {%- for key, data in entity_fields %}
+        {%- set name = data.fieldName %}
+        {%- if name not in ['id', 'created', 'createdBy', 'updated', 'updatedBy', 'deleted', 'deletedBy'] %}
+          {%- if data.enumType is defined %}
+            <td>{{" {{ " ~ twig_var_single ~ "." ~ name }}" }}</td>
+          {%- elseif data.type in ['boolean'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}Yes{% else %}No{% endif %}' }}</td>
+
+          {%- elseif data.type in ['date', 'date_immutable'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_date }}{% endif %}' }}</td>
+
+          {%- elseif data.type in ['datetime', 'datetime_immutable', 'datetimetz', 'datetimetz_immutable'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_datetime }}{% endif %}' }}</td>
+
+          {%- elseif data.type in ['time', 'time_immutable'] %}
+            <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_time }}{% endif %}' }}</td>
+
+          {%- elseif data.type in ['int', 'smallint', 'integer', 'bigint'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_number }}' }}</td>
+
+          {%- elseif data.type in ['decimal', 'float'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|format_number }}' }}</td>
+
+          {%- elseif data.type in ['text'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|raw }}' }}</td>
+
+          {%- elseif data.type in ['string'] %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ ' }}' }}</td>
+
+          {%- elseif data.type in ['array', 'json'] %}
+          <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ '|join(", ") }}' }}</td>
+
+          {%- else %}
+            <td>{{ '{{ ' ~ twig_var_single ~ '.' ~ name ~ ' }}' }}</td>
+
+          {% endif %}
+        {%- endif %}
+      {%- endfor %}
+
+    </tr>
+    {{ '{% endfor %}' }}
+  </tbody>
+</table>
+{% endautoescape %}

@@ -1,0 +1,40 @@
+<?php
+
+namespace {{ ns }};
+
+use Symfony\Bundle\MakerBundle\ConsoleStyle;
+use Symfony\Bundle\MakerBundle\DependencyBuilder;
+use Symfony\Bundle\MakerBundle\FileManager;
+use Symfony\Bundle\MakerBundle\Generator;
+use Symfony\Bundle\MakerBundle\InputConfiguration;
+use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Contracts\Service\Attribute\Required;
+use Twig\Environment;
+
+class {{ shortName}} extends AbstractNinesMaker
+{
+    public static function getCommandName() : string {
+        return '{{ name }}';
+    }
+
+    public static function getCommandDescription(): string
+    {
+        return '';
+    }
+
+    public function configureCommand(Command $command, InputConfiguration $inputConfig)    {
+        $command->addArgument('name', InputArgument::REQUIRED, 'Class name to generate');
+    }
+
+    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
+    {
+    }
+}

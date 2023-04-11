@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ repository_test_ns }};
+
+use {{ repository_class_name }};
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+class {{ repository_test_shortName }} extends KernelTestCase {
+    private ?{{ repository_class_shortName }} $repository = null;
+
+    /**
+     * @test
+     */
+    public function config() : void {
+        $this->assertNotNull($this->repository);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp() : void {
+        self::bootKernel();
+        $container = static::getContainer();
+        $this->repository = $container->get({{ repository_class_shortName }}::class);
+    }
+}

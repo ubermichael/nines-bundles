@@ -1,0 +1,22 @@
+{% autoescape false %}
+{{ "{% extends 'base.html.twig' %}" }}
+
+{{ '{% block title %}' }}{{ entity_class_shortName|camel_title }} List{{ '{% endblock %}' }}
+
+{{ "{% block pageheader %}" }}
+    <h1>{{ entity_class_shortName|camel_title }} List</h1>
+    <p class="count">
+        Displaying {{ '{{ ' ~ twig_var_plural ~ "|length }}" }} {{ twig_var_plural }} of {{ '{{ ' ~ twig_var_plural ~ ".getTotalItemCount }}" }} total.
+    </p>
+{{ " {% endblock %} " }}
+
+{{ "{% block body %}" }}
+  {{ "{% embed '" ~ route_name_prefix ~ "/partial/table.html.twig' %}" }}
+  {{ "{% endembed %}" }}
+
+    <div class="navigation">
+        {{ '{{ knp_pagination_render(' ~ twig_var_plural ~ ') }}' }}
+    </div>
+
+{{ "{% endblock %}" }}
+{% endautoescape %}

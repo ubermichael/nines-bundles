@@ -1,0 +1,14 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Nines\UtilBundle\:
+    resource: '../src/*'
+    exclude: '../src/{Entity,Resources,Tests}'
+
+  Nines\UtilBundle\Service\MySQLPurgerFactory:
+    tags:
+      - { name: doctrine.fixtures.purger_factory, alias: mysql_purger }
