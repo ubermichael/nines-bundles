@@ -47,7 +47,7 @@
           <tr>
             <th>{{ relation['fieldName']|camel_title }}</th>
             <td>
-              <a href='{{ '{{ path("' ~ relation['route_name_prefix'] ~ '_show"), {"id": ' ~ twig_var_single ~ '.' ~ relation['fieldName'] ~ '.id}) }}' }}'>
+              <a href='{{ '{{ path("' ~ relation['route_name_prefix'] ~ '_show", {"id": ' ~ twig_var_single ~ '.' ~ relation['fieldName'] ~ '.id}) }}' }}'>
                 {{ '{{ ' ~ twig_var_single ~ '.' ~ relation['fieldName'] ~ ' }}' }}
               </a>
           </td>
