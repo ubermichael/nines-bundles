@@ -4,6 +4,7 @@ namespace {{ form_class_ns }};
 
 use {{ entity_class_name }};
 {% set seen = [] %}
+{% set fkeys = association_fields|filter(v => v.type in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE'), constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE')]) -%}
 {% for field in fkeys|keys %}
 {% set relation = association_fields[field]['targetEntity'] %}
 {% if relation not in seen %}
