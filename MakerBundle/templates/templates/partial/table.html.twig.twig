@@ -26,7 +26,7 @@
         {%- set name = data.fieldName %}
         {%- if name not in ['id', 'created', 'createdBy', 'updated', 'updatedBy', 'deleted', 'deletedBy'] %}
           {%- if data.enumType is defined %}
-            <td>{{" {{ " ~ twig_var_single ~ "." ~ name }}" }}</td>
+            <td>{{" {{ " ~ twig_var_single ~ "." ~ name ~ " }}" }}</td>
           {%- elseif data.type in ['boolean'] %}
             <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}Yes{% else %}No{% endif %}' }}</td>
 

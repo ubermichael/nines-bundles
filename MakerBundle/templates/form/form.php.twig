@@ -53,7 +53,7 @@ class {{ form_class_shortName }} extends AbstractType
               'Yes' => true,
               'No' => false,
               {% if data.nullable %}'Unknown' => null,{% endif %}
-            ]
+            ],
             'expanded' => true,
             'help' => '',
             'label' => '{{ label }}',
@@ -100,7 +100,7 @@ class {{ form_class_shortName }} extends AbstractType
           'help' => '',
           'label' => '{{ label }}',
           'html5' => 'true',
-          'input' => 'number'
+          'input' => 'number',
           'required' => {{ data.nullable ? 'false' : 'true' }},
         ]);
 
@@ -109,7 +109,7 @@ class {{ form_class_shortName }} extends AbstractType
           'help' => '',
           'label' => '{{ label }}',
           'html5' => 'true',
-          'input' => 'number'
+          'input' => 'number',
           'required' => {{ data.nullable ? 'false' : 'true' }},
         ]);
 
@@ -136,28 +136,6 @@ class {{ form_class_shortName }} extends AbstractType
         {% endif %}
       {% endfor %}
 
-      {% for field in association_fields|keys %}
-      {% set relation = fkeys[field] %}
-      {% if relation['type'] in [constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_ONE'), constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::ONE_TO_ONE')] %}
-      $builder->add('{{ field }}', EntityType::class, [
-        'class' => \{{ relation['targetEntity'] }}::class,
-        'help' => '',
-        'label' => '{{ field|camel_title }}',
-        'multiple' => false,
-        'expanded' => false,
-        'required' => {{ relation['joinColumns'][0]['nullable'] ? 'false' : 'true' }},
-      ]);
-      {% elseif relation['type'] == constant('Doctrine\\ORM\\Mapping\\ClassMetadataInfo::MANY_TO_MANY') %}
-      $builder->add('{{ field }}', EntityType::class, [
-        'class' => \{{ relation['targetEntity'] }}::class,
-        'help' => '',
-        'label' => '{{ field|camel_title }}',
-        'multiple' => true,
-        'expanded' => false,
-        'required' => {{ relation['joinColumns'][0]['nullable'] ? 'false' : 'true' }},
-      ]);
-      {% endif %}
-      {% endfor %}
     }
 
     public function configureOptions(OptionsResolver $resolver): void
