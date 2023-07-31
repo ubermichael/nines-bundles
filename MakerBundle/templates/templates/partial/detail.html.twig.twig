@@ -8,7 +8,7 @@
         <tr>
           <th>{{ label }}</th>
           {%- if data.enumType is defined %}
-            <td>{{" {{ " ~ twig_var_single ~ "." ~ name " }}" }}</td>
+            <td>{{" {{ " ~ twig_var_single ~ "." ~ name ~ " }}" }}</td>
           {%- elseif data.type in ['boolean'] %}
             <td>{{ '{% if ' ~ twig_var_single ~ '.' ~ name ~ ' %}Yes{% else %}No{% endif %}' }}</td>
 
